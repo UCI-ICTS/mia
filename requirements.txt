@@ -1,0 +1,6 @@
+flask
+Flask-Migrate
+Flask-SQLAlchemy
+psycopg2-binary
+python-dotenv
+shortuuid

@@ -1,0 +1,227 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  background-color: white;
+}
+
+hr {
+  margin: 20px 0;
+}
+
+#root {
+  background-color: white;
+  width: 100%;
+  height: 100vh;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+#header {
+  top: 0;
+  width: 100%;
+  height: 100px;
+  background-color: #fcfdfe;
+  border-bottom: solid 1px #CCD6E1;;
+  text-align: center;
+  padding: 10px 0;
+}
+
+#header-image {
+    max-width: 80%;
+    height: auto;
+}
+
+#chat-window {
+  height: calc(100vh - 67px - 220px);
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 10px;
+  scroll-behavior: smooth;
+}
+
+.message-row {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+/* determines which side the chat bubbles show up */
+.message-row.bot {
+  align-self: flex-start;  /* default to the left side */
+}
+
+.message-row.user {
+  align-self: flex-end;  /* position to the right side */
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.message-content {
+  border-radius: 1.2em;
+  display: block;
+  line-height: 1.4;
+  margin: 0.0625em 0;
+  max-width: 85%;
+  padding: 0.5em 1em;
+  position: relative;
+  transition: border-radius 0.1s ease 0s;
+  word-break: break-word;
+  word-wrap: break-word;
+  white-space: normal;
+  font-family: "Helvetica Nueue", sans-serif;
+}
+
+.message-content.bot {
+  background-color: #EDF2F7;
+  color: #313F48;
+  fill: #EDF2F7;
+  border-radius: 1.2em 1.2em 1.2em 0;
+}
+
+.message-content.user {
+  text-align: right;
+  background-color: #19ac9f;
+  color: #fff;
+  fill: #19ac9f;
+  border-radius: 1.2em 1.2em 0 1.2em;
+  animation: Message-fadeIn 0.8s ease 0s forwards;
+}
+
+.message-row.user, .message-content.user {
+  max-width: 100%;
+  width: auto;
+}
+
+.user-response-container {
+  background-color: #EDF2F7;
+  border-top: solid 1px #CCD6E1;
+  display: flex;
+  left: 0;
+  min-height: 68px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+.user-response-form {
+  position: relative;
+  display: inline-block;
+  max-width: 740px;
+  width: 100%;
+  min-height: 48px;
+  margin: 0 auto;
+}
+
+.user-response-button-group {
+  padding: 0.5em;
+  margin: -2px auto;
+  width: 100%;
+  max-width: 740px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.user-response-button {
+  position: relative;
+  display: inline-block;
+  background-color: #fafbfc;
+  border-radius: 4px;
+  border: solid 1px #CCD6E1;
+  min-height: 48px;
+  padding: 0.66em 1em;
+  outline: none;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 1.125em;
+  color: #1a8279;
+  margin: 2px;
+  width: 100%;
+}
+
+.user-form-row {
+  padding: 15px;
+  border-bottom: solid 1px #CCD6E1;
+  position: relative;
+  display: block;
+  text-align: left;
+  background-color: #fafbfc;
+  min-height: 40px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.user-form-row-label {
+  padding-left: 0px;
+  font-size: 1.125em;
+}
+
+input[type="checkbox"] {
+  transform: scale(2);
+  margin-right: 10px;
+}
+
+#submit-button:disabled {
+  background-color: #D3D3D3; /* Light Gray */
+  color: #A9A9A9; /* Dark Gray */
+  cursor: not-allowed; /* To change the cursor shape indicating that it's not clickable */
+}
+
+.user-contact-form-row-label {
+  font-size: 0.9em;
+  text-align: left;
+  margin-bottom: 0.15em;
+  color: #313F48;
+}
+
+/* Apply only to text input types */
+input[type='text'] {
+    border: solid 1px rgba(0,0,0,0.23);
+    border-radius: 4px;
+    background-color: #fff;
+    min-height: 48px;
+    line-height: 1.4;
+    font-size: 18px;
+    text-align: left;
+    width: 100%;
+    padding-left: 10px;
+}
+
+/* Apply only to email input types */
+input[type='email'] {
+    border: solid 1px rgba(0,0,0,0.23);
+    border-radius: 4px;
+    background-color: #fff;
+    min-height: 40px;
+    line-height: 1.4;
+    font-size: 16px;
+    text-align: left;
+    width: 100%;
+    padding-left: 10px;
+}
+
+/* Apply only to tel input types */
+input[type='tel'] {
+    border: solid 1px rgba(0,0,0,0.23);
+    border-radius: 4px;
+    background-color: #fff;
+    min-height: 48px;
+    line-height: 1.4;
+    font-size: 18px;
+    text-align: left;
+    width: 100%;
+    padding-left: 10px;
+}
+
+::placeholder { /* Most modern browsers support */
+  color: #D5D5D5;
+}

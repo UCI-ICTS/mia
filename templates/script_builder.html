@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Builder</title>
+    <style>
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .half {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;  /* Scrollable when content overflows */
+        }
+
+        .entry {
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="half">
+        <ul>
+            <li>
+                There should only be a single user response for each added message
+            </li>
+            <li>
+                Multiple bot responses separated by newline (return) are fine
+            </li>
+        </ul>
+        <form id="chatForm">
+            Message Type:
+            <select name="type">
+                <option value="bot">Bot</option>
+                <option value="user">User</option>
+            </select><br><br>
+
+            Messages: <textarea name="messages" required style="width: 100%; height: 300px;"></textarea><br><br>
+
+            Parent ID (comma separated): <input type="text" id="parent_ids" name="parent_ids" required><br><br>
+
+            <input type="button" value="Add Message" onclick="addMessage()">
+        </form>
+        <br>
+        <button onclick="saveChat()">Save Chat</button>
+    </div>
+
+    <div class="half" id="entries">
+        <!-- Chat entries will be added here -->
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function addMessage() {
+    const formData = $('#chatForm').serialize();
+    $.post("/add_message", formData, function(data) {
+        // Join the messages with a <br> tag for new lines
+        const messagesContent = data.messages.join('<br>');
+
+        // Add the new entry to the entries div
+        const newEntry = `
+            <div class="entry">
+                <b>Type:</b> ${data.type}<br>
+                <b>Message:</b><br>
+                ${messagesContent}<br>
+                <b>ID:</b> ${data.id}<br>
+                <b>Parent IDs:</b> ${data.parent_ids || 'None'}
+            </div>
+        `;
+        $('#entries').append(newEntry);
+
+        // Reset the form
+        $('#chatForm')[0].reset();
+
+        // Set the parent_id field to the new ID for convenience
+        $('#parent_ids').val(data.id);
+    });
+
+}
+
+function saveChat() {
+    // AJAX request to save the current graph
+    $.post("/save_graph", function(data) {
+        alert(data.message); // Show a message that the chat was saved.
+    });
+}
+</script>
+<script>
+$(document).ready(function() {
+    // Fetch saved chat data on page load
+    $.get("/get_saved_chat", function(data) {
+        for (let id in data) {
+            const entry = data[id];
+            // Join the messages with a <br> tag for new lines
+            const messagesContent = entry.messages.join('<br>');
+            const newEntry = `
+                <div class="entry">
+                    Type: ${entry.type}<br>
+                    Message: ${messagesContent}<br>
+                    ID: ${id}<br>
+                    Parent IDs: ${entry.parent_ids || 'None'}
+                </div>
+            `;
+            $('#entries').append(newEntry);
+        }
+    });
+});
+</script>
+</body>
+</html>

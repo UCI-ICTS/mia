@@ -1,0 +1,870 @@
+{
+    "CaLvKv4": {
+        "type": "bot",
+        "messages": [
+            "I\u2019m Mia, your automated Medical Information Assistant from the Pediatric Mendelian",
+            "Genomics Research Center (PMGRC) through Children\u2019s National, UC Irvine, and Invitae.",
+            "I\u2019m here to tell you all about the PMGRC study and help you decide if you want to participate."
+        ],
+        "parent_ids": [
+            "start"
+        ],
+        "child_ids": [
+            "m84n5MM"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "m84n5MM": {
+        "type": "user",
+        "messages": [
+            "Hi Mia!"
+        ],
+        "parent_ids": [
+            "CaLvKv4"
+        ],
+        "child_ids": [
+            "de5ZDgm"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "de5ZDgm": {
+        "type": "bot",
+        "messages": [
+            "I\u2019m going to provide details about the study like why we are doing this research, what you will be expected to do if you enroll, and possible risks and benefits.",
+            "My job is to give you plenty of information to help you choose whether or not to participate."
+        ],
+        "parent_ids": [
+            "m84n5MM"
+        ],
+        "child_ids": [
+            "PJwkbgi"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "PJwkbgi": {
+        "type": "user",
+        "messages": [
+            "Great!"
+        ],
+        "parent_ids": [
+            "de5ZDgm"
+        ],
+        "child_ids": [
+            "oS9m8Ua"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "oS9m8Ua": {
+        "type": "bot",
+        "messages": [
+            "This chat usually takes about 30 minutes to go through before you can sign the consent form to enroll at the end.",
+            "You can always pause and come back at a later point.",
+            "At any time during our conversation, you can click the menu button (\u2630) at the top left to find chat options.",
+            "If you want to change any of your responses, just click on the response or go to the menu."
+        ],
+        "parent_ids": [
+            "PJwkbgi"
+        ],
+        "child_ids": [
+            "me5RCBw",
+            "iLpXdAS"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "me5RCBw": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "oS9m8Ua"
+        ],
+        "child_ids": [
+            "a6JKRdh"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "iLpXdAS": {
+        "type": "user",
+        "messages": [
+            "I understand"
+        ],
+        "parent_ids": [
+            "oS9m8Ua"
+        ],
+        "child_ids": [
+            "a6JKRdh"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "a6JKRdh": {
+        "type": "bot",
+        "messages": [
+            "All of the information I will share is also described in more detail in our consent document.",
+            "You can only sign the consent form electronically after reviewing it with me or with a study team member.",
+            "You can access an example of the consent document by clicking this <a href=\"https://acrobat.adobe.com/link/review?uri=urn%3Aaaid%3Ascds%3AUS%3Ac2c31666-e549-4415-8bf1-c0d1b822242b\">link</a>, but please remember to return here to complete our chat."
+        ],
+        "parent_ids": [
+            "iLpXdAS",
+            "me5RCBw"
+        ],
+        "child_ids": [
+            "WwRBQik"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "WwRBQik": {
+        "type": "user",
+        "messages": [
+            "Can I look at this after we chat?"
+        ],
+        "parent_ids": [
+            "a6JKRdh"
+        ],
+        "child_ids": [
+            "XcPGk57"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "XcPGk57": {
+        "type": "bot",
+        "messages": [
+            "Yes, you can come back here to access the link later, and I can also provide the link again at the end of the chat."
+        ],
+        "parent_ids": [
+            "WwRBQik"
+        ],
+        "child_ids": [
+            "JPVkFCr"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "JPVkFCr": {
+        "type": "user",
+        "messages": [
+            "Okay, great"
+        ],
+        "parent_ids": [
+            "XcPGk57"
+        ],
+        "child_ids": [
+            "ZjTLunQ"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "ZjTLunQ": {
+        "type": "bot",
+        "messages": [
+            "Whether or not you choose to participate in the study, the team at Children's National may review your interactions with me, Mia, to better understand how people interact with me and how I can improve."
+        ],
+        "parent_ids": [
+            "JPVkFCr"
+        ],
+        "child_ids": [
+            "fWXv5QS"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "fWXv5QS": {
+        "type": "user",
+        "messages": [
+            "Ok, sounds good"
+        ],
+        "parent_ids": [
+            "ZjTLunQ"
+        ],
+        "child_ids": [
+            "S2nH9zZ"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "S2nH9zZ": {
+        "type": "bot",
+        "messages": [
+            "If you are ready, we can start going through the information together right now!",
+            "If you would rather review the consent later or you would rather review it with a member of the study team, just let me know!"
+        ],
+        "parent_ids": [
+            "fWXv5QS"
+        ],
+        "child_ids": [
+            "9DgwYTz",
+            "DdxFUae",
+            "BxD4wrq"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "9DgwYTz": {
+        "type": "user",
+        "messages": [
+            "I\u2019d like to continue chatting with Mia now"
+        ],
+        "parent_ids": [
+            "S2nH9zZ"
+        ],
+        "child_ids": [
+            "Q8yaxQc"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "BxD4wrq": {
+        "type": "user",
+        "messages": [
+            "I want to pick up this chat with Mia sometime later"
+        ],
+        "parent_ids": [
+            "S2nH9zZ"
+        ],
+        "child_ids": [
+            "jbs93Hc"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "DdxFUae": {
+        "type": "user",
+        "messages": [
+            "I'd prefer to talk to someone from the research team"
+        ],
+        "parent_ids": [
+            "S2nH9zZ"
+        ],
+        "child_ids": [
+            "nqDwZrd"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "Q8yaxQc": {
+        "type": "bot",
+        "messages": [
+            "Okay!",
+            "Let\u2019s do this!",
+            "Please be sure to take notes and write down any questions you have as we go through this chat, as you will have the option to talk to a study team member at the end. \u270f\ufe0f",
+            "If you have any questions that are not answered during this chat, we will put you in touch with a team member to discuss them further."
+        ],
+        "parent_ids": [
+            "9DgwYTz",
+            "87q8gWG"
+        ],
+        "child_ids": [
+            "M4CaAt5"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "jbs93Hc": {
+        "type": "bot",
+        "messages": [
+            "Okay! No problem.",
+            "You can use the link in your text message to come back at any time.",
+            "Let me know when you are ready to chat."
+        ],
+        "parent_ids": [
+            "BxD4wrq"
+        ],
+        "child_ids": [
+            "87q8gWG"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "nqDwZrd": {
+        "type": "bot",
+        "messages": [
+            "Sure thing.",
+            "Someone from our study team will contact you directly by phone or email within the next 2-3 weeks.",
+            "If you have questions now, you can contact us at PMGRC@childrensnational.org"
+        ],
+        "parent_ids": [
+            "DdxFUae"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "87q8gWG": {
+        "type": "user",
+        "messages": [
+            "I'm ready to chat now"
+        ],
+        "parent_ids": [
+            "jbs93Hc"
+        ],
+        "child_ids": [
+            "Q8yaxQc"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "M4CaAt5": {
+        "type": "user",
+        "messages": [
+            "Sounds good! \ud83d\udc4d"
+        ],
+        "parent_ids": [
+            "Q8yaxQc"
+        ],
+        "child_ids": [
+            "FADCStr"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "FADCStr": {
+        "type": "bot",
+        "messages": [
+            "The goal of this study is to help identify the causes of genetic health conditions.",
+            "You are being invited to join this study because you or someone in your family has a genetic health condition (or a health issue that might be related to genes).",
+            "We often enroll multiple family members (people related by blood) in the study."
+        ],
+        "parent_ids": [
+            "M4CaAt5"
+        ],
+        "child_ids": [
+            "Vew9XnD",
+            "Bkyp7hD"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "Vew9XnD": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "FADCStr"
+        ],
+        "child_ids": [
+            "KMirb2i"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "Bkyp7hD": {
+        "type": "user",
+        "messages": [
+            "Why only those related by blood?"
+        ],
+        "parent_ids": [
+            "FADCStr"
+        ],
+        "child_ids": [
+            "QT8Mx3R"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "QT8Mx3R": {
+        "type": "bot",
+        "messages": [
+            "Having genetic data from blood relatives can help us do a better job of interpreting genetic findings.",
+            "For example, if we find a genetic change in a person who has a health issue, it is important to know if this genetic change was passed down through the family.",
+            "So, having data from blood-related family members helps us interpret what we find."
+        ],
+        "parent_ids": [
+            "Bkyp7hD"
+        ],
+        "child_ids": [
+            "RXBDyqd"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "RXBDyqd": {
+        "type": "user",
+        "messages": [
+            "Ah, that makes sense"
+        ],
+        "parent_ids": [
+            "QT8Mx3R"
+        ],
+        "child_ids": [
+            "KMirb2i"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "KMirb2i": {
+        "type": "bot",
+        "messages": [
+            "Ideally, we would enroll <b>the person with the genetic health condition</b> as well as <b>both of their biological parents</b> (mom and dad), if possible.",
+            "So, if one or both parents are able to enroll, that would be great!"
+        ],
+        "parent_ids": [
+            "RXBDyqd",
+            "Vew9XnD"
+        ],
+        "child_ids": [
+            "dM9iaFR"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "dM9iaFR": {
+        "type": "user",
+        "messages": [
+            "Good to know!"
+        ],
+        "parent_ids": [
+            "KMirb2i"
+        ],
+        "child_ids": [
+            "E3C8G5Y"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "E3C8G5Y": {
+        "type": "bot",
+        "messages": [
+            "Each person who enrolls in the study will have to go through this study consent process.",
+            "You can enroll yourself and/or your children in this chat today, and we can send a separate chat link to any other adults who want to enroll."
+        ],
+        "parent_ids": [
+            "dM9iaFR"
+        ],
+        "child_ids": [
+            "C8baGp6"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "C8baGp6": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "E3C8G5Y"
+        ],
+        "child_ids": [
+            "CPf9CCz"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "CPf9CCz": {
+        "type": "bot",
+        "messages": [
+            "For children who are 6 years old or younger, a parent or guardian can complete the consent on their behalf.",
+            "For children ages 7 to 17, (or for adults who are under another person\u2019s legal guardianship), a parent or guardian must complete the official consent.",
+            "We will also need to talk directly to the child (if they are capable) to get their agreement about participating.",
+            "People who are age 18 or older need to go through the consent process themselves (except those who are under another person\u2019s legal guardianship)."
+        ],
+        "parent_ids": [
+            "C8baGp6"
+        ],
+        "child_ids": [
+            "BBfTzRw",
+            "CAwKwCW"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "BBfTzRw": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "CPf9CCz"
+        ],
+        "child_ids": [
+            "USfk36C"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "CAwKwCW": {
+        "type": "user",
+        "messages": [
+            "I understand"
+        ],
+        "parent_ids": [
+            "CPf9CCz"
+        ],
+        "child_ids": [
+            "USfk36C"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "USfk36C": {
+        "type": "bot",
+        "messages": [
+            "Can you tell me who in your family might consider enrolling in this study? (check all that apply, including any parents or other adults who might enroll)"
+        ],
+        "parent_ids": [
+            "CAwKwCW",
+            "BBfTzRw"
+        ],
+        "child_ids": [
+            "b5nYNf6"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "b5nYNf6": {
+        "type": "user",
+        "messages": [],
+        "parent_ids": [
+            "USfk36C"
+        ],
+        "child_ids": [
+            "eca6cQF",
+            "axvGUBt",
+            "RMb2hrx"
+        ],
+        "attachment": null,
+        "metadata": [
+            "enroll_form"
+        ],
+        "html_type": "form",
+        "html_content": "\n<form id='checkbox-form' class='user-response-form'>\n    <label class='user-form-row' for='myself'>\n        <input type='checkbox' id='myself' name='myself' value='Myself'>\n        <input type='hidden' name='id_myself' value='eca6cQF'>\n        <span class='user-form-row-label'>Myself</span>\n    </label>\n    <label class='user-form-row' for='myChild'>\n        <input type='checkbox' id='myChild' name='myChildChildren' value='My child/children'>\n        <input type='hidden' name='id_myChildChildren' value='RMb2hrx'>\n        <span class='user-form-row-label'>My child/children</span>\n    </label>\n    <label class='user-form-row' for='childOtherParent'>\n        <input type='checkbox' id='childOtherParent' name='childOtherParent' value='My child\u2019s other parent'>\n        <input type='hidden' name='id_childOtherParent' value='axvGUBt'>\n        <span class='user-form-row-label'>My child\u2019s other parent</span>\n    </label>\n    <label class='user-form-row' for='adultFamilyMember'>\n        <input type='checkbox' id='adultFamilyMember' name='adultFamilyMember' value='Another adult family member'>\n        <input type='hidden' name='id_adultFamilyMember' value='axvGUBt'>\n        <span class='user-form-row-label'>Another adult family member</span>\n    </label>\n    <input type='hidden' name='id_node' value='b5nYNf6'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>\n"
+    },
+    "eca6cQF": {
+        "type": "bot",
+        "messages": [
+            "Great!",
+            "You can complete the consent process for <b>yourself</b> today in this chat"
+        ],
+        "parent_ids": [
+            "b5nYNf6"
+        ],
+        "child_ids": [
+            "L5xPJtN"
+        ],
+        "attachment": null,
+        "metadata": [
+            "enroll_form"
+        ],
+        "html_type": "button",
+        "html_content": null
+    },
+    "L5xPJtN": {
+        "type": "user",
+        "messages": [
+            "Okay, thanks"
+        ],
+        "parent_ids": [
+            "eca6cQF"
+        ],
+        "child_ids": [
+            "Ey8gJrc"
+        ],
+        "attachment": null,
+        "metadata": [
+            "enroll_form"
+        ],
+        "html_type": "button",
+        "html_content": null
+    },
+    "axvGUBt": {
+        "type": "bot",
+        "messages": [
+            "If your child\u2019s other parent or another adult family member is considering enrolling, they should also complete this consent chat themselves.",
+            "If they have not already received a link to this consent chat, I can send them one now with just a few pieces of information."
+        ],
+        "parent_ids": [
+            "b5nYNf6"
+        ],
+        "child_ids": [
+            "mBdVTa8",
+            "8dehgq7"
+        ],
+        "attachment": null,
+        "metadata": [
+            "enroll_form"
+        ],
+        "html_type": "button",
+        "html_content": null
+    },
+    "mBdVTa8": {
+        "type": "user",
+        "messages": [
+            "They have already received a link to this chat"
+        ],
+        "parent_ids": [
+            "axvGUBt"
+        ],
+        "child_ids": [
+            "AXCfXjh"
+        ],
+        "attachment": null,
+        "metadata": [
+            "enroll_form"
+        ],
+        "html_type": "button",
+        "html_content": null
+    },
+    "8dehgq7": {
+        "type": "user",
+        "messages": [
+            "I'd like to send them a link to the chat"
+        ],
+        "parent_ids": [
+            "axvGUBt"
+        ],
+        "child_ids": [
+            "aaVu2Vp"
+        ],
+        "attachment": null,
+        "metadata": [
+            "enroll_form"
+        ],
+        "html_type": "button",
+        "html_content": null
+    },
+    "RMb2hrx": {
+        "type": "bot",
+        "messages": [
+            "How many of your children are you considering enrolling?"
+        ],
+        "parent_ids": [
+            "b5nYNf6"
+        ],
+        "child_ids": [
+            "VDz6Yx8",
+            "5ZrtE33"
+        ],
+        "attachment": null,
+        "metadata": [
+            "enroll_form"
+        ],
+        "html_type": "button",
+        "html_content": null
+    },
+    "VDz6Yx8": {
+        "type": "user",
+        "messages": [
+            "One child"
+        ],
+        "parent_ids": [
+            "RMb2hrx"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "5ZrtE33": {
+        "type": "user",
+        "messages": [
+            "More than one child"
+        ],
+        "parent_ids": [
+            "RMb2hrx"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null
+    },
+    "Ey8gJrc": {
+        "type": "bot",
+        "messages": [
+            "You\u2019re welcome \ud83d\ude00",
+            "Now, let\u2019s take a moment to talk a little bit about genetics.",
+            "Do you want to keep it simple or get a little more science-y?"
+        ],
+        "parent_ids": [
+            "L5xPJtN"
+        ],
+        "child_ids": [
+            "KR89wri",
+            "QXNa2cz"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": []
+    },
+    "KR89wri": {
+        "type": "user",
+        "messages": [
+            "Science-y please \ud83e\udd13"
+        ],
+        "parent_ids": [
+            "Ey8gJrc"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": []
+    },
+    "QXNa2cz": {
+        "type": "user",
+        "messages": [
+            "Let's keep it simple"
+        ],
+        "parent_ids": [
+            "Ey8gJrc"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": []
+    },
+    "WnXoffX": {
+        "type": "bot",
+        "messages": [
+            "Now, let\u2019s take a moment to talk a little bit about genetics.",
+            "Do you want to keep it simple or get a little more science-y?"
+        ],
+        "parent_ids": [
+            "AXCfXjh"
+        ],
+        "child_ids": [
+            "KR89wri",
+            "QXNa2cz"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": []
+    },
+    "aaVu2Vp": {
+        "type": "bot",
+        "messages": [
+            "Okay!",
+            "Can you tell me their name and cell phone number and/or email address?"
+        ],
+        "parent_ids": [
+            "8dehgq7"
+        ],
+        "child_ids": [
+            "gWJxSfh"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": "",
+        "metadata": [
+            "enroll_form"
+        ]
+    },
+    "gWJxSfh": {
+        "type": "user",
+        "messages": [],
+        "parent_ids": [
+            "aaVu2Vp"
+        ],
+        "child_ids": [
+            "UiJSrG3"
+        ],
+        "attachment": null,
+        "html_type": "form",
+        "html_content": "<form id='contact-other-adult-form' class='user-response-form'>\n    <label class='user-form-row' for='firstname'>\n        <span class='user-contact-form-row-label'>First name</span>    \n        <input type='text' id='firstname' name='firstname'>\n    </label>\n    <label class='user-form-row' for='lastname'>\n        <span class='user-contact-form-row-label'>Last name</span>\n        <input type='text' id='lastname' name='lastname'>\n    </label>\n    <label class='user-form-row' for='cellphone'>\n        <span class='user-contact-form-row-label'>Cellphone</span>\n        <input type='tel' id='cellphone' name='cellphone' pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' placeholder='555-867-5309'>\n    </label>\n    <label class='user-form-row' for='email'>\n        <span class='user-contact-form-row-label'>Email</span>\n        <input type='email' id='email' name='email' placeholder='example@example.com'>\n    </label>\n    <input type='hidden' name='id_submit_node' value='UiJSrG3'>\n    <input type='hidden' name='id_skip_node' value='WnXoffX'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n    <input type='button' value='Skip' id='skip-button' class='user-response-button-group user-response-button'>\n</form>",
+        "metadata": [
+            "enroll_form"
+        ]
+    },
+    "UiJSrG3": {
+        "type": "bot",
+        "messages": [
+            "Thank you! We\u2019ll contact them with the information you've provided.",
+            "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>PMGRC@childrensnational.org</b>."
+        ],
+        "parent_ids": [
+            "aaVu2Vp"
+        ],
+        "child_ids": [
+            "4iXP7YP"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": [
+            "enroll_form"
+        ]
+    },
+    "4iXP7YP": {
+        "type": "user",
+        "messages": [
+            "Okay, thanks"
+        ],
+        "parent_ids": [
+            "aaVu2Vp"
+        ],
+        "child_ids": [
+            "WnXoffX"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": [
+            "enroll_form"
+        ]
+    },
+    "AXCfXjh": {
+        "type": "bot",
+        "messages": [
+            "Okay, great"
+        ],
+        "parent_ids": [
+            "mBdVTa8"
+        ],
+        "child_ids": [
+            "WnXoffX"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": [
+            "enroll_form"
+        ]
+    }
+}
