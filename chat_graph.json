@@ -2,9 +2,8 @@
     "CaLvKv4": {
         "type": "bot",
         "messages": [
-            "I\u2019m Mia, your automated Medical Information Assistant from the Pediatric Mendelian",
-            "Genomics Research Center (PMGRC) through Children\u2019s National, UC Irvine, and Invitae.",
-            "I\u2019m here to tell you all about the PMGRC study and help you decide if you want to participate."
+            "I\u2019m Mia, your automated Medical Information Assistant from the Pediatric Mendelian Genomics Research Center (PMGRC) through Children\u2019s National, UC Irvine, and Invitae.",
+            "I\u2019m here to tell you all about the UDN study and help you decide if you want to participate."
         ],
         "parent_ids": [
             "start"
@@ -19,7 +18,7 @@
     "m84n5MM": {
         "type": "user",
         "messages": [
-            "Hi Mia!"
+            "\ud83d\udc4b Hi Mia!"
         ],
         "parent_ids": [
             "CaLvKv4"
@@ -739,7 +738,9 @@
         "parent_ids": [
             "Ey8gJrc"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "hBC6sGH"
+        ],
         "attachment": null,
         "html_type": "button",
         "html_content": null,
@@ -807,7 +808,7 @@
         ],
         "attachment": null,
         "html_type": "form",
-        "html_content": "<form id='contact-other-adult-form' class='user-response-form'>\n    <label class='user-form-row' for='firstname'>\n        <span class='user-contact-form-row-label'>First name</span>    \n        <input type='text' id='firstname' name='firstname'>\n    </label>\n    <label class='user-form-row' for='lastname'>\n        <span class='user-contact-form-row-label'>Last name</span>\n        <input type='text' id='lastname' name='lastname'>\n    </label>\n    <label class='user-form-row' for='cellphone'>\n        <span class='user-contact-form-row-label'>Cellphone</span>\n        <input type='tel' id='cellphone' name='cellphone' pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' placeholder='555-867-5309'>\n    </label>\n    <label class='user-form-row' for='email'>\n        <span class='user-contact-form-row-label'>Email</span>\n        <input type='email' id='email' name='email' placeholder='example@example.com'>\n    </label>\n    <input type='hidden' name='id_submit_node' value='UiJSrG3'>\n    <input type='hidden' name='id_skip_node' value='WnXoffX'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n    <input type='button' value='Skip' id='skip-button' class='user-response-button-group user-response-button'>\n</form>",
+        "html_content": "<form id='contact-other-adult-form' class='user-response-form'>\n    <label class='user-form-row' for='firstname'>\n        <span class='user-contact-form-row-label'>First name</span>    \n        <input type='text' id='firstname' name='firstname'>\n    </label>\n    <label class='user-form-row' for='lastname'>\n        <span class='user-contact-form-row-label'>Last name</span>\n        <input type='text' id='lastname' name='lastname'>\n    </label>\n    <label class='user-form-row' for='phone'>\n        <span class='user-contact-form-row-label'>Phone</span>\n        <input type='tel' id='phone' name='phone' pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' placeholder='555-867-5309'>\n    </label>\n    <label class='user-form-row' for='email'>\n        <span class='user-contact-form-row-label'>Email</span>\n        <input type='email' id='email' name='email' placeholder='example@example.com'>\n    </label>\n    <input type='hidden' name='id_submit_node' value='UiJSrG3'>\n    <input type='hidden' name='id_skip_node' value='WnXoffX'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n    <input type='button' value='Skip' id='skip-button' class='user-response-button-group user-response-button'>\n</form>",
         "metadata": [
             "enroll_form"
         ]
@@ -866,5 +867,71 @@
         "metadata": [
             "enroll_form"
         ]
+    },
+    "hBC6sGH": {
+        "type": "bot",
+        "messages": [
+            "I was hoping you would say that!",
+            "You may already know that your body is made of trillions of cells.",
+            "Inside each of these cells is your DNA, which provides the instructions for how our bodies grow and develop."
+        ],
+        "parent_ids": [
+            "KR89wri"
+        ],
+        "child_ids": [
+            "EcgsbMN"
+        ],
+        "attachment": null,
+        "html_type": "image",
+        "html_content": "dna_diagram.jpg",
+        "metadata": []
+    },
+    "EcgsbMN": {
+        "type": "user",
+        "messages": [
+            "Ah, okay"
+        ],
+        "parent_ids": [
+            "hBC6sGH"
+        ],
+        "child_ids": [
+            "SfPWkep"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": []
+    },
+    "SfPWkep": {
+        "type": "bot",
+        "messages": [
+            "Your DNA is made up of a genetic code, which is represented by four letters: A, T, C and G.",
+            "A little section of the code might look something like this: <br><br>ATGCGCTAGCTCCTAGCTAGCCTAGCTAGCTAACGCTAGCCTCGTAGACTACGATCGCTAAGCTAGC",
+            "The code is actually over 3 billion letters long!"
+        ],
+        "parent_ids": [
+            "EcgsbMN"
+        ],
+        "child_ids": [
+            "AonpoZW"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": []
+    },
+    "AonpoZW": {
+        "type": "user",
+        "messages": [
+            "That's complicated"
+        ],
+        "parent_ids": [
+            "SfPWkep"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": []
     }
 }

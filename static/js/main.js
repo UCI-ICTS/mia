@@ -15,16 +15,7 @@ var ChatApp = {
     },
     smoothScrollToBottom: function() {
         const chatWindow = document.getElementById('chat-window');
-        const targetScrollTop = chatWindow.scrollHeight - chatWindow.clientHeight;
-        const step = (targetScrollTop - chatWindow.scrollTop) / 1;
-
-        function scroll() {
-            chatWindow.scrollTop += step;
-            if (Math.abs(targetScrollTop - chatWindow.scrollTop) > step) {
-                requestAnimationFrame(scroll);
-            }
-        }
-        requestAnimationFrame(scroll);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
     },
     onButtonClick: function(event) {
         event.preventDefault();
@@ -99,12 +90,25 @@ var ChatApp = {
                         <span>${botMessages[i]}</span>
                     </div>
                 </div>`;
-          chat.innerHTML += new_bot_content;
-          this.smoothScrollToBottom();
+            chat.innerHTML += new_bot_content;
+            this.smoothScrollToBottom();
+        }
+        if (data.next_sequence.bot_html_type == 'image') {
+            var imagePath = SCRIPT_ROOT + "/static/images/" + data.next_sequence.bot_html_content;
+            var imgElement = `<img src="${imagePath}" alt="${data.next_sequence.bot_html_content}">`;
+
+            var new_bot_image_content = `
+                <div class="message-row bot">
+                    <div class="message-content bot">
+                        <span>${imgElement}</span>
+                    </div>
+                </div>`;
+            chat.innerHTML += new_bot_image_content;
+            this.smoothScrollToBottom();
         }
 
         // --- configure form or buttons for the next user response
-        if (data.next_sequence.html_type == 'form') {
+        if (data.next_sequence.user_html_type == 'form') {
             // --- set the form for the next user response
             var responseContainer = document.querySelector('.user-response-button-group');
             responseContainer.innerHTML = data.next_sequence.user_responses[0][1];
@@ -127,7 +131,7 @@ var ChatApp = {
     adjustChatWindowHeight: function() {
         var windowHeight = $(window).height();
         var formContainerHeight = $('.user-response-container').outerHeight(true);
-        var otherHeight = 80; // the height of other elements, adjust as needed
+        var otherHeight = 90; // the height of other elements, adjust as needed
         var newChatWindowHeight = windowHeight - formContainerHeight - otherHeight;
 
         $('#chat-window').css('height', newChatWindowHeight + 'px');

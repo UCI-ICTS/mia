@@ -25,16 +25,22 @@ hr {
 #header {
   top: 0;
   width: 100%;
-  height: 100px;
-  background-color: #fcfdfe;
-  border-bottom: solid 1px #CCD6E1;;
+  height: 110px;
+  background-color: #325594;
+  border-bottom: solid 1px black;;
   text-align: center;
-  padding: 10px 0;
+  padding: 15px 0;
+  color: white;
 }
 
 #header-image {
     max-width: 80%;
     height: auto;
+}
+
+#header-logo {
+    height: 85%;
+    max-height: 100px;
 }
 
 #chat-window {
@@ -87,11 +93,16 @@ hr {
   border-radius: 1.2em 1.2em 1.2em 0;
 }
 
+.message-content.bot img {
+    max-width: 100%;
+    height: auto;
+}
+
 .message-content.user {
   text-align: right;
-  background-color: #19ac9f;
+  background-color: #148cfb;
   color: #fff;
-  fill: #19ac9f;
+  fill: #148cfb;
   border-radius: 1.2em 1.2em 0 1.2em;
   animation: Message-fadeIn 0.8s ease 0s forwards;
 }
@@ -143,7 +154,7 @@ hr {
   text-decoration: none;
   cursor: pointer;
   font-size: 1.125em;
-  color: #1a8279;
+  color: #148cfb;
   margin: 2px;
   width: 100%;
 }
@@ -180,7 +191,7 @@ input[type="checkbox"] {
   font-size: 0.9em;
   text-align: left;
   margin-bottom: 0.15em;
-  color: #313F48;
+  color: #148cfb;
 }
 
 /* Apply only to text input types */

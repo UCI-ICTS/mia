@@ -28,8 +28,8 @@ def start_chat():
     print('Starting chatbot...')
     global chat
     chat = load_chat()
-    #start_id = _get_chat_start_id(chat)
-    start_id = 'CPf9CCz'
+    start_id = _get_chat_start_id(chat)
+    #start_id = 'CPf9CCz'
 
     global workflow
     workflow = []
@@ -57,7 +57,7 @@ def user_response():
 
 @app.route('/_contact_another_adult_form', methods=['POST'])
 def contact_another_adult_form():
-    first_name, last_name, cellphone, email = '', '', '', ''
+    first_name, last_name, phone, email = '', '', '', ''
     submitted = request.form.get('submit') == 'true'
 
     if submitted:
@@ -65,8 +65,8 @@ def contact_another_adult_form():
             first_name = request.form.get('firstname')
         if request.form.get('lastname'):
             last_name = request.form.get('lastname')
-        if request.form.get('cellphone'):
-            cellphone = request.form.get('cellphone')
+        if request.form.get('phone'):
+            phone = request.form.get('phone')
         if request.form.get('email'):
             email = request.form.get('email')
         if request.form.get('id_submit_node'):
@@ -77,7 +77,7 @@ def contact_another_adult_form():
         --- SAVE THIS TO A DATABASE IN THE FUTURE ---
         first name: {first_name}
         last name: {last_name}
-        cellphone: {cellphone}
+        phone: {phone}
         email: {email}
         """)
     else:
@@ -286,7 +286,6 @@ def _get_response(id):
     elif chat[id]['type'] == 'user':
         response = chat[id]['messages'][0]  # there should only be a single message
     else:
-
         response = chat[id]['messages']
     return response
 
@@ -308,16 +307,24 @@ def _get_next_chat_sequence(chat_id):
             user_responses.append((current_node_id, _get_response(current_node_id)))
         node_ids.append(current_node_id)
 
-    html_type = 'button'
+    user_html_type = 'button'
     if len(chat[chat_id]['child_ids']) == 1:
         child_id = chat[chat_id]['child_ids'][0]
-        if chat[child_id]['html_type'] == 'form':
-            html_type = 'form'
+        if chat[child_id]['html_type'] == 'form' and chat[child_id]['type'] == 'user':
+            user_html_type = 'form'
+
+    bot_html_type = ''
+    bot_html_content = ''
+    if chat[chat_id]['html_type'] == 'image' and chat[chat_id]['type'] == 'bot':
+        bot_html_type = 'image'
+        bot_html_content = chat[chat_id]['html_content']
 
     data = {
         'bot_messages': bot_messages,
         'user_responses': user_responses,
-        'html_type': html_type
+        'user_html_type': user_html_type,
+        'bot_html_type': bot_html_type,
+        'bot_html_content': bot_html_content
     }
     print(f"next chat sequence: {data}")
     return data, node_ids
