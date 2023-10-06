@@ -12,9 +12,13 @@ pip3 install -r requirements.txt
 ### Run the application
 ```python 
 source venv/bin/activate
-python main.py
+python mia.py
 ```
 ### Databse migrations
+* Initialize the migration database (one time only)
+```python
+flask db init
+```
 * create a migration script everytime you later your database 
 models.
 ```python
@@ -23,4 +27,18 @@ flask db migrate -m "Your message here"
 * Upgrade the database (apply the migration script)
 ```python
 flask db upgrade
+```
+
+### Interact with the database manually
+```python
+from app.main import *
+app.app_context().push()
+
+# create a new user
+user = User(first_name=xxx, last_name=yyy, ...)
+db.session.add(user)
+db.session.commit()
+
+# get a chat_url for a user
+user.chat_url
 ```

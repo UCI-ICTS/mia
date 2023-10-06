@@ -1,9 +1,8 @@
-# SQLAlchemy chat models
+# SQLAlchemy chat model
+from app import db
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import uuid
-
-db = SQLAlchemy()
 
 
 class Chat(db.Model):

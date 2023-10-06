@@ -1,15 +1,13 @@
 import json
 import os
 import shortuuid
-from flask import Flask, request, render_template, jsonify
-from flask_migrate import Migrate
-from models.chat import db, Chat, ChatScriptVersion
+from app import app, db
+from datetime import datetime
+from flask import Flask, request, render_template, jsonify, abort
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/mia_app"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
-migrate = Migrate(app, db)
+from app.models.chat import Chat, ChatScriptVersion
+from app.models.user import User, UserChatUrl
+
 
 global chat
 global chat_graph
@@ -23,8 +21,9 @@ global workflow
 
 
 # define routes
-@app.route('/')
-def start_chat():
+@app.route('/invite/<uuid:invite_id>/')
+def start_chat(invite_id):
+    authenticate_user_invite_url(invite_id)
     print('Starting chatbot...')
     global chat
     chat = load_chat()
@@ -211,6 +210,17 @@ def get_saved_chat():
         return jsonify({})
 
 
+def authenticate_user_invite_url(invite_id):
+    # Use invite_id to query the database and check expiration.
+    chat_url_instance = UserChatUrl.query.filter_by(chat_url=str(invite_id)).filter(
+        UserChatUrl.expires_at > datetime.utcnow()).first()
+
+    if chat_url_instance is None:
+        print("User invite id not found in the database")
+        abort(404)  # Not found or expired
+    print(f"User authenticated {invite_id}")
+
+
 def process_workflow(chat_id):
     # we use workflows to process specific flows within the overall chat (e.g., conditional responses)
     if len(workflow) > 0:
@@ -342,7 +352,3 @@ def _get_chat_start_id(chat_graph):
         return start_key
     else:
         raise Exception("ERROR: chat_graph start key not found")
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
