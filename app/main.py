@@ -4,6 +4,7 @@ import shortuuid
 from app import app, db
 from datetime import datetime
 from flask import Flask, request, render_template, jsonify, abort
+from functools import wraps
 
 from app.models.chat import Chat, ChatScriptVersion
 from app.models.user import User, UserChatUrl
@@ -20,10 +21,33 @@ global workflow
 # 4. track all user responses and timestamp it
 
 
+def authenticate_user_invite_url(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        invite_id = kwargs.get('invite_id')
+
+        if invite_id is None:
+            print("invite_id is not provided")
+            abort(400)  # Bad request
+
+        # Use invite_id to query the database and check expiration.
+        chat_url_instance = UserChatUrl.query.filter_by(chat_url=str(invite_id)).filter(
+            UserChatUrl.expires_at > datetime.utcnow()).first()
+
+        if chat_url_instance is None:
+            print("User invite id not found in the database")
+            abort(404)  # Not found or expired
+
+        print(f"User authenticated {invite_id}")
+        return func(*args, **kwargs)
+
+    return decorated_function
+
+
 # define routes
 @app.route('/invite/<uuid:invite_id>/')
+@authenticate_user_invite_url
 def start_chat(invite_id):
-    authenticate_user_invite_url(invite_id)
     print('Starting chatbot...')
     global chat
     chat = load_chat()
@@ -37,8 +61,9 @@ def start_chat(invite_id):
     return render_template(template_name_or_list='chat.html', next_chat_sequence=next_chat_sequence)
 
 
-@app.route('/_user_response')
-def user_response():
+@app.route('/invite/<uuid:invite_id>/user_response')
+@authenticate_user_invite_url
+def user_response(invite_id):
     try:
         user_response_id = request.args.get('id')
         echo_user_response = _get_response(user_response_id)
@@ -54,8 +79,9 @@ def user_response():
         print(f"Error: {e}")
 
 
-@app.route('/_contact_another_adult_form', methods=['POST'])
-def contact_another_adult_form():
+@app.route('/invite/<uuid:invite_id>/contact_another_adult_form', methods=['POST'])
+@authenticate_user_invite_url
+def contact_another_adult_form(invite_id):
     first_name, last_name, phone, email = '', '', '', ''
     submitted = request.form.get('submit') == 'true'
 
@@ -88,8 +114,9 @@ def contact_another_adult_form():
     return jsonify(echo_user_response=echo_user_response, next_sequence=next_chat_sequence)
 
 
-@app.route('/_family_enrollment_form', methods=['POST'])
-def family_enrollment_form():
+@app.route('/invite/<uuid:invite_id>/family_enrollment_form', methods=['POST'])
+@authenticate_user_invite_url
+def family_enrollment_form(invite_id):
     checked_checkboxes = []
     checkbox_workflow_ids = []
 
@@ -208,17 +235,6 @@ def get_saved_chat():
     else:
         # Return an empty JSON object if the file doesn't exist
         return jsonify({})
-
-
-def authenticate_user_invite_url(invite_id):
-    # Use invite_id to query the database and check expiration.
-    chat_url_instance = UserChatUrl.query.filter_by(chat_url=str(invite_id)).filter(
-        UserChatUrl.expires_at > datetime.utcnow()).first()
-
-    if chat_url_instance is None:
-        print("User invite id not found in the database")
-        abort(404)  # Not found or expired
-    print(f"User authenticated {invite_id}")
 
 
 def process_workflow(chat_id):

@@ -21,10 +21,10 @@ var ChatApp = {
         event.preventDefault();
         var that = this; // store reference to the ChatApp object
         var chatWindow = document.getElementById("chat-window");
-        $.getJSON(this.SCRIPT_ROOT + '/_user_response', {
+        var uuid = that.getInviteUuid();
+        $.getJSON(this.SCRIPT_ROOT + '/invite/' + uuid + '/user_response', {
             id: event.target.id // event object to access the button clicked
         }, function(data) {
-            console.log("Data received", data);
             that.processChatMessages(data)
         });
     },
@@ -38,8 +38,9 @@ var ChatApp = {
     onFamilyEnrollmentForm: function(event) {
         event.preventDefault();
         var that = this; // store reference to the ChatApp object
+        var uuid = that.getInviteUuid();
         var formData = $(event.target).serialize();
-        $.post(this.SCRIPT_ROOT + '/_family_enrollment_form', formData, function(data) {
+        $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/family_enrollment_form', formData, function(data) {
             data.echo_user_response = data.echo_user_response.join(', ');
             that.processChatMessages(data)
         });
@@ -56,16 +57,18 @@ var ChatApp = {
     onSubmitContactAnotherAdultForm: function(event) {
         event.preventDefault();
         var that = this; // store reference to the ChatApp object
+        var uuid = that.getInviteUuid();
         var formData = $(event.target).serialize() + "&submit=true";
-        $.post(this.SCRIPT_ROOT + '/_contact_another_adult_form', formData, function(data) {
+        $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/contact_another_adult_form', formData, function(data) {
             that.processChatMessages(data)
         });
     },
     onSkipContactAnotherAdultForm: function(event) {
         event.preventDefault();
         var that = this; // store reference to the ChatApp object
+        var uuid = that.getInviteUuid();
         var formData = $('#contact-other-adult-form').serialize() + "&submit=false";
-        $.post(this.SCRIPT_ROOT + '/_contact_another_adult_form', formData, function(data) {
+        $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/contact_another_adult_form', formData, function(data) {
             that.processChatMessages(data)
         });
     },
@@ -136,6 +139,12 @@ var ChatApp = {
 
         $('#chat-window').css('height', newChatWindowHeight + 'px');
         this.smoothScrollToBottom();
+    },
+    getInviteUuid: function() {
+        let currentPath = window.location.pathname;
+        let pathParts = currentPath.split('/');
+        let uuid = pathParts[pathParts.length - 2];
+        return uuid;
     },
 };
 
