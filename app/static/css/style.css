@@ -236,3 +236,31 @@ input[type='tel'] {
 ::placeholder { /* Most modern browsers support */
   color: #D5D5D5;
 }
+
+#admin-sidebar {
+    height: 100vh;
+    padding-top: 75px;
+    padding-left: 30px;
+}
+
+.admin-sidebar-item {
+    padding: 10px;
+    display: flex;
+    align-items: center; /* Vertically aligns items in the center */
+    gap: 5px; /* Creates a small space between the icon and the text */
+}
+
+#admin-main-content {
+    height: 100vh;
+    overflow-y: auto; /* This will add a scrollbar if content exceeds the viewport height */
+    padding-top: 75px;
+}
+
+/* Styling the links on hover for better user experience */
+#admin-sidebar a:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.user-options-dropdown:hover {
+    background-color: #e3f2fd !important;
+}

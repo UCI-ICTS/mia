@@ -3,7 +3,7 @@ import os
 import shortuuid
 from app import app, db
 from datetime import datetime
-from flask import Flask, request, render_template, jsonify, abort
+from flask import Flask, request, render_template, jsonify, abort, redirect
 from functools import wraps
 
 from app.models.chat import Chat, ChatScriptVersion
@@ -213,7 +213,7 @@ def save_graph():
         json.dump(chat_graph, file, indent=4)
 
     # save to the database for safe keeping
-    chat_id = '6dbee346-3236-4067-b6a7-7da5da0199bf'  # PMGRC Consent ID (it's the only one)
+    chat_id = '2a15e88e-5458-4078-9956-619cdfcf6030'  # PMGRC Consent ID (it's the only one)
     version = ChatScriptVersion.get_max_version_number(chat_id) + 1
     script = ChatScriptVersion(
         chat_id=chat_id,
@@ -235,6 +235,61 @@ def get_saved_chat():
     else:
         # Return an empty JSON object if the file doesn't exist
         return jsonify({})
+
+
+@app.route('/admin', methods=['GET'])
+def admin():
+    users = db.session.query(User, Chat.name).outerjoin(
+        ChatScriptVersion, User.chat_script_version_id == ChatScriptVersion.chat_script_version_id).outerjoin(
+        Chat, ChatScriptVersion.chat_id == Chat.chat_id).all()
+    chat_names = Chat.get_chat_names()
+    return render_template('admin.html', users=users, chat_names=chat_names)
+
+
+@app.route('/admin/add_user', methods=['POST'])
+def add_user():
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    email = request.form['email']
+    phone = request.form.get('phone', None)  # Optional phone field
+    chat_name = request.form.get('chat_name', None)
+
+    user = User(
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        phone=phone,
+        chat_name=chat_name
+    )
+
+    db.session.add(user)
+    db.session.commit()
+
+    return redirect('/admin')
+
+
+@app.route('/admin/get_user/<string:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = db.session.get(User, user_id)
+    chat = db.session.get(Chat, user.chat_script_version.chat_id)
+    data = {
+        'user_id': user.user_id,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'email': user.email,
+        'phone': user.phone,
+        'chat_name': chat.name
+    }
+    return jsonify(data)
+
+
+@app.route('/admin/delete_user/<string:user_id>', methods=['GET'])
+def delete_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+    return redirect('/admin')
 
 
 def process_workflow(chat_id):

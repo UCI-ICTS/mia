@@ -12,6 +12,11 @@ class Chat(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     script_versions = db.relationship('ChatScriptVersion', backref='chat', lazy=True)
 
+    @classmethod
+    def get_chat_names(cls):
+        chats = Chat.query.all()
+        return [chat.name for chat in chats]
+
 
 class ChatScriptVersion(db.Model):
     chat_script_version_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))

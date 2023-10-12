@@ -1,5 +1,6 @@
 # SQLAlchemy user model
 from app import db
+from app.models.chat import Chat, ChatScriptVersion
 from datetime import datetime, timedelta
 from sqlalchemy.ext.hybrid import hybrid_property
 import uuid
@@ -15,10 +16,12 @@ class User(db.Model):
     referred_by = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=True)
     consent_complete = db.Column(db.Boolean, default=False, nullable=False)
     enrolling_children = db.Column(db.Boolean, default=False, nullable=False)
-
+    chat_script_version_id = db.Column(db.String(36), db.ForeignKey('chat_script_version.chat_script_version_id'),
+                                       nullable=True)
     # Establish relationships
+    chat_script_version = db.relationship('ChatScriptVersion', backref='users', lazy=True)
     referrals = db.relationship('User', backref=db.backref('referrer', remote_side=[user_id]), lazy=True)
-    chat_urls = db.relationship('UserChatUrl', backref='user', lazy=True)
+    chat_urls = db.relationship('UserChatUrl', backref='user', lazy=True, cascade="all, delete")
 
     @hybrid_property
     def chat_url(self):
@@ -33,8 +36,19 @@ class User(db.Model):
         db.session.commit()
         return new_chat_url.chat_url
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, chat_name=None, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
+
+        # Assign the latest ChatScriptVersion by chat_name
+        if chat_name:
+            chat = Chat.query.filter_by(name=chat_name).first()
+            if chat:
+                version_number = ChatScriptVersion.get_max_version_number(chat.chat_id)
+                chat_script_version = ChatScriptVersion.query.filter_by(chat_id=chat.chat_id,
+                                                                        version_number=version_number).first()
+                if chat_script_version:
+                    self.chat_script_version_id = chat_script_version.chat_script_version_id
+
         # Append a new UserChatUrl instance to chat_urls when a User is created
         self.chat_urls.append(UserChatUrl())
 
