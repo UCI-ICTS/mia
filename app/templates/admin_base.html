@@ -13,8 +13,28 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <title>Mia Admin</title>
     </head>
-    <body>
-        <div>{% block content %} {% endblock %}</div>
+    <body id="admin-body">
+        <div class="row">
+            <!-- Side navigation -->
+            <div class="col s2 grey lighten-5" id="admin-sidebar">
+                <ul>
+                    <li class="admin-sidebar-item">
+                        <i class="small material-icons">home</i>
+                        <a href="/admin" class="grey-text text-darken-3">Home</a>
+                    </li>
+                    <li class="admin-sidebar-item">
+                        <i class="small material-icons">people</i>
+                        <a href="/admin/users" class="grey-text text-darken-3">Users</a>
+                    </li>
+                    <li class="admin-sidebar-item">
+                        <i class="small material-icons">chat</i>
+                        <a href="/admin/chats" class="grey-text text-darken-3">Scripts</a>
+                    </li>
+                    <!-- Add other nav items here -->
+                </ul>
+            </div>
+            <div>{% block content %} {% endblock %}</div>
+        </div>
             <!-- Add your main.js here -->
         <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     </body>

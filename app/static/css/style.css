@@ -252,11 +252,10 @@ input[type='tel'] {
 
 #admin-main-content {
     height: 100vh;
-    overflow-y: auto; /* This will add a scrollbar if content exceeds the viewport height */
+    overflow-y: auto;
     padding-top: 75px;
 }
 
-/* Styling the links on hover for better user experience */
 #admin-sidebar a:hover {
     background-color: rgba(255,255,255,0.1);
 }
@@ -264,3 +263,14 @@ input[type='tel'] {
 .user-options-dropdown:hover {
     background-color: #e3f2fd !important;
 }
+
+.material-icons{
+    display: inline-flex;
+    vertical-align: top;
+}
+
+/* Each individual card */
+.card {
+    min-height: 260px; /* Adjust this value to your preference */
+}
+

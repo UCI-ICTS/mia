@@ -1,0 +1,139 @@
+{% extends 'admin_base.html' %} {% block content %}
+
+<div class="col s10" id="admin-main-content">
+    <h6>Users</h6>
+    <hr>
+    <table class="striped">
+        <thead>
+            <tr>
+                <th colspan="7"><a id="addUserBtn" class="waves-effect waves-light btn modal-trigger" href="#add-update-user-modal">Add New User</a></th>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Chat</th>
+                <th>Consent Complete</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user, chat_name in users %}
+                <tr>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{{ chat_name or 'N/A' }}</td>
+                    <td>{{ user.consent_complete }}</td>
+                    <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <!-- Dropdown Trigger -->
+                        <a class='dropdown-trigger btn-small btn-flat user-options-dropdown' href='#' data-target="{{ user.user_id }}">More options &#x25BC;</a>
+                        <!-- Dropdown Structure -->
+                        <ul id="{{ user.user_id }}" class='dropdown-content'>
+                            <li><a href="#!">Get chat invite link</a></li>
+                            <li><a class="edit-user-btn" href="/admin/users/get_user/{{user.user_id }}">Update user</a></li>
+                            <li class="divider" tabindex="-1"></li>
+                            <li><a href="/admin/users/delete_user/{{ user.user_id }}">Delete user</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- The Modal -->
+    <div id="add-update-user-modal" class="modal">
+        <div class="modal-content">
+            <h5 id="modal-title">Add New User</h5>
+            <br>
+            <form action="/admin/users/add_update_user" method="post">
+                <input type="hidden" id="user_id" name="user_id" value="">
+                <div class="input-field">
+                    <input id="first_name" name="first_name" type="text" class="validate" required autofocus>
+                    <label for="first_name">First Name</label>
+                </div>
+                <div class="input-field">
+                    <input id="last_name" name="last_name" type="text" class="validate" required autofocus>
+                    <label for="last_name">Last Name</label>
+                </div>
+                <div class="input-field">
+                    <input id="email" name="email" type="email" class="validate" required autofocus>
+                    <label for="email">Email</label>
+                </div>
+                <div class="input-field">
+                    <input id="phone" name="phone" type="tel" class="validate" autofocus>
+                    <label for="phone">Phone</label>
+                </div>
+                <div class="input-field">
+                    <select name="chat_name" id="chat_name">
+                        {% for chat_name in chat_names %}
+                            <option value="{{ chat_name }}">{{ chat_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="chat_name">Select Chat Name</label>
+                </div>
+                <button id="modal-submit-btn" class="btn waves-effect waves-light" type="submit">Add User</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('.modal').modal();
+        $('select').formSelect();
+        $('.dropdown-trigger').dropdown({ constrainWidth: false });
+
+        // Update user button click
+        $('.edit-user-btn').on('click', function(event) {
+            event.preventDefault();
+            $.getJSON(this.href, function(data) {
+                let userId = data.user_id;
+                let firstName = data.first_name;
+                let lastName = data.last_name;
+                let email = data.email;
+                let phone = data.phone;
+                let chat_name = data.chat_name;
+
+                // Set values
+                $('#user_id').val(userId);
+                $('#first_name').val(firstName);
+                $('#last_name').val(lastName);
+                $('#email').val(email);
+                $('#phone').val(phone);
+                // Set selected option for chat_name dropdown
+                $('#chat_name').val(chat_name);
+                $('select').formSelect();  // Refresh the Materialize select component after setting the value
+
+                // Change modal's title and submit button text
+                // (You might need to add IDs or classes to these elements first for easy targeting)
+                $('#modal-title').text('Edit User');
+                $('#modal-submit-btn').text('Update User');
+
+                // Finally, open the modal
+                $('#add-update-user-modal').modal('open');
+            });
+        });
+
+        $('#add-update-user-modal').modal({
+            onCloseEnd: function() {
+                console.log("Modal is closing!");  // Let's check if this prints when the modal closes
+                 // Reset the modal's title and submit button text
+                $('#modal-title').text('Add New User');
+                $('#modal-submit-btn').text('Add User');
+
+                // Clear the form fields
+                $('#first_name').val('');
+                $('#last_name').val('');
+                $('#email').val('');
+                $('#phone').val('');
+                $('#chat_name').prop('selectedIndex', 0);  // Reset the dropdown to the first option
+            },
+        });
+        // Update the Materialize components
+        M.updateTextFields();  // To reset the floating labels
+        $('select').formSelect();  // To refresh the dropdown
+    });
+</script>
+{% endblock %}

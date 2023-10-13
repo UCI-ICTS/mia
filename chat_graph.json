@@ -2,8 +2,8 @@
     "CaLvKv4": {
         "type": "bot",
         "messages": [
-            "I\u2019m Mia, your automated Medical Information Assistant from the Pediatric Mendelian Genomics Research Center (PMGRC) through Children\u2019s National, UC Irvine, and Invitae.",
-            "I\u2019m here to tell you all about the UDN study and help you decide if you want to participate."
+            "I\u2019m Mia, your automated Medical Information Assistant from the <b>Pediatric Mendelian Genomics Research Center (PMGRC)</b> through Children\u2019s National, UC Irvine, and Invitae.",
+            "I\u2019m here to tell you all about the PMGRC study and help you decide if you want to participate."
         ],
         "parent_ids": [
             "start"

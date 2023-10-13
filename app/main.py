@@ -73,7 +73,6 @@ def user_response(invite_id):
         else:
             next_id = 'terminal_node'
         next_chat_sequence = process_workflow(next_id)
-        print(f"user_response: {next_chat_sequence}")
         return jsonify(echo_user_response=echo_user_response, next_sequence=next_chat_sequence)
     except Exception as e:
         print(f"Error: {e}")
@@ -95,22 +94,28 @@ def contact_another_adult_form(invite_id):
         if request.form.get('email'):
             email = request.form.get('email')
         if request.form.get('id_submit_node'):
-            chat_id = request.form.get('id_submit_node')
+            node_id = request.form.get('id_submit_node')
 
+        user_chat_url = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first()
+        user = db.session.get(User, user_chat_url.user_id)
+        user_chat = db.session.get(Chat, user.chat_script_version.chat_id)
+        new_user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            phone=phone,
+            chat_name=user_chat.name,
+            referred_by=user.user_id
+        )
+        db.session.add(new_user)
+        db.session.commit()
         echo_user_response = "Submitted!"
-        print(f"""
-        --- SAVE THIS TO A DATABASE IN THE FUTURE ---
-        first name: {first_name}
-        last name: {last_name}
-        phone: {phone}
-        email: {email}
-        """)
     else:
         if request.form.get('id_skip_node'):
-            chat_id = request.form.get('id_skip_node')
+            node_id = request.form.get('id_skip_node')
         echo_user_response = "Let's skip this"
 
-    next_chat_sequence = process_workflow(chat_id)
+    next_chat_sequence = process_workflow(node_id)
     return jsonify(echo_user_response=echo_user_response, next_sequence=next_chat_sequence)
 
 
@@ -239,36 +244,48 @@ def get_saved_chat():
 
 @app.route('/admin', methods=['GET'])
 def admin():
+    return render_template('admin.html')
+
+
+@app.route('/admin/users', methods=['GET'])
+def admin_manage_users():
     users = db.session.query(User, Chat.name).outerjoin(
         ChatScriptVersion, User.chat_script_version_id == ChatScriptVersion.chat_script_version_id).outerjoin(
         Chat, ChatScriptVersion.chat_id == Chat.chat_id).all()
     chat_names = Chat.get_chat_names()
-    return render_template('admin.html', users=users, chat_names=chat_names)
+    return render_template('users.html', users=users, chat_names=chat_names)
 
 
-@app.route('/admin/add_user', methods=['POST'])
-def add_user():
-    first_name = request.form['first_name']
-    last_name = request.form['last_name']
-    email = request.form['email']
-    phone = request.form.get('phone', None)  # Optional phone field
-    chat_name = request.form.get('chat_name', None)
+@app.route('/admin/users/add_update_user', methods=['POST'])
+def add_update_user():
+    user_id = request.form.get('user_id', None)
+    user = db.session.get(User, user_id)
+    # Check if user_id exists. If it does, update the user; otherwise, create a new user.
+    if user:
+        # Update user attributes
+        user.first_name = request.form['first_name']
+        user.last_name = request.form['last_name']
+        user.email = request.form['email']
+        user.phone = request.form.get('phone', None)
+        user.chat_name = request.form.get('chat_name', None)
+    else:
+        # Create a new user
+        user = User(
+            first_name=request.form['first_name'],
+            last_name=request.form['last_name'],
+            email=request.form['email'],
+            phone=request.form.get('phone', None),
+            chat_name=request.form.get('chat_name', None)
+        )
+        db.session.add(user)
 
-    user = User(
-        first_name=first_name,
-        last_name=last_name,
-        email=email,
-        phone=phone,
-        chat_name=chat_name
-    )
-
-    db.session.add(user)
+    # Commit the session to save changes to the database
     db.session.commit()
 
-    return redirect('/admin')
+    return redirect('/admin/users')
 
 
-@app.route('/admin/get_user/<string:user_id>', methods=['GET'])
+@app.route('/admin/users/get_user/<string:user_id>', methods=['GET'])
 def get_user(user_id):
     user = db.session.get(User, user_id)
     chat = db.session.get(Chat, user.chat_script_version.chat_id)
@@ -283,16 +300,22 @@ def get_user(user_id):
     return jsonify(data)
 
 
-@app.route('/admin/delete_user/<string:user_id>', methods=['GET'])
+@app.route('/admin/users/delete_user/<string:user_id>', methods=['GET'])
 def delete_user(user_id):
     user = User.query.get(user_id)
     if user:
         db.session.delete(user)
         db.session.commit()
-    return redirect('/admin')
+    return redirect('/admin/users')
 
 
 def process_workflow(chat_id):
+    # check if workflow is already defined because we don't want to overwrite it
+    try:
+        workflow
+    except NameError:
+        workflow = []
+
     # we use workflows to process specific flows within the overall chat (e.g., conditional responses)
     if len(workflow) > 0:
         if chat_id not in workflow[0]:
@@ -361,21 +384,21 @@ def load_chat():
     return chat_graph
 
 
-def _get_response(id):
-    if chat[id]['html_type'] == 'form':
-        response = chat[id]['html_content']
-    elif chat[id]['type'] == 'user':
-        response = chat[id]['messages'][0]  # there should only be a single message
+def _get_response(node_id):
+    if chat[node_id]['html_type'] == 'form':
+        response = chat[node_id]['html_content']
+    elif chat[node_id]['type'] == 'user':
+        response = chat[node_id]['messages'][0]  # there should only be a single message
     else:
-        response = chat[id]['messages']
+        response = chat[node_id]['messages']
     return response
 
 
-def _get_next_chat_sequence(chat_id):
+def _get_next_chat_sequence(node_id):
     bot_messages = []
     user_responses = []
     node_ids = []
-    queue = [chat_id]
+    queue = [node_id]
 
     while queue:
         current_node_id = queue.pop(0)
@@ -389,16 +412,16 @@ def _get_next_chat_sequence(chat_id):
         node_ids.append(current_node_id)
 
     user_html_type = 'button'
-    if len(chat[chat_id]['child_ids']) == 1:
-        child_id = chat[chat_id]['child_ids'][0]
+    if len(chat[node_id]['child_ids']) == 1:
+        child_id = chat[node_id]['child_ids'][0]
         if chat[child_id]['html_type'] == 'form' and chat[child_id]['type'] == 'user':
             user_html_type = 'form'
 
     bot_html_type = ''
     bot_html_content = ''
-    if chat[chat_id]['html_type'] == 'image' and chat[chat_id]['type'] == 'bot':
+    if chat[node_id]['html_type'] == 'image' and chat[node_id]['type'] == 'bot':
         bot_html_type = 'image'
-        bot_html_content = chat[chat_id]['html_content']
+        bot_html_content = chat[node_id]['html_content']
 
     data = {
         'bot_messages': bot_messages,
