@@ -13,7 +13,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "m84n5MM": {
         "type": "user",
@@ -28,7 +32,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "de5ZDgm": {
         "type": "bot",
@@ -44,7 +52,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "PJwkbgi": {
         "type": "user",
@@ -59,7 +71,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "oS9m8Ua": {
         "type": "bot",
@@ -78,7 +94,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "me5RCBw": {
         "type": "user",
@@ -93,7 +113,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "iLpXdAS": {
         "type": "user",
@@ -108,7 +132,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "a6JKRdh": {
         "type": "bot",
@@ -126,7 +154,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "WwRBQik": {
         "type": "user",
@@ -141,7 +173,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "XcPGk57": {
         "type": "bot",
@@ -156,7 +192,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "JPVkFCr": {
         "type": "user",
@@ -171,7 +211,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "ZjTLunQ": {
         "type": "bot",
@@ -186,7 +230,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "fWXv5QS": {
         "type": "user",
@@ -201,7 +249,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "S2nH9zZ": {
         "type": "bot",
@@ -219,7 +271,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "9DgwYTz": {
         "type": "user",
@@ -234,7 +290,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "BxD4wrq": {
         "type": "user",
@@ -249,7 +309,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "DdxFUae": {
         "type": "user",
@@ -264,7 +328,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "Q8yaxQc": {
         "type": "bot",
@@ -283,7 +351,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "jbs93Hc": {
         "type": "bot",
@@ -300,7 +372,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "nqDwZrd": {
         "type": "bot",
@@ -315,7 +391,11 @@
         "child_ids": [],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "87q8gWG": {
         "type": "user",
@@ -330,7 +410,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "M4CaAt5": {
         "type": "user",
@@ -345,7 +429,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "FADCStr": {
         "type": "bot",
@@ -363,7 +451,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "Vew9XnD": {
         "type": "user",
@@ -378,7 +470,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "Bkyp7hD": {
         "type": "user",
@@ -393,7 +489,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "QT8Mx3R": {
         "type": "bot",
@@ -410,7 +510,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "RXBDyqd": {
         "type": "user",
@@ -425,7 +529,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "KMirb2i": {
         "type": "bot",
@@ -442,7 +550,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "dM9iaFR": {
         "type": "user",
@@ -457,7 +569,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "E3C8G5Y": {
         "type": "bot",
@@ -473,7 +589,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "C8baGp6": {
         "type": "user",
@@ -488,7 +608,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "CPf9CCz": {
         "type": "bot",
@@ -507,7 +631,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "BBfTzRw": {
         "type": "user",
@@ -522,7 +650,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "CAwKwCW": {
         "type": "user",
@@ -537,7 +669,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "USfk36C": {
         "type": "bot",
@@ -553,7 +689,11 @@
         ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "b5nYNf6": {
         "type": "user",
@@ -567,9 +707,10 @@
             "RMb2hrx"
         ],
         "attachment": null,
-        "metadata": [
-            "enroll_form"
-        ],
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "false"
+        },
         "html_type": "form",
         "html_content": "\n<form id='checkbox-form' class='user-response-form'>\n    <label class='user-form-row' for='myself'>\n        <input type='checkbox' id='myself' name='myself' value='Myself'>\n        <input type='hidden' name='id_myself' value='eca6cQF'>\n        <span class='user-form-row-label'>Myself</span>\n    </label>\n    <label class='user-form-row' for='myChild'>\n        <input type='checkbox' id='myChild' name='myChildChildren' value='My child/children'>\n        <input type='hidden' name='id_myChildChildren' value='RMb2hrx'>\n        <span class='user-form-row-label'>My child/children</span>\n    </label>\n    <label class='user-form-row' for='childOtherParent'>\n        <input type='checkbox' id='childOtherParent' name='childOtherParent' value='My child\u2019s other parent'>\n        <input type='hidden' name='id_childOtherParent' value='axvGUBt'>\n        <span class='user-form-row-label'>My child\u2019s other parent</span>\n    </label>\n    <label class='user-form-row' for='adultFamilyMember'>\n        <input type='checkbox' id='adultFamilyMember' name='adultFamilyMember' value='Another adult family member'>\n        <input type='hidden' name='id_adultFamilyMember' value='axvGUBt'>\n        <span class='user-form-row-label'>Another adult family member</span>\n    </label>\n    <input type='hidden' name='id_node' value='b5nYNf6'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>\n"
     },
@@ -586,9 +727,10 @@
             "L5xPJtN"
         ],
         "attachment": null,
-        "metadata": [
-            "enroll_form"
-        ],
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "false"
+        },
         "html_type": "button",
         "html_content": null
     },
@@ -604,9 +746,10 @@
             "Ey8gJrc"
         ],
         "attachment": null,
-        "metadata": [
-            "enroll_form"
-        ],
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "true"
+        },
         "html_type": "button",
         "html_content": null
     },
@@ -624,9 +767,10 @@
             "8dehgq7"
         ],
         "attachment": null,
-        "metadata": [
-            "enroll_form"
-        ],
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "false"
+        },
         "html_type": "button",
         "html_content": null
     },
@@ -642,9 +786,10 @@
             "AXCfXjh"
         ],
         "attachment": null,
-        "metadata": [
-            "enroll_form"
-        ],
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "false"
+        },
         "html_type": "button",
         "html_content": null
     },
@@ -660,9 +805,10 @@
             "aaVu2Vp"
         ],
         "attachment": null,
-        "metadata": [
-            "enroll_form"
-        ],
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "false"
+        },
         "html_type": "button",
         "html_content": null
     },
@@ -679,9 +825,10 @@
             "5ZrtE33"
         ],
         "attachment": null,
-        "metadata": [
-            "enroll_form"
-        ],
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "false"
+        },
         "html_type": "button",
         "html_content": null
     },
@@ -693,10 +840,16 @@
         "parent_ids": [
             "RMb2hrx"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "3jPsush"
+        ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "5ZrtE33": {
         "type": "user",
@@ -706,10 +859,16 @@
         "parent_ids": [
             "RMb2hrx"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "3jPsush"
+        ],
         "attachment": null,
         "html_type": "button",
-        "html_content": null
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "Ey8gJrc": {
         "type": "bot",
@@ -728,7 +887,10 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
-        "metadata": []
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "KR89wri": {
         "type": "user",
@@ -744,7 +906,10 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
-        "metadata": []
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "QXNa2cz": {
         "type": "user",
@@ -758,7 +923,10 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
-        "metadata": []
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "WnXoffX": {
         "type": "bot",
@@ -776,7 +944,10 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
-        "metadata": []
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "aaVu2Vp": {
         "type": "bot",
@@ -793,9 +964,10 @@
         "attachment": null,
         "html_type": "button",
         "html_content": "",
-        "metadata": [
-            "enroll_form"
-        ]
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "false"
+        }
     },
     "gWJxSfh": {
         "type": "user",
@@ -809,9 +981,10 @@
         "attachment": null,
         "html_type": "form",
         "html_content": "<form id='contact-other-adult-form' class='user-response-form'>\n    <label class='user-form-row' for='firstname'>\n        <span class='user-contact-form-row-label'>First name</span>    \n        <input type='text' id='firstname' name='firstname'>\n    </label>\n    <label class='user-form-row' for='lastname'>\n        <span class='user-contact-form-row-label'>Last name</span>\n        <input type='text' id='lastname' name='lastname'>\n    </label>\n    <label class='user-form-row' for='phone'>\n        <span class='user-contact-form-row-label'>Phone</span>\n        <input type='tel' id='phone' name='phone' pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' placeholder='555-867-5309'>\n    </label>\n    <label class='user-form-row' for='email'>\n        <span class='user-contact-form-row-label'>Email</span>\n        <input type='email' id='email' name='email' placeholder='example@example.com'>\n    </label>\n    <input type='hidden' name='id_submit_node' value='UiJSrG3'>\n    <input type='hidden' name='id_skip_node' value='WnXoffX'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n    <input type='button' value='Skip' id='skip-button' class='user-response-button-group user-response-button'>\n</form>",
-        "metadata": [
-            "enroll_form"
-        ]
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "false"
+        }
     },
     "UiJSrG3": {
         "type": "bot",
@@ -820,7 +993,7 @@
             "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>PMGRC@childrensnational.org</b>."
         ],
         "parent_ids": [
-            "aaVu2Vp"
+            "gWJxSfh"
         ],
         "child_ids": [
             "4iXP7YP"
@@ -828,9 +1001,10 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
-        "metadata": [
-            "enroll_form"
-        ]
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "false"
+        }
     },
     "4iXP7YP": {
         "type": "user",
@@ -838,7 +1012,7 @@
             "Okay, thanks"
         ],
         "parent_ids": [
-            "aaVu2Vp"
+            "UiJSrG3"
         ],
         "child_ids": [
             "WnXoffX"
@@ -846,9 +1020,10 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
-        "metadata": [
-            "enroll_form"
-        ]
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "true"
+        }
     },
     "AXCfXjh": {
         "type": "bot",
@@ -864,9 +1039,10 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
-        "metadata": [
-            "enroll_form"
-        ]
+        "metadata": {
+            "workflow": "enroll_form",
+            "end_sequence": "true"
+        }
     },
     "hBC6sGH": {
         "type": "bot",
@@ -884,7 +1060,10 @@
         "attachment": null,
         "html_type": "image",
         "html_content": "dna_diagram.jpg",
-        "metadata": []
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "EcgsbMN": {
         "type": "user",
@@ -900,7 +1079,10 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
-        "metadata": []
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "SfPWkep": {
         "type": "bot",
@@ -918,7 +1100,10 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
-        "metadata": []
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
     },
     "AonpoZW": {
         "type": "user",
@@ -932,6 +1117,495 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
-        "metadata": []
+        "metadata": {
+            "workflow": "",
+            "end_sequence": "false"
+        }
+    },
+    "3jPsush": {
+        "type": "bot",
+        "messages": [
+            "Okay, can you please select the ages of your children?"
+        ],
+        "parent_ids": [
+            "VDz6Yx8",
+            "5ZrtE33"
+        ],
+        "child_ids": [
+            "GkgFmXm"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "GkgFmXm": {
+        "type": "user",
+        "messages": [],
+        "parent_ids": [
+            "3jPsush"
+        ],
+        "child_ids": [
+            "mUpoZUX",
+            "gHm22vz",
+            "nGiGpjt"
+        ],
+        "attachment": null,
+        "html_type": "form",
+        "html_content": "<form id='child-ages-checkbox-form' class='user-response-form'>\n    <label class='user-form-row' for='ageSixOrLess'>\n        <input type='checkbox' id='ageSixOrLess' name='ageSixOrLess' value='6 years or younger'>\n        <input type='hidden' name='id_ageSixOrLess' value='mUpoZUX'>\n        <span class='user-form-row-label'>6 years or younger</span>\n    </label>\n    <label class='user-form-row' for='ageSevenToSeventeen'>\n        <input type='checkbox' id='ageSevenToSeventeen' name='ageSevenToSeventeen' value='7-17 years'>\n        <input type='hidden' name='id_ageSevenToSeventeen' value='gHm22vz'>\n        <span class='user-form-row-label'>7-17 years</span>\n    </label>\n    <label class='user-form-row' for='eighteenOrOlder'>\n        <input type='checkbox' id='eighteenOrOlder' name='eighteenOrOlder' value='18 years or older'>\n        <input type='hidden' name='id_eighteenOrOlder' value='nGiGpjt'>\n        <span class='user-form-row-label'>18 years or older</span>\n    </label>\n    <input type='hidden' name='id_node' value='GkgFmXm'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "mUpoZUX": {
+        "type": "bot",
+        "messages": [
+            "<b>For your child who is under age 7 years</b>, you will have the option to complete their consent and enrollment during our chat today."
+        ],
+        "parent_ids": [
+            "GkgFmXm"
+        ],
+        "child_ids": [
+            "fmNaDgk"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "fmNaDgk": {
+        "type": "user",
+        "messages": [
+            "Great, thanks!"
+        ],
+        "parent_ids": [
+            "mUpoZUX"
+        ],
+        "child_ids": [
+            "Sj26JXx"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": true
+        }
+    },
+    "gHm22vz": {
+        "type": "bot",
+        "messages": [
+            "<b>For your child who is between age 7 and age 17</b>, you will have the option to give your consent for your child to enroll in the study.",
+            "But because your child is over age 6, we may also need to talk to them briefly to tell them about the study.",
+            "If your child is developmentally not able to communicate, you can let us know when you talk with our study team."
+        ],
+        "parent_ids": [
+            "GkgFmXm"
+        ],
+        "child_ids": [
+            "gUoc5B6"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "gUoc5B6": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "gHm22vz"
+        ],
+        "child_ids": [
+            "eWd55kR"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "eWd55kR": {
+        "type": "bot",
+        "messages": [
+            "So, after you complete the consent chat with me, I can help arrange a time for you (and your child) to talk to a member of our study team to finalize your child's enrollment."
+        ],
+        "parent_ids": [
+            "gUoc5B6"
+        ],
+        "child_ids": [
+            "5hX84fN"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "5hX84fN": {
+        "type": "user",
+        "messages": [
+            "That sounds good, thanks"
+        ],
+        "parent_ids": [
+            "eWd55kR"
+        ],
+        "child_ids": [
+            "Sj26JXx"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": true
+        }
+    },
+    "nGiGpjt": {
+        "type": "bot",
+        "messages": [
+            "Is <b>your 18+ child</b> still under your legal guardianship?"
+        ],
+        "parent_ids": [
+            "GkgFmXm"
+        ],
+        "child_ids": [
+            "FMC5dJn",
+            "PEgQPMn"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "FMC5dJn": {
+        "type": "user",
+        "messages": [
+            "Yes"
+        ],
+        "parent_ids": [
+            "nGiGpjt"
+        ],
+        "child_ids": [
+            "AoYLgFK"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "PEgQPMn": {
+        "type": "user",
+        "messages": [
+            "No"
+        ],
+        "parent_ids": [
+            "nGiGpjt"
+        ],
+        "child_ids": [
+            "dFVXKxp"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "dFVXKxp": {
+        "type": "bot",
+        "messages": [
+            "Individuals who are 18 years or older need to complete this consent chat themselves.",
+            "Does your 18+ child already have a unique link to this chat?"
+        ],
+        "parent_ids": [
+            "PEgQPMn"
+        ],
+        "child_ids": [
+            "eF87SCm",
+            "3ENuxt7"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "eF87SCm": {
+        "type": "user",
+        "messages": [
+            "Yes"
+        ],
+        "parent_ids": [
+            "dFVXKxp"
+        ],
+        "child_ids": [
+            "nj5w3by"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "3ENuxt7": {
+        "type": "user",
+        "messages": [
+            "No, can we send them a link?"
+        ],
+        "parent_ids": [
+            "dFVXKxp"
+        ],
+        "child_ids": [
+            "2b6U7Vy"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "2b6U7Vy": {
+        "type": "bot",
+        "messages": [
+            "Sure!",
+            "Can you tell me your child's name, cell phone number, and/or email?"
+        ],
+        "parent_ids": [
+            "3ENuxt7"
+        ],
+        "child_ids": [
+            "8A8kAJS"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "8A8kAJS": {
+        "type": "user",
+        "messages": [],
+        "parent_ids": [
+            "2b6U7Vy"
+        ],
+        "child_ids": [
+            "ZykT2RX"
+        ],
+        "attachment": null,
+        "html_type": "form",
+        "html_content": "<form id='contact-other-adult-form' class='user-response-form'>\n    <label class='user-form-row' for='firstname'>\n        <span class='user-contact-form-row-label'>First name</span>    \n        <input type='text' id='firstname' name='firstname'>\n    </label>\n    <label class='user-form-row' for='lastname'>\n        <span class='user-contact-form-row-label'>Last name</span>\n        <input type='text' id='lastname' name='lastname'>\n    </label>\n    <label class='user-form-row' for='phone'>\n        <span class='user-contact-form-row-label'>Phone</span>\n        <input type='tel' id='phone' name='phone' pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' placeholder='555-867-5309'>\n    </label>\n    <label class='user-form-row' for='email'>\n        <span class='user-contact-form-row-label'>Email</span>\n        <input type='email' id='email' name='email' placeholder='example@example.com'>\n    </label>\n    <input type='hidden' name='id_submit_node' value='ZykT2RX'>\n    <input type='hidden' name='id_skip_node' value='WnXoffX'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n    <input type='button' value='Skip' id='skip-button' class='user-response-button-group user-response-button'>\n</form>",
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": "false"
+        }
+    },
+    "ZykT2RX": {
+        "type": "bot",
+        "messages": [
+            "Thank you! We'll contact them with the information you've provided.",
+            "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>PMGRC@childrensnational.org</b>"
+        ],
+        "parent_ids": [
+            "2b6U7Vy"
+        ],
+        "child_ids": [
+            "mGbcBU9"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "mGbcBU9": {
+        "type": "user",
+        "messages": [
+            "Great, thanks!"
+        ],
+        "parent_ids": [
+            "ZykT2RX"
+        ],
+        "child_ids": [
+            "Sj26JXx"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": true
+        }
+    },
+    "nj5w3by": {
+        "type": "bot",
+        "messages": [
+            "Okay, then they will be able to use that link to complete the consent chat themselves."
+        ],
+        "parent_ids": [
+            "eF87SCm"
+        ],
+        "child_ids": [
+            "WtmwJYx"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "WtmwJYx": {
+        "type": "user",
+        "messages": [
+            "Okay, thanks for letting me know"
+        ],
+        "parent_ids": [
+            "nj5w3by"
+        ],
+        "child_ids": [
+            "Sj26JXx"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": true
+        }
+    },
+    "AoYLgFK": {
+        "type": "bot",
+        "messages": [
+            "Okay",
+            "After our chat today, you will have the option to give your consent for your child to enroll in the study.",
+            "But because your child is over age 18, we may also need to talk to them briefly to tell them about the study."
+        ],
+        "parent_ids": [
+            "FMC5dJn"
+        ],
+        "child_ids": [
+            "KgLJBEb"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "KgLJBEb": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "AoYLgFK"
+        ],
+        "child_ids": [
+            "k5zGiMq"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "k5zGiMq": {
+        "type": "bot",
+        "messages": [
+            "So, after you complete the consent chat with me, I can help arrange a time for you (and your child) to talk to a member of our study team to finalize your child's enrollment.",
+            "If your child is developmentally not able to communicate, you can let us know when you talk with our study team."
+        ],
+        "parent_ids": [
+            "KgLJBEb"
+        ],
+        "child_ids": [
+            "DuLoHj9"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": false
+        }
+    },
+    "DuLoHj9": {
+        "type": "user",
+        "messages": [
+            "Okay, thanks"
+        ],
+        "parent_ids": [
+            "k5zGiMq"
+        ],
+        "child_ids": [
+            "Sj26JXx"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_age_form",
+            "end_sequence": true
+        }
+    },
+    "Sj26JXx": {
+        "type": "bot",
+        "messages": [
+            "You\u2019re welcome \ud83d\ude00"
+        ],
+        "parent_ids": [
+            "DuLoHj9",
+            "WtmwJYx",
+            "mGbcBU9"
+        ],
+        "child_ids": [
+            "WnXoffX"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
     }
 }

@@ -6,8 +6,9 @@ var ChatApp = {
     },
     bindEvents: function() {
         $(document).on('click', 'button.response', this.onButtonClick.bind(this));
-        $(document).on('change', "#checkbox-form input[type='checkbox']", this.onCheckboxChange.bind(this));
+        $(document).on('change', "#checkbox-form input[type='checkbox'], #child-ages-checkbox-form input[type='checkbox']", this.onCheckboxChange.bind(this));
         $('.user-response-container').on('submit', '#checkbox-form', this.onFamilyEnrollmentForm.bind(this));
+        $('.user-response-container').on('submit', '#child-ages-checkbox-form', this.onChildAgeEnrollmentForm.bind(this));
         $('.user-response-container').on('keyup change', '#firstname, #lastname', this.onCheckInputs.bind(this));
         $(window).on('resize', this.adjustChatWindowHeight.bind(this));
         $('.user-response-container').on('submit', '#contact-other-adult-form', this.onSubmitContactAnotherAdultForm.bind(this));
@@ -30,7 +31,7 @@ var ChatApp = {
     },
     onCheckboxChange: function() {
         let oneChecked = false;
-        $("#checkbox-form input[type='checkbox']").each(function() {
+        $("#checkbox-form input[type='checkbox'], #child-ages-checkbox-form input[type='checkbox']").each(function() {
             if ($(this).prop('checked')) oneChecked = true;
         });
         $('#submit-button').prop('disabled', !oneChecked);
@@ -41,6 +42,16 @@ var ChatApp = {
         var uuid = that.getInviteUuid();
         var formData = $(event.target).serialize();
         $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/family_enrollment_form', formData, function(data) {
+            data.echo_user_response = data.echo_user_response.join(', ');
+            that.processChatMessages(data)
+        });
+    },
+    onChildAgeEnrollmentForm: function(event) {
+        event.preventDefault();
+        var that = this; // store reference to the ChatApp object
+        var uuid = that.getInviteUuid();
+        var formData = $(event.target).serialize();
+        $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/child_age_enrollment_form', formData, function(data) {
             data.echo_user_response = data.echo_user_response.join(', ');
             that.processChatMessages(data)
         });

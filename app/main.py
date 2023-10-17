@@ -51,8 +51,8 @@ def start_chat(invite_id):
     print('Starting chatbot...')
     global chat
     chat = load_chat()
-    start_id = _get_chat_start_id(chat)
-    #start_id = 'CPf9CCz'
+    #start_id = _get_chat_start_id(chat)
+    start_id = 'CPf9CCz'
 
     global workflow
     workflow = []
@@ -158,8 +158,45 @@ def family_enrollment_form(invite_id):
     if not all([i in parent_node['child_ids'] for i in checkbox_workflow_ids]):
         raise Exception('ERROR: child id not found in parent id for user submitted form')
 
-    print(checked_checkboxes)
-    print(checkbox_workflow_ids)
+    start_node_id = checkbox_workflow_ids[0]
+    generate_workflow(chat, start_node_id, checkbox_workflow_ids)
+    next_chat_sequence = process_workflow(start_node_id)
+
+    return jsonify(echo_user_response=checked_checkboxes, next_sequence=next_chat_sequence)
+
+
+@app.route('/invite/<uuid:invite_id>/child_age_enrollment_form', methods=['POST'])
+@authenticate_user_invite_url
+def child_age_enrollment_form(invite_id):
+    checked_checkboxes = []
+    checkbox_workflow_ids = []
+
+    if request.form.get('id_node'):
+        parent_id = request.form.get('id_node')
+        if parent_id in chat:
+            parent_node = chat[parent_id]
+        else:
+            raise Exception('ERROR: parent id not found in chat script')
+    else:
+        raise Exception('ERROR: parent id not found in user submitted form')
+
+    # For each checkbox in the form, check if it was checked and get the node id
+    if request.form.get('ageSixOrLess'):
+        checked_checkboxes.append('6 years or younger')
+        checkbox_workflow_ids.append(request.form.get('id_ageSixOrLess'))
+
+    if request.form.get('ageSevenToSeventeen'):
+        checked_checkboxes.append('7-17 years')
+        checkbox_workflow_ids.append(request.form.get('id_ageSevenToSeventeen'))
+
+    if request.form.get('eighteenOrOlder'):
+        checked_checkboxes.append('18 years or older')
+        checkbox_workflow_ids.append(request.form.get('id_eighteenOrOlder'))
+
+    # check that ids are children ids of the parent node
+    if not all([i in parent_node['child_ids'] for i in checkbox_workflow_ids]):
+        raise Exception('ERROR: child id not found in parent id for user submitted form')
+
     start_node_id = checkbox_workflow_ids[0]
     generate_workflow(chat, start_node_id, checkbox_workflow_ids)
     next_chat_sequence = process_workflow(start_node_id)
@@ -192,7 +229,10 @@ def add_message():
         "attachment": None,
         "html_type": 'button',
         "html_content": None,
-        "metadata": []
+        "metadata": {
+            'workflow': '',
+            'end_sequence': False
+        }
     }
 
     chat_graph[new_id] = new_message
@@ -311,6 +351,8 @@ def delete_user(user_id):
 
 def process_workflow(chat_id):
     # check if workflow is already defined because we don't want to overwrite it
+    global workflow
+
     try:
         workflow
     except NameError:
@@ -324,10 +366,12 @@ def process_workflow(chat_id):
             print(f"Processing workflow with {chat_id}")
             print(f"Current workflow: {workflow}")
             next_chat_sequence, node_ids = _get_next_chat_sequence(chat_id)
-            print(f"node ids to remove: {node_ids}")
+            print(f"node ids to remove: {node_ids} | end_sequence: {next_chat_sequence['end_sequence']}")
             [workflow[0].remove(node_id) for node_id in node_ids
              if chat[chat_id]['metadata'] == chat[node_id]['metadata']]
-            if not workflow[0]:
+
+            # if the "current" workflow array is empty remove it
+            if not workflow[0] or next_chat_sequence['end_sequence']:
                 workflow.pop(0)
         else:
             raise Exception("ERROR: chat id not found in workflow")
@@ -346,7 +390,7 @@ def generate_workflow(chat, start_node_id, user_option_node_ids):
     except NameError:
         workflow = []
 
-    metadata_field = chat[start_node_id]['metadata'][0]
+    metadata_field = chat[start_node_id]['metadata']['workflow']
     for user_option_node_id in user_option_node_ids:
         sub_graph = traverse(chat, user_option_node_id, metadata_field)
         workflow.append(sub_graph)
@@ -359,16 +403,16 @@ def traverse(chat, start_id, metadata_field):
     def dfs(node_id):
         # depth-first search
         node = chat.get(node_id, {})
-        metadata = node.get("metadata", [])
+        metadata = node.get('metadata', {})
 
-        if metadata_field:
-            if metadata_field not in metadata:
+        if metadata_field and 'workflow' in metadata:
+            if metadata_field != metadata['workflow']:
                 return sub_graph_nodes
 
         print(node_id, node)  # Process the node (e.g., print it)
         sub_graph_nodes.append(node_id)
 
-        child_ids = node.get("child_ids", [])
+        child_ids = node.get('child_ids', [])
         for child_id in child_ids:
             dfs(child_id)
 
@@ -399,10 +443,14 @@ def _get_next_chat_sequence(node_id):
     user_responses = []
     node_ids = []
     queue = [node_id]
+    end_sequence = []
 
     while queue:
         current_node_id = queue.pop(0)
         node = chat.get(current_node_id)
+
+        if 'end_sequence' in node['metadata']:
+            end_sequence.append(node['metadata']['end_sequence'])
 
         if node['type'] == 'bot':
             bot_messages.extend(_get_response(current_node_id))
@@ -428,7 +476,8 @@ def _get_next_chat_sequence(node_id):
         'user_responses': user_responses,
         'user_html_type': user_html_type,
         'bot_html_type': bot_html_type,
-        'bot_html_content': bot_html_content
+        'bot_html_content': bot_html_content,
+        'end_sequence': any(end_sequence)
     }
     print(f"next chat sequence: {data}")
     return data, node_ids
