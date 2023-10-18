@@ -14,18 +14,30 @@
                 <th>Phone</th>
                 <th>Chat</th>
                 <th>Consent Complete</th>
+                <th>Invite Status</th>
                 <th>Created</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            {% for user, chat_name in users %}
+            {% for user in users %}
                 <tr>
                     <td>{{ user.first_name }} {{ user.last_name }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.phone }}</td>
-                    <td>{{ chat_name or 'N/A' }}</td>
+                    <td>{{ user.chat_name or '...' }}</td>
                     <td>{{ user.consent_complete }}</td>
+                    <td>
+                        {% if user.invite_expired %}
+                            <div class="chip red lighten-4">
+                                Expired
+                            </div>
+                        {% else %}
+                            <div class="chip green lighten-4">
+                                Active
+                            </div>
+                        {% endif %}
+                    </td>
                     <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
                     <td>
                         <!-- Dropdown Trigger -->
@@ -101,8 +113,13 @@
         $('.get-invite-link').on('click', function(event) {
             event.preventDefault();
             $.getJSON(this.href, function(data) {
-                let url = "127.0.0.1:5000/invite/" + data
-                $("#generatedURL").text(url);
+                let text;
+                if (data.expired == false) {
+                    text = "127.0.0.1:5000/invite/" + data.text;
+                } else {
+                    text = data.text;
+                }
+                $("#generatedURL").text(text);
 
                 // Finally, open the modal
                 $('#urlModal').modal('open');

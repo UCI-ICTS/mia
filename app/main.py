@@ -289,11 +289,25 @@ def admin():
 
 @app.route('/admin/users', methods=['GET'])
 def admin_manage_users():
-    users = db.session.query(User, Chat.name).outerjoin(
+    users_and_chats = db.session.query(User, Chat.name).outerjoin(
         ChatScriptVersion, User.chat_script_version_id == ChatScriptVersion.chat_script_version_id).outerjoin(
         Chat, ChatScriptVersion.chat_id == Chat.chat_id).all()
     chat_names = Chat.get_chat_names()
-    return render_template('users.html', users=users, chat_names=chat_names)
+
+    user_data = []
+    for user, chat_name in users_and_chats:
+        user_data.append({
+            'user_id': user.user_id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'phone': user.phone,
+            'chat_name': chat_name,
+            'consent_complete': user.consent_complete,
+            'invite_expired': False if user.chat_url else True,
+            'created_at': user.created_at
+        })
+    return render_template('users.html', users=user_data, chat_names=chat_names)
 
 
 @app.route('/admin/users/add_update_user', methods=['POST'])
@@ -343,7 +357,17 @@ def get_user(user_id):
 @app.route('/admin/users/get_user_chat_url/<string:user_id>', methods=['GET'])
 def get_user_chat_url(user_id):
     user = db.session.get(User, user_id)
-    return jsonify(user.chat_url)
+    if user.chat_url:
+        data = {
+            'expired': False,
+            'text': user.chat_url
+        }
+    else:
+        data = {
+            'expired': True,
+            'text': 'Invite link expired. Please regenerate a new link'
+        }
+    return jsonify(data)
 
 
 @app.route('/admin/users/delete_user/<string:user_id>', methods=['GET'])
