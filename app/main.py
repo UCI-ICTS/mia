@@ -340,6 +340,12 @@ def get_user(user_id):
     return jsonify(data)
 
 
+@app.route('/admin/users/get_user_chat_url/<string:user_id>', methods=['GET'])
+def get_user_chat_url(user_id):
+    user = db.session.get(User, user_id)
+    return jsonify(user.chat_url)
+
+
 @app.route('/admin/users/delete_user/<string:user_id>', methods=['GET'])
 def delete_user(user_id):
     user = User.query.get(user_id)

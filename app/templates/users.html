@@ -32,7 +32,7 @@
                         <a class='dropdown-trigger btn-small btn-flat user-options-dropdown' href='#' data-target="{{ user.user_id }}">More options &#x25BC;</a>
                         <!-- Dropdown Structure -->
                         <ul id="{{ user.user_id }}" class='dropdown-content'>
-                            <li><a href="#!">Get chat invite link</a></li>
+                            <li><a class="get-invite-link" href="/admin/users/get_user_chat_url/{{ user.user_id }}">Get chat invite link</a></li>
                             <li><a class="edit-user-btn" href="/admin/users/get_user/{{user.user_id }}">Update user</a></li>
                             <li class="divider" tabindex="-1"></li>
                             <li><a href="/admin/users/delete_user/{{ user.user_id }}">Delete user</a></li>
@@ -43,7 +43,7 @@
         </tbody>
     </table>
 
-    <!-- The Modal -->
+    <!-- The Add/Update Modal -->
     <div id="add-update-user-modal" class="modal">
         <div class="modal-content">
             <h5 id="modal-title">Add New User</h5>
@@ -78,12 +78,36 @@
             </form>
         </div>
     </div>
+
+    <!-- The Get Invite Link Modal -->
+    <div id="urlModal" class="modal">
+        <div class="modal-content">
+            <h5>User invite link</h5>
+            <p id="generatedURL"></p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn">Close</a>
+        </div>
+    </div>
+
 </div>
 <script>
     $(document).ready(function(){
         $('.modal').modal();
         $('select').formSelect();
         $('.dropdown-trigger').dropdown({ constrainWidth: false });
+
+        // Get invite link
+        $('.get-invite-link').on('click', function(event) {
+            event.preventDefault();
+            $.getJSON(this.href, function(data) {
+                let url = "127.0.0.1:5000/invite/" + data
+                $("#generatedURL").text(url);
+
+                // Finally, open the modal
+                $('#urlModal').modal('open');
+            });
+        });
 
         // Update user button click
         $('.edit-user-btn').on('click', function(event) {
@@ -118,7 +142,6 @@
 
         $('#add-update-user-modal').modal({
             onCloseEnd: function() {
-                console.log("Modal is closing!");  // Let's check if this prints when the modal closes
                  // Reset the modal's title and submit button text
                 $('#modal-title').text('Add New User');
                 $('#modal-submit-btn').text('Add User');
