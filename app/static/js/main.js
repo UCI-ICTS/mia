@@ -120,6 +120,18 @@ var ChatApp = {
             chat.innerHTML += new_bot_image_content;
             this.smoothScrollToBottom();
         }
+        if (data.next_sequence.bot_html_type == 'video') {
+            var videoElement = `<iframe width="100%" height="315" src="${data.next_sequence.bot_html_content}" frameborder="0" allowfullscreen></iframe>`;
+
+            var new_bot_video_content = `
+                <div class="message-row bot">
+                    <div class="message-content bot">
+                        <span>${videoElement}</span>
+                    </div>
+                </div>`;
+            chat.innerHTML += new_bot_video_content;
+            this.smoothScrollToBottom();
+        }
 
         // --- configure form or buttons for the next user response
         if (data.next_sequence.user_html_type == 'form') {

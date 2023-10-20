@@ -52,7 +52,7 @@ def start_chat(invite_id):
     global chat
     chat = load_chat()
     #start_id = _get_chat_start_id(chat)
-    start_id = 'CPf9CCz'
+    start_id = '8Z6qtgu'
 
     global workflow
     workflow = []
@@ -504,8 +504,8 @@ def _get_next_chat_sequence(node_id):
 
     bot_html_type = ''
     bot_html_content = ''
-    if chat[node_id]['html_type'] == 'image' and chat[node_id]['type'] == 'bot':
-        bot_html_type = 'image'
+    if chat[node_id]['html_type'] in ['image', 'video'] and chat[node_id]['type'] == 'bot':
+        bot_html_type = chat[node_id]['html_type']
         bot_html_content = chat[node_id]['html_content']
 
     data = {

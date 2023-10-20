@@ -919,7 +919,9 @@
         "parent_ids": [
             "Ey8gJrc"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "abx8PPP"
+        ],
         "attachment": null,
         "html_type": "button",
         "html_content": null,
@@ -1113,7 +1115,9 @@
         "parent_ids": [
             "SfPWkep"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "45kz8CE"
+        ],
         "attachment": null,
         "html_type": "button",
         "html_content": null,
@@ -1603,6 +1607,666 @@
         "attachment": null,
         "html_type": "button",
         "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "45kz8CE": {
+        "type": "bot",
+        "messages": [
+            "I know! But your cells know how the read this code",
+            "The cells use your genetic information like a recipe book",
+            "IMAGE",
+            "It is organized into specific sections, called genes (just like a recipe book is organized into individual recipes)"
+        ],
+        "parent_ids": [
+            "AonpoZW"
+        ],
+        "child_ids": [
+            "QjTtL5s",
+            "9ZmfvBQ"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "QjTtL5s": {
+        "type": "user",
+        "messages": [
+            "This sounds familiar"
+        ],
+        "parent_ids": [
+            "45kz8CE"
+        ],
+        "child_ids": [
+            "BF3k6W7"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "9ZmfvBQ": {
+        "type": "user",
+        "messages": [
+            "Tell me more"
+        ],
+        "parent_ids": [
+            "45kz8CE"
+        ],
+        "child_ids": [
+            "BF3k6W7"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "BF3k6W7": {
+        "type": "bot",
+        "messages": [
+            "In a recipe book, each recipe gives instructions for making a different dish",
+            "In your cells, each gene provides the instructions for molecules called RNA, and each RNA makes a different protein",
+            "IMAGE"
+        ],
+        "parent_ids": [
+            "9ZmfvBQ",
+            "QjTtL5s"
+        ],
+        "child_ids": [
+            "8Pvoowc"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "8Pvoowc": {
+        "type": "user",
+        "messages": [
+            "That's interesting"
+        ],
+        "parent_ids": [
+            "BF3k6W7"
+        ],
+        "child_ids": [
+            "WQFz456"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "WQFz456": {
+        "type": "bot",
+        "messages": [
+            "These proteins can help your body to do many important things",
+            "For example, some proteins build our tissues, like muscles and nerves.  Other proteins help our bodies break down food and make energy"
+        ],
+        "parent_ids": [
+            "8Pvoowc"
+        ],
+        "child_ids": [
+            "kvTbHhw"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "kvTbHhw": {
+        "type": "user",
+        "messages": [
+            "That's cool!"
+        ],
+        "parent_ids": [
+            "WQFz456"
+        ],
+        "child_ids": [
+            "PpUbXu4"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "PpUbXu4": {
+        "type": "bot",
+        "messages": [
+            "I know, right?",
+            "You have 2 copies of each gene - one from each of your parents",
+            "The 2 copies work together to make you who you are",
+            "IMAGE"
+        ],
+        "parent_ids": [
+            "kvTbHhw"
+        ],
+        "child_ids": [
+            "TfVxQFn"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "TfVxQFn": {
+        "type": "user",
+        "messages": [
+            "Got it"
+        ],
+        "parent_ids": [
+            "PpUbXu4"
+        ],
+        "child_ids": [
+            "HVeQxH2"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "HVeQxH2": {
+        "type": "bot",
+        "messages": [
+            "People can have different versions of the same gene. This is what makes each person unique",
+            "We call these different versions of a gene \u201cvariants\u201d"
+        ],
+        "parent_ids": [
+            "TfVxQFn"
+        ],
+        "child_ids": [
+            "Vnd4AC6"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "Vnd4AC6": {
+        "type": "user",
+        "messages": [
+            "What is a variant?"
+        ],
+        "parent_ids": [
+            "HVeQxH2"
+        ],
+        "child_ids": [
+            "c85Yw2k"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "c85Yw2k": {
+        "type": "bot",
+        "messages": [
+            "Remember how we said your genes are like recipes?",
+            "Well, if there are any little typos or slight changes in the recipe, the dish might turn out differently than you expected",
+            "A variant is when the letters of the genetic code are out of order or changed in some other way"
+        ],
+        "parent_ids": [
+            "Vnd4AC6"
+        ],
+        "child_ids": [
+            "iumYvk4"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "iumYvk4": {
+        "type": "user",
+        "messages": [
+            "I see"
+        ],
+        "parent_ids": [
+            "c85Yw2k"
+        ],
+        "child_ids": [
+            "7i6JiiZ"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "7i6JiiZ": {
+        "type": "bot",
+        "messages": [
+            "When a gene has a variant it gives different instructions.",
+            "Imagine that you are baking a cake and the recipe tells you to use salt instead of sugar, or strawberries instead of chocolate!",
+            "That\u2019s going to affect the cake!",
+            "GIF IMAGE"
+        ],
+        "parent_ids": [
+            "iumYvk4"
+        ],
+        "child_ids": [
+            "ZcynmTH"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "ZcynmTH": {
+        "type": "user",
+        "messages": [
+            "Got it"
+        ],
+        "parent_ids": [
+            "7i6JiiZ"
+        ],
+        "child_ids": [
+            "EE6kxBa"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "abx8PPP": {
+        "type": "bot",
+        "messages": [
+            "Okay, sounds good",
+            "You may already know that your body is made up of trillions of cells",
+            "Inside each of these cells is your DNA, which provides the instructions for our bodies to grow and develop",
+            "The DNA is arranged in sections called genes"
+        ],
+        "parent_ids": [
+            "QXNa2cz"
+        ],
+        "child_ids": [
+            "jUSVMUz",
+            "W5Gtph5"
+        ],
+        "attachment": null,
+        "html_type": "image",
+        "html_content": "dna_diagram.jpg",
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "jUSVMUz": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "abx8PPP"
+        ],
+        "child_ids": [
+            "2wRsFE8"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "W5Gtph5": {
+        "type": "user",
+        "messages": [
+            "This sounds familiar"
+        ],
+        "parent_ids": [
+            "abx8PPP"
+        ],
+        "child_ids": [
+            "2wRsFE8"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "2wRsFE8": {
+        "type": "bot",
+        "messages": [
+            "Genes are a big part of what makes you who you are",
+            "In your cells, each gene provides the instructions for molecules called RNA, and each RNA makes a different protein",
+            "IMAGE"
+        ],
+        "parent_ids": [
+            "W5Gtph5",
+            "jUSVMUz"
+        ],
+        "child_ids": [
+            "VNSy2sy"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "VNSy2sy": {
+        "type": "user",
+        "messages": [
+            "That's interesting"
+        ],
+        "parent_ids": [
+            "2wRsFE8"
+        ],
+        "child_ids": [
+            "6cFB5vN"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "6cFB5vN": {
+        "type": "bot",
+        "messages": [
+            "These proteins can help your body to do many important things",
+            "For example, some proteins build our tissues, like muscles and nerves.  Other proteins help our bodies break down food and make energy"
+        ],
+        "parent_ids": [
+            "VNSy2sy"
+        ],
+        "child_ids": [
+            "eo5YNAs",
+            "fFHd2uw"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "eo5YNAs": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "6cFB5vN"
+        ],
+        "child_ids": [
+            "jbTfjLx"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "fFHd2uw": {
+        "type": "user",
+        "messages": [
+            "That's cool!"
+        ],
+        "parent_ids": [
+            "6cFB5vN"
+        ],
+        "child_ids": [
+            "jbTfjLx"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "jbTfjLx": {
+        "type": "bot",
+        "messages": [
+            "We all have small differences in our genes, which we call \"variants\""
+        ],
+        "parent_ids": [
+            "fFHd2uw",
+            "eo5YNAs"
+        ],
+        "child_ids": [
+            "TXdMNWZ"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "TXdMNWZ": {
+        "type": "user",
+        "messages": [
+            "I see"
+        ],
+        "parent_ids": [
+            "jbTfjLx"
+        ],
+        "child_ids": [
+            "PiTC5fc"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "PiTC5fc": {
+        "type": "bot",
+        "messages": [
+            "When a gene has a variant it gives the body different instructions"
+        ],
+        "parent_ids": [
+            "TXdMNWZ"
+        ],
+        "child_ids": [
+            "Ti3ZavP"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "Ti3ZavP": {
+        "type": "user",
+        "messages": [
+            "Got it"
+        ],
+        "parent_ids": [
+            "PiTC5fc"
+        ],
+        "child_ids": [
+            "EE6kxBa"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "EE6kxBa": {
+        "type": "bot",
+        "messages": [
+            "Genetic variants are responsible for making us all unique and different",
+            "For example, things like eye color are determined by variants in our genes",
+            "Sometimes, having a certain genetic variant can lead to health issues",
+            "For example, if a person has a variant in a gene that is related to kidney health, then their chance of having kidney disease may increase."
+        ],
+        "parent_ids": [
+            "Ti3ZavP",
+            "ZcynmTH"
+        ],
+        "child_ids": [
+            "iMcrZ9h",
+            "iVCEBuL"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "iMcrZ9h": {
+        "type": "user",
+        "messages": [
+            "Interesting"
+        ],
+        "parent_ids": [
+            "EE6kxBa"
+        ],
+        "child_ids": [
+            "8Z6qtgu"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "iVCEBuL": {
+        "type": "user",
+        "messages": [
+            "That makes sense"
+        ],
+        "parent_ids": [
+            "EE6kxBa"
+        ],
+        "child_ids": [
+            "8Z6qtgu"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "8Z6qtgu": {
+        "type": "bot",
+        "messages": [
+            "When someone has a health issue caused by a genetic change (or \u201cvariant\u201d), we call this a genetic disorder",
+            "When we suspect that a patient has a genetic disorder, we will often do genetic testing to try and find the change (or variant) that is causing the health issue",
+            "In the PMGRC study, we are interested in doing different kinds of genetic testing to take a detailed look at people\u2019s genetic material to look for changes that might explain their health issues"
+        ],
+        "parent_ids": [
+            "iVCEBuL",
+            "iMcrZ9h"
+        ],
+        "child_ids": [
+            "Zgg7vB9"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "Zgg7vB9": {
+        "type": "user",
+        "messages": [
+            "Great"
+        ],
+        "parent_ids": [
+            "8Z6qtgu"
+        ],
+        "child_ids": [
+            "iCSWyTS"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "iCSWyTS": {
+        "type": "bot",
+        "messages": [
+            "Here's a 1-minute video that talks about one common type of testing, called sequencing"
+        ],
+        "parent_ids": [
+            "Zgg7vB9"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "video",
+        "html_content": "https://www.youtube.com/embed/jhJW69Ols14?si=SKQcWSinLxkwrlhR",
         "metadata": {
             "workflow": "",
             "end_sequence": false
