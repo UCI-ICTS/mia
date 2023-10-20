@@ -370,6 +370,13 @@ def get_user_chat_url(user_id):
     return jsonify(data)
 
 
+@app.route('/admin/users/generate_new_chat_url/<string:user_id>', methods=['GET'])
+def generate_new_chat_url(user_id):
+    user = db.session.get(User, user_id)
+    user.regenerate_chat_url()
+    return redirect('/admin/users')
+
+
 @app.route('/admin/users/delete_user/<string:user_id>', methods=['GET'])
 def delete_user(user_id):
     user = User.query.get(user_id)

@@ -44,8 +44,10 @@
                         <a class='dropdown-trigger btn-small btn-flat user-options-dropdown' href='#' data-target="{{ user.user_id }}">More options &#x25BC;</a>
                         <!-- Dropdown Structure -->
                         <ul id="{{ user.user_id }}" class='dropdown-content'>
-                            <li><a class="get-invite-link" href="/admin/users/get_user_chat_url/{{ user.user_id }}">Get chat invite link</a></li>
+                            <li><a class="get-invite-link-btn" href="/admin/users/get_user_chat_url/{{ user.user_id }}">Get chat invite link</a></li>
                             <li><a class="edit-user-btn" href="/admin/users/get_user/{{user.user_id }}">Update user</a></li>
+                            <li class="divider" tabindex="-1"></li>
+                            <li><a class="generate-new-invite-link-btn" href="/admin/users/generate_new_chat_url/{{user.user_id }}">Generate new invite link</a></li>
                             <li class="divider" tabindex="-1"></li>
                             <li><a href="/admin/users/delete_user/{{ user.user_id }}">Delete user</a></li>
                         </ul>
@@ -110,7 +112,7 @@
         $('.dropdown-trigger').dropdown({ constrainWidth: false });
 
         // Get invite link
-        $('.get-invite-link').on('click', function(event) {
+        $('.get-invite-link-btn').on('click', function(event) {
             event.preventDefault();
             $.getJSON(this.href, function(data) {
                 let text;
