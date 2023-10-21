@@ -15,10 +15,10 @@ global chat_graph
 global workflow
 
 # TODO
-# 1. check graph keys coming from the user to make sure they are valid
 # 2. change id to chat_id
 # 3. need some cache or database to store stuff like user responses and workflows
 # 4. track all user responses and timestamp it
+script_file_name = 'chat_graph.json'
 
 
 def authenticate_user_invite_url(func):
@@ -51,8 +51,8 @@ def start_chat(invite_id):
     print('Starting chatbot...')
     global chat
     chat = load_chat()
-    #start_id = _get_chat_start_id(chat)
-    start_id = '8Z6qtgu'
+    start_id = _get_chat_start_id(chat)
+    #start_id = 'CPf9CCz' # '8Z6qtgu'
 
     global workflow
     workflow = []
@@ -254,7 +254,7 @@ def add_message():
 @app.route('/save_graph', methods=['POST'])
 def save_graph():
     # save to a file for easy editing
-    with open("chat_graph.json", "w") as file:
+    with open(script_file_name, 'w') as file:
         json.dump(chat_graph, file, indent=4)
 
     # save to the database for safe keeping
@@ -273,8 +273,8 @@ def save_graph():
 
 @app.route('/get_saved_chat', methods=['GET'])
 def get_saved_chat():
-    if os.path.exists('chat_graph.json'):
-        with open('chat_graph.json', 'r') as file:
+    if os.path.exists(script_file_name):
+        with open(script_file_name, 'r') as file:
             chat_graph = json.load(file)
         return jsonify(chat_graph)
     else:
@@ -459,8 +459,8 @@ def traverse(chat, start_id, metadata_field):
 
 def load_chat():
     chat_graph = {}
-    if os.path.exists('chat_graph.json'):
-        with open('chat_graph.json', 'r') as file:
+    if os.path.exists(script_file_name):
+        with open(script_file_name, 'r') as file:
             chat_graph = json.load(file)
     return chat_graph
 

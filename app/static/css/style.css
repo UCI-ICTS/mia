@@ -25,11 +25,11 @@ hr {
 #header {
   top: 0;
   width: 100%;
-  height: 110px;
+  height: 85px;
   background-color: #325594;
   border-bottom: solid 1px black;;
   text-align: center;
-  padding: 15px 0;
+  padding: 12px 0;
   color: white;
 }
 
@@ -40,7 +40,7 @@ hr {
 
 #header-logo {
     height: 85%;
-    max-height: 100px;
+    max-height: 50px;
 }
 
 #chat-window {
