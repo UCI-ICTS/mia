@@ -278,3 +278,17 @@ input[type='tel'] {
     min-height: 260px; /* Adjust this value to your preference */
 }
 
+#script-entries {
+    flex: 1;
+    padding: 20px;
+    height: 800px;
+    overflow-y: auto;  /* Scrollable when content overflows */
+    overflow-x: hidden;
+}
+
+.script-entry {
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 11pt;
+}

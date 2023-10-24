@@ -251,24 +251,27 @@ def add_message():
     return jsonify(response_data)
 
 
-@app.route('/save_graph', methods=['POST'])
-def save_graph():
-    # save to a file for easy editing
-    with open(script_file_name, 'w') as file:
-        json.dump(chat_graph, file, indent=4)
+@app.route('/admin/scripts/edit_script_content/save_script/<string:chat_id>', methods=['POST'])
+def save_script(chat_id):
+    chat = db.session.get(Chat, chat_id)
+    if chat:
+        # save to a file for easy editing
+        with open(chat.name + '.json', 'w') as file:
+            json.dump(chat_graph, file, indent=4)
 
-    # save to the database for safe keeping
-    chat_id = '2a15e88e-5458-4078-9956-619cdfcf6030'  # PMGRC Consent ID (it's the only one)
-    version = ChatScriptVersion.get_max_version_number(chat_id) + 1
-    script = ChatScriptVersion(
-        chat_id=chat_id,
-        version_number=version,
-        script=chat_graph
-    )
-    db.session.add(script)
-    db.session.commit()
+        # save to the database for safe keeping
+        version = ChatScriptVersion.get_max_version_number(chat.chat_id) + 1
+        script = ChatScriptVersion(
+            chat_id=chat.chat_id,
+            version_number=version,
+            script=chat_graph
+        )
+        db.session.add(script)
+        db.session.commit()
 
-    return jsonify({"message": "Chat graph saved successfully!"})
+        return jsonify({'message': 'Chat graph saved successfully!'})
+    else:
+        return jsonify({'message': 'Error: script id not found'})
 
 
 @app.route('/get_saved_chat', methods=['GET'])
@@ -384,6 +387,68 @@ def delete_user(user_id):
         db.session.delete(user)
         db.session.commit()
     return redirect('/admin/users')
+
+
+@app.route('/admin/scripts', methods=['GET'])
+def get_scripts():
+    scripts = db.session.query(Chat).all()
+    return render_template('scripts.html', scripts=scripts)
+
+
+@app.route('/admin/scripts/edit_script/<string:chat_id>', methods=['GET'])
+def edit_script(chat_id):
+    script = db.session.get(Chat, chat_id)
+    data = {
+        'script_id': script.chat_id,
+        'script_name': script.name,
+        'script_description': script.description
+    }
+    return jsonify(data)
+
+
+@app.route('/admin/scripts/add_update_script', methods=['POST'])
+def add_update_script():
+    chat_id = request.form.get('script_id', None)
+    script = db.session.get(Chat, chat_id)
+
+    if script:
+        # update script attributes
+        script.name = request.form['script_name']
+        script.description = request.form['script_description']
+    else:
+        # create new script
+        script = Chat(
+            name=request.form['script_name'],
+            description=request.form['script_description']
+        )
+        db.session.add(script)
+
+    # commit the session to save the changes to the database
+    db.session.commit()
+    return redirect('/admin/scripts')
+
+
+@app.route('/admin/scripts/delete_script/<string:chat_id>', methods=['GET'])
+def delete_script(chat_id):
+    chat = db.session.get(Chat, chat_id)
+    if chat:
+        db.session.delete(chat)
+        db.session.commit()
+    return redirect('/admin/scripts')
+
+
+@app.route('/admin/scripts/edit_script_content/<string:chat_id>', methods=['GET'])
+def edit_script_content(chat_id):
+    global chat_graph
+    chat = db.session.get(Chat, chat_id)
+    latest_version = ChatScriptVersion.get_max_version_number(chat_id)
+    script_version = ChatScriptVersion.query.filter_by(chat_id=chat.chat_id, version_number=latest_version).first()
+    if script_version:
+        script = script_version.script
+    else:
+        script = {}
+    chat_graph = script
+    return render_template('script_editor.html', script=script, chat_id=chat_id, script_name=chat.name)
 
 
 def process_workflow(chat_id):

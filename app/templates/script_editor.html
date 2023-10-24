@@ -1,0 +1,84 @@
+{% extends 'admin_base.html' %} {% block content %}
+<div class="col s10" id="admin-main-content">
+    <h6>Edit Script - <b>{{ script_name }}</b></h6>
+    <hr>
+    <a id="saveScriptBtn" class="waves-effect waves-light btn" data-chat-id="{{ chat_id }}" href="#save-script">Save Script</a>
+    <br><br>
+    <div class="row">
+        <div class="col s6">
+            <ul class="browser-default" style="padding-left: 11.25px;">
+                <li>There should only be a single user response for each added message</li>
+                <li>Multiple bot responses separated by newline (return) are fine</li>
+            </ul>
+            <form id="chatForm">
+                <select name="type">
+                    <option value="bot">Bot</option>
+                    <option value="user">User</option>
+                </select>
+                <label>Message type</label>
+                <br><br>
+
+                Messages: <textarea name="messages" required style="width: 100%; height: 150px; padding: 10px;"></textarea><br><br>
+
+                Parent ID (comma separated): <input type="text" id="parent_ids" name="parent_ids" required><br><br>
+
+                <input class="waves-effect waves-light teal lighten-4 btn-flat" type="button" value="Add Message" onclick="addMessage()">
+            </form>
+        </div>
+        <div id="script-entries" class="col s6">
+            {% if script %}
+                {% for id in script %}
+                    <div class="script-entry">
+                        <b>Type:</b> {{ script[id].type }}<br>
+                        <b>ID:</b> {{ id }}<br>
+                        <b>Parent IDs:</b> {{ script[id].parent_ids|join(', ') }}<br>
+                        <b>Message:</b><br>
+                        {{ script[id].messages|join('<br>')|safe }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    function addMessage() {
+        const formData = $('#chatForm').serialize();
+        $.post("/add_message", formData, function(data) {
+            // Join the messages with a <br> tag for new lines
+            const messagesContent = data.messages.join('<br>');
+
+            // Add the new entry to the entries div
+            const newEntry = `
+                <div class="script-entry">
+                    <b>Type:</b> ${data.type}<br>
+                    <b>ID:</b> ${data.id}<br>
+                    <b>Parent IDs:</b> ${data.parent_ids || 'None'}<br>
+                    <b>Message:</b><br>
+                    ${messagesContent}
+                </div>
+            `;
+            $('#script-entries').append(newEntry);
+
+            // Reset the form
+            $('#chatForm')[0].reset();
+
+            // Set the parent_id field to the new ID for convenience
+            $('#parent_ids').val(data.id);
+        });
+
+    }
+</script>
+<script>
+    $(document).ready(function(){
+        $('select').formSelect();
+
+        $('#saveScriptBtn').on('click', function(event) {
+            event.preventDefault();
+            var chatId = $(this).data('chat-id')
+            $.post("/admin/scripts/edit_script_content/save_script/" + chatId, function(data) {
+            alert(data.message); // Show a message that the chat was saved.
+            });
+        });
+    });
+</script>
+{% endblock %}
