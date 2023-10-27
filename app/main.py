@@ -50,7 +50,7 @@ def authenticate_user_invite_url(func):
 def start_chat(invite_id):
     print('Starting chatbot...')
     global chat
-    chat = load_chat()
+    chat = get_script_from_invite_id(invite_id)
     start_id = _get_chat_start_id(chat)
     #start_id = 'CPf9CCz' # '8Z6qtgu'
 
@@ -521,12 +521,26 @@ def traverse(chat, start_id, metadata_field):
     return sub_graph_nodes
 
 
-def load_chat():
-    chat_graph = {}
-    if os.path.exists(script_file_name):
-        with open(script_file_name, 'r') as file:
-            chat_graph = json.load(file)
-    return chat_graph
+# def load_chat(invite_id):
+#     script = get_script_from_invite_id(invite_id)
+#     chat_graph = {}
+#     # if os.path.exists(script_file_name):
+#     #     with open(script_file_name, 'r') as file:
+#     #         chat_graph = json.load(file)
+#     return chat_graph
+
+
+def get_script_from_invite_id(invite_id):
+    print(invite_id)
+    script = db.session.query(ChatScriptVersion.script) \
+        .join(User, User.chat_script_version_id == ChatScriptVersion.chat_script_version_id) \
+        .join(UserChatUrl, User.user_id == UserChatUrl.user_id) \
+        .filter(UserChatUrl.chat_url == str(invite_id)).scalar()
+
+    if script:
+        return script
+    else:
+        raise Exception(f'ERROR: script not found for {invite_id}')
 
 
 def _get_response(node_id):
