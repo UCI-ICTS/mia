@@ -324,7 +324,6 @@ def add_update_user():
         user.last_name = request.form['last_name']
         user.email = request.form['email']
         user.phone = request.form.get('phone', None)
-        user.chat_name = request.form.get('chat_name', None)
     else:
         # Create a new user
         user = User(

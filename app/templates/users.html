@@ -147,6 +147,7 @@
                 $('#phone').val(phone);
                 // Set selected option for chat_name dropdown
                 $('#chat_name').val(chat_name);
+                $('#chat_name').prop('disabled', true);  // can't edit the chat name
                 $('select').formSelect();  // Refresh the Materialize select component after setting the value
 
                 // Change modal's title and submit button text
