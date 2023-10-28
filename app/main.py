@@ -7,18 +7,7 @@ from flask import Flask, request, render_template, jsonify, abort, redirect
 from functools import wraps
 
 from app.models.chat import Chat, ChatScriptVersion
-from app.models.user import User, UserChatUrl
-
-
-global chat
-global chat_graph
-global workflow
-
-# TODO
-# 2. change id to chat_id
-# 3. need some cache or database to store stuff like user responses and workflows
-# 4. track all user responses and timestamp it
-script_file_name = 'chat_graph.json'
+from app.models.user import User, UserChatUrl, UserConversationCache
 
 
 def authenticate_user_invite_url(func):
@@ -47,17 +36,17 @@ def authenticate_user_invite_url(func):
 # define routes
 @app.route('/invite/<uuid:invite_id>/')
 @authenticate_user_invite_url
-def start_chat(invite_id):
-    print('Starting chatbot...')
-    global chat
-    chat = get_script_from_invite_id(invite_id)
-    start_id = _get_chat_start_id(chat)
-    #start_id = 'CPf9CCz' # '8Z6qtgu'
-
-    global workflow
-    workflow = []
-    next_chat_sequence = process_workflow(start_id)
-
+def user_invite(invite_id):
+    print(f'Starting conversation for invite id {invite_id}')
+    conversation_graph = get_script_from_invite_id(invite_id)
+    workflow, current_node_id = get_user_conversation_cache(invite_id)
+    if current_node_id == 'start':
+        start_node_id = get_chat_start_id(conversation_graph)
+    else:
+        start_node_id = current_node_id
+    #start_node_id = 'CPf9CCz' # '8Z6qtgu'
+    set_user_conversation_cache(invite_id, workflow, start_node_id)
+    next_chat_sequence = process_workflow(conversation_graph, start_node_id, invite_id)
     return render_template(template_name_or_list='chat.html', next_chat_sequence=next_chat_sequence)
 
 
@@ -65,14 +54,15 @@ def start_chat(invite_id):
 @authenticate_user_invite_url
 def user_response(invite_id):
     try:
+        conversation_graph = get_script_from_invite_id(invite_id)
         user_response_id = request.args.get('id')
-        echo_user_response = _get_response(user_response_id)
+        echo_user_response = get_response(conversation_graph, user_response_id)
 
-        if chat[user_response_id]['child_ids']:
-            next_id = chat[user_response_id]['child_ids'][0]
+        if conversation_graph[user_response_id]['child_ids']:
+            next_id = conversation_graph[user_response_id]['child_ids'][0]
         else:
             next_id = 'terminal_node'
-        next_chat_sequence = process_workflow(next_id)
+        next_chat_sequence = process_workflow(conversation_graph, next_id, invite_id)
         return jsonify(echo_user_response=echo_user_response, next_sequence=next_chat_sequence)
     except Exception as e:
         print(f"Error: {e}")
@@ -115,22 +105,24 @@ def contact_another_adult_form(invite_id):
             node_id = request.form.get('id_skip_node')
         echo_user_response = "Let's skip this"
 
-    next_chat_sequence = process_workflow(node_id)
+    conversation_graph = get_script_from_invite_id(invite_id)
+    next_chat_sequence = process_workflow(conversation_graph, node_id, invite_id)
     return jsonify(echo_user_response=echo_user_response, next_sequence=next_chat_sequence)
 
 
 @app.route('/invite/<uuid:invite_id>/family_enrollment_form', methods=['POST'])
 @authenticate_user_invite_url
 def family_enrollment_form(invite_id):
+    conversation_graph = get_script_from_invite_id(invite_id)
     checked_checkboxes = []
     checkbox_workflow_ids = []
 
     if request.form.get('id_node'):
         parent_id = request.form.get('id_node')
-        if parent_id in chat:
-            parent_node = chat[parent_id]
+        if parent_id in conversation_graph:
+            parent_node = conversation_graph[parent_id]
         else:
-            raise Exception('ERROR: parent id not found in chat script')
+            raise Exception('ERROR: parent id not found in conversation_graph script')
     else:
         raise Exception('ERROR: parent id not found in user submitted form')
 
@@ -159,8 +151,8 @@ def family_enrollment_form(invite_id):
         raise Exception('ERROR: child id not found in parent id for user submitted form')
 
     start_node_id = checkbox_workflow_ids[0]
-    generate_workflow(chat, start_node_id, checkbox_workflow_ids)
-    next_chat_sequence = process_workflow(start_node_id)
+    generate_workflow(conversation_graph, start_node_id, checkbox_workflow_ids, invite_id)
+    next_chat_sequence = process_workflow(conversation_graph, start_node_id, invite_id)
 
     return jsonify(echo_user_response=checked_checkboxes, next_sequence=next_chat_sequence)
 
@@ -168,15 +160,16 @@ def family_enrollment_form(invite_id):
 @app.route('/invite/<uuid:invite_id>/child_age_enrollment_form', methods=['POST'])
 @authenticate_user_invite_url
 def child_age_enrollment_form(invite_id):
+    conversation_graph = get_script_from_invite_id(invite_id)
     checked_checkboxes = []
     checkbox_workflow_ids = []
 
     if request.form.get('id_node'):
         parent_id = request.form.get('id_node')
-        if parent_id in chat:
-            parent_node = chat[parent_id]
+        if parent_id in conversation_graph:
+            parent_node = conversation_graph[parent_id]
         else:
-            raise Exception('ERROR: parent id not found in chat script')
+            raise Exception('ERROR: parent id not found in conversation_graph script')
     else:
         raise Exception('ERROR: parent id not found in user submitted form')
 
@@ -198,17 +191,10 @@ def child_age_enrollment_form(invite_id):
         raise Exception('ERROR: child id not found in parent id for user submitted form')
 
     start_node_id = checkbox_workflow_ids[0]
-    generate_workflow(chat, start_node_id, checkbox_workflow_ids)
-    next_chat_sequence = process_workflow(start_node_id)
+    generate_workflow(conversation_graph, start_node_id, checkbox_workflow_ids, invite_id)
+    next_chat_sequence = process_workflow(conversation_graph, start_node_id, invite_id)
 
     return jsonify(echo_user_response=checked_checkboxes, next_sequence=next_chat_sequence)
-
-
-@app.route('/script_builder')
-def script_builder():
-    global chat_graph
-    chat_graph = load_chat()
-    return render_template("script_builder.html")
 
 
 @app.route('/add_message', methods=['POST'])
@@ -272,17 +258,6 @@ def save_script(chat_id):
         return jsonify({'message': 'Chat graph saved successfully!'})
     else:
         return jsonify({'message': 'Error: script id not found'})
-
-
-@app.route('/get_saved_chat', methods=['GET'])
-def get_saved_chat():
-    if os.path.exists(script_file_name):
-        with open(script_file_name, 'r') as file:
-            chat_graph = json.load(file)
-        return jsonify(chat_graph)
-    else:
-        # Return an empty JSON object if the file doesn't exist
-        return jsonify({})
 
 
 @app.route('/admin', methods=['GET'])
@@ -450,14 +425,9 @@ def edit_script_content(chat_id):
     return render_template('script_editor.html', script=script, chat_id=chat_id, script_name=chat.name)
 
 
-def process_workflow(chat_id):
+def process_workflow(conversation_graph, chat_id, invite_id):
     # check if workflow is already defined because we don't want to overwrite it
-    global workflow
-
-    try:
-        workflow
-    except NameError:
-        workflow = []
+    workflow, _ = get_user_conversation_cache(invite_id)
 
     # we use workflows to process specific flows within the overall chat (e.g., conditional responses)
     if len(workflow) > 0:
@@ -466,44 +436,48 @@ def process_workflow(chat_id):
         if chat_id in workflow[0]:
             print(f"Processing workflow with {chat_id}")
             print(f"Current workflow: {workflow}")
-            next_chat_sequence, node_ids = _get_next_chat_sequence(chat_id)
+            next_chat_sequence, node_ids = get_next_chat_sequence(conversation_graph, chat_id)
             print(f"node ids to remove: {node_ids} | end_sequence: {next_chat_sequence['end_sequence']}")
             [workflow[0].remove(node_id) for node_id in node_ids
-             if chat[chat_id]['metadata'] == chat[node_id]['metadata']]
+             if conversation_graph[chat_id]['metadata'] == conversation_graph[node_id]['metadata']]
 
-            # if the "current" workflow array is empty remove it
+            # if the "current" workflow array is empty, or we're at the end of a workflow sequence remove it
             if not workflow[0] or next_chat_sequence['end_sequence']:
                 workflow.pop(0)
+                set_user_conversation_cache(invite_id, workflow, None)
+            print(f"workflow: {workflow}")
         else:
             raise Exception("ERROR: chat id not found in workflow")
     else:
-        next_chat_sequence, node_ids = _get_next_chat_sequence(chat_id)
+        next_chat_sequence, node_ids = get_next_chat_sequence(conversation_graph, chat_id)
+
+        if next_chat_sequence['user_html_type'] == 'button':
+            # this hack prevents the conversation from restarting at a form, video, or image input. this is necessary
+            # because the rendering template assumes you start with buttons. we use javascript to render other html
+            # elements dynamically with the browser.
+            set_user_conversation_cache(invite_id, None, node_ids[0])
     return next_chat_sequence
 
 
-def generate_workflow(chat, start_node_id, user_option_node_ids):
+def generate_workflow(conversation_graph, start_node_id, user_option_node_ids, invite_id):
     # generate a sub workflow to dynamically process user responses
-    global workflow
+    workflow, _ = get_user_conversation_cache(invite_id)
 
-    # check if workflow is already defined because we don't want to overwrite it
-    try:
-        workflow
-    except NameError:
-        workflow = []
-
-    metadata_field = chat[start_node_id]['metadata']['workflow']
+    metadata_field = conversation_graph[start_node_id]['metadata']['workflow']
     for user_option_node_id in user_option_node_ids:
-        sub_graph = traverse(chat, user_option_node_id, metadata_field)
+        sub_graph = traverse(conversation_graph, user_option_node_id, metadata_field)
         workflow.append(sub_graph)
+
+    set_user_conversation_cache(invite_id, workflow, None)
     return workflow
 
 
-def traverse(chat, start_id, metadata_field):
+def traverse(conversation_graph, start_id, metadata_field):
     sub_graph_nodes = []
 
     def dfs(node_id):
         # depth-first search
-        node = chat.get(node_id, {})
+        node = conversation_graph.get(node_id, {})
         metadata = node.get('metadata', {})
 
         if metadata_field and 'workflow' in metadata:
@@ -521,17 +495,7 @@ def traverse(chat, start_id, metadata_field):
     return sub_graph_nodes
 
 
-# def load_chat(invite_id):
-#     script = get_script_from_invite_id(invite_id)
-#     chat_graph = {}
-#     # if os.path.exists(script_file_name):
-#     #     with open(script_file_name, 'r') as file:
-#     #         chat_graph = json.load(file)
-#     return chat_graph
-
-
 def get_script_from_invite_id(invite_id):
-    print(invite_id)
     script = db.session.query(ChatScriptVersion.script) \
         .join(User, User.chat_script_version_id == ChatScriptVersion.chat_script_version_id) \
         .join(UserChatUrl, User.user_id == UserChatUrl.user_id) \
@@ -543,17 +507,17 @@ def get_script_from_invite_id(invite_id):
         raise Exception(f'ERROR: script not found for {invite_id}')
 
 
-def _get_response(node_id):
-    if chat[node_id]['html_type'] == 'form':
-        response = chat[node_id]['html_content']
-    elif chat[node_id]['type'] == 'user':
-        response = chat[node_id]['messages'][0]  # there should only be a single message
+def get_response(conversation_graph, node_id):
+    if conversation_graph[node_id]['html_type'] == 'form':
+        response = conversation_graph[node_id]['html_content']
+    elif conversation_graph[node_id]['type'] == 'user':
+        response = conversation_graph[node_id]['messages'][0]  # there should only be a single message
     else:
-        response = chat[node_id]['messages']
+        response = conversation_graph[node_id]['messages']
     return response
 
 
-def _get_next_chat_sequence(node_id):
+def get_next_chat_sequence(conversation_graph, node_id):
     bot_messages = []
     user_responses = []
     node_ids = []
@@ -562,29 +526,29 @@ def _get_next_chat_sequence(node_id):
 
     while queue:
         current_node_id = queue.pop(0)
-        node = chat.get(current_node_id)
+        node = conversation_graph.get(current_node_id)
 
         if 'end_sequence' in node['metadata']:
             end_sequence.append(node['metadata']['end_sequence'])
 
         if node['type'] == 'bot':
-            bot_messages.extend(_get_response(current_node_id))
+            bot_messages.extend(get_response(conversation_graph, current_node_id))
             queue.extend(node['child_ids'])
         else:
-            user_responses.append((current_node_id, _get_response(current_node_id)))
+            user_responses.append((current_node_id, get_response(conversation_graph, current_node_id)))
         node_ids.append(current_node_id)
 
     user_html_type = 'button'
-    if len(chat[node_id]['child_ids']) == 1:
-        child_id = chat[node_id]['child_ids'][0]
-        if chat[child_id]['html_type'] == 'form' and chat[child_id]['type'] == 'user':
+    if len(conversation_graph[node_id]['child_ids']) == 1:
+        child_id = conversation_graph[node_id]['child_ids'][0]
+        if conversation_graph[child_id]['html_type'] == 'form' and conversation_graph[child_id]['type'] == 'user':
             user_html_type = 'form'
 
     bot_html_type = ''
     bot_html_content = ''
-    if chat[node_id]['html_type'] in ['image', 'video'] and chat[node_id]['type'] == 'bot':
-        bot_html_type = chat[node_id]['html_type']
-        bot_html_content = chat[node_id]['html_content']
+    if conversation_graph[node_id]['html_type'] in ['image', 'video'] and conversation_graph[node_id]['type'] == 'bot':
+        bot_html_type = conversation_graph[node_id]['html_type']
+        bot_html_content = conversation_graph[node_id]['html_content']
 
     data = {
         'bot_messages': bot_messages,
@@ -595,18 +559,39 @@ def _get_next_chat_sequence(node_id):
         'end_sequence': any(end_sequence)
     }
     print(f"next chat sequence: {data}")
+    print(f"chat sequence node ids: {node_ids}")
     return data, node_ids
 
 
-def _get_chat_start_id(chat_graph):
+def get_chat_start_id(conversation_graph):
     # find the node in the graph with a parent_id = start
-    start_key = ""
-    for key in chat_graph:
-        if chat_graph[key]['parent_ids'] and chat_graph[key]['parent_ids'][0] == 'start':
-            start_key = key
+    start_node = ""
+    for node_id in conversation_graph:
+        if conversation_graph[node_id]['parent_ids'] and conversation_graph[node_id]['parent_ids'][0] == 'start':
+            start_node = node_id
             break
 
-    if start_key:
-        return start_key
+    if start_node:
+        return start_node
     else:
         raise Exception("ERROR: chat_graph start key not found")
+
+
+def get_user_conversation_cache(invite_id):
+    user_conversation_cache = db.session.query(UserConversationCache).join(UserChatUrl).\
+        filter(UserChatUrl.chat_url == str(invite_id)).first()
+    workflow = json.loads(user_conversation_cache.workflow)
+    current_node_id = user_conversation_cache.current_node_id
+    return workflow, current_node_id
+
+
+def set_user_conversation_cache(invite_id, workflow=None, current_node_id=None):
+    user_conversation_cache = db.session.query(UserConversationCache).join(UserChatUrl).\
+        filter(UserChatUrl.chat_url == str(invite_id)).first()
+
+    if workflow is not None:
+        user_conversation_cache.workflow = json.dumps(workflow)
+    if current_node_id is not None:
+        user_conversation_cache.current_node_id = current_node_id
+
+    db.session.commit()
