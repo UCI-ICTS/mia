@@ -5,9 +5,13 @@ from app import app, db
 from datetime import datetime
 from flask import Flask, request, render_template, jsonify, abort, redirect
 from functools import wraps
+from sqlalchemy.orm.attributes import flag_modified
 
 from app.models.chat import Chat, ChatScriptVersion
 from app.models.user import User, UserChatUrl, UserConversationCache
+
+# flags
+VERSION_SCRIPTS = False  # useful for debugging and testing scripts with the same user
 
 
 def authenticate_user_invite_url(func):
@@ -197,10 +201,16 @@ def child_age_enrollment_form(invite_id):
     return jsonify(echo_user_response=checked_checkboxes, next_sequence=next_chat_sequence)
 
 
-@app.route('/add_message', methods=['POST'])
-def add_message():
+@app.route('/admin/scripts/edit_script_content/add_message/<string:chat_id>', methods=['POST'])
+def add_message(chat_id):
+    # get the most recent script
+    version = ChatScriptVersion.get_max_version_number(chat_id)
+    chat_script_version = db.session.query(ChatScriptVersion).filter(ChatScriptVersion.chat_id == str(chat_id),
+                                                                     ChatScriptVersion.version_number == version).first()
+    script = chat_script_version.script
+
     new_id = shortuuid.uuid()[:7]
-    while new_id in chat_graph:
+    while new_id in script:
         new_id = shortuuid.uuid()[:7]
 
     split_msgs = request.form.get('messages').split('\n')
@@ -221,12 +231,17 @@ def add_message():
         }
     }
 
-    chat_graph[new_id] = new_message
+    script[new_id] = new_message
 
     # If a parent_ids exists, append the new_id to its child_id list
-    if parent_ids and len(chat_graph) > 1:
+    if parent_ids and len(script) > 1:
         for parent_id in parent_ids:
-            chat_graph[parent_id]['child_ids'].append(new_id)
+            script[parent_id]['child_ids'].append(new_id)
+
+    print(f'script: {script}')
+    chat_script_version.script = script
+    flag_modified(chat_script_version, 'script')
+    db.session.commit()
 
     response_data = {
         "id": new_id,
@@ -240,20 +255,25 @@ def add_message():
 @app.route('/admin/scripts/edit_script_content/save_script/<string:chat_id>', methods=['POST'])
 def save_script(chat_id):
     chat = db.session.get(Chat, chat_id)
+    version = ChatScriptVersion.get_max_version_number(chat_id)
+    chat_script_version = ChatScriptVersion.query.filter_by(chat_id=str(chat_id), version_number=version).first()
+    script = chat_script_version.script
+
     if chat:
         # save to a file for easy editing
         with open(chat.name + '.json', 'w') as file:
-            json.dump(chat_graph, file, indent=4)
+            json.dump(script, file, indent=4)
 
         # save to the database for safe keeping
-        version = ChatScriptVersion.get_max_version_number(chat.chat_id) + 1
-        script = ChatScriptVersion(
-            chat_id=chat.chat_id,
-            version_number=version,
-            script=chat_graph
-        )
-        db.session.add(script)
-        db.session.commit()
+        if VERSION_SCRIPTS:
+            new_version = version + 1
+            new_chat_script_version = ChatScriptVersion(
+                chat_id=chat.chat_id,
+                version_number=new_version,
+                script=script
+            )
+            db.session.add(new_chat_script_version)
+            db.session.commit()
 
         return jsonify({'message': 'Chat graph saved successfully!'})
     else:
@@ -413,15 +433,15 @@ def delete_script(chat_id):
 
 @app.route('/admin/scripts/edit_script_content/<string:chat_id>', methods=['GET'])
 def edit_script_content(chat_id):
-    global chat_graph
     chat = db.session.get(Chat, chat_id)
     latest_version = ChatScriptVersion.get_max_version_number(chat_id)
     script_version = ChatScriptVersion.query.filter_by(chat_id=chat.chat_id, version_number=latest_version).first()
+
     if script_version:
         script = script_version.script
     else:
         script = {}
-    chat_graph = script
+
     return render_template('script_editor.html', script=script, chat_id=chat_id, script_name=chat.name)
 
 
@@ -574,7 +594,7 @@ def get_chat_start_id(conversation_graph):
     if start_node:
         return start_node
     else:
-        raise Exception("ERROR: chat_graph start key not found")
+        raise Exception("ERROR: conversation_graph start key not found")
 
 
 def get_user_conversation_cache(invite_id):

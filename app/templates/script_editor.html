@@ -43,7 +43,11 @@
 <script>
     function addMessage() {
         const formData = $('#chatForm').serialize();
-        $.post("/add_message", formData, function(data) {
+        let currentPath = window.location.pathname;
+        let pathParts = currentPath.split('/');
+        let uuid = pathParts[pathParts.length - 1];
+
+        $.post("/admin/scripts/edit_script_content/add_message/" + uuid, formData, function(data) {
             // Join the messages with a <br> tag for new lines
             const messagesContent = data.messages.join('<br>');
 
