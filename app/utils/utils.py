@@ -1,0 +1,177 @@
+import json
+
+from app import db
+from app.models.chat import ChatScriptVersion
+from app.models.user import User, UserChatUrl, UserConversationCache
+
+
+def get_script_from_invite_id(invite_id):
+    script = db.session.query(ChatScriptVersion.script) \
+        .join(User, User.chat_script_version_id == ChatScriptVersion.chat_script_version_id) \
+        .join(UserChatUrl, User.user_id == UserChatUrl.user_id) \
+        .filter(UserChatUrl.chat_url == str(invite_id)).scalar()
+
+    if script:
+        return script
+    else:
+        raise Exception(f'ERROR: script not found for {invite_id}')
+
+
+def process_workflow(conversation_graph, chat_id, invite_id):
+    # check if workflow is already defined because we don't want to overwrite it
+    workflow, _ = get_user_conversation_cache(invite_id)
+
+    # we use workflows to process specific flows within the overall chat (e.g., conditional responses)
+    if len(workflow) > 0:
+        if chat_id not in workflow[0]:
+            chat_id = workflow[0][0]
+        if chat_id in workflow[0]:
+            print(f"Processing workflow with {chat_id}")
+            print(f"Current workflow: {workflow}")
+            next_chat_sequence, node_ids = get_next_chat_sequence(conversation_graph, chat_id)
+            print(f"node ids to remove: {node_ids} | end_sequence: {next_chat_sequence['end_sequence']}")
+            [workflow[0].remove(node_id) for node_id in node_ids
+             if conversation_graph[chat_id]['metadata'] == conversation_graph[node_id]['metadata']]
+
+            # if the "current" workflow array is empty, or we're at the end of a workflow sequence remove it
+            if not workflow[0] or next_chat_sequence['end_sequence']:
+                workflow.pop(0)
+                set_user_conversation_cache(invite_id, workflow, None)
+            print(f"workflow: {workflow}")
+        else:
+            raise Exception("ERROR: chat id not found in workflow")
+    else:
+        next_chat_sequence, node_ids = get_next_chat_sequence(conversation_graph, chat_id)
+
+        if next_chat_sequence['user_html_type'] == 'button':
+            # this hack prevents the conversation from restarting at a form, video, or image input. this is necessary
+            # because the rendering template assumes you start with buttons. we use javascript to render other html
+            # elements dynamically with the browser.
+            set_user_conversation_cache(invite_id, None, node_ids[0])
+    return next_chat_sequence
+
+
+def generate_workflow(conversation_graph, start_node_id, user_option_node_ids, invite_id):
+    # generate a sub workflow to dynamically process user responses
+    workflow, _ = get_user_conversation_cache(invite_id)
+
+    metadata_field = conversation_graph[start_node_id]['metadata']['workflow']
+    for user_option_node_id in user_option_node_ids:
+        sub_graph = traverse(conversation_graph, user_option_node_id, metadata_field)
+        workflow.append(sub_graph)
+
+    set_user_conversation_cache(invite_id, workflow, None)
+    return workflow
+
+
+def traverse(conversation_graph, start_id, metadata_field):
+    sub_graph_nodes = []
+
+    def dfs(node_id):
+        # depth-first search
+        node = conversation_graph.get(node_id, {})
+        metadata = node.get('metadata', {})
+
+        if metadata_field and 'workflow' in metadata:
+            if metadata_field != metadata['workflow']:
+                return sub_graph_nodes
+
+        print(node_id, node)  # Process the node (e.g., print it)
+        sub_graph_nodes.append(node_id)
+
+        child_ids = node.get('child_ids', [])
+        for child_id in child_ids:
+            dfs(child_id)
+
+    dfs(start_id)
+    return sub_graph_nodes
+
+
+def get_response(conversation_graph, node_id):
+    if conversation_graph[node_id]['html_type'] == 'form':
+        response = conversation_graph[node_id]['html_content']
+    elif conversation_graph[node_id]['type'] == 'user':
+        response = conversation_graph[node_id]['messages'][0]  # there should only be a single message
+    else:
+        response = conversation_graph[node_id]['messages']
+    return response
+
+
+def get_next_chat_sequence(conversation_graph, node_id):
+    bot_messages = []
+    user_responses = []
+    node_ids = []
+    queue = [node_id]
+    end_sequence = []
+
+    while queue:
+        current_node_id = queue.pop(0)
+        node = conversation_graph.get(current_node_id)
+
+        if 'end_sequence' in node['metadata']:
+            end_sequence.append(node['metadata']['end_sequence'])
+
+        if node['type'] == 'bot':
+            bot_messages.extend(get_response(conversation_graph, current_node_id))
+            queue.extend(node['child_ids'])
+        else:
+            user_responses.append((current_node_id, get_response(conversation_graph, current_node_id)))
+        node_ids.append(current_node_id)
+
+    user_html_type = 'button'
+    if len(conversation_graph[node_id]['child_ids']) == 1:
+        child_id = conversation_graph[node_id]['child_ids'][0]
+        if conversation_graph[child_id]['html_type'] == 'form' and conversation_graph[child_id]['type'] == 'user':
+            user_html_type = 'form'
+
+    bot_html_type = ''
+    bot_html_content = ''
+    if conversation_graph[node_id]['html_type'] in ['image', 'video'] and conversation_graph[node_id]['type'] == 'bot':
+        bot_html_type = conversation_graph[node_id]['html_type']
+        bot_html_content = conversation_graph[node_id]['html_content']
+
+    data = {
+        'bot_messages': bot_messages,
+        'user_responses': user_responses,
+        'user_html_type': user_html_type,
+        'bot_html_type': bot_html_type,
+        'bot_html_content': bot_html_content,
+        'end_sequence': any(end_sequence)
+    }
+    print(f"next chat sequence: {data}")
+    print(f"chat sequence node ids: {node_ids}")
+    return data, node_ids
+
+
+def get_chat_start_id(conversation_graph):
+    # find the node in the graph with a parent_id = start
+    start_node = ""
+    for node_id in conversation_graph:
+        if conversation_graph[node_id]['parent_ids'] and conversation_graph[node_id]['parent_ids'][0] == 'start':
+            start_node = node_id
+            break
+
+    if start_node:
+        return start_node
+    else:
+        raise Exception("ERROR: conversation_graph start key not found")
+
+
+def get_user_conversation_cache(invite_id):
+    user_conversation_cache = db.session.query(UserConversationCache).join(UserChatUrl).\
+        filter(UserChatUrl.chat_url == str(invite_id)).first()
+    workflow = json.loads(user_conversation_cache.workflow)
+    current_node_id = user_conversation_cache.current_node_id
+    return workflow, current_node_id
+
+
+def set_user_conversation_cache(invite_id, workflow=None, current_node_id=None):
+    user_conversation_cache = db.session.query(UserConversationCache).join(UserChatUrl).\
+        filter(UserChatUrl.chat_url == str(invite_id)).first()
+
+    if workflow is not None:
+        user_conversation_cache.workflow = json.dumps(workflow)
+    if current_node_id is not None:
+        user_conversation_cache.current_node_id = current_node_id
+
+    db.session.commit()
