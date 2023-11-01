@@ -1,8 +1,10 @@
 import json
+import os.path
 
 from app import db
-from app.models.chat import ChatScriptVersion
-from app.models.user import User, UserChatUrl, UserConversationCache
+from app.models.chat import Chat, ChatScriptVersion
+from app.models.user import User, UserChatUrl, UserConversationCache, UserTest
+from sqlalchemy.orm.attributes import flag_modified
 
 
 def get_script_from_invite_id(invite_id):
@@ -26,10 +28,7 @@ def process_workflow(conversation_graph, chat_id, invite_id):
         if chat_id not in workflow[0]:
             chat_id = workflow[0][0]
         if chat_id in workflow[0]:
-            print(f"Processing workflow with {chat_id}")
-            print(f"Current workflow: {workflow}")
             next_chat_sequence, node_ids = get_next_chat_sequence(conversation_graph, chat_id)
-            print(f"node ids to remove: {node_ids} | end_sequence: {next_chat_sequence['end_sequence']}")
             [workflow[0].remove(node_id) for node_id in node_ids
              if conversation_graph[chat_id]['metadata'] == conversation_graph[node_id]['metadata']]
 
@@ -175,3 +174,47 @@ def set_user_conversation_cache(invite_id, workflow=None, current_node_id=None):
         user_conversation_cache.current_node_id = current_node_id
 
     db.session.commit()
+
+
+def save_test_question(conversation_graph, current_node_id, invite_id):
+    node = conversation_graph[current_node_id]
+    if 'test_question_answer_correct' in node['metadata'] and node['type'] == 'user':
+        parent_id = node['parent_ids'][0]
+        parent_node = conversation_graph[parent_id]
+        if 'test_question' in parent_node['metadata'] and parent_node['metadata']['test_question'] is True:
+            test_question = parent_node['messages'][0]
+            user_answer = node['messages'][0]
+            answer_correct = node['metadata']['test_question_answer_correct']
+            print(f'test question: {test_question}')
+            print(f'user answer: {user_answer}')
+
+            user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+            chat_script_version_id = db.session.get(User, user_id).chat_script_version.chat_script_version_id
+            user_test_result = UserTest(
+                user_id=user_id,
+                chat_script_version_id=chat_script_version_id,
+                test_question=test_question,
+                user_answer=user_answer,
+                answer_correct=answer_correct
+            )
+            db.session.add(user_test_result)
+            db.session.commit()
+    else:
+        return
+
+
+def _replace_db_script_with_json(chat_name, json_file):
+    # helper method for editing the json script directly and then uploading to the database
+    chat = Chat.query.filter_by(name=chat_name).first()
+    version = ChatScriptVersion.get_max_version_number(chat.chat_id)
+    chat_script_version = ChatScriptVersion.query.filter_by(chat_id=chat.chat_id, version_number=version).first()
+
+    if os.path.exists(json_file):
+        with open(json_file, 'r') as file:
+            new_script = json.load(file)
+
+    chat_script_version.script = new_script
+    flag_modified(chat_script_version, 'script')
+
+    db.session.commit()
+    print('Saved!')

@@ -77,6 +77,17 @@ class UserConversationCache(db.Model):
     chat_url_id = db.Column(db.String(36), db.ForeignKey('user_chat_url.chat_url_id'), nullable=False)
 
 
+class UserTest(db.Model):
+    user_test_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=False)
+    chat_script_version_id = db.Column(db.String(36), db.ForeignKey('chat_script_version.chat_script_version_id'),
+                                       nullable=False)
+    test_question = db.Column(db.String(200), nullable=False)
+    user_answer = db.Column(db.String(200), nullable=False)
+    answer_correct = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 # Example queries
 # user = User.query.get(some_user_id)
 #

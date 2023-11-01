@@ -292,3 +292,7 @@ input[type='tel'] {
     padding: 10px;
     font-size: 11pt;
 }
+
+.bot-chat-bullets {
+    padding-left: 35px;
+}

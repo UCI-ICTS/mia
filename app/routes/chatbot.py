@@ -5,7 +5,8 @@ from functools import wraps
 from app.models.user import User, UserChatUrl
 from app.models.chat import Chat
 from app.utils.utils import (get_script_from_invite_id, get_user_conversation_cache, get_chat_start_id,
-                             set_user_conversation_cache, process_workflow, get_response, generate_workflow)
+                             set_user_conversation_cache, process_workflow, get_response, generate_workflow,
+                             save_test_question)
 
 
 def authenticate_user_invite_url(func):
@@ -53,6 +54,10 @@ def user_response(invite_id):
     try:
         conversation_graph = get_script_from_invite_id(invite_id)
         user_response_id = request.args.get('id')
+
+        # check if current node is part of a test question
+        save_test_question(conversation_graph, user_response_id, invite_id)
+
         echo_user_response = get_response(conversation_graph, user_response_id)
 
         if conversation_graph[user_response_id]['child_ids']:
