@@ -3,8 +3,14 @@ import os.path
 
 from app import db
 from app.models.chat import Chat, ChatScriptVersion
-from app.models.user import User, UserChatUrl, UserConversationCache, UserTest
+from app.models.user import User, UserChatUrl, UserTest
+from app.utils.cache import get_user_workflow, set_user_workflow, set_user_current_node_id
+from sqlalchemy import func
 from sqlalchemy.orm.attributes import flag_modified
+
+# flags
+NUM_TEST_QUESTIONS_CORRECT = 10
+NUM_TEST_TRIES = 2
 
 
 def get_script_from_invite_id(invite_id):
@@ -21,10 +27,10 @@ def get_script_from_invite_id(invite_id):
 
 def process_workflow(conversation_graph, chat_id, invite_id):
     # check if workflow is already defined because we don't want to overwrite it
-    workflow, _ = get_user_conversation_cache(invite_id)
+    workflow = get_user_workflow(invite_id)
 
     # we use workflows to process specific flows within the overall chat (e.g., conditional responses)
-    if len(workflow) > 0:
+    if workflow is list and len(workflow) > 0:
         if chat_id not in workflow[0]:
             chat_id = workflow[0][0]
         if chat_id in workflow[0]:
@@ -35,10 +41,10 @@ def process_workflow(conversation_graph, chat_id, invite_id):
             # if the "current" workflow array is empty, or we're at the end of a workflow sequence remove it
             if not workflow[0] or next_chat_sequence['end_sequence']:
                 workflow.pop(0)
-                set_user_conversation_cache(invite_id, workflow, None)
-            print(f"workflow: {workflow}")
+                set_user_workflow(invite_id, workflow)
+            print(f"sequence: {workflow}")
         else:
-            raise Exception("ERROR: chat id not found in workflow")
+            raise Exception("ERROR: chat id not found in sequence")
     else:
         next_chat_sequence, node_ids = get_next_chat_sequence(conversation_graph, chat_id)
 
@@ -46,20 +52,19 @@ def process_workflow(conversation_graph, chat_id, invite_id):
             # this hack prevents the conversation from restarting at a form, video, or image input. this is necessary
             # because the rendering template assumes you start with buttons. we use javascript to render other html
             # elements dynamically with the browser.
-            set_user_conversation_cache(invite_id, None, node_ids[0])
+            set_user_current_node_id(invite_id, node_ids[0])
     return next_chat_sequence
 
 
 def generate_workflow(conversation_graph, start_node_id, user_option_node_ids, invite_id):
     # generate a sub workflow to dynamically process user responses
-    workflow, _ = get_user_conversation_cache(invite_id)
+    workflow = get_user_workflow(invite_id)
 
     metadata_field = conversation_graph[start_node_id]['metadata']['workflow']
     for user_option_node_id in user_option_node_ids:
         sub_graph = traverse(conversation_graph, user_option_node_id, metadata_field)
         workflow.append(sub_graph)
-
-    set_user_conversation_cache(invite_id, workflow, None)
+    set_user_workflow(invite_id, workflow)
     return workflow
 
 
@@ -156,27 +161,31 @@ def get_chat_start_id(conversation_graph):
         raise Exception("ERROR: conversation_graph start key not found")
 
 
-def get_user_conversation_cache(invite_id):
-    user_conversation_cache = db.session.query(UserConversationCache).join(UserChatUrl).\
-        filter(UserChatUrl.chat_url == str(invite_id)).first()
-    workflow = json.loads(user_conversation_cache.workflow)
-    current_node_id = user_conversation_cache.current_node_id
-    return workflow, current_node_id
+def process_test_question(conversation_graph, current_node_id, invite_id):
+    node = conversation_graph[current_node_id]['metadata']
+    if node['workflow'] == 'test_user_understanding':
+        user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+        user = db.session.get(User, user_id)
+        chat_script_version_id = db.session.get(User, user.user_id).chat_script_version.chat_script_version_id
+        save_test_question(conversation_graph, current_node_id, user, chat_script_version_id)
+        if node['end_sequence'] is True:
+            result = get_test_results(user, chat_script_version_id)
+            if result != NUM_TEST_QUESTIONS_CORRECT:
+                if user.num_test_tries < NUM_TEST_TRIES:
+                    # retry
+                    user.num_test_tries += 1
+                    db.session.commit()
+                    return node['retry_node_id']
+                else:
+                    # fail, contact someone
+                    return node['fail_node_id']
+            else:
+                # passed the test
+                return node['pass_node_id']
+    return ''
 
 
-def set_user_conversation_cache(invite_id, workflow=None, current_node_id=None):
-    user_conversation_cache = db.session.query(UserConversationCache).join(UserChatUrl).\
-        filter(UserChatUrl.chat_url == str(invite_id)).first()
-
-    if workflow is not None:
-        user_conversation_cache.workflow = json.dumps(workflow)
-    if current_node_id is not None:
-        user_conversation_cache.current_node_id = current_node_id
-
-    db.session.commit()
-
-
-def save_test_question(conversation_graph, current_node_id, invite_id):
+def save_test_question(conversation_graph, current_node_id, user, chat_script_version_id):
     node = conversation_graph[current_node_id]
     if 'test_question_answer_correct' in node['metadata'] and node['type'] == 'user':
         parent_id = node['parent_ids'][0]
@@ -188,11 +197,10 @@ def save_test_question(conversation_graph, current_node_id, invite_id):
             print(f'test question: {test_question}')
             print(f'user answer: {user_answer}')
 
-            user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
-            chat_script_version_id = db.session.get(User, user_id).chat_script_version.chat_script_version_id
             user_test_result = UserTest(
-                user_id=user_id,
+                user_id=user.user_id,
                 chat_script_version_id=chat_script_version_id,
+                test_try_num=user.num_test_tries,
                 test_question=test_question,
                 user_answer=user_answer,
                 answer_correct=answer_correct
@@ -201,6 +209,18 @@ def save_test_question(conversation_graph, current_node_id, invite_id):
             db.session.commit()
     else:
         return
+
+
+def get_test_results(user, chat_script_version_id):
+    test_try = user.num_test_tries
+    user_results = (
+        db.session.query(func.count(UserTest.answer_correct))
+        .filter(UserTest.user_id == user.user_id, UserTest.chat_script_version_id == chat_script_version_id,
+                UserTest.test_try_num == test_try, UserTest.answer_correct == True)
+        .group_by(UserTest.user_id, UserTest.chat_script_version_id)
+        .scalar()
+    )
+    return user_results
 
 
 def _replace_db_script_with_json(chat_name, json_file):

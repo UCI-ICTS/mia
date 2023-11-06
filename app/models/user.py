@@ -16,12 +16,14 @@ class User(db.Model):
     referred_by = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=True)
     consent_complete = db.Column(db.Boolean, default=False, nullable=False)
     enrolling_children = db.Column(db.Boolean, default=False, nullable=False)
+    num_test_tries = db.Column(db.Integer, default=1, nullable=True)
     chat_script_version_id = db.Column(db.String(36), db.ForeignKey('chat_script_version.chat_script_version_id'),
                                        nullable=True)
     # Establish relationships
     chat_script_version = db.relationship('ChatScriptVersion', backref='users', lazy=True)
     referrals = db.relationship('User', backref=db.backref('referrer', remote_side=[user_id]), lazy=True)
-    chat_urls = db.relationship('UserChatUrl', backref='user', lazy=True, cascade="all, delete")
+    chat_urls = db.relationship('UserChatUrl', backref='user', lazy=True, cascade='all, delete')
+    user_tests = db.relationship('UserTest', backref='user', lazy=True, cascade='all, delete')
 
     @hybrid_property
     def chat_url(self):
@@ -53,10 +55,6 @@ class User(db.Model):
         new_chat_url = UserChatUrl()
         self.chat_urls.append(new_chat_url)
 
-        # Initialize a UserConversationCache instance for the newly created UserChatUrl
-        new_cache = UserConversationCache()
-        new_chat_url.conversation_cache.append(new_cache)
-
         db.session.commit()
 
 
@@ -66,15 +64,14 @@ class UserChatUrl(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     expires_at = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(weeks=1))
     user_id = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=False)
-    conversation_cache = db.relationship('UserConversationCache', backref='userchaturl', lazy=True,
-                                         cascade="all, delete-orphan")
 
 
-class UserConversationCache(db.Model):
-    cache_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    workflow = db.Column(db.JSON, default='[]', nullable=False)
-    current_node_id = db.Column(db.String(7), default='start', nullable=False)
-    chat_url_id = db.Column(db.String(36), db.ForeignKey('user_chat_url.chat_url_id'), nullable=False)
+class UserChatCache(db.Model):
+    key = db.Column(db.String(200), primary_key=True)
+    value = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return f"<UserChatCache(key='{self.key}', value='{self.value}')>"
 
 
 class UserTest(db.Model):
@@ -82,6 +79,7 @@ class UserTest(db.Model):
     user_id = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=False)
     chat_script_version_id = db.Column(db.String(36), db.ForeignKey('chat_script_version.chat_script_version_id'),
                                        nullable=False)
+    test_try_num = db.Column(db.Integer, default=1, nullable=True)
     test_question = db.Column(db.String(200), nullable=False)
     user_answer = db.Column(db.String(200), nullable=False)
     answer_correct = db.Column(db.Boolean, default=False, nullable=False)

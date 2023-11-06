@@ -4,9 +4,9 @@ from flask import request, render_template, jsonify, abort
 from functools import wraps
 from app.models.user import User, UserChatUrl
 from app.models.chat import Chat
-from app.utils.utils import (get_script_from_invite_id, get_user_conversation_cache, get_chat_start_id,
-                             set_user_conversation_cache, process_workflow, get_response, generate_workflow,
-                             save_test_question)
+from app.utils.utils import (get_script_from_invite_id, get_chat_start_id, process_workflow, get_response,
+                             generate_workflow, process_test_question)
+from app.utils.cache import get_user_workflow, get_user_current_node_id, set_user_workflow, set_user_current_node_id
 
 
 def authenticate_user_invite_url(func):
@@ -37,13 +37,20 @@ def authenticate_user_invite_url(func):
 def user_invite(invite_id):
     print(f'Starting conversation for invite id {invite_id}')
     conversation_graph = get_script_from_invite_id(invite_id)
-    workflow, current_node_id = get_user_conversation_cache(invite_id)
+
+    workflow = get_user_workflow(invite_id)
+    if workflow is None:
+        workflow = []
+        set_user_workflow(invite_id, workflow)
+    current_node_id = get_user_current_node_id(invite_id)
+    if current_node_id is None:
+        current_node_id = 'start'
+
     if current_node_id == 'start':
         start_node_id = get_chat_start_id(conversation_graph)
     else:
         start_node_id = current_node_id
-    #start_node_id = 'CPf9CCz' # '8Z6qtgu'
-    set_user_conversation_cache(invite_id, workflow, start_node_id)
+    set_user_current_node_id(invite_id, start_node_id)
     next_chat_sequence = process_workflow(conversation_graph, start_node_id, invite_id)
     return render_template(template_name_or_list='chat.html', next_chat_sequence=next_chat_sequence)
 
@@ -53,18 +60,20 @@ def user_invite(invite_id):
 def user_response(invite_id):
     try:
         conversation_graph = get_script_from_invite_id(invite_id)
-        user_response_id = request.args.get('id')
+        user_response_node_id = request.args.get('id')
 
-        # check if current node is part of a test question
-        save_test_question(conversation_graph, user_response_id, invite_id)
+        echo_user_response = get_response(conversation_graph, user_response_node_id)
 
-        echo_user_response = get_response(conversation_graph, user_response_id)
+        # we might override the next node based on how the user did on the test
+        next_node_id = process_test_question(conversation_graph, user_response_node_id, invite_id)
 
-        if conversation_graph[user_response_id]['child_ids']:
-            next_id = conversation_graph[user_response_id]['child_ids'][0]
-        else:
-            next_id = 'terminal_node'
-        next_chat_sequence = process_workflow(conversation_graph, next_id, invite_id)
+        if next_node_id == '':
+            if conversation_graph[user_response_node_id]['child_ids']:
+                next_node_id = conversation_graph[user_response_node_id]['child_ids'][0]
+            else:
+                next_node_id = 'terminal_node'
+
+        next_chat_sequence = process_workflow(conversation_graph, next_node_id, invite_id)
         return jsonify(echo_user_response=echo_user_response, next_sequence=next_chat_sequence)
     except Exception as e:
         print(f"Error: {e}")

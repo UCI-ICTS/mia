@@ -6223,7 +6223,7 @@
     "VWzWNAK": {
         "type": "bot",
         "messages": [
-            "Question 1: Are you required to participate in the PMGRC study?"
+            "<b>Question 1: Are you required to participate in the PMGRC study?</b>"
         ],
         "parent_ids": [
             "bmorWZo"
@@ -6236,7 +6236,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question": true
         }
@@ -6256,7 +6256,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": true
         }
@@ -6276,7 +6276,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
@@ -6297,7 +6297,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6316,12 +6316,12 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "YxYN9RX": {
-        "type": "user",
+        "type": "bot",
         "messages": [
             "That's right!"
         ],
@@ -6335,14 +6335,14 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "hfQYPNY": {
         "type": "bot",
         "messages": [
-            "Question 2: Is there an alternative to enrolling in the study?"
+            "<b>Question 2: Is there an alternative to enrolling in the study?</b>"
         ],
         "parent_ids": [
             "YxYN9RX",
@@ -6356,7 +6356,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question": true
         }
@@ -6376,7 +6376,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": true
         }
@@ -6396,7 +6396,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
@@ -6417,7 +6417,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6436,7 +6436,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6455,14 +6455,14 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "aBLobjJ": {
         "type": "bot",
         "messages": [
-            "Question 3: Is there any cost to you or your insurance provider to participate in the study?"
+            "<b>Question 3: Is there any cost to you or your insurance provider to participate in the study?</b>"
         ],
         "parent_ids": [
             "2N84yDZ",
@@ -6476,7 +6476,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question": true
         }
@@ -6496,7 +6496,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
@@ -6516,7 +6516,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": true
         }
@@ -6536,7 +6536,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6556,7 +6556,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6575,14 +6575,14 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "nWC8AGV": {
         "type": "bot",
         "messages": [
-            "Question 4: Will you be paid for your participation?"
+            "<b>Question 4: Will you be paid for your participation?</b>"
         ],
         "parent_ids": [
             "3fndF8Q",
@@ -6596,7 +6596,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question": true
         }
@@ -6616,7 +6616,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": true
         }
@@ -6636,7 +6636,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
@@ -6657,7 +6657,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6676,7 +6676,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6695,14 +6695,14 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "LFgk3AZ": {
         "type": "bot",
         "messages": [
-            "Question 5: Will you benefit from participating in this study?"
+            "<b>Question 5: Will you benefit from participating in this study?</b>"
         ],
         "parent_ids": [
             "TEL5iQi",
@@ -6717,7 +6717,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question": true
         }
@@ -6737,7 +6737,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
@@ -6757,7 +6757,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
@@ -6777,7 +6777,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": true
         }
@@ -6798,7 +6798,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6819,7 +6819,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6838,7 +6838,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6860,7 +6860,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6879,14 +6879,14 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "hHuaG87": {
         "type": "bot",
         "messages": [
-            "Question 6: Are there any risks from participating?"
+            "<b>Question 6: Are there any risks from participating?</b>"
         ],
         "parent_ids": [
             "YmLFWDr",
@@ -6901,7 +6901,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question": true
         }
@@ -6921,7 +6921,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": true
         }
@@ -6941,7 +6941,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
@@ -6962,7 +6962,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -6981,12 +6981,12 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "PUv6WAA": {
-        "type": "user",
+        "type": "bot",
         "messages": [
             "You\u2019re right, there could be some risks"
         ],
@@ -7000,14 +7000,14 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "2Bh3yqe": {
         "type": "bot",
         "messages": [
-            "Question 7: What is the purpose of the study?"
+            "<b>Question 7: What is the purpose of the study?</b>"
         ],
         "parent_ids": [
             "PUv6WAA",
@@ -7021,7 +7021,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question": true
         }
@@ -7041,13 +7041,13 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
     },
     "Yj34Tnd": {
-        "type": "bot",
+        "type": "user",
         "messages": [
             "To discover the causes of genetic health issues and better understand the role of genetic variants"
         ],
@@ -7061,7 +7061,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": true
         }
@@ -7081,7 +7081,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -7101,7 +7101,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -7120,14 +7120,14 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "Wi8Xzvj": {
         "type": "bot",
         "messages": [
-            "Question 8: Will you need to provide samples and/or data?"
+            "<b>Question 8: Will you need to provide samples and/or data?</b>"
         ],
         "parent_ids": [
             "7zpKYiG",
@@ -7141,7 +7141,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question": true
         }
@@ -7161,7 +7161,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": true
         }
@@ -7181,7 +7181,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
@@ -7204,7 +7204,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -7223,7 +7223,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -7242,14 +7242,14 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "JLwjXJk": {
         "type": "bot",
         "messages": [
-            "Question 9: Will your personal identifiable data be kept confidential?"
+            "<b>Question 9: Will your personal identifiable data be kept confidential?</b>"
         ],
         "parent_ids": [
             "XskwUVW",
@@ -7263,7 +7263,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question": true
         }
@@ -7283,7 +7283,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": true
         }
@@ -7303,7 +7303,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
@@ -7324,7 +7324,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -7343,7 +7343,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -7362,14 +7362,14 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "NPkVfwh": {
         "type": "bot",
         "messages": [
-            "Question 10: If you are injured as part of your study participation, what can you do?"
+            "<b>Question 10: If you are injured as part of your study participation, what can you do?</b>"
         ],
         "parent_ids": [
             "22qZY38",
@@ -7383,7 +7383,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question": true
         }
@@ -7403,7 +7403,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": false
         }
@@ -7423,7 +7423,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false,
             "test_question_answer_correct": true
         }
@@ -7443,7 +7443,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -7463,7 +7463,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
@@ -7482,18 +7482,139 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "test_user_understanding",
             "end_sequence": false
         }
     },
     "Qs4fMgg": {
         "type": "bot",
         "messages": [
-            "Thanks for answering these questions!"
+            "Thanks for answering these questions!",
+            "Let me get your results..."
         ],
         "parent_ids": [
             "eK9JBuV",
             "7ttaVVT"
+        ],
+        "child_ids": [
+            "nFpTPVg"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "test_user_understanding",
+            "end_sequence": false
+        }
+    },
+    "nFpTPVg": {
+        "type": "user",
+        "messages": [
+            "Okay \ud83d\udc4d"
+        ],
+        "parent_ids": [
+            "Qs4fMgg"
+        ],
+        "child_ids": [
+            "VUipQHn",
+            "G3EXSPz",
+            "iH6N9fF"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "test_user_understanding",
+            "end_sequence": true,
+            "pass_node_id": "VUipQHn",
+            "retry_node_id": "G3EXSPz",
+            "fail_node_id": "iH6N9fF"
+        }
+    },
+    "VUipQHn": {
+        "type": "bot",
+        "messages": [
+            "You got 10 out of 10 questions right! \ud83e\udd47",
+            "Now we’re ready to collect your consent for participation in the study"
+        ],
+        "parent_ids": [
+            "nFpTPVg"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "G3EXSPz": {
+        "type": "bot",
+        "messages": [
+            "It seems like you had a little trouble with these questions",
+            "I hope my responses helped clarify.  Let\u2019s go through them one more time"
+        ],
+        "parent_ids": [
+            "nFpTPVg"
+        ],
+        "child_ids": [
+            "VWzWNAK"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "iH6N9fF": {
+        "type": "bot",
+        "messages": [
+            "To complete your consent, we\u2019d like to connect you to a member of our study team"
+        ],
+        "parent_ids": [
+            "nFpTPVg"
+        ],
+        "child_ids": [
+            "X4CvZHZ"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "X4CvZHZ": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "iH6N9fF"
+        ],
+        "child_ids": [
+            "PZYk7Ga"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "PZYk7Ga": {
+        "type": "bot",
+        "messages": [
+            "Someone from our team will contact you directly by phone or email within the next 2-3 weeks",
+            "If you have questions now, you can contact us at PMGRC@childrensnational.org"
+        ],
+        "parent_ids": [
+            "X4CvZHZ"
         ],
         "child_ids": [],
         "attachment": null,
