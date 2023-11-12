@@ -135,7 +135,6 @@ def add_message(chat_id):
         for parent_id in parent_ids:
             script[parent_id]['child_ids'].append(new_id)
 
-    print(f'script: {script}')
     chat_script_version.script = script
     flag_modified(chat_script_version, 'script')
     db.session.commit()

@@ -1,9 +1,11 @@
 # SQLAlchemy user model
+import uuid, enum
+
 from app import db
 from app.models.chat import Chat, ChatScriptVersion
 from datetime import datetime, timedelta
 from sqlalchemy.ext.hybrid import hybrid_property
-import uuid
+from sqlalchemy import Enum
 
 
 class User(db.Model):
@@ -15,7 +17,9 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     referred_by = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=True)
     consent_complete = db.Column(db.Boolean, default=False, nullable=False)
+    enrolling_myself = db.Column(db.Boolean, default=False, nullable=False)
     enrolling_children = db.Column(db.Boolean, default=False, nullable=False)
+    num_children_enrolling = db.Column(db.Integer, default=0, nullable=False)
     num_test_tries = db.Column(db.Integer, default=1, nullable=True)
     chat_script_version_id = db.Column(db.String(36), db.ForeignKey('chat_script_version.chat_script_version_id'),
                                        nullable=True)
@@ -85,6 +89,30 @@ class UserTest(db.Model):
     answer_correct = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+
+class ConsentAgeGroup(enum.Enum):
+    LESS_THAN_SIX = "<=6"
+    SEVEN_TO_SEVENTEEN = "7-17"
+    EIGHTEEN_AND_OVER = ">=18"
+    EIGHTEEN_AND_OVER_DEPENDENT = ">=18 dependent"
+
+
+class UserConsent(db.Model):
+    user_consent_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=False)
+    dependent_user_id = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=True)
+    consent_age_group = db.Column(Enum(ConsentAgeGroup))
+    store_sample_this_study = db.Column(db.Boolean, default=True, nullable=False)
+    store_sample_other_studies = db.Column(db.Boolean, default=False, nullable=False)
+    store_phi_this_study = db.Column(db.Boolean, default=True, nullable=False)
+    store_phi_other_studies = db.Column(db.Boolean, default=False, nullable=False)
+    return_primary_results = db.Column(db.Boolean, default=False, nullable=False)
+    return_actionable_secondary_results = db.Column(db.Boolean, default=False, nullable=False)
+    return_secondary_results = db.Column(db.Boolean, default=False, nullable=False)
+    consent_statements = db.Column(db.String(2000), default='', nullable=False)
+    user_full_name_consent = db.Column(db.String(200), default='', nullable=False)
+    consented_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # Example queries
 # user = User.query.get(some_user_id)

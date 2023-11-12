@@ -7535,12 +7535,15 @@
         "type": "bot",
         "messages": [
             "You got 10 out of 10 questions right! \ud83e\udd47",
-            "Now we’re ready to collect your consent for participation in the study"
+            "Now we\u2019re ready to collect your consent for participation in the study",
+            "We'll start by capturing your enrollment preferences and then we'll ask for your electronic signature"
         ],
         "parent_ids": [
             "nFpTPVg"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "JTCaWss"
+        ],
         "attachment": null,
         "html_type": "button",
         "html_content": null,
@@ -7615,6 +7618,1117 @@
         ],
         "parent_ids": [
             "X4CvZHZ"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "JTCaWss": {
+        "type": "user",
+        "messages": [
+            "Okay, sounds good"
+        ],
+        "parent_ids": [
+            "VUipQHn"
+        ],
+        "child_ids": [
+            "QKNbLGv",
+            "nbkJ3g7"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "start_consent",
+            "end_sequence": false,
+            "enrolling_myself_node_id": "QKNbLGv",
+            "enrolling_children_node_id": "nbkJ3g7"
+        }
+    },
+    "QKNbLGv": {
+        "type": "bot",
+        "messages": [
+            "We would like to store your research samples in a biobank for future research, which we will describe in a moment",
+            "The samples we store could include genetic material (DNA or RNA), skin or other tissue samples, or cells",
+            "The biobank is maintained by Children's National Research Institute's Center for Genetic Medicine Research",
+            "Please let us know how you would like your samples to be used"
+        ],
+        "parent_ids": [
+            "JTCaWss"
+        ],
+        "child_ids": [
+            "gdiDJUS"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "gdiDJUS": {
+        "type": "user",
+        "messages": [],
+        "parent_ids": [
+            "QKNbLGv"
+        ],
+        "child_ids": [
+            "Psu2bBx"
+        ],
+        "attachment": null,
+        "html_type": "form",
+        "html_content": "<form id='sample-storage-use-form' class='user-response-form'>\n    <p class='consent-text'>Can we store your samples for purposes of this research study? (Required for participation in the study)</p>\n    <label class='user-form-row' for='yesThisStudy'>\n        <input type='radio' id='yesThisStudy' name='storeSamplesThisStudy' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <p class='consent-text'>Can we store your samples in the Children\u2019s National biobank for purposes of unrelated research?</p>\n    <label class='user-form-row' for='yesOtherStudies'>\n        <input type='radio' id='yesOtherStudies' name='storeSamplesOtherStudies' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noOtherStudies'>\n        <input type='radio' id='noOtherStudies' name='storeSamplesOtherStudies' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <input type='hidden' name='id_node' value='gdiDJUS'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "Psu2bBx": {
+        "type": "bot",
+        "messages": [
+            "You should know that you may change your mind at a later time and request that your sample be destroyed",
+            "If you change your mind and want to request that your sample be destroyed, you must send a written request to: <br><br>Seth Berger, MD, PhD<br>Children's National Research and Innovation Campus<br>7144 13th Place NW<br>Washington, DC 20012"
+        ],
+        "parent_ids": [
+            "gdiDJUS"
+        ],
+        "child_ids": [
+            "bdmfVYQ"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "bdmfVYQ": {
+        "type": "user",
+        "messages": [
+            "That's good to know"
+        ],
+        "parent_ids": [
+            "Psu2bBx"
+        ],
+        "child_ids": [
+            "cmJfBjf"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "cmJfBjf": {
+        "type": "bot",
+        "messages": [
+            "We would like to store personal health information (PHI) collected from you in this study (such as your name, date of birth, contact information, etc.) in a database for future research",
+            "The database is maintained by Children's National Research Institute's Center For Genetic Medicine Research",
+            "Please let us know how you would like your PHI to be stored and used"
+        ],
+        "parent_ids": [
+            "bdmfVYQ"
+        ],
+        "child_ids": [
+            "VZsTdFg"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "VZsTdFg": {
+        "type": "user",
+        "messages": [],
+        "parent_ids": [
+            "cmJfBjf"
+        ],
+        "child_ids": [
+            "4bYChBx"
+        ],
+        "attachment": null,
+        "html_type": "form",
+        "html_content": "<form id='phi-use-form' class='user-response-form'>\n    <p class='consent-text'>Can we store your PHI in our database for research related to this study? (Required for participation in the study)</p>\n    <label class='user-form-row' for='yesThisStudy'>\n        <input type='radio' id='yesThisStudy' name='storePhiThisStudy' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <p class='consent-text'>Can we use your stored PHI to contact you about future research opportunities that are not related to this study?</p>\n    <label class='user-form-row' for='yesOtherStudies'>\n        <input type='radio' id='yesOtherStudies' name='storePhiOtherStudies' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noOtherStudies'>\n        <input type='radio' id='noOtherStudies' name='storePhiOtherStudies' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <input type='hidden' name='id_node' value='VZsTdFg'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "4bYChBx": {
+        "type": "bot",
+        "messages": [
+            "You may recall that we discussed the types of genetic research results that may be found in this study",
+            "You get to decide which types of results you want to learn about, if any",
+            "Do you remember the different types of results we discussed, like \u201cprimary results\u201d and \u201cmedically actionable secondary results\u201d?"
+        ],
+        "parent_ids": [
+            "VZsTdFg"
+        ],
+        "child_ids": [
+            "SLcyBjQ",
+            "GzG3exY"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "SLcyBjQ": {
+        "type": "user",
+        "messages": [
+            "Yes, I remember"
+        ],
+        "parent_ids": [
+            "4bYChBx"
+        ],
+        "child_ids": [
+            "QpzocPu"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "GzG3exY": {
+        "type": "user",
+        "messages": [
+            "No, can you remind me?"
+        ],
+        "parent_ids": [
+            "4bYChBx"
+        ],
+        "child_ids": [
+            "3iBfwGK"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "3iBfwGK": {
+        "type": "bot",
+        "messages": [
+            "<b>Primary findings</b> are genetic changes that may be related to the specific health issues that have been seen in you or your family members",
+            "Primary findings often allow the clinical team to make a diagnosis"
+        ],
+        "parent_ids": [
+            "GzG3exY"
+        ],
+        "child_ids": [
+            "WHwSvgC"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "WHwSvgC": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "3iBfwGK"
+        ],
+        "child_ids": [
+            "N9JZqfY"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "N9JZqfY": {
+        "type": "bot",
+        "messages": [
+            "Sometimes the study may find genetic variants that are not related to a patient\u2019s current known health issues",
+            "These are called <b>secondary findings</b>",
+            "Some of these secondary findings are considered medically actionable, meaning if these genetic changes are known, then you or your healthcare provider can then take action to try and reduce your risk of developing the health problems or to better treat or manage the health problems"
+        ],
+        "parent_ids": [
+            "WHwSvgC"
+        ],
+        "child_ids": [
+            "Hc525XA"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "Hc525XA": {
+        "type": "user",
+        "messages": [
+            "What kind of findings are medically actionable?"
+        ],
+        "parent_ids": [
+            "N9JZqfY"
+        ],
+        "child_ids": [
+            "GMm2FJg"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "GMm2FJg": {
+        "type": "bot",
+        "messages": [
+            "Some examples of medically actionable secondary findings may be genetic variants that cause increased risk for future health issues like heart disease or cancer",
+            "Secondary findings are often related to adult health risks. However, it is possible that we could discover a secondary finding that relates to health issues in childhood"
+        ],
+        "parent_ids": [
+            "Hc525XA"
+        ],
+        "child_ids": [
+            "hnqNqbi"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "hnqNqbi": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "GMm2FJg"
+        ],
+        "child_ids": [
+            "QpzocPu"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "QpzocPu": {
+        "type": "bot",
+        "messages": [
+            "Please complete the form below to let us know what types of results you would like to receive"
+        ],
+        "parent_ids": [
+            "hnqNqbi",
+            "SLcyBjQ"
+        ],
+        "child_ids": [
+            "nriTamw"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "nriTamw": {
+        "type": "user",
+        "messages": [],
+        "parent_ids": [
+            "QpzocPu"
+        ],
+        "child_ids": [
+            "knbtYck"
+        ],
+        "attachment": null,
+        "html_type": "form",
+        "html_content": "<form id='result-return-form' class='user-response-form'>\n    <p class='consent-text'>Do you want to learn about primary results that are found?</p>\n    <label class='user-form-row' for='yesRorPrimary'>\n        <input type='radio' id='yesRorPrimary' name='rorPrimary' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noRorPrimary'>\n        <input type='radio' id='noRorPrimary' name='rorPrimary' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <p class='consent-text'>Do you also want to learn about medically actionable secondary results?</p>\n    <label class='user-form-row' for='yesRorSecondary'>\n        <input type='radio' id='yesRorSecondary' name='rorSecondary' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noRorSecondary'>\n        <input type='radio' id='noRorSecondary' name='rorSecondary' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <p class='consent-text'>Do you want to learn about secondary results that are NOT medically actionable?</p>\n    <label class='user-form-row' for='yesRorSecondaryNot'>\n        <input type='radio' id='yesRorSecondaryNot' name='rorSecondaryNot' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noRorSecondaryNot'>\n        <input type='radio' id='noRorSecondaryNot' name='rorSecondaryNot' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <input type='hidden' name='id_node' value='nriTamw'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "knbtYck": {
+        "type": "bot",
+        "messages": [
+            "Great!  You have now entered all of your choices for your enrollment",
+            "You are ready to provide your signature to consent!"
+        ],
+        "parent_ids": [
+            "nriTamw"
+        ],
+        "child_ids": [
+            "AimWGCA"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "AimWGCA": {
+        "type": "user",
+        "messages": [],
+        "parent_ids": [
+            "knbtYck"
+        ],
+        "child_ids": [
+            "5n6QHJ7"
+        ],
+        "attachment": null,
+        "html_type": "form",
+        "html_content": "<form id='consent-form' class='user-response-form'>\n    <p class='consent-text'>\n        I am the study participant or I am authorized to act on behalf of the participant.\n        I have read this consent form or had it read to me.\n        I have been invited to take part in a research study. I was told why the research is being done and how long my participation in the study is expected to last. I was told about what will happen in the study and if there are any procedures or drugs that are experimental.\n        I was told that taking part in this research is voluntary. I also was told that I can decide not to take part or stop being in it at any time without any penalty to me or any change to the quality of care I receive at Children's National.\n        I was told about the risks and possible discomforts of taking part in this research study. I was also informed if there are any possible benefits to me if I am in this study.\n        I have been given the chance to ask questions about the study, and my questions have been answered. If I have questions later, I can ask one of the people listed in this form.\n        I agree to take part in this research study.\n        I will receive a signed copy of this Informed Consent/Parental Permission form to keep.\n    </p>\n    <label class='user-form-row' for='fullname'>\n        <span class='user-contact-form-row-label'>Full name</span>    \n        <input type='text' id='fullname' name='fullname'>\n    </label>\n    <label class='user-form-row' for='consent'>\n        <input type='checkbox' id='consent' name='consent'>\n        <span class='user-form-row-label'>I consent</span>\n    </label>\n    <input type='hidden' name='id_node' value='AimWGCA'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "metadata": {
+            "workflow": "end_consent",
+            "end_sequence": false
+        }
+    },
+    "5n6QHJ7": {
+        "type": "bot",
+        "messages": [
+            "Thank you!"
+        ],
+        "parent_ids": [
+            "AimWGCA"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "nbkJ3g7": {
+        "type": "bot",
+        "messages": [
+            "Now, let\u2019s talk about the next steps for enrolling your child or children",
+            "How many children are you enrolling?"
+        ],
+        "parent_ids": [
+            "JTCaWss"
+        ],
+        "child_ids": [
+            "YkoAEVe"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "YkoAEVe": {
+        "type": "user",
+        "messages": [],
+        "parent_ids": [
+            "nbkJ3g7"
+        ],
+        "child_ids": [
+            "eDqsGdn",
+            "VbbeudE"
+        ],
+        "attachment": null,
+        "html_type": "form",
+        "html_content": "<form id='num-children-enroll-form' class='user-response-form'>\n    <p class='consent-text'>How many children are you enrolling?</p>\n    <label class='user-form-row' for='oneChild'>\n        <input type='radio' id='oneChild' name='numChildrenEnroll' value='1'>\n        <span class='user-form-row-label'>1</span>\n    </label>\n    <label class='user-form-row' for='twoChild'>\n        <input type='radio' id='twoChild' name='numChildrenEnroll' value='2'>\n        <span class='user-form-row-label'>2</span>\n    </label>\n    <label class='user-form-row' for='threeChild'>\n        <input type='radio' id='threeChild' name='numChildrenEnroll' value='3'>\n        <span class='user-form-row-label'>3</span>\n    </label>\n        <label class='user-form-row' for='fourChild'>\n        <input type='radio' id='fourChild' name='numChildrenEnroll' value='4'>\n        <span class='user-form-row-label'>4 or more</span>\n    </label>\n    <input type='hidden' name='one-three' value='eDqsGdn'>\n    <input type='hidden' name='four-more' value='VbbeudE'>\n    <input type='hidden' name='id_node' value='YkoAEVe'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "eDqsGdn": {
+        "type": "bot",
+        "messages": [
+            "Okay, we will now collect contact information and enrollment preferences for each child, and then we\u2019ll ask for your electronic signature"
+        ],
+        "parent_ids": [
+            "YkoAEVe"
+        ],
+        "child_ids": [
+            "nm8saM4"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "nm8saM4": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "eDqsGdn"
+        ],
+        "child_ids": [
+            "33yRxHn"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "VbbeudE": {
+        "type": "bot",
+        "messages": [
+            "Okay, great!",
+            "To enroll four or more children, it would be best for you to talk to a member of our study team",
+            "Someone from our team will contact you directly by phone or email within the next 2-3 weeks",
+            "If you have questions now, you can contact us at PMGRC@childrensnational.org"
+        ],
+        "parent_ids": [
+            "YkoAEVe"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "33yRxHn": {
+        "type": "bot",
+        "messages": [
+            "Please provide your child's information below"
+        ],
+        "parent_ids": [
+            "nm8saM4"
+        ],
+        "child_ids": [
+            "XGa7LFM"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "XGa7LFM": {
+        "type": "user",
+        "messages": [
+            "CHILD NAME / CONTACT FORM"
+        ],
+        "parent_ids": [
+            "33yRxHn"
+        ],
+        "child_ids": [
+            "afCcd5B"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "afCcd5B": {
+        "type": "bot",
+        "messages": [
+            "We would like to store your child\u2019s samples (such as genetic material including DNA, RNA, or protein, or cells) in a tissue bank for future research as identified below",
+            "The biobank is maintained by Children's National Research Institute's Center for Genetic Medicine Research",
+            "Please let us know how you would like your child's samples to be used"
+        ],
+        "parent_ids": [
+            "XGa7LFM"
+        ],
+        "child_ids": [
+            "SFiuhW9"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "SFiuhW9": {
+        "type": "user",
+        "messages": [
+            "CHILD SAMPLE STORAGE FORM"
+        ],
+        "parent_ids": [
+            "afCcd5B"
+        ],
+        "child_ids": [
+            "Ycq8NGN"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "Ycq8NGN": {
+        "type": "bot",
+        "messages": [
+            "You should know that you may change your mind at a later time and request that your sample be destroyed",
+            "If you change your mind and want to request that your sample be destroyed, you must send a written request to: <br><br>Seth Berger, MD, PhD<br>Children's National Research and Innovation Campus<br>7144 13th Place NW<br>Washington, DC 20012"
+        ],
+        "parent_ids": [
+            "SFiuhW9"
+        ],
+        "child_ids": [
+            "6KTYnrc"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "6KTYnrc": {
+        "type": "user",
+        "messages": [
+            "That's good to know"
+        ],
+        "parent_ids": [
+            "Ycq8NGN"
+        ],
+        "child_ids": [
+            "hbBDr5V"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "hbBDr5V": {
+        "type": "bot",
+        "messages": [
+            "We would like to store personal health information collected in this study (such as your child\u2019s name, date of birth, contact information, etc.) in a database for future research",
+            "The database is maintained by Children's National Research Institute's Center For Genetic Medicine Research",
+            "Please let us know how you would like your child\u2019s PHI to be stored and used"
+        ],
+        "parent_ids": [
+            "6KTYnrc"
+        ],
+        "child_ids": [
+            "VaSzySv"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "VaSzySv": {
+        "type": "user",
+        "messages": [
+            "CHILD PHI FORM"
+        ],
+        "parent_ids": [
+            "hbBDr5V"
+        ],
+        "child_ids": [
+            "VfXY5LK"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "VfXY5LK": {
+        "type": "bot",
+        "messages": [
+            "You may recall that we discussed the types of genetic research results that may be found in this study",
+            "You get to decide which types of results you want to learn about, if any",
+            "Do you remember the different types of results we discussed, like \u201cprimary results\u201d and \u201cmedically actionable secondary results\u201d?"
+        ],
+        "parent_ids": [
+            "VaSzySv"
+        ],
+        "child_ids": [
+            "ZaZ73e4",
+            "J5LzZD4"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "ZaZ73e4": {
+        "type": "user",
+        "messages": [
+            "Yes, I remember"
+        ],
+        "parent_ids": [
+            "VfXY5LK"
+        ],
+        "child_ids": [
+            "3Y8xK6c"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "J5LzZD4": {
+        "type": "user",
+        "messages": [
+            "No, can you remind me?"
+        ],
+        "parent_ids": [
+            "VfXY5LK"
+        ],
+        "child_ids": [
+            "9VfACid"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "9VfACid": {
+        "type": "bot",
+        "messages": [
+            "<b>Primary findings</b> are genetic changes that may be related to the specific health issues that have been seen in your child or your family members",
+            "Primary findings often allow the clinical team to make a diagnosis",
+            "Sometimes the study may find genetic variants that are not related to a patient\u2019s current known health issues",
+            "These are called <b>secondary findings</b>",
+            "Some of these secondary findings are considered <b>medically actionable</b>, meaning if these genetic changes are known, then you or your healthcare provider can then take action to try and reduce your child\u2019s risk of developing the health problems or to better treat or manage the health problems"
+        ],
+        "parent_ids": [
+            "J5LzZD4"
+        ],
+        "child_ids": [
+            "eXaerup"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "eXaerup": {
+        "type": "user",
+        "messages": [
+            "What kind of findings are medically actionable?"
+        ],
+        "parent_ids": [
+            "9VfACid"
+        ],
+        "child_ids": [
+            "gedo5CN"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "gedo5CN": {
+        "type": "bot",
+        "messages": [
+            "Some examples of medically actionable secondary findings may be genetic variants that cause increased risk for future health issues like heart disease or cancer",
+            "Secondary findings are often related to adult health risks.  However, it is possible that we could discover a secondary finding that relates to health issues in childhood"
+        ],
+        "parent_ids": [
+            "eXaerup"
+        ],
+        "child_ids": [
+            "KByDnk2"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "KByDnk2": {
+        "type": "user",
+        "messages": [
+            "Okay"
+        ],
+        "parent_ids": [
+            "gedo5CN"
+        ],
+        "child_ids": [
+            "3Y8xK6c"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "3Y8xK6c": {
+        "type": "bot",
+        "messages": [
+            "Please complete the form below to let us know what types of results you would like to receive for your child"
+        ],
+        "parent_ids": [
+            "KByDnk2",
+            "ZaZ73e4"
+        ],
+        "child_ids": [
+            "nU9xybq"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "nU9xybq": {
+        "type": "user",
+        "messages": [
+            "ROR CHILD FORM"
+        ],
+        "parent_ids": [
+            "3Y8xK6c"
+        ],
+        "child_ids": [
+            "ggfpZho"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "ggfpZho": {
+        "type": "bot",
+        "messages": [
+            "Great!  You have now entered all of your choices for your child\u2019s enrollment",
+            "You are ready to provide your signature to give consent for your child!"
+        ],
+        "parent_ids": [
+            "nU9xybq"
+        ],
+        "child_ids": [
+            "nAaeApX"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": false
+        }
+    },
+    "nAaeApX": {
+        "type": "user",
+        "messages": [
+            "CHILD CONSENT FORM"
+        ],
+        "parent_ids": [
+            "ggfpZho"
+        ],
+        "child_ids": [
+            "Mzh9KYH"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": true
+        }
+    },
+    "Mzh9KYH": {
+        "type": "bot",
+        "messages": [
+            "We are almost done with the consent process. Just a few more things to tell you.",
+            "Below are links to access some of the documents we discussed during our chat:<br>Notice of Privacy Practices - https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf<br>HIPAA information - https://www.cdc.gov/phlp/publications/topic/hipaa.html<br>GINA resources - https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina"
+        ],
+        "parent_ids": [
+            "nAaeApX"
+        ],
+        "child_ids": [
+            "KxvpjwE"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "KxvpjwE": {
+        "type": "user",
+        "messages": [
+            "Thank you"
+        ],
+        "parent_ids": [
+            "Mzh9KYH"
+        ],
+        "child_ids": [
+            "W7DeBPU"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "W7DeBPU": {
+        "type": "bot",
+        "messages": [
+            "After our study staff has finalized the consent paperwork, we will send you a copy of the signed consent documents via a secure email using the email address you provided above",
+            "You will receive a separate email with a transcript of our chat"
+        ],
+        "parent_ids": [
+            "KxvpjwE"
+        ],
+        "child_ids": [
+            "TSRVTj5"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "TSRVTj5": {
+        "type": "user",
+        "messages": [
+            "Okay, great!"
+        ],
+        "parent_ids": [
+            "W7DeBPU"
+        ],
+        "child_ids": [
+            "39kDMR8"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "39kDMR8": {
+        "type": "bot",
+        "messages": [
+            "We will also send you an email with a link to an online form where we will collect health information to complete your study enrollment",
+            "Once you are enrolled, we will be in touch to let you know if we need to collect any samples from you or your child"
+        ],
+        "parent_ids": [
+            "TSRVTj5"
+        ],
+        "child_ids": [
+            "6iruWjc"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "6iruWjc": {
+        "type": "user",
+        "messages": [
+            "That sounds good"
+        ],
+        "parent_ids": [
+            "39kDMR8"
+        ],
+        "child_ids": [
+            "nJgsH7y"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "nJgsH7y": {
+        "type": "bot",
+        "messages": [
+            "Remember, if you have any questions or concerns, you can always reach out to our team at PMGRC@childrensnational.org",
+            "Thank you for completing the consent process with me today!",
+            "For security reasons, this link will be deactivated within 24 hours",
+            "If you would like to help me improve please rate your experience and provide feedback"
+        ],
+        "parent_ids": [
+            "6iruWjc"
+        ],
+        "child_ids": [
+            "BUgU8Tq",
+            "nTBdMds"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "BUgU8Tq": {
+        "type": "user",
+        "messages": [
+            "I'd like to leave feedback"
+        ],
+        "parent_ids": [
+            "nJgsH7y"
+        ],
+        "child_ids": [
+            "aXDDbh2"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "nTBdMds": {
+        "type": "user",
+        "messages": [
+            "No thanks"
+        ],
+        "parent_ids": [
+            "nJgsH7y"
+        ],
+        "child_ids": [
+            "7PxxtTh"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "7PxxtTh": {
+        "type": "bot",
+        "messages": [
+            "No problem",
+            "Bye!"
+        ],
+        "parent_ids": [
+            "nTBdMds"
+        ],
+        "child_ids": [],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "aXDDbh2": {
+        "type": "user",
+        "messages": [
+            "USER FEEDBACK FORM"
+        ],
+        "parent_ids": [
+            "BUgU8Tq"
+        ],
+        "child_ids": [
+            "YQHvnrA"
+        ],
+        "attachment": null,
+        "html_type": "button",
+        "html_content": null,
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
+    "YQHvnrA": {
+        "type": "bot",
+        "messages": [
+            "Thanks, bye!"
+        ],
+        "parent_ids": [
+            "aXDDbh2"
         ],
         "child_ids": [],
         "attachment": null,

@@ -31,7 +31,8 @@ flask db upgrade
 
 ### Interact with the database manually
 ```python
-from app.main import *
+from app.utils.utils import *
+from app import *
 app.app_context().push()
 
 # create a new user

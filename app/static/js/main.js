@@ -7,8 +7,15 @@ var ChatApp = {
     bindEvents: function() {
         $(document).on('click', 'button.response', this.onButtonClick.bind(this));
         $(document).on('change', "#checkbox-form input[type='checkbox'], #child-ages-checkbox-form input[type='checkbox']", this.onCheckboxChange.bind(this));
+        $(document).on('change', "#sample-storage-use-form input[type='radio']", this.onStoreSamples.bind(this));
+        $(document).on('change', "#phi-use-form input[type='radio']", this.onStorePhi.bind(this));
+        $(document).on('change', "#result-return-form input[type='radio']", this.onResultReturn.bind(this));
+        $(document).on('change', "#num-children-enroll-form input[type='radio']", this.onNumChildrenEnrollment.bind(this));
+        $(document).on('keyup change', "#fullname, #consent", this.onCheckConsentForm.bind(this));
         $('.user-response-container').on('submit', '#checkbox-form', this.onFamilyEnrollmentForm.bind(this));
         $('.user-response-container').on('submit', '#child-ages-checkbox-form', this.onChildAgeEnrollmentForm.bind(this));
+        $('.user-response-container').on('submit', '#sample-storage-use-form, #phi-use-form, #result-return-form, #consent-form', this.onSaveConsentPreferences.bind(this));
+        $('.user-response-container').on('submit', '#num-children-enroll-form', this.onNumChildrenEnrollForm.bind(this));
         $('.user-response-container').on('keyup change', '#firstname, #lastname', this.onCheckInputs.bind(this));
         $(window).on('resize', this.adjustChatWindowHeight.bind(this));
         $('.user-response-container').on('submit', '#contact-other-adult-form', this.onSubmitContactAnotherAdultForm.bind(this));
@@ -29,12 +36,48 @@ var ChatApp = {
             that.processChatMessages(data)
         });
     },
+    onStoreSamples: function() {
+        var radioGroups = ['storeSamplesThisStudy', 'storeSamplesOtherStudies'];
+        this.checkRadioChange(radioGroups);
+    },
+    onStorePhi: function() {
+        var radioGroups = ['storePhiThisStudy', 'storePhiOtherStudies'];
+        this.checkRadioChange(radioGroups);
+    },
+    onResultReturn: function() {
+        var radioGroups = ['rorPrimary', 'rorSecondary', 'rorSecondaryNot'];
+        this.checkRadioChange(radioGroups);
+    },
+    onNumChildrenEnrollment: function() {
+        var radioGroups = ['numChildrenEnroll'];
+        this.checkRadioChange(radioGroups);
+    },
+    checkRadioChange: function(radioGroups) {
+        var allGroupsChecked = true;
+
+        // Check each group
+        radioGroups.forEach(function(group) {
+            // If no button in this group is checked, set allGroupsChecked to false
+            if ($(`input[name='${group}']:checked`).length === 0) {
+                allGroupsChecked = false;
+            }
+        });
+        // Enable or disable the submit button based on the radio status
+        $('#submit-button').prop('disabled', !allGroupsChecked);
+    },
     onCheckboxChange: function() {
         let oneChecked = false;
         $("#checkbox-form input[type='checkbox'], #child-ages-checkbox-form input[type='checkbox']").each(function() {
             if ($(this).prop('checked')) oneChecked = true;
         });
         $('#submit-button').prop('disabled', !oneChecked);
+    },
+    onCheckConsentForm: function() {
+        var fullnameLength = $('#fullname').val().length;
+        var isConsentChecked = $('#consent').is(':checked');
+        var isFormValid = fullnameLength > 3 && isConsentChecked;
+
+        $('#submit-button').prop('disabled', !isFormValid);
     },
     onFamilyEnrollmentForm: function(event) {
         event.preventDefault();
@@ -52,6 +95,26 @@ var ChatApp = {
         var uuid = that.getInviteUuid();
         var formData = $(event.target).serialize();
         $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/child_age_enrollment_form', formData, function(data) {
+            data.echo_user_response = data.echo_user_response.join(', ');
+            that.processChatMessages(data)
+        });
+    },
+    onSaveConsentPreferences: function(event) {
+        event.preventDefault();
+        var that = this; // store reference to the ChatApp object
+        var uuid = that.getInviteUuid();
+        var formData = $(event.target).serialize();
+        $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/save_consent_preferences', formData, function(data) {
+            data.echo_user_response = data.echo_user_response.join(', ');
+            that.processChatMessages(data)
+        });
+    },
+    onNumChildrenEnrollForm: function(event) {
+        event.preventDefault();
+        var that = this; // store reference to the ChatApp object
+        var uuid = that.getInviteUuid();
+        var formData = $(event.target).serialize();
+        $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/children_enrollment_form', formData, function(data) {
             data.echo_user_response = data.echo_user_response.join(', ');
             that.processChatMessages(data)
         });

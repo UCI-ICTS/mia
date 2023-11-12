@@ -296,3 +296,9 @@ input[type='tel'] {
 .bot-chat-bullets {
     padding-left: 35px;
 }
+
+.consent-text {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
