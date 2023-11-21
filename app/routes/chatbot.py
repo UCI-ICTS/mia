@@ -8,9 +8,8 @@ from app.utils.utils import (get_script_from_invite_id, get_chat_start_id, proce
                              generate_workflow, process_test_question, process_user_consent, create_follow_up_with_user,
                              clean_up_after_chat)
 from app.utils.cache import (get_user_workflow, get_user_current_node_id, set_user_workflow, set_user_current_node_id,
-                             get_consenting_myself, get_consent_node, set_consenting_myself, set_consenting_children,
-                             set_child_user_id, set_child_user_consent_id, get_child_user_consent_id, get_child_user_id,
-                             get_consenting_children)
+                             get_consenting_myself, set_child_user_id, set_child_user_consent_id,
+                             get_child_user_consent_id, get_child_user_id, get_consenting_children)
 from app.utils.enumerations import *
 
 
@@ -55,18 +54,6 @@ def user_invite(invite_id):
         start_node_id = get_chat_start_id(conversation_graph)
     else:
         start_node_id = current_node_id
-
-    #############################################################################################
-    # FOR TESTING PURPOSES ONLY - DELETE WHEN TESTING IS COMPLETE
-    start_node_id = 'W7DeBPU'
-    # set_consenting_myself(invite_id, True)  # DELETE IMPORT
-    # key = f'invite_id:{invite_id}:children_consenting'
-    # user_chat_cache = db.session.get(UserChatCache, key)
-    # if user_chat_cache:
-    #     db.session.delete(user_chat_cache)
-    #     db.session.commit()
-    # set_user_workflow(invite_id, [])
-    #############################################################################################
 
     set_user_current_node_id(invite_id, start_node_id)
     next_chat_sequence = process_workflow(conversation_graph, start_node_id, invite_id)
