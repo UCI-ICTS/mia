@@ -330,8 +330,10 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
-            "end_sequence": "false"
+            "workflow": "follow-up",
+            "end_sequence": "false",
+            "follow_up_reason": "consent",
+            "follow_up_info": "prefer to talk with someone from the research team"
         }
     },
     "Q8yaxQc": {
@@ -2549,8 +2551,8 @@
             "DKTqMXc"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "video",
+        "html_content": "https://www.youtube.com/watch?v=HbQTI2pDmSs",
         "metadata": {
             "workflow": "",
             "end_sequence": false
@@ -6018,7 +6020,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
+            "workflow": "decline_consent",
             "end_sequence": false
         }
     },
@@ -6037,8 +6039,10 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
-            "end_sequence": false
+            "workflow": "follow-up",
+            "end_sequence": false,
+            "follow_up_reason": "consent",
+            "follow_up_info": "not ready or have questions"
         }
     },
     "BMeYncH": {
@@ -6056,8 +6060,10 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
-            "end_sequence": false
+            "workflow": "follow_up",
+            "end_sequence": false,
+            "follow_up_reason": "consent",
+            "follow_up_info": "not ready or have questions"
         }
     },
     "SZabuK4": {
@@ -6085,8 +6091,7 @@
     "Swxbt6c": {
         "type": "bot",
         "messages": [
-            "Okay - that\u2019s just fine",
-            "If you are interested in participating in the future, you can always contact our study team at PMGRC@childrensnational.org"
+            "Okay - that\u2019s just fine"
         ],
         "parent_ids": [
             "FVdUisi"
@@ -6110,7 +6115,9 @@
         "parent_ids": [
             "Swxbt6c"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "nJgsH7y"
+        ],
         "attachment": null,
         "html_type": "button",
         "html_content": null,
@@ -7606,20 +7613,23 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "",
-            "end_sequence": false
+            "workflow": "follow_up",
+            "end_sequence": false,
+            "follow_up_reason": "consent",
+            "follow_up_info": "did not pass knowledge test"
         }
     },
     "PZYk7Ga": {
         "type": "bot",
         "messages": [
-            "Someone from our team will contact you directly by phone or email within the next 2-3 weeks",
-            "If you have questions now, you can contact us at PMGRC@childrensnational.org"
+            "Someone from our team will contact you directly by phone or email within the next 2-3 weeks"
         ],
         "parent_ids": [
             "X4CvZHZ"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "nJgsH7y"
+        ],
         "attachment": null,
         "html_type": "button",
         "html_content": null,
@@ -8026,7 +8036,9 @@
         "parent_ids": [
             "AimWGCA"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "Mzh9KYH"
+        ],
         "attachment": null,
         "html_type": "button",
         "html_content": null,
@@ -8122,7 +8134,9 @@
         "parent_ids": [
             "YkoAEVe"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "Mzh9KYH"
+        ],
         "attachment": null,
         "html_type": "button",
         "html_content": null,
@@ -8152,9 +8166,7 @@
     },
     "XGa7LFM": {
         "type": "user",
-        "messages": [
-            "CHILD NAME / CONTACT FORM"
-        ],
+        "messages": [],
         "parent_ids": [
             "33yRxHn"
         ],
@@ -8162,8 +8174,8 @@
             "afCcd5B"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "form",
+        "html_content": "<form id='child-consent-contact-form' class='user-response-form'>\n    <label class='user-form-row' for='firstname'>\n        <span class='user-contact-form-row-label'>First name</span>    \n        <input type='text' id='firstname' name='firstname' required>\n    </label>\n    <label class='user-form-row' for='lastname'>\n        <span class='user-contact-form-row-label'>Last name</span>\n        <input type='text' id='lastname' name='lastname' required>\n    </label>\n    <label class='user-form-row' for='phone'>\n        <span class='user-contact-form-row-label'>Phone to use for contact regarding this child</span>\n        <input type='tel' id='phone' name='phone' pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' placeholder='555-867-5309' required>\n    </label>\n    <label class='user-form-row' for='email'>\n        <span class='user-contact-form-row-label'>Email to use for contact regarding this child</span>\n        <input type='email' id='email' name='email' placeholder='example@example.com' required>\n    </label>\n    <label class='user-form-row' for='age-group'>\n        <span class='user-contact-form-row-label'>How old is this child?</span>\n        <select id='age-group' name='age_group' required>\n            <option value='' disabled selected>Select age</option>\n            <option value='<=6'>6 or younger</option>\n            <option value='7-17'>7 to 17</option>\n            <option value='>=18 guardianship'>18+ under my guardianship</option>\n        </select>\n    </label>\n    <input type='hidden' name='id_submit_node' value='afCcd5B'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
         "metadata": {
             "workflow": "child_consent",
             "end_sequence": false
@@ -8192,9 +8204,7 @@
     },
     "SFiuhW9": {
         "type": "user",
-        "messages": [
-            "CHILD SAMPLE STORAGE FORM"
-        ],
+        "messages": [],
         "parent_ids": [
             "afCcd5B"
         ],
@@ -8202,8 +8212,8 @@
             "Ycq8NGN"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "form",
+        "html_content": "<form id='sample-storage-use-form' class='user-response-form'>\n    <p class='consent-text'>Can we store this person's samples for purposes of this research study? (Required for participation in the study)</p>\n    <label class='user-form-row' for='yesThisStudy'>\n        <input type='radio' id='yesThisStudy' name='storeSamplesThisStudy' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <p class='consent-text'>Can we store this person's samples in the Children\u2019s National biobank for purposes of unrelated research?</p>\n    <label class='user-form-row' for='yesOtherStudies'>\n        <input type='radio' id='yesOtherStudies' name='storeSamplesOtherStudies' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noOtherStudies'>\n        <input type='radio' id='noOtherStudies' name='storeSamplesOtherStudies' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <input type='hidden' name='id_node' value='SFiuhW9'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
         "metadata": {
             "workflow": "child_consent",
             "end_sequence": false
@@ -8271,9 +8281,7 @@
     },
     "VaSzySv": {
         "type": "user",
-        "messages": [
-            "CHILD PHI FORM"
-        ],
+        "messages": [],
         "parent_ids": [
             "hbBDr5V"
         ],
@@ -8281,8 +8289,8 @@
             "VfXY5LK"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "form",
+        "html_content": "<form id='phi-use-form' class='user-response-form'>\n    <p class='consent-text'>Can we store this person's PHI in our database for research related to this study? (Required for participation in the study)</p>\n    <label class='user-form-row' for='yesThisStudy'>\n        <input type='radio' id='yesThisStudy' name='storePhiThisStudy' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <p class='consent-text'>Can we use this person's PHI to contact you about future research opportunities that are not related to this study?</p>\n    <label class='user-form-row' for='yesOtherStudies'>\n        <input type='radio' id='yesOtherStudies' name='storePhiOtherStudies' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noOtherStudies'>\n        <input type='radio' id='noOtherStudies' name='storePhiOtherStudies' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <input type='hidden' name='id_node' value='VaSzySv'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
         "metadata": {
             "workflow": "child_consent",
             "end_sequence": false
@@ -8451,9 +8459,7 @@
     },
     "nU9xybq": {
         "type": "user",
-        "messages": [
-            "ROR CHILD FORM"
-        ],
+        "messages": [],
         "parent_ids": [
             "3Y8xK6c"
         ],
@@ -8461,8 +8467,8 @@
             "ggfpZho"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "form",
+        "html_content": "<form id='result-return-form' class='user-response-form'>\n    <p class='consent-text'>Do you want to learn about primary results that are found?</p>\n    <label class='user-form-row' for='yesRorPrimary'>\n        <input type='radio' id='yesRorPrimary' name='rorPrimary' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noRorPrimary'>\n        <input type='radio' id='noRorPrimary' name='rorPrimary' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <p class='consent-text'>Do you also want to learn about medically actionable secondary results?</p>\n    <label class='user-form-row' for='yesRorSecondary'>\n        <input type='radio' id='yesRorSecondary' name='rorSecondary' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noRorSecondary'>\n        <input type='radio' id='noRorSecondary' name='rorSecondary' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <p class='consent-text'>Do you want to learn about secondary results that are NOT medically actionable?</p>\n    <label class='user-form-row' for='yesRorSecondaryNot'>\n        <input type='radio' id='yesRorSecondaryNot' name='rorSecondaryNot' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noRorSecondaryNot'>\n        <input type='radio' id='noRorSecondaryNot' name='rorSecondaryNot' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <input type='hidden' name='id_node' value='nU9xybq'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
         "metadata": {
             "workflow": "child_consent",
             "end_sequence": false
@@ -8490,28 +8496,47 @@
     },
     "nAaeApX": {
         "type": "user",
-        "messages": [
-            "CHILD CONSENT FORM"
-        ],
+        "messages": [],
         "parent_ids": [
             "ggfpZho"
         ],
         "child_ids": [
-            "Mzh9KYH"
+            "Mzke78A"
+        ],
+        "attachment": null,
+        "html_type": "form",
+        "html_content": "<form id='consent-form' class='user-response-form'>\n    <p class='consent-text'>\n        I am the study participant or I am authorized to act on behalf of the participant.\n        I have read this consent form or had it read to me.\n        I have been invited to take part in a research study. I was told why the research is being done and how long my participation in the study is expected to last. I was told about what will happen in the study and if there are any procedures or drugs that are experimental.\n        I was told that taking part in this research is voluntary. I also was told that I can decide not to take part or stop being in it at any time without any penalty to me or any change to the quality of care I receive at Children's National.\n        I was told about the risks and possible discomforts of taking part in this research study. I was also informed if there are any possible benefits to me if I am in this study.\n        I have been given the chance to ask questions about the study, and my questions have been answered. If I have questions later, I can ask one of the people listed in this form.\n        I agree to take part in this research study.\n        I will receive a signed copy of this Informed Consent/Parental Permission form to keep.\n    </p>\n    <label class='user-form-row' for='childname'>\n        <span class='user-contact-form-row-label'>Child's full name</span>    \n        <input type='text' id='childname' name='childname'>\n    </label>\n    <label class='user-form-row' for='fullname'>\n        <span class='user-contact-form-row-label'>Full name of consenting individual (parent/legal guardian)</span>    \n        <input type='text' id='fullname' name='fullname'>\n    </label>\n    <label class='user-form-row' for='consent'>\n        <input type='checkbox' id='consent' name='consent'>\n        <span class='user-form-row-label'>I consent</span>\n    </label>\n    <input type='hidden' name='id_node' value='nAaeApX'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "metadata": {
+            "workflow": "child_consent",
+            "end_sequence": true
+        }
+    },
+    "Mzke78A": {
+        "type": "bot",
+        "messages": [
+            "We are almost done with the consent process. Just a few more things to tell you.",
+            "If you enrolled a child who is 7 years or older, a member of the study team will need to talk to your child briedly to tell them about the study and confirm their interest in participating",
+            "Below are links to access some of the documents we discussed during our chat:<br><br><b>Notice of Privacy Practices</b> - <a href=\"https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf\">https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf</a><br><br><b>HIPAA information</b> - <a href=\"https://www.cdc.gov/phlp/publications/topic/hipaa.html\">https://www.cdc.gov/phlp/publications/topic/hipaa.html</a><br><br><b>GINA resources</b> - <a href=\"https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina\">https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina</a>"
+        ],
+        "parent_ids": [
+            "nAaeApX"
+        ],
+        "child_ids": [
+            "KxvpjwE"
         ],
         "attachment": null,
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "child_consent",
-            "end_sequence": true
+            "workflow": "",
+            "end_sequence": false
         }
     },
     "Mzh9KYH": {
         "type": "bot",
         "messages": [
             "We are almost done with the consent process. Just a few more things to tell you.",
-            "Below are links to access some of the documents we discussed during our chat:<br>Notice of Privacy Practices - https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf<br>HIPAA information - https://www.cdc.gov/phlp/publications/topic/hipaa.html<br>GINA resources - https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina"
+            "Below are links to access some of the documents we discussed during our chat:<br><br><b>Notice of Privacy Practices</b> - <a href=\"https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf\">https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf</a><br><br><b>HIPAA information</b> - <a href=\"https://www.cdc.gov/phlp/publications/topic/hipaa.html\">https://www.cdc.gov/phlp/publications/topic/hipaa.html</a><br><br><b>GINA resources</b> - <a href=\"https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina\">https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina</a>"
         ],
         "parent_ids": [
             "nAaeApX"
@@ -8628,8 +8653,6 @@
         "type": "bot",
         "messages": [
             "Remember, if you have any questions or concerns, you can always reach out to our team at PMGRC@childrensnational.org",
-            "Thank you for completing the consent process with me today!",
-            "For security reasons, this link will be deactivated within 24 hours",
             "If you would like to help me improve please rate your experience and provide feedback"
         ],
         "parent_ids": [
@@ -8656,7 +8679,7 @@
             "nJgsH7y"
         ],
         "child_ids": [
-            "aXDDbh2"
+            "YQH834A"
         ],
         "attachment": null,
         "html_type": "button",
@@ -8688,8 +8711,8 @@
     "7PxxtTh": {
         "type": "bot",
         "messages": [
-            "No problem",
-            "Bye!"
+            "No problem, thank you for completing the consent process with me today!",
+            "For security reasons, this link will be deactivated within 24 hours"
         ],
         "parent_ids": [
             "nTBdMds"
@@ -8703,16 +8726,16 @@
             "end_sequence": false
         }
     },
-    "aXDDbh2": {
-        "type": "user",
+    "YQH834A": {
+        "type": "bot",
         "messages": [
-            "USER FEEDBACK FORM"
+            "Great, thanks so much!"
         ],
         "parent_ids": [
             "BUgU8Tq"
         ],
         "child_ids": [
-            "YQHvnrA"
+            "aXDDbh2"
         ],
         "attachment": null,
         "html_type": "button",
@@ -8722,10 +8745,28 @@
             "end_sequence": false
         }
     },
+    "aXDDbh2": {
+        "type": "user",
+        "messages": [],
+        "parent_ids": [
+            "BUgU8Tq"
+        ],
+        "child_ids": [
+            "YQHvnrA"
+        ],
+        "attachment": null,
+        "html_type": "form",
+        "html_content": "<form id='user-feedback-form' class='user-response-form'>\n    <label class='user-form-row' for='satisfaction'>\n        <span class='user-contact-form-row-label'>Overall satisfaction with the consent process:\n            <select id='satisfaction' name='satisfaction'>\n                <option value='' disabled selected></option>\n                <option value='Very Satisfied'>Very Satisfied</option>\n                <option value='Satisfied'>Satisfied</option>\n                <option value='Neutral'>Neutral</option>\n                <option value='Dissatisfied'>Dissatisfied</option>\n                <option value='Very Dissatisfied'>Very Dissatisfied</option>\n            </select>\n        </span>\n    </label>\n    <label class='user-form-row' for='suggestions'>\n        <span class='user-contact-form-row-label'>Suggestions for Improvement:\n            <textarea id='suggestions' name='suggestions'></textarea>\n        </span>\n    </label>\n    <input type='hidden' name='id_node' value='aXDDbh2'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button'>\n</form>",
+        "metadata": {
+            "workflow": "",
+            "end_sequence": false
+        }
+    },
     "YQHvnrA": {
         "type": "bot",
         "messages": [
-            "Thanks, bye!"
+            "Thank you for completing the consent process with me today!",
+            "For security reasons, this link will be deactivated within 24 hours"
         ],
         "parent_ids": [
             "aXDDbh2"

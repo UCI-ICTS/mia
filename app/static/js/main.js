@@ -12,14 +12,18 @@ var ChatApp = {
         $(document).on('change', "#result-return-form input[type='radio']", this.onResultReturn.bind(this));
         $(document).on('change', "#num-children-enroll-form input[type='radio']", this.onNumChildrenEnrollment.bind(this));
         $(document).on('keyup change', "#fullname, #consent", this.onCheckConsentForm.bind(this));
+        $(document).on('keyup change', '#contact-other-adult-form #firstname, #lastname', this.onCheckInputs.bind(this));
+        $(document).on('keyup input change', '#child-consent-contact-form input[type="text"], input[type="tel"], input[type="email"], select', this.onCheckChildConsentForm.bind(this));
         $('.user-response-container').on('submit', '#checkbox-form', this.onFamilyEnrollmentForm.bind(this));
         $('.user-response-container').on('submit', '#child-ages-checkbox-form', this.onChildAgeEnrollmentForm.bind(this));
         $('.user-response-container').on('submit', '#sample-storage-use-form, #phi-use-form, #result-return-form, #consent-form', this.onSaveConsentPreferences.bind(this));
         $('.user-response-container').on('submit', '#num-children-enroll-form', this.onNumChildrenEnrollForm.bind(this));
-        $('.user-response-container').on('keyup change', '#firstname, #lastname', this.onCheckInputs.bind(this));
-        $(window).on('resize', this.adjustChatWindowHeight.bind(this));
+        $('.user-response-container').on('submit', '#child-consent-contact-form', this.onChildConsentContactForm.bind(this));
         $('.user-response-container').on('submit', '#contact-other-adult-form', this.onSubmitContactAnotherAdultForm.bind(this));
+        $('.user-response-container').on('submit', '#user-feedback-form', this.onSubmitUserFeedbackForm.bind(this));
         $('.user-response-container').on('click', '#skip-button', this.onSkipContactAnotherAdultForm.bind(this));
+        $(window).on('resize', this.adjustChatWindowHeight.bind(this));
+
     },
     smoothScrollToBottom: function() {
         const chatWindow = document.getElementById('chat-window');
@@ -119,6 +123,26 @@ var ChatApp = {
             that.processChatMessages(data)
         });
     },
+    onChildConsentContactForm: function(event) {
+        event.preventDefault();
+        var that = this; // store reference to the ChatApp object
+        var uuid = that.getInviteUuid();
+        var formData = $(event.target).serialize();
+        $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/child_consent_contact_form', formData, function(data) {
+            data.echo_user_response = data.echo_user_response.join(', ');
+            that.processChatMessages(data)
+        });
+    },
+    onSubmitUserFeedbackForm: function(event) {
+        event.preventDefault();
+        var that = this; // store reference to the ChatApp object
+        var uuid = that.getInviteUuid();
+        var formData = $(event.target).serialize();
+        $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/user_feedback_form', formData, function(data) {
+            data.echo_user_response = data.echo_user_response.join(', ');
+            that.processChatMessages(data)
+        });
+    },
     onCheckInputs: function() {
         let firstname = $('#firstname').val().trim();
         let lastname = $('#lastname').val().trim();
@@ -127,6 +151,17 @@ var ChatApp = {
         } else {
             $('#submit-button').prop('disabled', true);
         }
+    },
+    onCheckChildConsentForm: function() {
+        var allFilled = true;
+        $('#child-consent-contact-form input[type="text"], #child-consent-contact-form input[type="tel"], #child-consent-contact-form input[type="email"], #child-consent-contact-form select').each(function() {
+            // Check if any field is empty or select is on its default option
+            if ($(this).val() === '' || ($(this).is('select') && $(this).val() === 'Select age')) {
+                allFilled = false;
+                return false; // break the loop
+            }
+        });
+        $('#submit-button').prop('disabled', !allFilled);
     },
     onSubmitContactAnotherAdultForm: function(event) {
         event.preventDefault();

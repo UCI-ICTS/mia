@@ -17,6 +17,7 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     referred_by = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=True)
     consent_complete = db.Column(db.Boolean, default=False, nullable=False)
+    declined_consent = db.Column(db.Boolean, default=False, nullable=False)
     enrolling_myself = db.Column(db.Boolean, default=False, nullable=False)
     enrolling_children = db.Column(db.Boolean, default=False, nullable=False)
     num_children_enrolling = db.Column(db.Integer, default=0, nullable=False)
@@ -28,6 +29,10 @@ class User(db.Model):
     referrals = db.relationship('User', backref=db.backref('referrer', remote_side=[user_id]), lazy=True)
     chat_urls = db.relationship('UserChatUrl', backref='user', lazy=True, cascade='all, delete')
     user_tests = db.relationship('UserTest', backref='user', lazy=True, cascade='all, delete')
+    user_follow_up = db.relationship('UserFollowUp', backref='user', lazy=True, cascade='all, delete')
+
+    # needs more thought...
+    # user_consent = db.relationship('UserConsent', backref='user_id', lazy=True, cascade='all, delete')
 
     @hybrid_property
     def chat_url(self):
@@ -94,7 +99,7 @@ class ConsentAgeGroup(enum.Enum):
     LESS_THAN_SIX = "<=6"
     SEVEN_TO_SEVENTEEN = "7-17"
     EIGHTEEN_AND_OVER = ">=18"
-    EIGHTEEN_AND_OVER_DEPENDENT = ">=18 dependent"
+    EIGHTEEN_AND_OVER_GUARDIANSHIP = ">=18 guardianship"
 
 
 class UserConsent(db.Model):
@@ -111,8 +116,25 @@ class UserConsent(db.Model):
     return_secondary_results = db.Column(db.Boolean, default=False, nullable=False)
     consent_statements = db.Column(db.String(2000), default='', nullable=False)
     user_full_name_consent = db.Column(db.String(200), default='', nullable=False)
+    child_full_name_consent = db.Column(db.String(200), nullable=True)
     consented_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class UserFollowUp(db.Model):
+    user_follow_up_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=False)
+    follow_up_reason = db.Column(db.String(200), default='', nullable=False)
+    follow_up_info = db.Column(db.String(200), default='', nullable=False)
+    resolved = db.Column(db.Boolean, default=False, nullable=False)
+
+
+class UserFeedback(db.Model):
+    user_feedback_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=False)
+    satisfaction = db.Column(db.String(25), nullable=True)
+    suggestions = db.Column(db.String(2000), nullable=True)
+
 
 # Example queries
 # user = User.query.get(some_user_id)

@@ -107,3 +107,45 @@ def get_consent_node(invite_id):
         return value
     else:
         return None
+
+
+def set_child_user_id(invite_id, child_user_id):
+    key = f'invite_id:{invite_id}:child_user_id'
+    user_chat_cache = db.session.query(UserChatCache).get(key)
+    if user_chat_cache:
+        user_chat_cache.value = child_user_id
+    else:
+        user_chat_cache = UserChatCache(key=key, value=child_user_id)
+        db.session.add(user_chat_cache)
+    db.session.commit()
+
+
+def get_child_user_id(invite_id):
+    key = f'invite_id:{invite_id}:child_user_id'
+    user_chat_cache = db.session.query(UserChatCache).get(key)
+    if user_chat_cache:
+        value = user_chat_cache.value
+        return value
+    else:
+        return None
+
+
+def set_child_user_consent_id(invite_id, child_user_id):
+    key = f'invite_id:{invite_id}:child_user_consent_id'
+    user_chat_cache = db.session.query(UserChatCache).get(key)
+    if user_chat_cache:
+        user_chat_cache.value = child_user_id
+    else:
+        user_chat_cache = UserChatCache(key=key, value=child_user_id)
+        db.session.add(user_chat_cache)
+    db.session.commit()
+
+
+def get_child_user_consent_id(invite_id):
+    key = f'invite_id:{invite_id}:child_user_consent_id'
+    user_chat_cache = db.session.query(UserChatCache).get(key)
+    if user_chat_cache:
+        value = user_chat_cache.value
+        return value
+    else:
+        return None

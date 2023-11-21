@@ -2,12 +2,15 @@ from app import app, db
 from datetime import datetime
 from flask import request, render_template, jsonify, abort
 from functools import wraps
-from app.models.user import User, UserChatUrl, UserConsent, UserChatCache
+from app.models.user import User, UserChatUrl, UserConsent, ConsentAgeGroup, UserFeedback
 from app.models.chat import Chat
 from app.utils.utils import (get_script_from_invite_id, get_chat_start_id, process_workflow, get_response,
-                             generate_workflow, process_test_question, process_user_consent)
+                             generate_workflow, process_test_question, process_user_consent, create_follow_up_with_user,
+                             clean_up_after_chat)
 from app.utils.cache import (get_user_workflow, get_user_current_node_id, set_user_workflow, set_user_current_node_id,
-                             get_consenting_myself, get_consent_node, set_consenting_myself, set_consenting_children)
+                             get_consenting_myself, get_consent_node, set_consenting_myself, set_consenting_children,
+                             set_child_user_id, set_child_user_consent_id, get_child_user_consent_id, get_child_user_id,
+                             get_consenting_children)
 from app.utils.enumerations import *
 
 
@@ -55,14 +58,14 @@ def user_invite(invite_id):
 
     #############################################################################################
     # FOR TESTING PURPOSES ONLY - DELETE WHEN TESTING IS COMPLETE
-    start_node_id = '4bYChBx'
-    set_consenting_myself(invite_id, True)  # DELETE IMPORT
-    key = f'invite_id:{invite_id}:children_consenting'
-    user_chat_cache = db.session.get(UserChatCache, key)
-    if user_chat_cache:
-        db.session.delete(user_chat_cache)
-        db.session.commit()
-    set_user_workflow(invite_id, [])
+    start_node_id = 'W7DeBPU'
+    # set_consenting_myself(invite_id, True)  # DELETE IMPORT
+    # key = f'invite_id:{invite_id}:children_consenting'
+    # user_chat_cache = db.session.get(UserChatCache, key)
+    # if user_chat_cache:
+    #     db.session.delete(user_chat_cache)
+    #     db.session.commit()
+    # set_user_workflow(invite_id, [])
     #############################################################################################
 
     set_user_current_node_id(invite_id, start_node_id)
@@ -80,12 +83,18 @@ def user_response(invite_id):
         node = conversation_graph[user_response_node_id]['metadata']
 
         # we might override the next node based on various chat specific logic
+        next_node_id = ''
+
         if node['workflow'] == 'test_user_understanding':
             next_node_id = process_test_question(conversation_graph, user_response_node_id, invite_id)
         elif node['workflow'] == 'start_consent':
             next_node_id = process_user_consent(conversation_graph, user_response_node_id, invite_id)
-        else:
-            next_node_id = ''
+        elif node['workflow'] == 'follow-up':
+            reason = node['follow_up_reason']
+            more_info = node['follow_up_info']
+            create_follow_up_with_user(invite_id, reason, more_info)
+        elif node['workflow'] == 'decline_consent':
+            next_node_id = process_user_consent(conversation_graph, user_response_node_id, invite_id)
 
         if next_node_id == '':
             if conversation_graph[user_response_node_id]['child_ids']:
@@ -240,15 +249,15 @@ def save_consent_preferences(invite_id):
     else:
         raise Exception('ERROR: parent id not found in user submitted form')
 
-    #TODO can't get the first value because you could be consenting for yourself and
-    # your children so how do we know the difference???
-    # need consentor_id and consentee_id - something like that
-
     user_consent = None
 
     if get_consenting_myself(invite_id):
         user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+        user = db.session.get(User, user_id)
         user_consent = UserConsent.query.filter_by(user_id=user_id).first()
+    elif get_consenting_children(invite_id) and get_child_user_consent_id(invite_id):
+        user = db.session.get(User, get_child_user_id(invite_id))
+        user_consent = db.session.get(UserConsent, get_child_user_consent_id(invite_id))
 
     if user_consent:
         echo_user_response = ['Submitted preferences']
@@ -289,7 +298,10 @@ def save_consent_preferences(invite_id):
             # checkbox checked
             user_consent.consented_at = datetime.utcnow()
             user_consent.consent_statements = CONSENT_STATEMENTS
-            user = db.session.get(User, user_id)
+
+            if request.form.get('childname'):
+                user_consent.child_full_name_consent = request.form.get('childname')
+
             user.consent_complete = True
             echo_user_response = ['I consent to this study']
 
@@ -332,13 +344,84 @@ def children_enrollment_form(invite_id):
         else:
             echo_user_response = 'Enrolling 4 or more children'
             child_consent_start_node_id = request.form.get('four-more')
+            create_follow_up_with_user(invite_id, 'consent', 'enroll 4 or more children')
 
         next_chat_sequence = process_workflow(conversation_graph, child_consent_start_node_id, invite_id)
         return jsonify(echo_user_response=[echo_user_response], next_sequence=next_chat_sequence)
 
 
-@app.route('/invite/<uuid:invite_id>/child_sample_health_info_use', methods=['POST'])
+@app.route('/invite/<uuid:invite_id>/child_consent_contact_form', methods=['POST'])
 @authenticate_user_invite_url
-def child_sample_health_info_use_form(invite_id):
-    # TODO need to add the corresponding js code
-    pass
+def child_consent_contact_form(invite_id):
+    first_name = request.form.get('firstname')
+    last_name = request.form.get('lastname')
+    phone = request.form.get('phone')
+    email = request.form.get('email')
+    node_id = request.form.get('id_submit_node')
+    age_group_value = request.form.get('age_group')
+
+    age_group_enum = None
+    for member in ConsentAgeGroup:
+        if member.value == age_group_value:
+            age_group_enum = member
+            break
+
+    user_chat_url = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first()
+    user = db.session.get(User, user_chat_url.user_id)
+    user_chat = db.session.get(Chat, user.chat_script_version.chat_id)
+    new_user = User(
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        phone=phone,
+        chat_name=user_chat.name,
+        referred_by=user.user_id
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    set_child_user_id(invite_id, new_user.user_id)
+
+    new_user_consent = UserConsent(
+        user_id=user.user_id,
+        dependent_user_id=new_user.user_id,
+        consent_age_group=age_group_enum
+    )
+    db.session.add(new_user_consent)
+    db.session.commit()
+    set_child_user_consent_id(invite_id, new_user_consent.user_consent_id)
+
+    echo_user_response = "Submitted!"
+
+    conversation_graph = get_script_from_invite_id(invite_id)
+    next_chat_sequence = process_workflow(conversation_graph, node_id, invite_id)
+    return jsonify(echo_user_response=[echo_user_response], next_sequence=next_chat_sequence)
+
+
+@app.route('/invite/<uuid:invite_id>/user_feedback_form', methods=['POST'])
+@authenticate_user_invite_url
+def create_user_feedback(invite_id):
+    node_id = request.form.get('id_node')
+    user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+
+    satisfaction, suggestions = '', ''
+    if request.form.get('satisfaction'):
+        satisfaction = request.form.get('satisfaction')
+    if request.form.get('suggestions'):
+        suggestions = request.form.get('suggestions')
+        if len(suggestions) > 2000:
+            suggestions = suggestions[:2000]
+
+    user_feedback = UserFeedback(
+        user_id=user_id,
+        satisfaction=satisfaction,
+        suggestions=suggestions
+    )
+
+    db.session.add(user_feedback)
+    db.session.commit()
+
+    conversation_graph = get_script_from_invite_id(invite_id)
+    next_node_id = conversation_graph[node_id]['child_ids'][0]
+    next_chat_sequence = process_workflow(conversation_graph, next_node_id, invite_id)
+    clean_up_after_chat(invite_id)
+    return jsonify(echo_user_response=['feedback submitted!'], next_sequence=next_chat_sequence)

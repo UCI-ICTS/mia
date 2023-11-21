@@ -1,9 +1,11 @@
+import datetime
 import json
 import os.path
 
+from datetime import datetime, timedelta
 from app import db
 from app.models.chat import Chat, ChatScriptVersion
-from app.models.user import User, UserChatUrl, UserTest, UserConsent, ConsentAgeGroup
+from app.models.user import User, UserChatUrl, UserTest, UserConsent, ConsentAgeGroup, UserFollowUp
 from app.utils.cache import (get_user_workflow, set_user_workflow, set_user_current_node_id, set_consenting_myself,
                              set_consent_node, get_consent_node, set_consenting_children, get_consenting_children)
 from sqlalchemy import func
@@ -29,7 +31,7 @@ def get_script_from_invite_id(invite_id):
 def process_workflow(conversation_graph, chat_id, invite_id):
     # check if workflow is already defined because we don't want to overwrite it
     workflow = get_user_workflow(invite_id)
-    print(f'1. Workflow: {workflow}')
+
     # we use workflows to process specific flows within the overall chat (e.g., conditional responses)
     if isinstance(workflow, list) and len(workflow) > 0:
         print('Using workflow...')
@@ -114,7 +116,8 @@ def get_next_chat_sequence(conversation_graph, node_id):
     while queue:
         current_node_id = queue.pop(0)
         node = conversation_graph.get(current_node_id)
-
+        print(node_id)
+        print(node)
         if 'end_sequence' in node['metadata']:
             end_sequence.append(node['metadata']['end_sequence'])
 
@@ -193,16 +196,12 @@ def process_user_consent(conversation_graph, current_node_id, invite_id):
                 node = conversation_graph[consent_node_id]['metadata']
                 return node['enrolling_children_node_id']
 
-            # Loop all this for each child
-                # TODO: save child user as a new user referred_by current user
-                # get new child user id and save that in the cache for reference later
-                # update consent model to include dependent_id -> new child user id
-                # create new user consent with current user and child user id (aka dependent_id)
-                # update save_consent_preferences to check cache for child_user_id possibly "enroll_child" too
-                    # follow same patter with the correct "user_consent" selected
+    elif node['workflow'] == 'decline_consent':
+        user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+        user = db.session.get(User, user_id)
 
-            # get consentee_id and user_id - something referred_by=user_id
-            # consent_complete=False, maybe also check the db cache
+        user.declined_consent = True
+        db.session.commit()
 
     return ''
 
@@ -267,6 +266,24 @@ def get_test_results(user, chat_script_version_id):
         .scalar()
     )
     return user_results
+
+
+def create_follow_up_with_user(invite_id, reason, more_info):
+    user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+    user_follow_up = UserFollowUp(
+        user_id=user_id,
+        follow_up_reason=reason,
+        follow_up_info=more_info
+    )
+    db.session.add(user_follow_up)
+    db.session.commit()
+
+
+def clean_up_after_chat(invite_id):
+    # set the chat url to expire in 24 hrs
+    user_chat_url = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first()
+    user_chat_url.expires_at = datetime.utcnow() + timedelta(hours=24)
+    db.session.commit()
 
 
 def _replace_db_script_with_json(chat_name, json_file):
