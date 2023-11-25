@@ -1,7 +1,9 @@
-from flask import render_template
-from app import app
+from flask import render_template, Blueprint
 
 
-@app.route('/admin', methods=['GET'])
+admin_bp = Blueprint('admin', __name__)
+
+
+@admin_bp.route('/', methods=['GET'])
 def admin():
     return render_template('admin.html')

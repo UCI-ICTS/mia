@@ -1,6 +1,6 @@
-from app import app, db
+from app import db, create_app
 from datetime import datetime
-from flask import request, render_template, jsonify, abort
+from flask import request, render_template, jsonify, abort, Blueprint
 from functools import wraps
 from app.models.user import User, UserChatUrl, UserConsent, ConsentAgeGroup, UserFeedback
 from app.models.chat import Chat
@@ -11,6 +11,9 @@ from app.utils.cache import (get_user_workflow, get_user_current_node_id, set_us
                              get_consenting_myself, set_child_user_id, set_child_user_consent_id,
                              get_child_user_consent_id, get_child_user_id, get_consenting_children)
 from app.utils.enumerations import *
+
+
+invite_bp = Blueprint('invite', __name__)
 
 
 def authenticate_user_invite_url(func):
@@ -36,7 +39,7 @@ def authenticate_user_invite_url(func):
     return decorated_function
 
 
-@app.route('/invite/<uuid:invite_id>/')
+@invite_bp.route('/<uuid:invite_id>/')
 @authenticate_user_invite_url
 def user_invite(invite_id):
     print(f'Starting conversation for invite id {invite_id}')
@@ -60,7 +63,7 @@ def user_invite(invite_id):
     return render_template(template_name_or_list='chat.html', next_chat_sequence=next_chat_sequence)
 
 
-@app.route('/invite/<uuid:invite_id>/user_response')
+@invite_bp.route('/<uuid:invite_id>/user_response')
 @authenticate_user_invite_url
 def user_response(invite_id):
     try:
@@ -95,7 +98,7 @@ def user_response(invite_id):
         print(f"Error: {e}")
 
 
-@app.route('/invite/<uuid:invite_id>/contact_another_adult_form', methods=['POST'])
+@invite_bp.route('/<uuid:invite_id>/contact_another_adult_form', methods=['POST'])
 @authenticate_user_invite_url
 def contact_another_adult_form(invite_id):
     first_name, last_name, phone, email = '', '', '', ''
@@ -137,7 +140,7 @@ def contact_another_adult_form(invite_id):
     return jsonify(echo_user_response=echo_user_response, next_sequence=next_chat_sequence)
 
 
-@app.route('/invite/<uuid:invite_id>/family_enrollment_form', methods=['POST'])
+@invite_bp.route('/<uuid:invite_id>/family_enrollment_form', methods=['POST'])
 @authenticate_user_invite_url
 def family_enrollment_form(invite_id):
     conversation_graph = get_script_from_invite_id(invite_id)
@@ -184,7 +187,7 @@ def family_enrollment_form(invite_id):
     return jsonify(echo_user_response=checked_checkboxes, next_sequence=next_chat_sequence)
 
 
-@app.route('/invite/<uuid:invite_id>/child_age_enrollment_form', methods=['POST'])
+@invite_bp.route('/<uuid:invite_id>/child_age_enrollment_form', methods=['POST'])
 @authenticate_user_invite_url
 def child_age_enrollment_form(invite_id):
     conversation_graph = get_script_from_invite_id(invite_id)
@@ -224,7 +227,7 @@ def child_age_enrollment_form(invite_id):
     return jsonify(echo_user_response=checked_checkboxes, next_sequence=next_chat_sequence)
 
 
-@app.route('/invite/<uuid:invite_id>/save_consent_preferences', methods=['POST'])
+@invite_bp.route('/<uuid:invite_id>/save_consent_preferences', methods=['POST'])
 @authenticate_user_invite_url
 def save_consent_preferences(invite_id):
     conversation_graph = get_script_from_invite_id(invite_id)
@@ -301,7 +304,7 @@ def save_consent_preferences(invite_id):
         return jsonify(echo_user_response=echo_user_response, next_sequence=next_chat_sequence)
 
 
-@app.route('/invite/<uuid:invite_id>/children_enrollment_form', methods=['POST'])
+@invite_bp.route('/<uuid:invite_id>/children_enrollment_form', methods=['POST'])
 @authenticate_user_invite_url
 def children_enrollment_form(invite_id):
     conversation_graph = get_script_from_invite_id(invite_id)
@@ -337,7 +340,7 @@ def children_enrollment_form(invite_id):
         return jsonify(echo_user_response=[echo_user_response], next_sequence=next_chat_sequence)
 
 
-@app.route('/invite/<uuid:invite_id>/child_consent_contact_form', methods=['POST'])
+@invite_bp.route('/<uuid:invite_id>/child_consent_contact_form', methods=['POST'])
 @authenticate_user_invite_url
 def child_consent_contact_form(invite_id):
     first_name = request.form.get('firstname')
@@ -384,7 +387,7 @@ def child_consent_contact_form(invite_id):
     return jsonify(echo_user_response=[echo_user_response], next_sequence=next_chat_sequence)
 
 
-@app.route('/invite/<uuid:invite_id>/user_feedback_form', methods=['POST'])
+@invite_bp.route('/<uuid:invite_id>/user_feedback_form', methods=['POST'])
 @authenticate_user_invite_url
 def create_user_feedback(invite_id):
     node_id = request.form.get('id_node')

@@ -1,20 +1,23 @@
 import shortuuid, json
 
-from flask import request, render_template, jsonify, redirect
-from app import app, db
+from flask import request, render_template, jsonify, redirect, Blueprint
+from app import db
 from sqlalchemy.orm.attributes import flag_modified
 from app.models.chat import Chat, ChatScriptVersion
 
 VERSION_SCRIPTS = False  # useful for debugging and testing scripts with the same user
 
 
-@app.route('/admin/scripts', methods=['GET'])
+admin_scripts_bp = Blueprint('admin_scripts', __name__)
+
+
+@admin_scripts_bp.route('/', methods=['GET'])
 def get_scripts():
     scripts = db.session.query(Chat).all()
     return render_template('scripts.html', scripts=scripts)
 
 
-@app.route('/admin/scripts/edit_script/<string:chat_id>', methods=['GET'])
+@admin_scripts_bp.route('/edit_script/<string:chat_id>', methods=['GET'])
 def edit_script(chat_id):
     script = db.session.get(Chat, chat_id)
     data = {
@@ -25,7 +28,7 @@ def edit_script(chat_id):
     return jsonify(data)
 
 
-@app.route('/admin/scripts/add_update_script', methods=['POST'])
+@admin_scripts_bp.route('/add_update_script', methods=['POST'])
 def add_update_script():
     chat_id = request.form.get('script_id', None)
     script = db.session.get(Chat, chat_id)
@@ -47,7 +50,7 @@ def add_update_script():
     return redirect('/admin/scripts')
 
 
-@app.route('/admin/scripts/delete_script/<string:chat_id>', methods=['GET'])
+@admin_scripts_bp.route('/delete_script/<string:chat_id>', methods=['GET'])
 def delete_script(chat_id):
     chat = db.session.get(Chat, chat_id)
     if chat:
@@ -56,7 +59,7 @@ def delete_script(chat_id):
     return redirect('/admin/scripts')
 
 
-@app.route('/admin/scripts/edit_script_content/<string:chat_id>', methods=['GET'])
+@admin_scripts_bp.route('/edit_script_content/<string:chat_id>', methods=['GET'])
 def edit_script_content(chat_id):
     chat = db.session.get(Chat, chat_id)
     latest_version = ChatScriptVersion.get_max_version_number(chat_id)
@@ -70,7 +73,7 @@ def edit_script_content(chat_id):
     return render_template('script_editor.html', script=script, chat_id=chat_id, script_name=chat.name)
 
 
-@app.route('/admin/scripts/edit_script_content/save_script/<string:chat_id>', methods=['POST'])
+@admin_scripts_bp.route('/edit_script_content/save_script/<string:chat_id>', methods=['POST'])
 def save_script(chat_id):
     chat = db.session.get(Chat, chat_id)
     version = ChatScriptVersion.get_max_version_number(chat_id)
@@ -98,7 +101,7 @@ def save_script(chat_id):
         return jsonify({'message': 'Error: script id not found'})
 
 
-@app.route('/admin/scripts/edit_script_content/add_message/<string:chat_id>', methods=['POST'])
+@admin_scripts_bp.route('/edit_script_content/add_message/<string:chat_id>', methods=['POST'])
 def add_message(chat_id):
     # get the most recent script
     version = ChatScriptVersion.get_max_version_number(chat_id)

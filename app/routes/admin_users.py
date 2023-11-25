@@ -1,10 +1,13 @@
-from flask import request, render_template, jsonify, redirect
-from app import app, db
+from flask import request, render_template, jsonify, redirect, Blueprint
+from app import db
 from app.models.chat import Chat, ChatScriptVersion
 from app.models.user import User
 
 
-@app.route('/admin/users', methods=['GET'])
+admin_users_bp = Blueprint('admin_users', __name__)
+
+
+@admin_users_bp.route('/', methods=['GET'])
 def admin_manage_users():
     users_and_chats = db.session.query(User, Chat.name).outerjoin(
         ChatScriptVersion, User.chat_script_version_id == ChatScriptVersion.chat_script_version_id).outerjoin(
@@ -27,7 +30,7 @@ def admin_manage_users():
     return render_template('users.html', users=user_data, chat_names=chat_names)
 
 
-@app.route('/admin/users/add_update_user', methods=['POST'])
+@admin_users_bp.route('/add_update_user', methods=['POST'])
 def add_update_user():
     user_id = request.form.get('user_id', None)
     user = db.session.get(User, user_id)
@@ -55,7 +58,7 @@ def add_update_user():
     return redirect('/admin/users')
 
 
-@app.route('/admin/users/get_user/<string:user_id>', methods=['GET'])
+@admin_users_bp.route('/get_user/<string:user_id>', methods=['GET'])
 def get_user(user_id):
     user = db.session.get(User, user_id)
     chat = db.session.get(Chat, user.chat_script_version.chat_id)
@@ -70,7 +73,7 @@ def get_user(user_id):
     return jsonify(data)
 
 
-@app.route('/admin/users/get_user_chat_url/<string:user_id>', methods=['GET'])
+@admin_users_bp.route('/get_user_chat_url/<string:user_id>', methods=['GET'])
 def get_user_chat_url(user_id):
     user = db.session.get(User, user_id)
     if user.chat_url:
@@ -86,14 +89,14 @@ def get_user_chat_url(user_id):
     return jsonify(data)
 
 
-@app.route('/admin/users/generate_new_chat_url/<string:user_id>', methods=['GET'])
+@admin_users_bp.route('/generate_new_chat_url/<string:user_id>', methods=['GET'])
 def generate_new_chat_url(user_id):
     user = db.session.get(User, user_id)
     user.regenerate_chat_url()
     return redirect('/admin/users')
 
 
-@app.route('/admin/users/delete_user/<string:user_id>', methods=['GET'])
+@admin_users_bp.route('/delete_user/<string:user_id>', methods=['GET'])
 def delete_user(user_id):
     user = User.query.get(user_id)
     if user:
