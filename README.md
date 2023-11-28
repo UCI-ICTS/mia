@@ -9,6 +9,12 @@ python3 -m venv venv
 ```python
 pip3 install -r requirements.txt
 ```
+### Run the tests
+```python
+# from the project directory
+source venv/bin/activate
+pytest
+```
 ### Run the application
 ```python 
 source venv/bin/activate
