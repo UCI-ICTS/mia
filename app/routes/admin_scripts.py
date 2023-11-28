@@ -38,15 +38,22 @@ def add_update_script():
         script.name = request.form['script_name']
         script.description = request.form['script_description']
     else:
-        # create new script
+        # create new script and then a version
         script = Chat(
             name=request.form['script_name'],
             description=request.form['script_description']
         )
         db.session.add(script)
+        db.session.commit()
 
-    # commit the session to save the changes to the database
-    db.session.commit()
+        script_version = ChatScriptVersion(
+            chat_id=script.chat_id,
+            version_number=0,
+            script={}
+        )
+        db.session.add(script_version)
+        db.session.commit()
+
     return redirect('/admin/scripts')
 
 
