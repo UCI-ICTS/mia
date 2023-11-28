@@ -1,9 +1,8 @@
+from .Factory.factory_data import INVITE_ID
 from app.utils.cache import (get_user_workflow, get_user_current_node_id, get_consenting_myself, get_consent_node,
                              get_child_user_id, get_child_user_consent_id, get_consenting_children, set_user_workflow,
                              set_user_current_node_id, set_consenting_myself, set_consent_node, set_child_user_id,
                              set_child_user_consent_id, set_consenting_children)
-
-INVITE_ID = '56a475ee-45cc-4872-8749-619ae0eb7592'
 
 
 def test_get_user_workflow_none(app):

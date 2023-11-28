@@ -34,7 +34,6 @@ def process_workflow(conversation_graph, chat_id, invite_id):
 
     # we use workflows to process specific flows within the overall chat (e.g., conditional responses)
     if isinstance(workflow, list) and len(workflow) > 0:
-        print('Using workflow...')
         if chat_id not in workflow[0]:
             chat_id = workflow[0][0]
         if chat_id in workflow[0]:
@@ -42,7 +41,6 @@ def process_workflow(conversation_graph, chat_id, invite_id):
             [workflow[0].remove(node_id) for node_id in node_ids
              if conversation_graph[chat_id]['metadata'] == conversation_graph[node_id]['metadata']]
 
-            print(f'Next chat sequence: {next_chat_sequence}')
             print(f'Workflow: {workflow}')
             # if the "current" workflow array is empty, or we're at the end of a workflow sequence remove it
             if not workflow[0] or next_chat_sequence['end_sequence']:
