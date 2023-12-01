@@ -37,15 +37,6 @@ flask db upgrade
 
 ### Interact with the database manually
 ```python
-from app.utils.utils import *
-from app import *
-app.app_context().push()
-
-# create a new user
-user = User(first_name=xxx, last_name=yyy, ...)
-db.session.add(user)
-db.session.commit()
-
-# get a chat_url for a user
-user.chat_url
+# launch an ipython session with access to all the models
+ipython -i setup_ipython.py
 ```

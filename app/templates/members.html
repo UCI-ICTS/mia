@@ -1,0 +1,123 @@
+{% extends 'admin_base.html' %} {% block content %}
+
+<div class="col s10" id="admin-main-content">
+    <h6>Members</h6>
+    <hr>
+    <a id="addUserBtn" class="waves-effect waves-light btn modal-trigger" href="#add-update-member-modal">Add New Member</a>
+    <br>
+    <br>
+    <table class="highlight centered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in members %}
+                <tr>
+                    <td>{{ member.full_name }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>{{ member.role.value }}</td>
+                    <td>{{ member.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <!-- Dropdown Trigger -->
+                        <a class='dropdown-trigger btn-small btn-flat member-options-dropdown' href='#' data-target="{{ member.member_id }}">More options &#x25BC;</a>
+                        <!-- Dropdown Structure -->
+                        <ul id="{{ member.member_id }}" class='dropdown-content'>
+                            <li><a class="edit-member-btn" href="/admin/members/get_member/{{member.member_id }}">Edit member</a></li>
+                            <li class="divider" tabindex="-1"></li>
+                            <li><a href="/admin/members/delete_member/{{ member.member_id }}">Delete member</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- The Add/Update Modal -->
+    <div id="add-update-member-modal" class="modal">
+        <div class="modal-content">
+            <h5 id="modal-title">Add New member</h5>
+            <br>
+            <form action="/admin/members/add_update_member" method="post">
+                <input type="hidden" id="member_id" name="member_id" value="">
+                <div class="input-field">
+                    <input id="full_name" name="full_name" type="text" class="validate" required autofocus>
+                    <label for="full_name">Name</label>
+                </div>
+                <div class="input-field">
+                    <input id="email" name="email" type="email" class="validate" required autofocus>
+                    <label for="email">Email</label>
+                </div>
+                <div class="input-field">
+                    <input id="password" name="password" type="password" class="validate" autofocus>
+                    <label for="password">Password</label>
+                </div>
+                <div class="input-field">
+                    <select name="member_role" id="member_role">
+                        {% for role in member_role_group %}
+                            <option value="{{ role.value }}">{{ role.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="member_role">Select Role</label>
+                </div>
+                <button id="modal-submit-btn" class="btn waves-effect waves-light" type="submit">Add member</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function(){
+        $('.modal').modal();
+        $('select').formSelect();
+        $('.dropdown-trigger').dropdown({ constrainWidth: false });
+
+        // Update member button click
+        $('.edit-member-btn').on('click', function(event) {
+            event.preventDefault();
+            $.getJSON(this.href, function(data) {
+                let memberID = data.member_id;
+                let fullName = data.full_name;
+                let email = data.email;
+                let role = data.role;
+
+                // Set values
+                $('#member_id').val(memberID);
+                $('#full_name').val(fullName);
+                $('#email').val(email);
+                // Set selected option for chat_name dropdown
+                $('#member_role').val(role);
+                $('select').formSelect();  // Refresh the Materialize select component after setting the value
+
+                // Change modal's title and submit button text
+                $('#modal-title').text('Edit member');
+                $('#modal-submit-btn').text('Update member');
+
+                // Finally, open the modal
+                $('#add-update-member-modal').modal('open');
+            });
+        });
+
+        $('#add-update-member-modal').modal({
+            onCloseEnd: function() {
+                 // Reset the modal's title and submit button text
+                $('#modal-title').text('Add New member');
+                $('#modal-submit-btn').text('Add member');
+
+                // Clear the form fields
+                $('#full_name').val('');
+                $('#email').val('');
+                $('#member_role').prop('selectedIndex', 0);  // Reset the dropdown to the first option
+            },
+        });
+        // Update the Materialize components
+        M.updateTextFields();  // To reset the floating labels
+        $('select').formSelect();  // To refresh the dropdown
+    });
+</script>
+{% endblock %}

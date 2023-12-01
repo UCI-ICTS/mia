@@ -1,6 +1,7 @@
 import shortuuid, json
 
 from flask import request, render_template, jsonify, redirect, Blueprint
+from flask_login import login_required, current_user
 from app import db
 from sqlalchemy.orm.attributes import flag_modified
 from app.models.chat import Chat, ChatScriptVersion
@@ -9,6 +10,15 @@ VERSION_SCRIPTS = False  # useful for debugging and testing scripts with the sam
 
 
 admin_scripts_bp = Blueprint('admin_scripts', __name__)
+
+
+# Use the before_request hook to apply login_required to all routes in the blueprint
+@admin_scripts_bp.before_request
+@login_required
+def before_request():
+    # This will ensure that every request to this blueprint is checked against login_required
+    if not current_user.is_authenticated:
+        return redirect('auth.login')
 
 
 @admin_scripts_bp.route('/', methods=['GET'])

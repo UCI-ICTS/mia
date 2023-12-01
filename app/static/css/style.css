@@ -257,7 +257,7 @@ input[type='tel'] {
 #admin-sidebar {
     height: 100vh;
     padding-top: 30px;
-    padding-left: 30px;
+    padding-left: 20px;
 }
 
 #admin-sidebar-title {
@@ -281,7 +281,7 @@ input[type='tel'] {
     background-color: rgba(255,255,255,0.1);
 }
 
-.user-options-dropdown:hover {
+.user-options-dropdown:hover, .member-options-dropdown:hover {
     background-color: #e3f2fd !important;
 }
 
@@ -318,4 +318,38 @@ input[type='tel'] {
     padding-top: 5px;
     padding-bottom: 5px;
     font-weight: bold;
+}
+
+/* Style adjustments for user info button */
+.user-info-btn .user-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 50px;
+    padding: 0 10px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.user-info-btn .user-btn .btn-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #f44336;
+    color: #fff;
+    border-radius: 50%;
+    margin-right: 10px;
+    font-size: 20px;
+    overflow: hidden;
+}
+
+.user-info-btn .user-btn i {
+    line-height: 50px; /* Adjust to center the icon vertically */
+}
+
+/* Additional styling to ensure the text is aligned properly */
+.user-info-btn .user-btn span + span {
+    margin-left: 10px;
 }

@@ -1,5 +1,6 @@
 # SQLAlchemy user model
-import uuid, enum
+import enum
+import uuid
 
 from app import db
 from app.models.chat import Chat, ChatScriptVersion

@@ -1,10 +1,19 @@
 from flask import request, render_template, jsonify, redirect, Blueprint
+from flask_login import login_required, current_user
 from app import db
 from app.models.chat import Chat, ChatScriptVersion
 from app.models.user import User
 
 
 admin_users_bp = Blueprint('admin_users', __name__)
+
+
+@admin_users_bp.before_request
+@login_required
+def before_request():
+    # This will ensure that every request to this blueprint is checked against login_required
+    if not current_user.is_authenticated:
+        return redirect('auth.login')
 
 
 @admin_users_bp.route('/', methods=['GET'])
@@ -51,10 +60,7 @@ def add_update_user():
             chat_name=request.form.get('chat_name', None)
         )
         db.session.add(user)
-
-    # Commit the session to save changes to the database
     db.session.commit()
-
     return redirect('/admin/users')
 
 
@@ -98,7 +104,7 @@ def generate_new_chat_url(user_id):
 
 @admin_users_bp.route('/delete_user/<string:user_id>', methods=['GET'])
 def delete_user(user_id):
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if user:
         db.session.delete(user)
         db.session.commit()

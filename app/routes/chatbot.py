@@ -1,4 +1,4 @@
-from app import db, create_app
+from app import db
 from datetime import datetime
 from flask import request, render_template, jsonify, abort, Blueprint
 from functools import wraps
