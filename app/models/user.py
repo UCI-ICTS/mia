@@ -128,6 +128,7 @@ class UserFollowUp(db.Model):
     follow_up_reason = db.Column(db.String(200), default='', nullable=False)
     follow_up_info = db.Column(db.String(200), default='', nullable=False)
     resolved = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class UserFeedback(db.Model):
@@ -135,6 +136,7 @@ class UserFeedback(db.Model):
     user_id = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=False)
     satisfaction = db.Column(db.String(25), nullable=True)
     suggestions = db.Column(db.String(2000), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 # Example queries

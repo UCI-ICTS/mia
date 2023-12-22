@@ -22,6 +22,7 @@ def create_app(config_class=Config):
     from app.routes.admin_users import admin_users_bp
     from app.routes.authentication import auth_bp
     from app.routes.members import member_users_bp
+    from app.routes.admin_follow_up import admin_follow_up_bp
 
     app.register_blueprint(invite_bp, url_prefix='/invite')
     app.register_blueprint(admin_bp, url_prefix='/admin')
@@ -29,6 +30,7 @@ def create_app(config_class=Config):
     app.register_blueprint(admin_users_bp, url_prefix='/admin/users')
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(member_users_bp, url_prefix='/admin/members')
+    app.register_blueprint(admin_follow_up_bp, url_prefix='/admin/follow_up')
 
     db.init_app(app)
     migrate.init_app(app, db)
