@@ -2359,31 +2359,9 @@
     "nVUpS6V": {
         "type": "bot",
         "messages": [
-            "So you've had some experience. That's good!",
-            "Do you remember what the results were?"
-        ],
+            "So you've had some experience. That's good!"],
         "parent_ids": [
             "9cuqxwT"
-        ],
-        "child_ids": [
-            "hAJaHbM"
-        ],
-        "attachment": null,
-        "html_type": "button",
-        "html_content": null,
-        "metadata": {
-            "workflow": "",
-            "end_sequence": false
-        }
-    },
-    "hAJaHbM": {
-        "type": "user",
-        "messages": [
-            "FORM",
-            "The results found something / the results didn't find anything / I don't remember"
-        ],
-        "parent_ids": [
-            "nVUpS6V"
         ],
         "child_ids": [
             "kYjpLjd"
@@ -2403,7 +2381,7 @@
             "If genetic testing didn\u2019t find an answer before, our research might be able to find something new"
         ],
         "parent_ids": [
-            "hAJaHbM"
+            "nVUpS6V"
         ],
         "child_ids": [
             "FiRFHGF"
