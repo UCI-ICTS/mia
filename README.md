@@ -1,5 +1,6 @@
 
 ## Install & Setup
+* These instructions are for MacOS (Windows is possible but slightly different)
 * Download and install PostgreSQL (v16)
   * Configure PostgreSQL settings and create a database called `mia_app` and `test_db` 
   * You might want a database explorer tool like pgAdmin 4
@@ -8,6 +9,9 @@
 ```python
 # create the virtual environment
 python3 -m venv venv
+
+# activate virtual environment
+source venv/bin/activate
 
 # pip install the requirements
 pip3 install -r requirements.txt
