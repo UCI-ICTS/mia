@@ -5,6 +5,15 @@
   * Configure PostgreSQL settings and create a database called `mia_app` and `test_db` 
   * You might want a database explorer tool like pgAdmin 4
 * git clone the repo
+  * Create a `.miaenv` file in the repo directory 
+  * The file should contain the following information:
+  ```python
+  FLASK_CONFIG=local or DevConfig
+  SECRET_KEY=mysecretkey
+  DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mia_app
+  TEST_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db
+  AWS_DATABASE_URL=postgresql://username:password@rds-instance:5432/mia_app
+  ```
 * create the virtual environment
 ```python
 # create the virtual environment
@@ -16,8 +25,12 @@ source venv/bin/activate
 # pip install the requirements
 pip3 install -r requirements.txt
 
-# initialize the database
+# skip if you have an existing migration folder
+# initialize the database (only do this if you're starting from scratch)
 flask db init
+
+# update the database
+flask db upgrade
 ```
 Next create an admin user
 ```python
