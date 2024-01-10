@@ -2,7 +2,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from config import Config, DevConfig
+from config import Config, DevConfig, TestConfig
 
 
 db = SQLAlchemy()
@@ -15,6 +15,8 @@ def create_app(config_type='Config'):
 
     if config_type == 'DevConfig':
         app.config.from_object(DevConfig)
+    elif config_type == 'TestConfig':
+        app.config.from_object(TestConfig)
     else:
         app.config.from_object(Config)
 

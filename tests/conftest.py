@@ -1,12 +1,11 @@
 import pytest
 from sqlalchemy.orm import scoped_session, sessionmaker
 from app import create_app, db
-from config import TestConfig
 
 
 @pytest.fixture(scope='session')
 def app():
-    app = create_app(TestConfig)
+    app = create_app('TestConfig')
     with app.app_context():
         yield app
 
