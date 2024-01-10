@@ -2,7 +2,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from config import Config
+from config import Config, DevConfig
 
 
 db = SQLAlchemy()
@@ -10,9 +10,13 @@ migrate = Migrate()
 login_manager = LoginManager()
 
 
-def create_app(config_class=Config):
+def create_app(config_type='Config'):
     app = Flask(__name__)
-    app.config.from_object(config_class)
+
+    if config_type == 'DevConfig':
+        app.config.from_object(DevConfig)
+    else:
+        app.config.from_object(Config)
 
     from app.auth import load_user
 

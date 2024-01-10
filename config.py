@@ -1,17 +1,23 @@
 import os
+from dotenv import load_dotenv
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+dotenv_path = os.path.join(basedir, '.miaenv')
+load_dotenv(dotenv_path)
 
 
-# change this to dotenv
 class Config(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-    #     'sqlite:///' + os.path.join(basedir, 'app.db')
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/mia_app'
+    SECRET_KEY = os.getenv('SECRET_KEY', 'you-will-never-guess')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/mia_app')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
+class DevConfig(Config):
+    # Inherits from Config, can override or add any AWS specific settings
+    SQLALCHEMY_DATABASE_URI = os.getenv('AWS_DATABASE_URL')
+
+
 class TestConfig(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/test_db'
+    SECRET_KEY = os.getenv('SECRET_KEY', 'you-will-never-guess')
+    SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/test_db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

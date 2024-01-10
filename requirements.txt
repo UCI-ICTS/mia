@@ -7,3 +7,4 @@ python-dotenv
 shortuuid
 pytest
 ipython
+python-dotenv
