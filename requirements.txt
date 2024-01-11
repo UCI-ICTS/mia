@@ -8,3 +8,4 @@ shortuuid
 pytest
 ipython
 python-dotenv
+gunicorn
