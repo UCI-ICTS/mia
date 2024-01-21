@@ -384,13 +384,14 @@
         "type": "bot",
         "messages": [
             "Sure thing.",
-            "Someone from our study team will contact you directly by phone or email within the next 2-3 weeks.",
-            "If you have questions now, you can contact us at PMGRC@childrensnational.org"
+            "Someone from our study team will contact you directly by phone or email within the next 2-3 weeks."
         ],
         "parent_ids": [
             "DdxFUae"
         ],
-        "child_ids": [],
+        "child_ids": [
+            "nJgsH7y"
+        ],
         "attachment": null,
         "html_type": "button",
         "html_content": null,

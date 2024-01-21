@@ -3,6 +3,7 @@ from app.models.members import *
 from app.models.chat import *
 from app.models.user import *
 from app.utils.utils import *
+from app.utils.cache import *
 from app.utils.utils import _replace_db_script_with_json
 
 config_type = os.getenv('FLASK_CONFIG', 'Config')

@@ -42,6 +42,36 @@ hr {
     height: 85%;
     max-height: 50px;
 }
+#splash-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+#splash-content {
+  margin-top: -30vh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 500px;
+  width: 100%;
+  padding: 24px;
+  flex-grow: 1;
+  box-sizing: border-box;
+}
+
+#splash-logo {
+  max-height: 55px;
+  margin-bottom: 50px;
+}
+
+#splash-hipaa {
+  max-height: 70px;
+}
 
 #chat-window {
   height: calc(100vh - 67px - 220px);

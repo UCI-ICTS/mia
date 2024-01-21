@@ -43,23 +43,24 @@ def authenticate_user_invite_url(func):
 @authenticate_user_invite_url
 def user_invite(invite_id):
     print(f'Starting conversation for invite id {invite_id}')
-    conversation_graph = get_script_from_invite_id(invite_id)
 
+    current_node_id = get_user_current_node_id(invite_id)
+    if current_node_id is None:
+        next_chat_sequence = {
+            'user_responses': [('start', 'Start')],
+            'user_html_type': 'button'
+        }
+        return render_template('splash_chat.html', next_chat_sequence=next_chat_sequence)
+
+    conversation_graph = get_script_from_invite_id(invite_id)
     workflow = get_user_workflow(invite_id)
+
     if workflow is None:
         workflow = []
         set_user_workflow(invite_id, workflow)
+
     current_node_id = get_user_current_node_id(invite_id)
-    if current_node_id is None:
-        current_node_id = 'start'
-
-    if current_node_id == 'start':
-        start_node_id = get_chat_start_id(conversation_graph)
-    else:
-        start_node_id = current_node_id
-
-    set_user_current_node_id(invite_id, start_node_id)
-    next_chat_sequence = process_workflow(conversation_graph, start_node_id, invite_id)
+    next_chat_sequence = process_workflow(conversation_graph, current_node_id, invite_id)
     return render_template(template_name_or_list='chat.html', next_chat_sequence=next_chat_sequence)
 
 
@@ -69,31 +70,38 @@ def user_response(invite_id):
     try:
         conversation_graph = get_script_from_invite_id(invite_id)
         user_response_node_id = request.args.get('id')
-        echo_user_response = get_response(conversation_graph, user_response_node_id)
-        node = conversation_graph[user_response_node_id]['metadata']
+        print('in user response...')
+        print(user_response_node_id)
+        if user_response_node_id == 'start':
+            start_node_id = get_chat_start_id(conversation_graph)
+            set_user_current_node_id(invite_id, start_node_id)
+            return jsonify({'reload': True})
+        else:
+            echo_user_response = get_response(conversation_graph, user_response_node_id)
+            node = conversation_graph[user_response_node_id]['metadata']
 
-        # we might override the next node based on various chat specific logic
-        next_node_id = ''
+            # we might override the next node based on various chat specific logic
+            next_node_id = ''
 
-        if node['workflow'] == 'test_user_understanding':
-            next_node_id = process_test_question(conversation_graph, user_response_node_id, invite_id)
-        elif node['workflow'] == 'start_consent':
-            next_node_id = process_user_consent(conversation_graph, user_response_node_id, invite_id)
-        elif node['workflow'] == 'follow-up':
-            reason = node['follow_up_reason']
-            more_info = node['follow_up_info']
-            create_follow_up_with_user(invite_id, reason, more_info)
-        elif node['workflow'] == 'decline_consent':
-            next_node_id = process_user_consent(conversation_graph, user_response_node_id, invite_id)
+            if node['workflow'] == 'test_user_understanding':
+                next_node_id = process_test_question(conversation_graph, user_response_node_id, invite_id)
+            elif node['workflow'] == 'start_consent':
+                next_node_id = process_user_consent(conversation_graph, user_response_node_id, invite_id)
+            elif node['workflow'] == 'follow-up':
+                reason = node['follow_up_reason']
+                more_info = node['follow_up_info']
+                create_follow_up_with_user(invite_id, reason, more_info)
+            elif node['workflow'] == 'decline_consent':
+                next_node_id = process_user_consent(conversation_graph, user_response_node_id, invite_id)
 
-        if next_node_id == '':
-            if conversation_graph[user_response_node_id]['child_ids']:
-                next_node_id = conversation_graph[user_response_node_id]['child_ids'][0]
-            else:
-                next_node_id = 'terminal_node'
+            if next_node_id == '':
+                if conversation_graph[user_response_node_id]['child_ids']:
+                    next_node_id = conversation_graph[user_response_node_id]['child_ids'][0]
+                else:
+                    next_node_id = 'terminal_node'
 
-        next_chat_sequence = process_workflow(conversation_graph, next_node_id, invite_id)
-        return jsonify(echo_user_response=echo_user_response, next_sequence=next_chat_sequence)
+            next_chat_sequence = process_workflow(conversation_graph, next_node_id, invite_id)
+            return jsonify(echo_user_response=echo_user_response, next_sequence=next_chat_sequence)
     except Exception as e:
         print(f"Error: {e}")
 

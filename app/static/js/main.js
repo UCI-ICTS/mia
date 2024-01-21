@@ -32,12 +32,15 @@ var ChatApp = {
     onButtonClick: function(event) {
         event.preventDefault();
         var that = this; // store reference to the ChatApp object
-        var chatWindow = document.getElementById("chat-window");
         var uuid = that.getInviteUuid();
         $.getJSON(this.SCRIPT_ROOT + '/invite/' + uuid + '/user_response', {
             id: event.target.id // event object to access the button clicked
         }, function(data) {
-            that.processChatMessages(data)
+            if (data.reload == true) {
+                window.location.reload();
+            } else {
+                that.processChatMessages(data);
+            }
         });
     },
     onStoreSamples: function() {
