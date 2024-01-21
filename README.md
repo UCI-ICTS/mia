@@ -37,7 +37,7 @@ Next create an admin user
 # launch ipython and create an admin login account
 ipython -i setup_ipython.py
 
-In [1]: member = Members(full_name='John Smith', email='jsmith@hs.uci.edu', password='#SomethingSuperSecure')
+In [1]: member = Members(full_name='John Smith', email='jsmith@hs.uci.edu', role=MemberRoleGroup.ADMIN, password='#SomethingSuperSecure')
 
 In [2]: db.session.add(member)
 
