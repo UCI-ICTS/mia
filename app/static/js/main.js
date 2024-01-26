@@ -92,7 +92,6 @@ var ChatApp = {
         var uuid = that.getInviteUuid();
         var formData = $(event.target).serialize();
         $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/family_enrollment_form', formData, function(data) {
-            data.echo_user_response = data.echo_user_response.join(', ');
             that.processChatMessages(data)
         });
     },
@@ -102,7 +101,6 @@ var ChatApp = {
         var uuid = that.getInviteUuid();
         var formData = $(event.target).serialize();
         $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/child_age_enrollment_form', formData, function(data) {
-            data.echo_user_response = data.echo_user_response.join(', ');
             that.processChatMessages(data)
         });
     },
@@ -112,7 +110,6 @@ var ChatApp = {
         var uuid = that.getInviteUuid();
         var formData = $(event.target).serialize();
         $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/save_consent_preferences', formData, function(data) {
-            data.echo_user_response = data.echo_user_response.join(', ');
             that.processChatMessages(data)
         });
     },
@@ -122,7 +119,6 @@ var ChatApp = {
         var uuid = that.getInviteUuid();
         var formData = $(event.target).serialize();
         $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/children_enrollment_form', formData, function(data) {
-            data.echo_user_response = data.echo_user_response.join(', ');
             that.processChatMessages(data)
         });
     },
@@ -132,7 +128,6 @@ var ChatApp = {
         var uuid = that.getInviteUuid();
         var formData = $(event.target).serialize();
         $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/child_consent_contact_form', formData, function(data) {
-            data.echo_user_response = data.echo_user_response.join(', ');
             that.processChatMessages(data)
         });
     },
@@ -142,7 +137,6 @@ var ChatApp = {
         var uuid = that.getInviteUuid();
         var formData = $(event.target).serialize();
         $.post(this.SCRIPT_ROOT + '/invite/' + uuid + '/user_feedback_form', formData, function(data) {
-            data.echo_user_response = data.echo_user_response.join(', ');
             that.processChatMessages(data)
         });
     },
@@ -185,19 +179,22 @@ var ChatApp = {
         });
     },
     processChatMessages: function(data) {
-        // --- echo the response from the user in the chat window
-        var new_user_content = `
-            <div class="message-row user">
-                <div class="message-content user">
-                    <span>${data.echo_user_response}</span>
-                </div>
-            </div>`;
         var chat = document.getElementById("chat-window");
-        chat.innerHTML += new_user_content;
-        this.smoothScrollToBottom();
+
+        // --- echo the response from the user in the chat window
+        if (data.echo_user_response) {
+            var new_user_content = `
+                <div class="message-row user">
+                    <div class="message-content user">
+                        <span>${data.echo_user_response}</span>
+                    </div>
+                </div>`;
+            chat.innerHTML += new_user_content;
+            this.smoothScrollToBottom();
+        }
 
         // --- return the next chatbot message
-        var botMessages = data.next_sequence.bot_messages;
+        var botMessages = data.next_chat_sequence.bot_messages;
         for (var i = 0; i < botMessages.length; i++) {
             var new_bot_content = `
                 <div class="message-row bot">
@@ -208,9 +205,9 @@ var ChatApp = {
             chat.innerHTML += new_bot_content;
             this.smoothScrollToBottom();
         }
-        if (data.next_sequence.bot_html_type == 'image') {
-            var imagePath = SCRIPT_ROOT + "/static/images/" + data.next_sequence.bot_html_content;
-            var imgElement = `<img src="${imagePath}" alt="${data.next_sequence.bot_html_content}">`;
+        if (data.next_chat_sequence.bot_html_type == 'image') {
+            var imagePath = SCRIPT_ROOT + "/static/images/" + data.next_chat_sequence.bot_html_content;
+            var imgElement = `<img src="${imagePath}" alt="${data.next_chat_sequence.bot_html_content}">`;
 
             var new_bot_image_content = `
                 <div class="message-row bot">
@@ -221,8 +218,8 @@ var ChatApp = {
             chat.innerHTML += new_bot_image_content;
             this.smoothScrollToBottom();
         }
-        if (data.next_sequence.bot_html_type == 'video') {
-            var videoElement = `<iframe width="100%" height="315" src="${data.next_sequence.bot_html_content}" frameborder="0" allowfullscreen></iframe>`;
+        if (data.next_chat_sequence.bot_html_type == 'video') {
+            var videoElement = `<iframe width="100%" height="315" src="${data.next_chat_sequence.bot_html_content}" frameborder="0" allowfullscreen></iframe>`;
 
             var new_bot_video_content = `
                 <div class="message-row bot">
@@ -235,14 +232,15 @@ var ChatApp = {
         }
 
         // --- configure form or buttons for the next user response
-        if (data.next_sequence.user_html_type == 'form') {
+        if (data.next_chat_sequence.user_html_type == 'form') {
             // --- set the form for the next user response
             var responseContainer = document.querySelector('.user-response-button-group');
-            responseContainer.innerHTML = data.next_sequence.user_responses[0][1];
-        } else {
+            responseContainer.innerHTML = data.next_chat_sequence.user_responses[0][1];
+        }
+        if (data.next_chat_sequence.user_html_type == 'button') {
             // --- set the buttons for the next user response
             var buttonDiv = document.getElementById("user-response-button-group");
-            var userResponses = data.next_sequence.user_responses;
+            var userResponses = data.next_chat_sequence.user_responses;
             buttonDiv.innerHTML = "";
 
             for (var i = 0; i < userResponses.length; i++) {

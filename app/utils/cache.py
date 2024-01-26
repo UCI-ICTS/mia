@@ -34,16 +34,6 @@ def set_user_workflow(invite_id, workflow):
     _set_cache_value(key, json.dumps(workflow))
 
 
-def get_user_current_node_id(invite_id):
-    key = _build_key(invite_id, 'current_node_id')
-    return _get_cache_value(key)
-
-
-def set_user_current_node_id(invite_id, current_node_id):
-    key = _build_key(invite_id, 'current_node_id')
-    _set_cache_value(key, current_node_id)
-
-
 def set_consenting_myself(invite_id, consenting=True):
     key = _build_key(invite_id, 'user_consenting')
     _set_cache_value(key, consenting)
@@ -96,3 +86,14 @@ def get_child_user_consent_id(invite_id):
 def set_child_user_consent_id(invite_id, child_user_consent_id):
     key = _build_key(invite_id, 'child_user_consent_id')
     _set_cache_value(key, child_user_consent_id)
+
+
+def get_user_chat_history(invite_id):
+    key = _build_key(invite_id, 'user_chat_history')
+    value = _get_cache_value(key)
+    return json.loads(value) if value else []
+
+
+def set_user_chat_history(invite_id, user_chat_history):
+    key = _build_key(invite_id, 'user_chat_history')
+    _set_cache_value(key, json.dumps(user_chat_history))

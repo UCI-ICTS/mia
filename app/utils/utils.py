@@ -28,7 +28,9 @@ def get_script_from_invite_id(invite_id):
         raise Exception(f'ERROR: script not found for {invite_id}')
 
 
-def process_workflow(conversation_graph, chat_id, invite_id):
+def process_workflow(chat_id, invite_id):
+    conversation_graph = get_script_from_invite_id(invite_id)
+
     # check if workflow is already defined because we don't want to overwrite it
     workflow = get_user_workflow(invite_id)
 
@@ -59,7 +61,9 @@ def process_workflow(conversation_graph, chat_id, invite_id):
     return next_chat_sequence
 
 
-def generate_workflow(conversation_graph, start_node_id, user_option_node_ids, invite_id):
+def generate_workflow(start_node_id, user_option_node_ids, invite_id):
+    conversation_graph = get_script_from_invite_id(invite_id)
+
     # generate a sub workflow to dynamically process user responses
     workflow = get_user_workflow(invite_id)
 
@@ -114,8 +118,6 @@ def get_next_chat_sequence(conversation_graph, node_id):
     while queue:
         current_node_id = queue.pop(0)
         node = conversation_graph.get(current_node_id)
-        print(node_id)
-        print(node)
         if 'end_sequence' in node['metadata']:
             end_sequence.append(node['metadata']['end_sequence'])
 
