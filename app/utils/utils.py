@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from app import db
 from app.models.chat import Chat, ChatScriptVersion
 from app.models.user import User, UserChatUrl, UserTest, UserConsent, ConsentAgeGroup, UserFollowUp
-from app.utils.cache import (get_user_workflow, set_user_workflow, set_user_current_node_id, set_consenting_myself,
+from app.utils.cache import (get_user_workflow, set_user_workflow, set_consenting_myself,
                              set_consent_node, get_consent_node, set_consenting_children, get_consenting_children)
 from sqlalchemy import func
 from sqlalchemy.orm.attributes import flag_modified
