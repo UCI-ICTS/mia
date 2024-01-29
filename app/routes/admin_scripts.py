@@ -90,6 +90,33 @@ def edit_script_content(chat_id):
     return render_template('script_editor.html', script=script, chat_id=chat_id, script_name=chat.name)
 
 
+def preprocess_data(data):
+    # Create a mapping of parent IDs to their child nodes
+    parent_to_children = {}
+    for key, value in data.items():
+        for parent_id in value['parent_ids']:
+            if parent_id not in parent_to_children:
+                parent_to_children[parent_id] = []
+            parent_to_children[parent_id].append(key)
+    return parent_to_children
+
+
+@admin_scripts_bp.route('/view_script_content/<string:chat_id>', methods=['GET'])
+def view_script_content(chat_id):
+    chat = db.session.get(Chat, chat_id)
+    latest_version = ChatScriptVersion.get_max_version_number(chat_id)
+    script_version = ChatScriptVersion.query.filter_by(chat_id=chat.chat_id, version_number=latest_version).first()
+
+    if script_version:
+        script = script_version.script
+    else:
+        script = {}
+
+    parent_to_children = preprocess_data(script)
+    return render_template('view_script.html', script=script, script_name=chat.name,
+                           parent_to_children=parent_to_children)
+
+
 @admin_scripts_bp.route('/edit_script_content/save_script/<string:chat_id>', methods=['POST'])
 def save_script(chat_id):
     chat = db.session.get(Chat, chat_id)

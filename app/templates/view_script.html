@@ -1,0 +1,47 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+    <style>
+        .message-box {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .bot-message {
+            background-color: #e0f2f1; /* Light teal color for bot messages */
+        }
+        .user-message {
+            background-color: #e3f2fd; /* Light blue color for user messages */
+        }
+    </style>
+
+    <div class="col s10" id="admin-main-content">
+        <h6>View Script - <b>{{ script_name }}</b></h6>
+        <hr>
+        <div class="container">
+            {% for key, value in script.items() %}
+                <!-- Parent Node -->
+                <div class="row">
+                    <div class="col s12">
+                        {% if value.type == 'bot' %}
+                            <div class="message-box bot-message">
+                                {% if value.messages %}
+                                    <p><strong>Bot:</strong> {{ value.messages | join(' ') | safe }}</p>
+                                {% elif value.html_content %}
+                                    <div>{{ value.html_content | safe }}</div>
+                                {% endif %}
+                            </div>
+                        {% elif value.type == 'user' %}
+                            <div class="message-box user-message">
+                                {% if value.messages %}
+                                    <p><strong>User:</strong> {{ value.messages | join(' ') }}</p>
+                                {% elif value.html_content %}
+                                    <div>{{ value.html_content | safe }}</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
