@@ -53,11 +53,6 @@ def process_workflow(chat_id, invite_id):
     else:
         next_chat_sequence, node_ids = get_next_chat_sequence(conversation_graph, chat_id)
 
-        if next_chat_sequence['user_html_type'] == 'button':
-            # this hack prevents the conversation from restarting at a form, video, or image input. this is necessary
-            # because the rendering template assumes you start with buttons. we use javascript to render other html
-            # elements dynamically with the browser.
-            set_user_current_node_id(invite_id, node_ids[0])
     return next_chat_sequence
 
 
