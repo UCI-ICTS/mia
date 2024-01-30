@@ -3,7 +3,7 @@
         "type": "bot",
         "messages": [
             "I\u2019m Mia, your automated Medical Information Assistant from the University of California, Irvine (UCI). I'm inviting you to participate in the <b>Pediatric Mendelian Genomics Research Center (PMGRC)</b> research study.",
-            "I\u2019m here to tell you all about the PMGRC study and help you decide if you want to participate."
+            "I\u2019m here to tell you all about the PMGRC study and help you decide if you want to participate"
         ],
         "parent_ids": [
             "start"
@@ -41,8 +41,8 @@
     "de5ZDgm": {
         "type": "bot",
         "messages": [
-            "I\u2019m going to provide details about the study like why we are doing this research, what you will be expected to do if you enroll, and possible risks and benefits.",
-            "My job is to give you plenty of information to help you choose whether or not to participate."
+            "I\u2019m going to provide details about the study like why we are doing this research, what you will be expected to do if you enroll, and possible risks and benefits",
+            "My job is to give you plenty of information to help you choose whether or not to participate"
         ],
         "parent_ids": [
             "m84n5MM"
@@ -80,10 +80,8 @@
     "oS9m8Ua": {
         "type": "bot",
         "messages": [
-            "This chat usually takes about 30 minutes to go through before you can sign the consent form to enroll at the end.",
-            "You can always pause and come back at a later point.",
-            "At any time during our conversation, you can click the menu button (\u2630) at the top left to find chat options.",
-            "If you want to change any of your responses, just click on the response or go to the menu."
+            "This chat usually takes about 30 minutes to go through before you can sign the consent form to enroll at the end",
+            "This link will expire two weeks after it was sent, but you can always pause and come back at a later point during this time"
         ],
         "parent_ids": [
             "PJwkbgi"
@@ -141,9 +139,9 @@
     "a6JKRdh": {
         "type": "bot",
         "messages": [
-            "All of the information I will share is also described in more detail in our consent document.",
-            "You can only sign the consent form electronically after reviewing it with me or with a study team member.",
-            "You can access an example of the consent document by clicking this <a href=\"https://acrobat.adobe.com/link/review?uri=urn%3Aaaid%3Ascds%3AUS%3Ac2c31666-e549-4415-8bf1-c0d1b822242b\">link</a>, but please remember to return here to complete our chat."
+            "All of the information I will share is also described in more detail in our consent document",
+            "You can only sign the consent form electronically after reviewing it with me or with a study team member",
+            "You can access an example of the consent document by clicking this <a href=\"https://acrobat.adobe.com/link/review?uri=urn%3Aaaid%3Ascds%3AUS%3Ac2c31666-e549-4415-8bf1-c0d1b822242b\">link</a>, but please remember to return here to complete our chat"
         ],
         "parent_ids": [
             "iLpXdAS",
@@ -182,7 +180,7 @@
     "XcPGk57": {
         "type": "bot",
         "messages": [
-            "Yes, you can come back here to access the link later, and I can also provide the link again at the end of the chat."
+            "Yes, you can come back here to access the link later, and I can also provide the link again at the end of the chat"
         ],
         "parent_ids": [
             "WwRBQik"
@@ -220,7 +218,7 @@
     "ZjTLunQ": {
         "type": "bot",
         "messages": [
-            "Whether or not you choose to participate in the study, the team at Children's National may review your interactions with me, Mia, to better understand how people interact with me and how I can improve."
+            "Whether or not you choose to participate in the study, the team at UCI may review your interactions with me, Mia, to better understand how people interact with me and how I can improve"
         ],
         "parent_ids": [
             "JPVkFCr"
@@ -342,7 +340,7 @@
             "Okay!",
             "Let\u2019s do this!",
             "Please be sure to take notes and write down any questions you have as we go through this chat, as you will have the option to talk to a study team member at the end. \u270f\ufe0f",
-            "If you have any questions that are not answered during this chat, we will put you in touch with a team member to discuss them further."
+            "If you have any questions that are not answered during this chat, we will put you in touch with a team member to discuss them further"
         ],
         "parent_ids": [
             "9DgwYTz",
@@ -362,9 +360,9 @@
     "jbs93Hc": {
         "type": "bot",
         "messages": [
-            "Okay! No problem.",
-            "You can use the link in your text message to come back at any time.",
-            "Let me know when you are ready to chat."
+            "Okay! No problem",
+            "You can use the link in your text message to come back at any time",
+            "Let me know when you are ready to chat"
         ],
         "parent_ids": [
             "BxD4wrq"
@@ -383,8 +381,8 @@
     "nqDwZrd": {
         "type": "bot",
         "messages": [
-            "Sure thing.",
-            "Someone from our study team will contact you directly by phone or email within the next 2-3 weeks."
+            "Sure thing",
+            "Someone from our study team will contact you directly by phone or email within the next 2-3 weeks"
         ],
         "parent_ids": [
             "DdxFUae"
@@ -441,9 +439,9 @@
     "FADCStr": {
         "type": "bot",
         "messages": [
-            "The goal of this study is to help identify the causes of genetic health conditions.",
-            "You are being invited to join this study because you or someone in your family has a genetic health condition (or a health issue that might be related to genes).",
-            "We often enroll multiple family members (people related by blood) in the study."
+            "The goal of this study is to help identify the causes of genetic health conditions",
+            "You are being invited to join this study because you or someone in your family has a genetic health condition (or a health issue that might be related to genes)",
+            "We often enroll multiple family members (people related by blood) in the study"
         ],
         "parent_ids": [
             "M4CaAt5"
@@ -501,9 +499,9 @@
     "QT8Mx3R": {
         "type": "bot",
         "messages": [
-            "Having genetic data from blood relatives can help us do a better job of interpreting genetic findings.",
-            "For example, if we find a genetic change in a person who has a health issue, it is important to know if this genetic change was passed down through the family.",
-            "So, having data from blood-related family members helps us interpret what we find."
+            "Having genetic data from blood relatives can help us do a better job of interpreting genetic findings",
+            "For example, if we find a genetic change in a person who has a health issue, it is important to know if this genetic change was passed down through the family",
+            "So, having data from blood-related family members helps us interpret what we find"
         ],
         "parent_ids": [
             "Bkyp7hD"
@@ -581,8 +579,8 @@
     "E3C8G5Y": {
         "type": "bot",
         "messages": [
-            "Each person who enrolls in the study will have to go through this study consent process.",
-            "You can enroll yourself and/or your children in this chat today, and we can send a separate chat link to any other adults who want to enroll."
+            "Each person who enrolls in the study will have to go through this study consent process",
+            "You can enroll yourself and/or your children in this chat today, and we can send a separate chat link to any other adults who want to enroll"
         ],
         "parent_ids": [
             "dM9iaFR"
@@ -620,10 +618,10 @@
     "CPf9CCz": {
         "type": "bot",
         "messages": [
-            "For children who are 6 years old or younger, a parent or guardian can complete the consent on their behalf.",
-            "For children ages 7 to 17, (or for adults who are under another person\u2019s legal guardianship), a parent or guardian must complete the official consent.",
-            "We will also need to talk directly to the child (if they are capable) to get their agreement about participating.",
-            "People who are age 18 or older need to go through the consent process themselves (except those who are under another person\u2019s legal guardianship)."
+            "For children who are 6 years old or younger, a parent or guardian can complete the consent on their behalf",
+            "For children ages 7 to 17, (or for adults who are under another person\u2019s legal guardianship), a parent or guardian must complete the official consent",
+            "We will also need to talk directly to the child (if they are capable) to get their agreement about participating",
+            "People who are age 18 or older need to go through the consent process themselves (except those who are under another person\u2019s legal guardianship)"
         ],
         "parent_ids": [
             "C8baGp6"
@@ -759,8 +757,8 @@
     "axvGUBt": {
         "type": "bot",
         "messages": [
-            "If your child\u2019s other parent or another adult family member is considering enrolling, they should also complete this consent chat themselves.",
-            "If they have not already received a link to this consent chat, I can send them one now with just a few pieces of information."
+            "If your child\u2019s other parent or another adult family member is considering enrolling, they should also complete this consent chat themselves",
+            "If they have not already received a link to this consent chat, I can send them one now with just a few pieces of information"
         ],
         "parent_ids": [
             "b5nYNf6"
@@ -994,8 +992,8 @@
     "UiJSrG3": {
         "type": "bot",
         "messages": [
-            "Thank you! We\u2019ll contact them with the information you've provided.",
-            "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>PMGRC@childrensnational.org</b>."
+            "Thank you! We\u2019ll contact them with the information you've provided",
+            "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>PMGRC@childrensnational.org</b>"
         ],
         "parent_ids": [
             "gWJxSfh"
@@ -2679,7 +2677,7 @@
     "HUAk3zG": {
         "type": "user",
         "messages": [
-            "What if I am a student or employee at Children's National?"
+            "What if I am a student or employee at UCI?"
         ],
         "parent_ids": [
             "NHPvQRe"
@@ -2718,7 +2716,7 @@
         "type": "bot",
         "messages": [
             "You can contact the study team at any time by emailing PMGRC@childrensnational.org.",
-            "To withdraw from the study, you must send a written letter to the Principal Investigator (Seth Berger) to inform him of your decision"
+            "To withdraw from the study, you must send a written letter to the Principal Investigator (Eric Vilain) to inform him of your decision"
         ],
         "parent_ids": [
             "Ua23Tdf"
@@ -2757,7 +2755,7 @@
     "8BCaaXA": {
         "type": "user",
         "messages": [
-            "What if I am a student or employee at Children's National?"
+            "What if I am a student or employee at UCI?"
         ],
         "parent_ids": [
             "aJ5R3Ko"
@@ -2776,7 +2774,7 @@
     "Gufd5fp": {
         "type": "bot",
         "messages": [
-            "If you are an employee or a medical or graduate student in training at Children's National, your decision to participate or not participate will not affect your employment or academic standing"
+            "If you are an employee or a medical or graduate student in training at UCI, your decision to participate or not participate will not affect your employment or academic standing"
         ],
         "parent_ids": [
             "8BCaaXA",
@@ -2876,90 +2874,10 @@
     "aBzgDD8": {
         "type": "bot",
         "messages": [
-            "Just a little more background information for you: Dr. Seth Berger is the person responsible for this research study at Children's National. He is called the Principal Investigator.",
-            "The National Human Genome Research Institute (part of the National Institutes of Health or \u201cNIH\u201d) is paying for this research to be done.",
-            "Children's National and a company called Invitae are working together on this research study."
-        ],
+            "Just a little more background information for you: Dr. Eric Vilain is the person responsible for this research study at UCI. He is called the Principal Investigator.",
+            "The National Human Genome Research Institute (part of the National Institutes of Health or \u201cNIH\u201d) is paying for this research to be done."],
         "parent_ids": [
             "Z8bgCzz"
-        ],
-        "child_ids": [
-            "dPtxZ5F",
-            "BHkn5kQ"
-        ],
-        "attachment": null,
-        "html_type": "button",
-        "html_content": null,
-        "metadata": {
-            "workflow": "",
-            "end_sequence": false
-        }
-    },
-    "dPtxZ5F": {
-        "type": "user",
-        "messages": [
-            "Working together - cool!"
-        ],
-        "parent_ids": [
-            "aBzgDD8"
-        ],
-        "child_ids": [
-            "ApKCtVL"
-        ],
-        "attachment": null,
-        "html_type": "button",
-        "html_content": null,
-        "metadata": {
-            "workflow": "",
-            "end_sequence": false
-        }
-    },
-    "BHkn5kQ": {
-        "type": "user",
-        "messages": [
-            "Tell me more about Invite and Children's National"
-        ],
-        "parent_ids": [
-            "aBzgDD8"
-        ],
-        "child_ids": [
-            "jp5QabL"
-        ],
-        "attachment": null,
-        "html_type": "button",
-        "html_content": null,
-        "metadata": {
-            "workflow": "",
-            "end_sequence": false
-        }
-    },
-    "jp5QabL": {
-        "type": "bot",
-        "messages": [
-            "Invitae is a company that provides clinical genetic testing",
-            "Children\u2019s National is a pediatric hospital in Washington, DC."
-        ],
-        "parent_ids": [
-            "BHkn5kQ"
-        ],
-        "child_ids": [
-            "2W3seWb"
-        ],
-        "attachment": null,
-        "html_type": "button",
-        "html_content": null,
-        "metadata": {
-            "workflow": "",
-            "end_sequence": false
-        }
-    },
-    "2W3seWb": {
-        "type": "user",
-        "messages": [
-            "Got it!"
-        ],
-        "parent_ids": [
-            "jp5QabL"
         ],
         "child_ids": [
             "ApKCtVL"
@@ -3034,8 +2952,8 @@
     "Gb4EZXT": {
         "type": "bot",
         "messages": [
-            "We are hoping to enroll up to 13,000 people.",
-            "We expect half to be patients and family members referred through Children's National, and half to be from outside of Children's National"
+            "We are hoping to enroll up to 4,200 people.",
+            "We expect half to be patients and family members recruited at UCI and half to be referred from outside of UCI"
         ],
         "parent_ids": [
             "UXhKLb9"
@@ -3554,7 +3472,7 @@
         "messages": [
             "There are a few options",
             "If you are having clinical blood drawn for another reason, an extra sample may be collected for this study at that time",
-            "You could also schedule a blood draw at the Children's National Clinical Research Unit (CRU)",
+            "You could also schedule a blood draw at the UCI research unit",
             "Or our study team may be able to arrange for a mobile phlebotomy company to come to your house for a blood draw"
         ],
         "parent_ids": [
@@ -3832,7 +3750,7 @@
         "messages": [
             "As we mentioned before, the samples and data we gather from you will be labeled only with your unique study ID number. This means that your data and samples will be de-identified",
             "Only a few members of the study team will be able to link your study number to your name",
-            "Other collaborators (such as Invitae or a mobile blood draw company) would only have your name and identifiers if you used that company for previous genetic testing or blood collection"
+            "Other collaborators (such as a commercial lab or a mobile blood draw company) would only have your name and identifiers if you used that company for previous genetic testing or blood collection"
         ],
         "parent_ids": [
             "P32EkeA"
@@ -4031,9 +3949,9 @@
     "5aJHekM": {
         "type": "bot",
         "messages": [
-            "There are some third parties such as government agencies or other groups within Children's National that may check records that identify you without your permission.",
+            "There are some third parties such as government agencies or other groups within UCI that may check records that identify you without your permission.",
             "They might review the study records and your medical records to make sure we are following the law and protecting the people in the study and to make sure our study results are correct.",
-            "The agencies or groups who might see these records are: <ul class='bot-chat-bullets'><li>the Department of Health and Human Services Office of Human Research Protections</li><li>the National Human Genome Research Institute (part of the NIH)</li><li>the Children's National Hospital Institutional Review Board (the ethics board that reviewed and approved this research study)</li><li>the Office for the Protection of Human Subjects</li)></ul>"
+            "The agencies or groups who might see these records are: <ul class='bot-chat-bullets'><li>the Department of Health and Human Services Office of Human Research Protections</li><li>the National Human Genome Research Institute (part of the NIH)</li><li>the UCI Medical Center Institutional Review Board (the ethics board that reviewed and approved this research study)</li><li>the Office for the Protection of Human Subjects</li)></ul>"
         ],
         "parent_ids": [
             "ieCqQsR"
@@ -4981,7 +4899,7 @@
         "type": "bot",
         "messages": [
             "To revoke the Authorization, you must send a written letter to the Principal Investigator to inform him of your decision",
-            "Seth Berger, MD, PhD<br>Children's National Research and Innovation Campus<br>7144 13th Place NW<br>Washington, DC 20012",
+            "Eric Vilain, MD, PhD<br>University of California, Irvine (UCI)<br>Department of Pediatrics<br>1003 Health Sciences Rd, Suite 308<br>Irvine, CA 92617",
             "If you revoke this Authorization, researchers may only use and disclose the PHI that was collected for this research study before you revoked the Authorization",
             "If you change your mind and withdraw the Authorization, you will not be allowed to participate in the study"
         ],
@@ -5861,7 +5779,7 @@
         "type": "bot",
         "messages": [
             "I\u2019m going to give you a bunch of contact information, and you can write it down if you want. \u270f\ufe0f",
-            "If you have any questions about the study or if you get hurt or sick because of something to do with the study, please contact the principal investigator, Dr. Seth Berger, at 202-545-2756.",
+            "If you have any questions about the study or if you get hurt or sick because of something to do with the study, please contact the principal investigator, Dr. Eric Vilain, at 949-824-4090.",
             "In case of a medical emergency, call 911 or go directly to the hospital. Be sure to tell the Emergency Room personnel and your doctor that you are in this study"
         ],
         "parent_ids": [
@@ -5900,9 +5818,8 @@
     "BXUr8TN": {
         "type": "bot",
         "messages": [
-            "If you have any questions or concerns about your privacy rights, you may contact the Children's Hospital Privacy Officer at 202-476-6464",
-            "If you have questions or concerns about your rights as a study participant, you can contact the Children\u2019s National IRB (Office for the Protection of Human Subjects) at 301-565-8447  or you can contact a research advocate by phone (202-476-5586) or by email (RSA@childrensnational.org)",
-            "For urgent matters related to this study, you can contact the research advocate and pediatric ethics program team pager at 202-259-2082"
+            "If you have any questions or concerns about your privacy rights, you may contact the UCI Health Privacy Office at 714-456-3916",
+            "If you have questions or concerns about your rights as a study participant, you can contact UCI's Human Research Protections unit in the Office of Research at 949-824-6068; or by email (IRB@research.uci.edu); or by writing to us at 160 Aldrich Hall, Irvine, CA 92697"
         ],
         "parent_ids": [
             "5UhK2Hy"
@@ -7437,7 +7354,7 @@
         "type": "bot",
         "messages": [
             "Actually, that\u2019s not true",
-            "If you get hurt or sick because of something to do with the study, please call the Principal Investigator, Seth Berger, at 202-545-2756"
+            "If you get hurt or sick because of something to do with the study, please call the Principal Investigator, Eric Vilain, at 949-824-4090"
         ],
         "parent_ids": [
             "W3wVKub"
@@ -7644,7 +7561,7 @@
         "messages": [
             "We would like to store your research samples in a biobank for future research, which we will describe in a moment",
             "The samples we store could include genetic material (DNA or RNA), skin or other tissue samples, or cells",
-            "The biobank is maintained by Children's National Research Institute's Center for Genetic Medicine Research",
+            "The biobank is maintained by the study team at UCI",
             "Please let us know how you would like your samples to be used"
         ],
         "parent_ids": [
@@ -7682,7 +7599,7 @@
         "type": "bot",
         "messages": [
             "You should know that you may change your mind at a later time and request that your sample be destroyed",
-            "If you change your mind and want to request that your sample be destroyed, you must send a written request to: <br><br>Seth Berger, MD, PhD<br>Children's National Research and Innovation Campus<br>7144 13th Place NW<br>Washington, DC 20012"
+            "If you change your mind and want to request that your sample be destroyed, you must send a written request to: <br><br>Eric Vilain, MD, PhD<br>University of California, Irvine (UCI)<br>Department of Pediatrics<br>1003 Health Sciences Rd, Suite 308<br>Irvine, CA 92617"
         ],
         "parent_ids": [
             "gdiDJUS"
@@ -7721,7 +7638,7 @@
         "type": "bot",
         "messages": [
             "We would like to store personal health information (PHI) collected from you in this study (such as your name, date of birth, contact information, etc.) in a database for future research",
-            "The database is maintained by Children's National Research Institute's Center For Genetic Medicine Research",
+            "The database is maintained by the study team at UCI",
             "Please let us know how you would like your PHI to be stored and used"
         ],
         "parent_ids": [
@@ -8001,7 +7918,7 @@
         ],
         "attachment": null,
         "html_type": "form",
-        "html_content": "<form id='consent-form' class='user-response-form'>\n    <p class='consent-text'>\n        I am the study participant or I am authorized to act on behalf of the participant.\n        I have read this consent form or had it read to me.\n        I have been invited to take part in a research study. I was told why the research is being done and how long my participation in the study is expected to last. I was told about what will happen in the study and if there are any procedures or drugs that are experimental.\n        I was told that taking part in this research is voluntary. I also was told that I can decide not to take part or stop being in it at any time without any penalty to me or any change to the quality of care I receive at Children's National.\n        I was told about the risks and possible discomforts of taking part in this research study. I was also informed if there are any possible benefits to me if I am in this study.\n        I have been given the chance to ask questions about the study, and my questions have been answered. If I have questions later, I can ask one of the people listed in this form.\n        I agree to take part in this research study.\n        I will receive a signed copy of this Informed Consent/Parental Permission form to keep.\n    </p>\n    <label class='user-form-row' for='fullname'>\n        <span class='user-contact-form-row-label'>Full name</span>    \n        <input type='text' id='fullname' name='fullname'>\n    </label>\n    <label class='user-form-row' for='consent'>\n        <input type='checkbox' id='consent' name='consent'>\n        <span class='user-form-row-label'>I consent</span>\n    </label>\n    <input type='hidden' name='id_node' value='AimWGCA'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "html_content": "<form id='consent-form' class='user-response-form'>\n    <p class='consent-text'>\n        I am the study participant or I am authorized to act on behalf of the participant.\n        I have read this consent form or had it read to me.\n        I have been invited to take part in a research study. I was told why the research is being done and how long my participation in the study is expected to last. I was told about what will happen in the study and if there are any procedures or drugs that are experimental.\n        I was told that taking part in this research is voluntary. I also was told that I can decide not to take part or stop being in it at any time without any penalty to me or any change to the quality of care I receive at UCI.\n        I was told about the risks and possible discomforts of taking part in this research study. I was also informed if there are any possible benefits to me if I am in this study.\n        I have been given the chance to ask questions about the study, and my questions have been answered. If I have questions later, I can ask one of the people listed in this form.\n        I agree to take part in this research study.\n        I will receive a signed copy of this Informed Consent/Parental Permission form to keep.\n    </p>\n    <label class='user-form-row' for='fullname'>\n        <span class='user-contact-form-row-label'>Full name</span>    \n        <input type='text' id='fullname' name='fullname'>\n    </label>\n    <label class='user-form-row' for='consent'>\n        <input type='checkbox' id='consent' name='consent'>\n        <span class='user-form-row-label'>I consent</span>\n    </label>\n    <input type='hidden' name='id_node' value='AimWGCA'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
         "metadata": {
             "workflow": "end_consent",
             "end_sequence": false
@@ -8164,7 +8081,7 @@
         "type": "bot",
         "messages": [
             "We would like to store your child\u2019s samples (such as genetic material including DNA, RNA, or protein, or cells) in a tissue bank for future research as identified below",
-            "The biobank is maintained by Children's National Research Institute's Center for Genetic Medicine Research",
+            "The biobank is maintained by the study team at UCI",
             "Please let us know how you would like your child's samples to be used"
         ],
         "parent_ids": [
@@ -8202,7 +8119,7 @@
         "type": "bot",
         "messages": [
             "You should know that you may change your mind at a later time and request that your sample be destroyed",
-            "If you change your mind and want to request that your sample be destroyed, you must send a written request to: <br><br>Seth Berger, MD, PhD<br>Children's National Research and Innovation Campus<br>7144 13th Place NW<br>Washington, DC 20012"
+            "If you change your mind and want to request that your sample be destroyed, you must send a written request to: <br><br>Eric Vilain, MD, PhD<br>University of California, Irvine (UCI)<br>Department of Pediatrics<br>1003 Health Sciences Rd, Suite 308<br>Irvine, CA 92617"
         ],
         "parent_ids": [
             "SFiuhW9"
@@ -8241,7 +8158,7 @@
         "type": "bot",
         "messages": [
             "We would like to store personal health information collected in this study (such as your child\u2019s name, date of birth, contact information, etc.) in a database for future research",
-            "The database is maintained by Children's National Research Institute's Center For Genetic Medicine Research",
+            "The database is maintained by the study team at UCI",
             "Please let us know how you would like your child\u2019s PHI to be stored and used"
         ],
         "parent_ids": [
@@ -8484,7 +8401,7 @@
         ],
         "attachment": null,
         "html_type": "form",
-        "html_content": "<form id='consent-form' class='user-response-form'>\n    <p class='consent-text'>\n        I am the study participant or I am authorized to act on behalf of the participant.\n        I have read this consent form or had it read to me.\n        I have been invited to take part in a research study. I was told why the research is being done and how long my participation in the study is expected to last. I was told about what will happen in the study and if there are any procedures or drugs that are experimental.\n        I was told that taking part in this research is voluntary. I also was told that I can decide not to take part or stop being in it at any time without any penalty to me or any change to the quality of care I receive at Children's National.\n        I was told about the risks and possible discomforts of taking part in this research study. I was also informed if there are any possible benefits to me if I am in this study.\n        I have been given the chance to ask questions about the study, and my questions have been answered. If I have questions later, I can ask one of the people listed in this form.\n        I agree to take part in this research study.\n        I will receive a signed copy of this Informed Consent/Parental Permission form to keep.\n    </p>\n    <label class='user-form-row' for='childname'>\n        <span class='user-contact-form-row-label'>Child's full name</span>    \n        <input type='text' id='childname' name='childname'>\n    </label>\n    <label class='user-form-row' for='fullname'>\n        <span class='user-contact-form-row-label'>Full name of consenting individual (parent/legal guardian)</span>    \n        <input type='text' id='fullname' name='fullname'>\n    </label>\n    <label class='user-form-row' for='consent'>\n        <input type='checkbox' id='consent' name='consent'>\n        <span class='user-form-row-label'>I consent</span>\n    </label>\n    <input type='hidden' name='id_node' value='nAaeApX'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "html_content": "<form id='consent-form' class='user-response-form'>\n    <p class='consent-text'>\n        I am the study participant or I am authorized to act on behalf of the participant.\n        I have read this consent form or had it read to me.\n        I have been invited to take part in a research study. I was told why the research is being done and how long my participation in the study is expected to last. I was told about what will happen in the study and if there are any procedures or drugs that are experimental.\n        I was told that taking part in this research is voluntary. I also was told that I can decide not to take part or stop being in it at any time without any penalty to me or any change to the quality of care I receive at UCI.\n        I was told about the risks and possible discomforts of taking part in this research study. I was also informed if there are any possible benefits to me if I am in this study.\n        I have been given the chance to ask questions about the study, and my questions have been answered. If I have questions later, I can ask one of the people listed in this form.\n        I agree to take part in this research study.\n        I will receive a signed copy of this Informed Consent/Parental Permission form to keep.\n    </p>\n    <label class='user-form-row' for='childname'>\n        <span class='user-contact-form-row-label'>Child's full name</span>    \n        <input type='text' id='childname' name='childname'>\n    </label>\n    <label class='user-form-row' for='fullname'>\n        <span class='user-contact-form-row-label'>Full name of consenting individual (parent/legal guardian)</span>    \n        <input type='text' id='fullname' name='fullname'>\n    </label>\n    <label class='user-form-row' for='consent'>\n        <input type='checkbox' id='consent' name='consent'>\n        <span class='user-form-row-label'>I consent</span>\n    </label>\n    <input type='hidden' name='id_node' value='nAaeApX'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
         "metadata": {
             "workflow": "child_consent",
             "end_sequence": true
