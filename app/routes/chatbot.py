@@ -100,7 +100,7 @@ def user_response(invite_id):
                 next_node_id = process_test_question(conversation_graph, user_response_node_id, invite_id)
             elif node_metadata['workflow'] == 'start_consent':
                 next_node_id = process_user_consent(conversation_graph, user_response_node_id, invite_id)
-            elif node_metadata['workflow'] == 'follow-up':
+            elif node_metadata['workflow'] == 'follow_up':
                 reason = node_metadata['follow_up_reason']
                 more_info = node_metadata['follow_up_info']
                 create_follow_up_with_user(invite_id, reason, more_info)

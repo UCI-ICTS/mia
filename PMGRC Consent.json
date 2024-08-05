@@ -328,7 +328,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "follow-up",
+            "workflow": "follow_up",
             "end_sequence": "false",
             "follow_up_reason": "consent",
             "follow_up_info": "prefer to talk with someone from the research team"
@@ -4499,8 +4499,7 @@
     "Qakavzg": {
         "type": "bot",
         "messages": [
-            "The study could also discover secondary findings that are <b>not medically actionable</b>, meaning they could be related to an increased risk for certain diseases with no known treatments or interventions",
-            ""
+            "The study could also discover secondary findings that are <b>not medically actionable</b>, meaning they could be related to an increased risk for certain diseases with no known treatments or interventions"
         ],
         "parent_ids": [
             "Py4Sw9s"
@@ -5911,7 +5910,7 @@
         "html_type": "button",
         "html_content": null,
         "metadata": {
-            "workflow": "follow-up",
+            "workflow": "follow_up",
             "end_sequence": false,
             "follow_up_reason": "consent",
             "follow_up_info": "not ready or have questions"
