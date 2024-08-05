@@ -41,8 +41,8 @@
     "de5ZDgm": {
         "type": "bot",
         "messages": [
-            "I\u2019m going to provide details about the study like why we are doing this research, what you will be expected to do if you enroll, and possible risks and benefits",
-            "My job is to give you plenty of information to help you choose whether or not to participate"
+            "Some of the things I will review with you are: why we are doing this research, what you will be expected to do if you enroll, and possible risks and benefits",
+            "This information will help you choose whether or not to participate"
         ],
         "parent_ids": [
             "m84n5MM"
@@ -80,8 +80,8 @@
     "oS9m8Ua": {
         "type": "bot",
         "messages": [
-            "This chat usually takes about 30 minutes to go through before you can sign the consent form to enroll at the end",
-            "This link will expire two weeks after it was sent, but you can always pause and come back at a later point during this time"
+            "Our conversation usually takes about 30 minutes. At the end, if you choose to enroll, you can sign the consent.",
+            "This link will expire two weeks after it was sent to you. You can always take a break and come back to this link, during the two weeks, to complete enrollment."
         ],
         "parent_ids": [
             "PJwkbgi"
@@ -139,7 +139,7 @@
     "a6JKRdh": {
         "type": "bot",
         "messages": [
-            "All of the information I will share is also described in more detail in our consent document",
+            "All of the information we discuss will also be described in more detail in our consent document",
             "You can only sign the consent form electronically after reviewing it with me or with a study team member",
             "You can access an example of the consent document by clicking this <a href=\"https://acrobat.adobe.com/link/review?uri=urn%3Aaaid%3Ascds%3AUS%3Ac2c31666-e549-4415-8bf1-c0d1b822242b\">link</a>, but please remember to return here to complete our chat"
         ],
@@ -161,7 +161,7 @@
     "WwRBQik": {
         "type": "user",
         "messages": [
-            "Can I look at this after we chat?"
+            "Can I look at the consent document after we chat?"
         ],
         "parent_ids": [
             "a6JKRdh"
@@ -257,7 +257,7 @@
         "type": "bot",
         "messages": [
             "If you are ready, we can start going through the information together right now!",
-            "If you would rather review the consent later or you would rather review it with a member of the study team, just let me know!"
+            "If you would rather review the consent later or you would rather review it with a study team member, just let me know!"
         ],
         "parent_ids": [
             "fWXv5QS"
@@ -339,7 +339,7 @@
         "messages": [
             "Okay!",
             "Let\u2019s do this!",
-            "Please be sure to take notes and write down any questions you have as we go through this chat, as you will have the option to talk to a study team member at the end. \u270f\ufe0f",
+            "Please be sure to take notes and write down any questions you have as we go through this chat. You will have the option to talk to a study team member at the end. \u270f\ufe0f",
             "If you have any questions that are not answered during this chat, we will put you in touch with a team member to discuss them further"
         ],
         "parent_ids": [
@@ -439,8 +439,8 @@
     "FADCStr": {
         "type": "bot",
         "messages": [
-            "The goal of this study is to help identify the causes of genetic health conditions",
-            "You are being invited to join this study because you or someone in your family has a genetic health condition (or a health issue that might be related to genes)",
+            "The goal of this study is to help identify the cause or causes of genetic health conditions",
+            "You are being invited to join this study because you or someone in your family has a suspected genetic health condition (or a health issue that might be related to genes)",
             "We often enroll multiple family members (people related by blood) in the study"
         ],
         "parent_ids": [
@@ -499,9 +499,8 @@
     "QT8Mx3R": {
         "type": "bot",
         "messages": [
-            "Having genetic data from blood relatives can help us do a better job of interpreting genetic findings",
-            "For example, if we find a genetic change in a person who has a health issue, it is important to know if this genetic change was passed down through the family",
-            "So, having data from blood-related family members helps us interpret what we find"
+            "Having genetic data from blood relatives can help us understand genetic findings",
+            "For example, if we find a genetic change in a person who has specific medical concern, like heart disease, it can be helpful to know if this genetic change was passed down through the family to identify other individuals at risk"
         ],
         "parent_ids": [
             "Bkyp7hD"
@@ -539,8 +538,9 @@
     "KMirb2i": {
         "type": "bot",
         "messages": [
-            "Ideally, we would enroll <b>the person with the genetic health condition</b> as well as <b>both of their biological parents</b> (mom and dad), if possible.",
-            "So, if one or both parents are able to enroll, that would be great!"
+            "Ideally, we would enroll <b>the person with the suspected genetic health condition</b> as well as <b>both of their biological parents</b> (mom and dad), if possible.",
+            "So, if one or both parents are able to enroll, that would be great!",
+            "You can still participate if family members are not available"
         ],
         "parent_ids": [
             "RXBDyqd",
@@ -580,7 +580,7 @@
         "type": "bot",
         "messages": [
             "Each person who enrolls in the study will have to go through this study consent process",
-            "You can enroll yourself and/or your children in this chat today, and we can send a separate chat link to any other adults who want to enroll"
+            "You can enroll yourself and/or your children in this chat today. We can send a separate chat link to any other adults who want to enroll"
         ],
         "parent_ids": [
             "dM9iaFR"
@@ -619,9 +619,9 @@
         "type": "bot",
         "messages": [
             "For children who are 6 years old or younger, a parent or guardian can complete the consent on their behalf",
-            "For children ages 7 to 17, (or for adults who are under another person\u2019s legal guardianship), a parent or guardian must complete the official consent",
-            "We will also need to talk directly to the child (if they are capable) to get their agreement about participating",
-            "People who are age 18 or older need to go through the consent process themselves (except those who are under another person\u2019s legal guardianship)"
+            "For children ages 7 to 17, (or for adults who are under a person\u2019s legal guardianship), a parent or guardian must complete the official consent",
+            "We will also need to talk directly to the child (if they are capable) to get their agreement about participating. This is called assent",
+            "People who are age 18 or older need to go through the consent process themselves unless they are under another person\u2019s legal guardianship"
         ],
         "parent_ids": [
             "C8baGp6"
@@ -993,7 +993,7 @@
         "type": "bot",
         "messages": [
             "Thank you! We\u2019ll contact them with the information you've provided",
-            "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>PMGRC@childrensnational.org</b>"
+            "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>GREGOR@hs.uci.edu</b>"
         ],
         "parent_ids": [
             "gWJxSfh"
@@ -1051,8 +1051,7 @@
         "type": "bot",
         "messages": [
             "I was hoping you would say that!",
-            "You may already know that your body is made of trillions of cells.",
-            "Inside each of these cells is your DNA, which provides the instructions for how our bodies grow and develop."
+            "You may already know that your body is made of trillions of cells. DNA provides the instructions to tell our bodies how to grow and develop"
         ],
         "parent_ids": [
             "KR89wri"
@@ -1062,7 +1061,7 @@
         ],
         "attachment": null,
         "html_type": "image",
-        "html_content": "dna_diagram.jpg",
+        "html_content": "person_cell_dna.png",
         "metadata": {
             "workflow": "",
             "end_sequence": "false"
@@ -1090,9 +1089,9 @@
     "SfPWkep": {
         "type": "bot",
         "messages": [
-            "Your DNA is made up of a genetic code, which is represented by four letters: A, T, C and G.",
+            "Our DNA uses specific letters (A, T, C, and G) to write these instructions",
             "A little section of the code might look something like this: <br><br>ATGCGCTAGCTCCTAGCTAGCCTAGCTAGCTAACGCTAGCCTCGTAGACTACGATCGCTAAGCTAGC",
-            "The code is actually over 3 billion letters long!"
+            "Our genetic code is actually over 3 billion letters long!"
         ],
         "parent_ids": [
             "EcgsbMN"
@@ -1207,9 +1206,9 @@
     "gHm22vz": {
         "type": "bot",
         "messages": [
-            "<b>For your child who is between age 7 and age 17</b>, you will have the option to give your consent for your child to enroll in the study.",
-            "But because your child is over age 6, we may also need to talk to them briefly to tell them about the study.",
-            "If your child is developmentally not able to communicate, you can let us know when you talk with our study team."
+            "<b>For your child who is between age 7 and age 17</b>, you will have the option to give your consent for your child to enroll in the study",
+            "However, because your child is over age 6, we may also need to talk to them briefly to tell them about the study. This is called assent",
+            "If your child is developmentally not able to communicate, you can let us know when you talk with the team"
         ],
         "parent_ids": [
             "GkgFmXm"
@@ -1440,7 +1439,7 @@
         "type": "bot",
         "messages": [
             "Thank you! We'll contact them with the information you've provided.",
-            "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>PMGRC@childrensnational.org</b>"
+            "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>GREGOR@hs.uci.edu</b>"
         ],
         "parent_ids": [
             "2b6U7Vy"
@@ -1516,9 +1515,8 @@
     "AoYLgFK": {
         "type": "bot",
         "messages": [
-            "Okay",
-            "After our chat today, you will have the option to give your consent for your child to enroll in the study.",
-            "But because your child is over age 18, we may also need to talk to them briefly to tell them about the study."
+            "Okay, after our chat today, you will have the option to give your consent for your child to enroll in the study.",
+            "But because your child is over age 18, we may also need to speak with them briefly to tell them about the study."
         ],
         "parent_ids": [
             "FMC5dJn"
@@ -1556,7 +1554,7 @@
     "k5zGiMq": {
         "type": "bot",
         "messages": [
-            "So, after you complete the consent chat with me, I can help arrange a time for you (and your child) to talk to a member of our study team to finalize your child's enrollment.",
+            "So, after you complete the consent chat with me, I can help arrange a time for you (and your child) to talk to a member of our study team to finalize your child's participation.",
             "If your child is developmentally not able to communicate, you can let us know when you talk with our study team."
         ],
         "parent_ids": [
@@ -1616,10 +1614,8 @@
     "45kz8CE": {
         "type": "bot",
         "messages": [
-            "I know! But your cells know how the read this code",
-            "The cells use your genetic information like a recipe book",
-            "IMAGE",
-            "It is organized into specific sections, called genes (just like a recipe book is organized into individual recipes)"
+            "I know this sounds complicated! Your cells know how the read these instructions. They use your genetic code like a cookbook",
+            "Our DNA is organized into specific sections, as if they are individual recipes. These sections, or the recipes, are called genes"
         ],
         "parent_ids": [
             "AonpoZW"
@@ -1629,8 +1625,8 @@
             "9ZmfvBQ"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "image",
+        "html_content": "dna_cookbook.png",
         "metadata": {
             "workflow": "",
             "end_sequence": false
@@ -1677,9 +1673,8 @@
     "BF3k6W7": {
         "type": "bot",
         "messages": [
-            "In a recipe book, each recipe gives instructions for making a different dish",
-            "In your cells, each gene provides the instructions for molecules called RNA, and each RNA makes a different protein",
-            "IMAGE"
+            "In a cookbook, each recipe gives instructions for making a different dish",
+            "In your cells, each gene provides the instructions for molecules called RNA, and each RNA makes a different protein"
         ],
         "parent_ids": [
             "9ZmfvBQ",
@@ -1689,8 +1684,8 @@
             "8Pvoowc"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "image",
+        "html_content": "dna_cookbook_recipe.png",
         "metadata": {
             "workflow": "",
             "end_sequence": false
@@ -1718,8 +1713,8 @@
     "WQFz456": {
         "type": "bot",
         "messages": [
-            "These proteins can help your body to do many important things",
-            "For example, some proteins build our tissues, like muscles and nerves.  Other proteins help our bodies break down food and make energy"
+            "Your body uses proteins to do many important things",
+            "For example, some proteins build our tissues, like muscles and nerves. Other proteins help our body break down food and make energy"
         ],
         "parent_ids": [
             "8Pvoowc"
@@ -1758,9 +1753,7 @@
         "type": "bot",
         "messages": [
             "I know, right?",
-            "You have 2 copies of each gene - one from each of your parents",
-            "The 2 copies work together to make you who you are",
-            "IMAGE"
+            "You typically have 2 copies of each gene - getting one from each of your parents. The 2 copies work together to make you who you are"
         ],
         "parent_ids": [
             "kvTbHhw"
@@ -1769,8 +1762,8 @@
             "TfVxQFn"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "image",
+        "html_content": "dna_from_parents.png",
         "metadata": {
             "workflow": "",
             "end_sequence": false
@@ -1838,8 +1831,7 @@
         "type": "bot",
         "messages": [
             "Remember how we said your genes are like recipes?",
-            "Well, if there are any little typos or slight changes in the recipe, the dish might turn out differently than you expected",
-            "A variant is when the letters of the genetic code are out of order or changed in some other way"
+            "When genes have misspellings or changes in them, we call that a variant. This is like changing an ingredient in a recipe. The end product may turn out differently than you expect or may not work at all"
         ],
         "parent_ids": [
             "Vnd4AC6"
@@ -1848,8 +1840,8 @@
             "iumYvk4"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "image",
+        "html_content": "dna_cookbook_variant.png",
         "metadata": {
             "workflow": "",
             "end_sequence": false
@@ -1877,10 +1869,8 @@
     "7i6JiiZ": {
         "type": "bot",
         "messages": [
-            "When a gene has a variant it gives different instructions.",
             "Imagine that you are baking a cake and the recipe tells you to use salt instead of sugar, or strawberries instead of chocolate!",
-            "That\u2019s going to affect the cake!",
-            "GIF IMAGE"
+            "That\u2019s going to affect the cake!"
         ],
         "parent_ids": [
             "iumYvk4"
@@ -1889,8 +1879,8 @@
             "ZcynmTH"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "image",
+        "html_content": "cake.png",
         "metadata": {
             "workflow": "",
             "end_sequence": false
@@ -1919,9 +1909,8 @@
         "type": "bot",
         "messages": [
             "Okay, sounds good",
-            "You may already know that your body is made up of trillions of cells",
-            "Inside each of these cells is your DNA, which provides the instructions for our bodies to grow and develop",
-            "The DNA is arranged in sections called genes"
+            "You may already know that your body is made of trillions of cells. DNA provides the instructions to tell our bodies how to grow and develop"
+
         ],
         "parent_ids": [
             "QXNa2cz"
@@ -1932,7 +1921,7 @@
         ],
         "attachment": null,
         "html_type": "image",
-        "html_content": "dna_diagram.jpg",
+        "html_content": "person_cell_dna.png",
         "metadata": {
             "workflow": "",
             "end_sequence": false
@@ -1980,8 +1969,7 @@
         "type": "bot",
         "messages": [
             "Genes are a big part of what makes you who you are",
-            "In your cells, each gene provides the instructions for molecules called RNA, and each RNA makes a different protein",
-            "IMAGE"
+            "In your cells, each gene provides the instructions for molecules called RNA, and each RNA makes a different protein"
         ],
         "parent_ids": [
             "W5Gtph5",
@@ -2020,8 +2008,8 @@
     "6cFB5vN": {
         "type": "bot",
         "messages": [
-            "These proteins can help your body to do many important things",
-            "For example, some proteins build our tissues, like muscles and nerves.  Other proteins help our bodies break down food and make energy"
+            "Your body uses proteins to do many important things",
+            "For example, some proteins build our tissues, like muscles and nerves. Other proteins help our body break down food and make energy"
         ],
         "parent_ids": [
             "VNSy2sy"
@@ -2118,7 +2106,7 @@
     "PiTC5fc": {
         "type": "bot",
         "messages": [
-            "When a gene has a variant it gives the body different instructions"
+            "When a gene has a variant it gives the body different instructions. It's like changing an ingredient in a recipe"
         ],
         "parent_ids": [
             "TXdMNWZ"
@@ -2127,8 +2115,8 @@
             "Ti3ZavP"
         ],
         "attachment": null,
-        "html_type": "button",
-        "html_content": null,
+        "html_type": "image",
+        "html_content": "dna_cookbook_variant.png",
         "metadata": {
             "workflow": "",
             "end_sequence": false
@@ -2156,10 +2144,8 @@
     "EE6kxBa": {
         "type": "bot",
         "messages": [
-            "Genetic variants are responsible for making us all unique and different",
-            "For example, things like eye color are determined by variants in our genes",
-            "Sometimes, having a certain genetic variant can lead to health issues",
-            "For example, if a person has a variant in a gene that is related to kidney health, then their chance of having kidney disease may increase."
+            "Genetic variants are what make each person unique",
+            "Some variants may change a person’s eye color, height, or hair color, while others may change a person’s development, heart function, or kidney function"
         ],
         "parent_ids": [
             "Ti3ZavP",
@@ -2218,9 +2204,9 @@
     "8Z6qtgu": {
         "type": "bot",
         "messages": [
-            "When someone has a health issue caused by a genetic change (or \u201cvariant\u201d), we call this a genetic disorder",
-            "When we suspect that a patient has a genetic disorder, we will often do genetic testing to try and find the change (or variant) that is causing the health issue",
-            "In the PMGRC study, we are interested in doing different kinds of genetic testing to take a detailed look at people\u2019s genetic material to look for changes that might explain their health issues"
+            "When someone has a health issue or symptoms caused by a genetic change (or \u201cvariant\u201d), this can cause a genetic disorder",
+            "When we suspect that a patient has a genetic disorder, we often do genetic testing to try and find the change, or variant, that is causing the symptoms",
+            "In the PMGRC study, we are interested in doing different kinds of genetic testing, some that is not available to your doctors regularly, to look for changes that might explain your health concerns"
         ],
         "parent_ids": [
             "iVCEBuL",
@@ -2278,8 +2264,8 @@
     "jczufDn": {
         "type": "bot",
         "messages": [
-            "We are hoping to enroll patients with known or suspected genetic conditions and their blood relatives, such as parents and siblings",
-            "Can you tell me a little bit more about your history with genetic testing for you or your family member so far?"
+            "As we discussed earlier, we are hoping to enroll patients with known or suspected genetic conditions and their blood relatives, such as parents and siblings",
+            "Can you tell me a little bit more about your history with genetic testing for you or your family members so far?"
         ],
         "parent_ids": [
             "iCSWyTS"
@@ -2337,8 +2323,8 @@
     "G5dyfh6": {
         "type": "bot",
         "messages": [
-            "No problem",
-            "One goal for our PMGRC study is to discover <b>new</b> causes of health problems, like finding a new gene or new ways that differences in our genetic material can cause health problems",
+            "No problem!",
+            "One goal for our PMGRC study is to discover <b>new</b> causes of health problems, like finding a new gene or new ways that differences in our genes can cause health concerns",
             "If genetic testing didn\u2019t find an answer before, our research might be able to find something new"
         ],
         "parent_ids": [
@@ -2376,7 +2362,7 @@
     "kYjpLjd": {
         "type": "bot",
         "messages": [
-            "One goal for our PMGRC study is to discover <b>new</b> causes of health problems, like finding a new gene or new ways that differences in our genetic material can cause health problems",
+            "One goal for our PMGRC study is to discovery new causes of health problems, like finding a new gene or new ways that differences in our genes can cause health concerns",
             "If genetic testing didn\u2019t find an answer before, our research might be able to find something new"
         ],
         "parent_ids": [
@@ -2417,7 +2403,7 @@
         "type": "bot",
         "messages": [
             "Another goal of our study is to better understand prior genetic test results that may have been unclear",
-            "For example, if previous genetic testing found a \u201cvariant of uncertain significance\u201d, our research might be able to help explain whether that finding is related to disease or not"
+            "For example, if previous genetic testing found a \u201cvariant of uncertain significance\u201d, our research might be able to help explain whether that finding is related to your symptoms or not"
         ],
         "parent_ids": [
             "FiRFHGF"
@@ -2476,9 +2462,8 @@
         "type": "bot",
         "messages": [
             "Of course!",
-            "When genetic testing is done, we are usually looking for some genetic variant to explain the patient\u2019s health issues.",
-            "Sometimes, the testing does find a clear answer - a genetic variant that explains the health issue.",
-            "We call this a \u201cpositive\u201d result."
+            "When genetic testing is done, we are usually looking for a genetic variant or variants to explain the patient\u2019s health concerns",
+            "When the testing finds an answer, meaning a genetic variant(s) that explains your health concerns is identified, we call this a \u201cpositive\u201d result"
         ],
         "parent_ids": [
             "LbgZ4YK"
@@ -2516,10 +2501,10 @@
     "WAkoAEV": {
         "type": "bot",
         "messages": [
-            "If the testing does NOT find any variants that could explain the health issue, we call this a \u201cnegative\u201d result",
-            "Sometimes, the testing can find something that we don\u2019t yet understand well",
-            "When a variant is found, but we aren\u2019t sure whether it is linked to a specific health issue, we call this a \u201cvariant of uncertain significance\u201d or VUS.",
-            "You can also check out the brief video to review the possible types of genetic results"
+            "If the testing does NOT find any variants that could explain your health concern, we call this a \u201cnegative\u201d result",
+            "Sometimes, the testing can find something that we do not fully understand",
+            "When a variant is found, but we aren\u2019t sure whether it is linked to a symptom, we call this a \u201cvariant of uncertain significance\u201d or VUS",
+            "Here is a brief video to review the types of genetic results we just discussed:"
         ],
         "parent_ids": [
             "h2xWJaa"
@@ -2557,8 +2542,7 @@
     "XKshQvX": {
         "type": "bot",
         "messages": [
-            "We don\u2019t know if this kind of research genetic testing will help people get to a diagnosis, but we\u2019re hoping that it will at least help make science and medicine better",
-            "This may help other people in the future"
+            "We don\u2019t know if this kind of research genetic testing will help people find a diagnosis, but we hope that it will at least help make science and medicine better with the possibility of helping other people in the future"
         ],
         "parent_ids": [
             "DKTqMXc",
@@ -2635,9 +2619,9 @@
     "NHPvQRe": {
         "type": "bot",
         "messages": [
-            "You can choose to be part of this study or choose not to be part of this study. And you can change your mind about being involved at any time",
-            "Whatever choice you make, the quality of care you receive will not change, and you will not lose access to your medical care or give up any of your legal rights or benefits",
-            "Also, if we make any changes to the study or if there are any important new findings, we will tell you so that you can decide if you still want to be in the study"
+            "Voluntary means you can choose to be part of this study or choose not to be part of this study. If you choose to enroll, then later change your mind, you can withdraw from the study",
+            "Whatever choice you make, the quality of care you receive from your current medical team will not change. You will not lose access to your medical care or give up any of your legal rights or medical benefits",
+            "If we make any changes to the study or if there are any important new findings, we will tell you so that you can decide if you still want to participate"
         ],
         "parent_ids": [
             "HEz7sik"
@@ -2715,8 +2699,8 @@
     "aJ5R3Ko": {
         "type": "bot",
         "messages": [
-            "You can contact the study team at any time by emailing PMGRC@childrensnational.org.",
-            "To withdraw from the study, you must send a written letter to the Principal Investigator (Eric Vilain) to inform him of your decision"
+            "You can contact the study team at any time by emailing GREGOR@hs.uci.edu",
+            "To withdraw from the study, you must send a written letter to the Principal Investigator (Dr. Eric Vilain) to inform him of your decision"
         ],
         "parent_ids": [
             "Ua23Tdf"
@@ -2774,7 +2758,7 @@
     "Gufd5fp": {
         "type": "bot",
         "messages": [
-            "If you are an employee or a medical or graduate student in training at UCI, your decision to participate or not participate will not affect your employment or academic standing"
+            "If you are an employee or student (undergraduate, graduate, medical) in training at UCI, your decision to participate or not participate will not affect your employment or academic standing"
         ],
         "parent_ids": [
             "8BCaaXA",
@@ -2834,7 +2818,7 @@
         "type": "bot",
         "messages": [
             "Participating in the study is <b>free</b> - so there is no cost to you or to your health insurance provider",
-            "However, if you learn something new about your health as a result of the study, you or your insurance provider will be responsible for the cost of any relevant follow-up testing or medical care"
+            "If you learn something new about your health as a result of the study, you or your insurance provider will be responsible for the cost of any relevant follow-up testing or medical care from those results"
         ],
         "parent_ids": [
             "aPfw9zP",
@@ -2874,8 +2858,9 @@
     "aBzgDD8": {
         "type": "bot",
         "messages": [
-            "Just a little more background information for you: Dr. Eric Vilain is the person responsible for this research study at UCI. He is called the Principal Investigator.",
-            "The National Human Genome Research Institute (part of the National Institutes of Health or \u201cNIH\u201d) is paying for this research to be done."],
+            "Just a little more background information for you",
+            "Dr. Eric Vilain is the person responsible for this research study at UCI. This study is paid for by The Human Genome Research Institute (part of the National Institutes of Health or NIH)"
+        ],
         "parent_ids": [
             "Z8bgCzz"
         ],
@@ -2991,7 +2976,7 @@
     "M2fEy3b": {
         "type": "bot",
         "messages": [
-            "It\u2019s really important to understand that research testing like this does not replace clinical testing.",
+            "It\u2019s important to understand that research testing like this does not replace clinical testing.",
             "Whether you join the PMGRC research study or not, you should always continue getting medical advice from your doctor, which might include other options for genetic testing",
             "You might want to discuss this study with your family and anyone else you trust before making your decision"
         ],
@@ -3052,7 +3037,7 @@
     "2SpZFSY": {
         "type": "bot",
         "messages": [
-            "Some people you could talk to about your participation in this study include your family members, your doctor, or anyone you trust to help you make decisions"
+            "Some people you could talk to about your participation in this study include your family members, your doctor, or someone you trust to help you make decisions"
         ],
         "parent_ids": [
             "HQwx7B3"
@@ -3090,7 +3075,7 @@
     "85NXhpr": {
         "type": "bot",
         "messages": [
-            "So! Let\u2019s talk about what will actually happen when someone enrolls in this PMGRC study"
+            "So! Let\u2019s talk about what will happen when someone enrolls in this study"
         ],
         "parent_ids": [
             "YyMv36M",
@@ -3170,7 +3155,7 @@
         "type": "bot",
         "messages": [
             "Once enrolled, you will be asked to provide some medical information and a detailed family health history",
-            "The medical information we collect may include things like doctors' notes, diagnoses, and past test results that may help us understand how your genetic information affects your health.",
+            "The medical information we collect may include things like doctors' notes, current or previous diagnoses, and past test results (both genetic and non-genetic)",
             "If you had previous genetic testing (such as whole genome sequencing), you may be asked to provide the data from this testing"
         ],
         "parent_ids": [
@@ -3249,8 +3234,7 @@
     "ikGZqyF": {
         "type": "bot",
         "messages": [
-            "That\u2019s a complicated process, but usually, it involves signing a form to send to the lab that did the original testing",
-            "Our study staff can help you take the next steps, if necessary"
+            "Usually, you will provide a signed medical release to us, which we will send to the lab that did the original testing or to your doctor's office. Our study team can help you take the next steps, if necessary"
         ],
         "parent_ids": [
             "6wCXYUp"
@@ -3472,8 +3456,7 @@
         "messages": [
             "There are a few options",
             "If you are having clinical blood drawn for another reason, an extra sample may be collected for this study at that time",
-            "You could also schedule a blood draw at the UCI research unit",
-            "Or our study team may be able to arrange for a mobile phlebotomy company to come to your house for a blood draw"
+            "You could also schedule a blood draw at the UCI research unit or ask if our study team is able to arrange for a mobile phlebotomy company to come to your home for a blood draw"
         ],
         "parent_ids": [
             "832xEwo"
@@ -3512,8 +3495,8 @@
     "CFMdbEP": {
         "type": "bot",
         "messages": [
-            "A \u201cbuccal swab\u201d is a large Q-tip used for swabbing the inside of the cheeks.",
-            "If you provide a buccal sample, these will be collected either on-site at Children\u2019s National or with a kit provided to you with instructions for collection at home and mailing back"
+            "A \u201cbuccal swab\u201d is like a large Q-tip used for swabbing the inside of the cheeks.",
+            "If you provide a buccal sample, these will be collected at home with a kit provided to you with instructions for collection at home and mailing back. Sometimes your doctor at UCI can help you collect your buccal swab"
         ],
         "parent_ids": [
             "i6bA6Jp"
@@ -3592,8 +3575,8 @@
     "Fok52cR": {
         "type": "bot",
         "messages": [
-            "Once you\u2019ve enrolled and provided the requested information and/or samples, a team of study investigators will review your case history and genetic results.",
-            "This team will decide what research tests will be performed on your samples and data"
+            "Once you\u2019ve enrolled and provided the requested information and/or samples, a team of study investigators will review your case history and genetic results",
+            "This will help them decide what research tests will be performed on your samples and data"
         ],
         "parent_ids": [
             "jo5VEXs"
@@ -3671,7 +3654,7 @@
     "2DC2FU2": {
         "type": "bot",
         "messages": [
-            "Our PMGRC study staff might contact you to request additional samples, more information, or photographs from you"
+            "Our PMGRC study staff might contact you to request additional samples or more information from you"
         ],
         "parent_ids": [
             "dJioePa",
@@ -3691,7 +3674,7 @@
     "fjogsGG": {
         "type": "user",
         "messages": [
-            "What if I don\u2019t want to provide additional samples or photographs?"
+            "What if I don\u2019t want to provide additional samples or information?"
         ],
         "parent_ids": [
             "2DC2FU2"
@@ -3748,7 +3731,7 @@
     "2kEyysx": {
         "type": "bot",
         "messages": [
-            "As we mentioned before, the samples and data we gather from you will be labeled only with your unique study ID number. This means that your data and samples will be de-identified",
+            "As we mentioned before, the samples and data we gather from you will be labeled only with your unique study ID number. This means that your data and samples are de-identified",
             "Only a few members of the study team will be able to link your study number to your name",
             "Other collaborators (such as a commercial lab or a mobile blood draw company) would only have your name and identifiers if you used that company for previous genetic testing or blood collection"
         ],
@@ -3788,10 +3771,8 @@
     "dZRNUod": {
         "type": "bot",
         "messages": [
-            "Our PMGRC study is one of 5  Genomics Research Centers, and we collaborate with the other 4 centers.",
-            "We might share your genetic information and health information with these other experts, but any information we share will be de-identified, so these centers will not have access to your name or other personal information that directly identifies you.",
-            "This study will send de-identified data to a National Institutes of Health (NIH)-designated data repository.",
-            "This repository may be accessed by other researchers around the world"
+            "Our PMGRC study is one of 5 Genomics Research Centers. We collaborate with the other 4 centers and might share your genetic information and/or health information with their experts. Any information we share will be de-identified, so these centers will not have access to your name or other personal information that directly identifies you",
+            "This study will also send de-identified data to a National Institutes of Health (NIH)-designated data repository. This repository may be accessed by other researchers around the world"
         ],
         "parent_ids": [
             "SS9NdGi"
@@ -3830,7 +3811,7 @@
         "type": "bot",
         "messages": [
             "The results of this research may be presented at scientific meetings or in scientific publications",
-            "But you will not be personally identified and no identifiable photos will be published without your separate consent"
+            "You will not be personally identified and no identifiable photos will be published without your specific consent"
         ],
         "parent_ids": [
             "4hnYNnR"
@@ -3871,7 +3852,7 @@
             "Your de-identified <b>genetic information</b> and <b>health information</b> could be used for future research studies or given to another investigator for future research studies without your additional informed consent.",
             "This de-identified information may be used for many different research studies, for many years in the future.",
             "If you enroll in the study, you will have the option to let us know if you want to allow your <b>samples</b> to be used for other research beyond this study.",
-            "Otherwise, your samples will remain at the Children\u2019s National Research Institute for use in this study only"
+            "Otherwise, your samples will remain at UCI for use in this study only"
         ],
         "parent_ids": [
             "Nki2gNX"
@@ -3911,7 +3892,7 @@
         "messages": [
             "So far we\u2019ve been talking about the ways that de-identified information may be used or shared, but you might be wondering whether identifiable information will ever be shared.",
             "Your identifiable personal information will not be given to anyone else unless you give your permission in writing first, with a few exceptions that I will explain in a moment.",
-            "The study team will be careful with the information we gather for the study, and we will only share it with authorized members of the study team or people who have a need to review this information."
+            "The study team is careful with the information we gather for the study, and we will only share it with authorized members of the study team or people who need to review the study information."
         ],
         "parent_ids": [
             "UH32G43"
@@ -3949,9 +3930,9 @@
     "5aJHekM": {
         "type": "bot",
         "messages": [
-            "There are some third parties such as government agencies or other groups within UCI that may check records that identify you without your permission.",
-            "They might review the study records and your medical records to make sure we are following the law and protecting the people in the study and to make sure our study results are correct.",
-            "The agencies or groups who might see these records are: <ul class='bot-chat-bullets'><li>the Department of Health and Human Services Office of Human Research Protections</li><li>the National Human Genome Research Institute (part of the NIH)</li><li>the UCI Medical Center Institutional Review Board (the ethics board that reviewed and approved this research study)</li><li>the Office for the Protection of Human Subjects</li)></ul>"
+            "There are some third parties such as government agencies or other groups within UCI that may check records that identify you without your permission",
+            "They might look at the study records and your medical records to make sure we are following the law and protecting the people in the study and to make sure our study results are correct",
+            "Some agencies or groups who might see these records are: <ul class='bot-chat-bullets'><li>The Department of Health and Human Services Office of Human Research Protections</li><li>The National Human Genome Research Institute (part of the NIH)</li><li>The UCI Medical Center Institutional Review Board (the ethics board that reviewed and approved this research study)</li><li>The Office for the Protection of Human Subjects</li)></ul>"
         ],
         "parent_ids": [
             "ieCqQsR"
@@ -3989,7 +3970,7 @@
     "WiP4Fk6": {
         "type": "bot",
         "messages": [
-            "I can provide you with a link to the Children\u2019s National Notice of Privacy Practices at the end of our chat"
+            "I can provide you with a link to UCI\u2019s Notice of Privacy Practices at the end of our chat"
         ],
         "parent_ids": [
             "4pcbkEp"
@@ -4067,7 +4048,7 @@
         "messages": [
             "Yes, you have probably reviewed the HIPAA information at medical visits",
             "HIPAA is a privacy law that protects your individually identifiable health information (also called \u201cProtected Health Information\u201d or \u201cPHI\u201d)",
-            "The <b>HIPAA</b> law also describes how information about you may be used or shared if you are in a research study.",
+            "The <b>HIPAA</b> law also describes how information about you may be used or shared if you are in a research study",
             ""
         ],
         "parent_ids": [
@@ -4106,8 +4087,8 @@
     "QWBbjLo": {
         "type": "bot",
         "messages": [
-            "Under HIPAA, you need to sign an agreement in order for researchers to use or share your PHI for research purposes.",
-            "I can provide you with a link to the Children\u2019s National HIPAA Information Sheet at the end of our chat, and you can read the complete HIPAA authorization in the consent document"
+            "Under HIPAA, you need to sign an agreement in order for researchers to use or share your PHI for research purposes",
+            "I can provide you with a link to UCI\u2019s HIPAA Information Sheet at the end of our chat. You can read the complete HIPAA authorization in the consent document"
         ],
         "parent_ids": [
             "DB7z6ev"
@@ -4183,9 +4164,9 @@
     "bTii8uW": {
         "type": "bot",
         "messages": [
-            "We will make every effort to keep your information private, but no one's privacy can be totally guaranteed.",
+            "We will make every effort to keep your information private, but no one's privacy can be totally guaranteed",
             "To help protect your privacy, the research team has obtained a <b>Certificate of Confidentiality</b> from the Department of Health and Human Services (DHHS)",
-            "With this Certificate, the investigators cannot be forced (for example, by a court order or subpoena) to give information that may identify you in any federal, state or local civil or criminal court, or in any administrative, legislative, or other proceedings"
+            "With this certificate, the investigators cannot be forced (for example, by a court order or subpoena) to give information that may identify you in any federal, state or local civil or criminal court, or in any administrative, legislative, or other proceeding"
         ],
         "parent_ids": [
             "hqiSxfQ"
@@ -4243,7 +4224,7 @@
     "9SsWRKf": {
         "type": "bot",
         "messages": [
-            "It is important that you know that a Certificate of Confidentiality does not stop you or a member of your family from voluntarily giving information to others about yourself or about taking part in this research",
+            "It is important that you know that a Certificate of Confidentiality does not stop you or a member of your family from voluntarily giving information to others about you or about taking part in this research",
             "You should also know that if an insurer or employer learns about your participation and you give them permission to receive research information about you, we cannot use the Certificate of Confidentiality to keep your information private from them",
             "This means that you must also actively protect your own privacy"
         ],
@@ -4323,7 +4304,7 @@
         "type": "bot",
         "messages": [
             "If your samples and/or data are studied as part of this research, there are different types of results that could be returned to you",
-            "Like we mentioned earlier, you are being referred to this study because you or your family member has a known or suspected genetic condition based on specific health issues"
+            "Like we mentioned earlier, you are being referred to this study because you or your family member has a known or suspected genetic condition based on specific health concerns or symptoms"
         ],
         "parent_ids": [
             "coJCK6d"
@@ -4362,7 +4343,7 @@
         "type": "bot",
         "messages": [
             "This PMGRC study will try to find genetic changes that may be related to those issues",
-            "These results are called <b>primary findings</b>, and they often allow the clinical team to make a diagnosis",
+            "These results are called <b>primary findings</b>, and they often allow the team to make a diagnosis",
             "Later in this chat, you will get to choose whether you want to be told about these primary findings"
         ],
         "parent_ids": [
@@ -4401,9 +4382,8 @@
     "YJ9BvJu": {
         "type": "bot",
         "messages": [
-            "Sometimes the study may find genetic variants that are not related to the patient\u2019s current known health issues",
-            "These results are called <b>secondary findings</b>",
-            "Some of these secondary findings are considered <b>medically actionable</b>, meaning if these genetic changes are known, then you or your healthcare provider can then take action to try and reduce your risk of developing the health problems or to better treat or manage the health problems"
+            "Sometimes the study may find genetic variants that are not related to the patient\u2019s current known health concerns",
+            "These results are called <b>secondary findings</b>. Secondary findings are considered <b>medically actionable</b>, meaning if you are found to have one of these findings on your testing, then you or your healthcare provider can take action to reduce your risk of developing the health concerns or to better treat or manage the health concerns"
         ],
         "parent_ids": [
             "9btMpEf"
@@ -4441,8 +4421,8 @@
     "PLHGemU": {
         "type": "bot",
         "messages": [
-            "Some examples of medically actionable secondary findings may be genetic variants that cause increased risk for future health issues like heart disease or cancer",
-            "Secondary findings are often related to adult health risks, but it is possible that we could discover a secondary finding that relates to health issues in childhood"
+            "Some examples of medically actionable secondary findings may be genetic variants that cause increased risk for things like heart disease or cancer",
+            "Secondary findings are often related to adult-onset health risks, but it is possible that we could discover a secondary finding that relates to health issues in childhood"
         ],
         "parent_ids": [
             "XW2AGZ2"
@@ -4480,9 +4460,8 @@
     "Et3pvov": {
         "type": "bot",
         "messages": [
-            "Knowing about a medically actionable genetic variant allows doctors to adjust your medical care plan",
-            "This can include avoiding certain medications or more frequent checkups with your doctor",
-            ""
+            "Knowing about a medically actionable genetic variant can help your doctors to adjust your medical care plan",
+            "This can include things like avoiding certain medications or having more frequent checkups with your doctor"
         ],
         "parent_ids": [
             "mC7SWtw"
@@ -4520,7 +4499,7 @@
     "Qakavzg": {
         "type": "bot",
         "messages": [
-            "The study could also discover secondary findings are <b>not medically actionable</b>, meaning they could be related to an increased risk for certain diseases for which there are no known treatments or medical actions",
+            "The study could also discover secondary findings that are <b>not medically actionable</b>, meaning they could be related to an increased risk for certain diseases with no known treatments or interventions",
             ""
         ],
         "parent_ids": [
@@ -4578,7 +4557,7 @@
     "78Ucru5": {
         "type": "user",
         "messages": [
-            "What if I don\u2019t want to know about those kinds of health risks?"
+            "What if I don\u2019t want to know about health risks from secondary findings?"
         ],
         "parent_ids": [
             "X5VskxR"
@@ -4598,8 +4577,7 @@
         "type": "bot",
         "messages": [
             "That\u2019s perfectly fine",
-            "If you do decide to participate in the study, you will get to decide if you want to receive any possible research results.  And you can decide if you want to receive some types of results and not others",
-            ""
+            "If you do decide to participate in the study, you will get to decide if you want to receive any possible research results. You will decide if you want to receive everything or receive only some types of results and not others"
         ],
         "parent_ids": [
             "78Ucru5"
@@ -4637,8 +4615,8 @@
     "gAkBYPB": {
         "type": "bot",
         "messages": [
-            "Sometimes genetic testing can find unexpected or surprising results that aren\u2019t related to the genetic health issues in your family",
-            "For example, sometimes genetic testing can reveal that a child's parent is not actually their biological parent or that two parents are related to each other by blood",
+            "Sometimes genetic testing can find unexpected or surprising results that aren\u2019t related to your health",
+            "For example, sometimes testing can reveal that a child's parent is not actually their biological parent or that two parents are related to each other by blood",
             "These types of unexpected results are called <b>incidental findings</b>"
         ],
         "parent_ids": [
@@ -4716,9 +4694,9 @@
     "gXJJXUo": {
         "type": "bot",
         "messages": [
-            "If the study team finds a genetic change that relates to genetic health issues, we plan to tell you about it if you have opted to receive that kind of research result",
-            "However, because the results from our study are research results (not clinical results), we will not provide you with an official clinical report",
-            "And you should know that any research findings will need to be <b>confirmed in a certified clinical lab</b> before they can be added to your medical record"
+            "If the study team finds a genetic change that relates to your health concerns, we will tell you about it if you have opted to receive that kind of research result",
+            "Because the results from our study are research results and not clinical results, we will not provide you with an official clinical report",
+            "Any research findings will need to be <b>confirmed in a certified clinical lab</b> before they can be added to your medical record"
         ],
         "parent_ids": [
             "PF2Sqz8"
@@ -4738,7 +4716,7 @@
     "RSiG59t": {
         "type": "user",
         "messages": [
-            "Who will pay for that testing?"
+            "Who will pay for that additional testing?"
         ],
         "parent_ids": [
             "gXJJXUo",
@@ -4818,7 +4796,7 @@
         "type": "bot",
         "messages": [
             "Most tests done on samples in research studies are <b>only for research</b> and have no clear meaning for healthcare",
-            "If we think that there are research results that might have meaning for you or your family, these tests should be re-done by a certified clinical laboratory",
+            "If we think that there are research results that might have meaning for you or your family, these tests should be re-done by a certified clinical laboratory to confirm them",
             "Results will only be placed in your medical record once they have been clinically confirmed"
         ],
         "parent_ids": [
@@ -4898,10 +4876,10 @@
     "AbjKtPR": {
         "type": "bot",
         "messages": [
-            "To revoke the Authorization, you must send a written letter to the Principal Investigator to inform him of your decision",
+            "To revoke the authorization, you must send a written letter to the Principal Investigator to inform him of your decision",
             "Eric Vilain, MD, PhD<br>University of California, Irvine (UCI)<br>Department of Pediatrics<br>1003 Health Sciences Rd, Suite 308<br>Irvine, CA 92617",
-            "If you revoke this Authorization, researchers may only use and disclose the PHI that was collected for this research study before you revoked the Authorization",
-            "If you change your mind and withdraw the Authorization, you will not be allowed to participate in the study"
+            "If you revoke this Authorization, researchers may only use and disclose the PHI that was collected for this research study before you revoked the authorization",
+            "If you change your mind and withdraw the authorization, you will not be allowed to participate in the study any further"
         ],
         "parent_ids": [
             "Y3WMAjr"
@@ -4939,7 +4917,7 @@
     "GKg8Z3M": {
         "type": "bot",
         "messages": [
-            "It is important that you know that anyone who undergoes genetic testing in the United States is protected from certain types of discrimination by a United States federal law called the <b>Genetic Information Nondiscrimination Act (GINA)</b>"
+            "It is important that you know that anyone who undergoes genetic testing in the United States is protected from certain types of discrimination by a policy called the <b>Genetic Information Nondiscrimination Act (GINA)</b>"
         ],
         "parent_ids": [
             "MamuHnC"
@@ -5059,7 +5037,7 @@
         "type": "bot",
         "messages": [
             "Health insurance companies may not request your genetic information that we get from this research",
-            "Health insurance companies may not use your genetic information when deciding whether to insure you or the amount of money they will charge you"
+            "Health insurance companies may not use your genetic information when deciding whether to insure you or the amount of money they will charge for your plan"
         ],
         "parent_ids": [
             "HE7Z96Y"
@@ -5217,7 +5195,7 @@
     "nk6nfNp": {
         "type": "bot",
         "messages": [
-            "These kinds of additional insurance companies (such as life insurance or disability insurance) might ask you to provide your medical history\u2013including genetic testing results\u2013before allowing you to enroll",
+            "These kinds of additional insurance companies (such as life insurance or disability insurance) might ask you to provide your medical history\u2013including genetic test results\u2013before allowing you to enroll",
             "Because the genetic testing being done in this study is for research only, the results will not be part of any official medical record until they are confirmed by a clinical lab.",
             "Some families may choose to enroll in these kinds of insurances for their child or themselves before getting a clinically validated genetic test result"
         ],
@@ -5297,7 +5275,7 @@
         "type": "bot",
         "messages": [
             "I\u2019d like to take a moment to give you some info about the <b>risks and possible discomforts</b> that may occur as part of participating in this study",
-            "The greatest risks of this study are related to sample collection, the potential for loss of confidentiality of your study information, and possible psychological risks associated with genetic information",
+            "The greatest risks of the study are related to sample collection, the potential for loss of confidentiality of your study information, and possible psychological risks associated with genetic information",
             "That may sound like a lot, so I will go through each of these with you"
         ],
         "parent_ids": [
@@ -5380,7 +5358,7 @@
         "messages": [
             "The study team will take care to protect the privacy and confidentiality of your study data",
             "Because your samples and data will be labeled only with a study ID, your personal information (like your name) will only be known to certain authorized study team members",
-            "The team will keep your personal and genetic data on a secure drive, and you will be notified immediately if there is a security breach"
+            "The team will keep your personal and genetic data in an encrypted secure environment, and be notified immediately if there is a security breach"
         ],
         "parent_ids": [
             "DhAQkSy"
@@ -5478,8 +5456,7 @@
     "fsbFZtR": {
         "type": "bot",
         "messages": [
-            "These risks may also affect members of your family",
-            "You may want to discuss your participation in this study with your family and ask the study team about any questions or concerns you may have"
+            "These risks may also affect members of your family. You may want to discuss your participation in this study with your family and ask the study team about any questions or concerns you may have"
         ],
         "parent_ids": [
             "YDBEbUp",
@@ -5558,8 +5535,8 @@
     "KbzEchg": {
         "type": "bot",
         "messages": [
-            "Some results may be more certain than others",
-            "For example, sometimes we may find a \u201cvariant of uncertain significance\u201d, which means that we aren\u2019t sure whether the genetic variant is linked to a specific health issue or not",
+            "These results may be more certain than others",
+            "For example, as we discussed before, we may find a \u201cvariant of uncertain significance\u201d, which means that we aren\u2019t sure whether a genetic variant is linked to a specific health concern or not",
             "Some people may feel anxious or uncomfortable about uncertain results"
         ],
         "parent_ids": [
@@ -5598,9 +5575,9 @@
     "d4nnpdr": {
         "type": "bot",
         "messages": [
-            "And finally, results from this study may sometimes give you information about a genetic health issue that does not have a clear medical treatment",
-            "Some people may feel distressed or anxious to learn about a genetic health issue or risk without a known treatment",
-            "It is up to you to decide if you want to receive any possible genetic results from this study, and you can also decide if you want to receive some types of results but not others"
+            "Lastly, results from this study may sometimes give you information about a genetic health issue that does not have a clear medical treatment",
+            "Some people become distressed or anxious to learn about a diagnosis or risk to develop symptoms without a known treatment",
+            "It is up to you to decide if you want to receive any possible genetic results from this study. As we discussed before, you can decide if you want to receive some types of results but not others"
         ],
         "parent_ids": [
             "3uRFDJg"
@@ -5638,7 +5615,7 @@
     "KX6JCsF": {
         "type": "bot",
         "messages": [
-            "We can also talk a little bit about the <b>possible benefits</b> of participating in this study",
+            "Lets also talk about the <b>possible benefits</b> of participating in this study",
             "You should know that there may be no benefit to you for your participation in this study, and you will not be paid for your participation in this study"
         ],
         "parent_ids": [
@@ -5677,9 +5654,8 @@
     "h4Luo4M": {
         "type": "bot",
         "messages": [
-            "Some study participants may benefit by getting a new genetic diagnosis or discovering the genetic cause of a known genetic health issue",
-            "This type of information can be beneficial because it can help that individual understand more about their health, it can give them an idea of health issues to look out for in the future, and it can sometimes give their clinical team some guidance about testing or screening options",
-            "In rare cases, learning about a genetic result can even help the individual learn about a specific medical therapy or treatment"
+            "Some study participants may benefit by receiving a new genetic diagnosis or discovering the genetic cause of a known genetic health concern",
+            "This type of information is beneficial because it can help that individual understand more about their health, provide their clinical team some guidance about testing or screening options, and in rare cases, can even help the individual learn about a specific therapy or treatment"
         ],
         "parent_ids": [
             "jey9scg"
@@ -5737,9 +5713,9 @@
     "7WLks8j": {
         "type": "bot",
         "messages": [
-            "Unfortunately, for many people who have a genetic health issue, a specific diagnosis or cause may never be found",
-            "We do not know if the genetic testing approaches used in this study will be able to help diagnose people who do not yet have a diagnosis",
-            "However, we hope that, through this study, we will gain lots of new knowledge and understanding that will help us find diagnoses for people in the future"
+            "Unfortunately, for many people who have a suspected genetic health concern, a specific diagnosis or cause may never be found",
+            "We do not know if the genetic testing used in this study will be able to help diagnose people who do not yet have a diagnosis",
+            "We hope that through this study we will learn new information and improve our understanding of genetic conditions to help us find diagnoses for people in the future"
         ],
         "parent_ids": [
             "UynEV5h",
@@ -5778,7 +5754,7 @@
     "nYueqrk": {
         "type": "bot",
         "messages": [
-            "I\u2019m going to give you a bunch of contact information, and you can write it down if you want. \u270f\ufe0f",
+            "I\u2019m going to give you some contact information, and you can write it down if you would like. \u270f\ufe0f",
             "If you have any questions about the study or if you get hurt or sick because of something to do with the study, please contact the principal investigator, Dr. Eric Vilain, at 949-824-4090.",
             "In case of a medical emergency, call 911 or go directly to the hospital. Be sure to tell the Emergency Room personnel and your doctor that you are in this study"
         ],
@@ -5819,7 +5795,7 @@
         "type": "bot",
         "messages": [
             "If you have any questions or concerns about your privacy rights, you may contact the UCI Health Privacy Office at 714-456-3916",
-            "If you have questions or concerns about your rights as a study participant, you can contact UCI's Human Research Protections unit in the Office of Research at 949-824-6068; or by email (IRB@research.uci.edu); or by writing to us at 160 Aldrich Hall, Irvine, CA 92697"
+            "If you have questions or concerns about your rights as a study participant, you can contact UCI's Human Research Protections unit in the Office of Research at 949-824-6068, or by email (IRB@research.uci.edu), or by writing to us at 160 Aldrich Hall, Irvine, CA 92697"
         ],
         "parent_ids": [
             "5UhK2Hy"
@@ -6026,7 +6002,7 @@
         "type": "bot",
         "messages": [
             "Okay! I can arrange for someone from our study team to contact you directly by phone and/or email within the next 2-3 weeks",
-            "If you have questions now, you can contact us at PMGRC@childrensnational.org",
+            "If you have questions now, you can email us at GREGOR@hs.uci.edu",
             "You can also come back here to continue the chat if you have made a decision"
         ],
         "parent_ids": [
@@ -6048,8 +6024,8 @@
         "type": "bot",
         "messages": [
             "Okay!  Please take all the time you need",
-            "As you are considering things, you can scroll through our chat to review our discussion any time",
-            "To come back to the chat, just use the link you used to access the chat"
+            "As you are considering things, you can scroll through our chat to review our discussion any time. To come back to the chat, click the link you used to access the chat",
+            "If the link is expired or does not work, the study team can send a new link"
         ],
         "parent_ids": [
             "NsfXTD7"
@@ -6710,7 +6686,7 @@
         "messages": [
             "Actually, that\u2019s not right",
             "Though we can\u2019t be sure whether you will benefit from participating in the study, it is possible that you will benefit",
-            "For example, it is possible that you may learn about a genetic result that leads to a diagnosis or a better understanding of your health"
+            "For example, it is possible you may learn about a genetic result that leads to a diagnosis or a better understanding of your health"
         ],
         "parent_ids": [
             "DViRS7T"
@@ -6750,7 +6726,7 @@
         "messages": [
             "Actually, that\u2019s not right",
             "Though there may be some direct benefits to you, it is also possible that you may not benefit from the study",
-            "For example, it is possible that you may learn about a genetic result that leads to a diagnosis or a better understanding of your health",
+            "For example, it is possible you may learn about a genetic result that leads to a diagnosis or a better understanding of your health",
             "But you may not get any results from this study or any direct benefit"
         ],
         "parent_ids": [
@@ -6853,7 +6829,7 @@
         "type": "bot",
         "messages": [
             "Actually, there are some risks of participating in the study",
-            "The main risks of this study are related to sample collection, the potential for loss of confidentiality of your study information, and possible psychological risks associated with genetic information"
+            "The main risks of this study are related to sample collection, the potential for loss of confidentiality of your information, and possible psychological risks associated with genetic information"
         ],
         "parent_ids": [
             "HSHVE6v"
@@ -7589,7 +7565,7 @@
         ],
         "attachment": null,
         "html_type": "form",
-        "html_content": "<form id='sample-storage-use-form' class='user-response-form'>\n    <p class='consent-text'>Can we store your samples for purposes of this research study? (Required for participation in the study)</p>\n    <label class='user-form-row' for='yesThisStudy'>\n        <input type='radio' id='yesThisStudy' name='storeSamplesThisStudy' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <p class='consent-text'>Can we store your samples in the Children\u2019s National biobank for purposes of unrelated research?</p>\n    <label class='user-form-row' for='yesOtherStudies'>\n        <input type='radio' id='yesOtherStudies' name='storeSamplesOtherStudies' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noOtherStudies'>\n        <input type='radio' id='noOtherStudies' name='storeSamplesOtherStudies' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <input type='hidden' name='id_node' value='gdiDJUS'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "html_content": "<form id='sample-storage-use-form' class='user-response-form'>\n    <p class='consent-text'>Can we store your samples for purposes of this research study? (Required for participation in the study)</p>\n    <label class='user-form-row' for='yesThisStudy'>\n        <input type='radio' id='yesThisStudy' name='storeSamplesThisStudy' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <p class='consent-text'>Can we store your samples in the UCI biobank for purposes of unrelated research?</p>\n    <label class='user-form-row' for='yesOtherStudies'>\n        <input type='radio' id='yesOtherStudies' name='storeSamplesOtherStudies' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noOtherStudies'>\n        <input type='radio' id='noOtherStudies' name='storeSamplesOtherStudies' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <input type='hidden' name='id_node' value='gdiDJUS'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
         "metadata": {
             "workflow": "",
             "end_sequence": false
@@ -7676,7 +7652,7 @@
         "type": "bot",
         "messages": [
             "You may recall that we discussed the types of genetic research results that may be found in this study",
-            "You get to decide which types of results you want to learn about, if any",
+            "You get to decide which types of results you want to learn about",
             "Do you remember the different types of results we discussed, like \u201cprimary results\u201d and \u201cmedically actionable secondary results\u201d?"
         ],
         "parent_ids": [
@@ -7735,7 +7711,7 @@
     "3iBfwGK": {
         "type": "bot",
         "messages": [
-            "<b>Primary findings</b> are genetic changes that may be related to the specific health issues that have been seen in you or your family members",
+            "<b>Primary findings</b> are genetic changes that may be related to the specific health concern that has been seen in you or your family members",
             "Primary findings often allow the clinical team to make a diagnosis"
         ],
         "parent_ids": [
@@ -7774,9 +7750,9 @@
     "N9JZqfY": {
         "type": "bot",
         "messages": [
-            "Sometimes the study may find genetic variants that are not related to a patient\u2019s current known health issues",
+            "Sometimes the study may find genetic variants that are not related to a patient\u2019s current known health concerns",
             "These are called <b>secondary findings</b>",
-            "Some of these secondary findings are considered medically actionable, meaning if these genetic changes are known, then you or your healthcare provider can then take action to try and reduce your risk of developing the health problems or to better treat or manage the health problems"
+            "Some of these secondary findings are considered medically actionable, meaning if these genetic changes are known, then you or your healthcare provider can then take action to try to reduce your risk of developing the symptoms or to better treat or manage your healthcare related to the secondary findings"
         ],
         "parent_ids": [
             "WHwSvgC"
@@ -7814,8 +7790,8 @@
     "GMm2FJg": {
         "type": "bot",
         "messages": [
-            "Some examples of medically actionable secondary findings may be genetic variants that cause increased risk for future health issues like heart disease or cancer",
-            "Secondary findings are often related to adult health risks. However, it is possible that we could discover a secondary finding that relates to health issues in childhood"
+            "Some examples of medically actionable secondary findings may be genetic variants that cause increased risk for future health concerns like heart disease or cancer",
+            "Secondary findings are often related to adult-onset health risks. However, it is possible that we could discover a secondary finding that relates to symptoms in childhood"
         ],
         "parent_ids": [
             "Hc525XA"
@@ -8025,7 +8001,7 @@
             "Okay, great!",
             "To enroll four or more children, it would be best for you to talk to a member of our study team",
             "Someone from our team will contact you directly by phone or email within the next 2-3 weeks",
-            "If you have questions now, you can contact us at PMGRC@childrensnational.org"
+            "If you have questions now, you can contact us at GREGOR@hs.uci.edu"
         ],
         "parent_ids": [
             "YkoAEVe"
@@ -8109,7 +8085,7 @@
         ],
         "attachment": null,
         "html_type": "form",
-        "html_content": "<form id='sample-storage-use-form' class='user-response-form'>\n    <p class='consent-text'>Can we store this person's samples for purposes of this research study? (Required for participation in the study)</p>\n    <label class='user-form-row' for='yesThisStudy'>\n        <input type='radio' id='yesThisStudy' name='storeSamplesThisStudy' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <p class='consent-text'>Can we store this person's samples in the Children\u2019s National biobank for purposes of unrelated research?</p>\n    <label class='user-form-row' for='yesOtherStudies'>\n        <input type='radio' id='yesOtherStudies' name='storeSamplesOtherStudies' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noOtherStudies'>\n        <input type='radio' id='noOtherStudies' name='storeSamplesOtherStudies' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <input type='hidden' name='id_node' value='SFiuhW9'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
+        "html_content": "<form id='sample-storage-use-form' class='user-response-form'>\n    <p class='consent-text'>Can we store this person's samples for purposes of this research study? (Required for participation in the study)</p>\n    <label class='user-form-row' for='yesThisStudy'>\n        <input type='radio' id='yesThisStudy' name='storeSamplesThisStudy' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <p class='consent-text'>Can we store this person's samples in UCI\u2019s biobank for purposes of unrelated research?</p>\n    <label class='user-form-row' for='yesOtherStudies'>\n        <input type='radio' id='yesOtherStudies' name='storeSamplesOtherStudies' value='yes'>\n        <span class='user-form-row-label'>Yes</span>\n    </label>\n    <label class='user-form-row' for='noOtherStudies'>\n        <input type='radio' id='noOtherStudies' name='storeSamplesOtherStudies' value='no'>\n        <span class='user-form-row-label'>No</span>\n    </label>\n    <input type='hidden' name='id_node' value='SFiuhW9'>\n    <input type='submit' value='Submit' id='submit-button' class='user-response-button-group user-response-button' disabled>\n</form>",
         "metadata": {
             "workflow": "child_consent",
             "end_sequence": false
@@ -8196,7 +8172,7 @@
         "type": "bot",
         "messages": [
             "You may recall that we discussed the types of genetic research results that may be found in this study",
-            "You get to decide which types of results you want to learn about, if any",
+            "You get to decide which types of results you want to learn about",
             "Do you remember the different types of results we discussed, like \u201cprimary results\u201d and \u201cmedically actionable secondary results\u201d?"
         ],
         "parent_ids": [
@@ -8255,11 +8231,9 @@
     "9VfACid": {
         "type": "bot",
         "messages": [
-            "<b>Primary findings</b> are genetic changes that may be related to the specific health issues that have been seen in your child or your family members",
-            "Primary findings often allow the clinical team to make a diagnosis",
-            "Sometimes the study may find genetic variants that are not related to a patient\u2019s current known health issues",
-            "These are called <b>secondary findings</b>",
-            "Some of these secondary findings are considered <b>medically actionable</b>, meaning if these genetic changes are known, then you or your healthcare provider can then take action to try and reduce your child\u2019s risk of developing the health problems or to better treat or manage the health problems"
+            "<b>Primary findings</b> are genetic changes that may be related to the specific health concern that has been seen in your child or your family members. Primary findings often allow the clinical team to make a diagnosis",
+            "Sometimes the study may find genetic variants that are not related to a patient\u2019s current known health concern",
+            "These are called <b>secondary findings</b>. Some secondary findings are considered <b>medically actionable</b>, meaning if these genetic changes are known, then you or your healthcare provider can then take action to try to reduce your child\u2019s risk of developing symptoms or to better treat or manage the health concern related to the secondary findings"
         ],
         "parent_ids": [
             "J5LzZD4"
@@ -8297,8 +8271,8 @@
     "gedo5CN": {
         "type": "bot",
         "messages": [
-            "Some examples of medically actionable secondary findings may be genetic variants that cause increased risk for future health issues like heart disease or cancer",
-            "Secondary findings are often related to adult health risks.  However, it is possible that we could discover a secondary finding that relates to health issues in childhood"
+            "Some examples of medically actionable secondary findings may be genetic variants that cause increased risk for future health concerns like heart disease or cancer",
+            "Secondary findings are often related to adult-onset health risks.  However, it is possible that we could discover a secondary finding that relates to symptoms in childhood"
         ],
         "parent_ids": [
             "eXaerup"
@@ -8411,7 +8385,7 @@
         "type": "bot",
         "messages": [
             "We are almost done with the consent process. Just a few more things to tell you.",
-            "If you enrolled a child who is 7 years or older, a member of the study team will need to talk to your child briedly to tell them about the study and confirm their interest in participating",
+            "If you enrolled a child who is 7 years or older, a member of the study team will need to talk to your child briefly to tell them about the study and confirm their interest in participating",
             "Below are links to access some of the documents we discussed during our chat:<br><br><b>Notice of Privacy Practices</b> - <a href=\"https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf\">https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf</a><br><br><b>HIPAA information</b> - <a href=\"https://www.cdc.gov/phlp/publications/topic/hipaa.html\">https://www.cdc.gov/phlp/publications/topic/hipaa.html</a><br><br><b>GINA resources</b> - <a href=\"https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina\">https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina</a>"
         ],
         "parent_ids": [
@@ -8548,8 +8522,8 @@
     "nJgsH7y": {
         "type": "bot",
         "messages": [
-            "Remember, if you have any questions or concerns, you can always reach out to our team at PMGRC@childrensnational.org",
-            "If you would like to help me improve please rate your experience and provide feedback"
+            "Remember, if you have any questions or concerns, you can always reach out to our team at GREGOR@hs.uci.edu",
+            "If you would like to help me improve, please rate your experience and provide feedback!"
         ],
         "parent_ids": [
             "6iruWjc"
