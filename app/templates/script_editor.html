@@ -2,7 +2,7 @@
 <div class="col s10" id="admin-main-content">
     <h6>Edit Script - <b>{{ script_name }}</b></h6>
     <hr>
-    <a id="saveScriptBtn" class="waves-effect waves-light btn" data-chat-id="{{ chat_id }}" href="#save-script">Save Script</a>
+    <a id="downloadScriptBtn" class="waves-effect waves-light btn" data-chat-id="{{ chat_id }}" href="#download-script">Download Script</a>
     <br><br>
     <div class="row">
         <div class="col s6">
@@ -75,13 +75,15 @@
 <script>
     $(document).ready(function(){
         $('select').formSelect();
-
-        $('#saveScriptBtn').on('click', function(event) {
+        $('#downloadScriptBtn').on('click', function(event) {
             event.preventDefault();
-            var chatId = $(this).data('chat-id')
-            $.post("/admin/scripts/edit_script_content/save_script/" + chatId, function(data) {
-            alert(data.message); // Show a message that the chat was saved.
-            });
+            var chatId = $(this).data('chat-id');
+
+            // Create a form and submit it to trigger file download
+            var form = $('<form></form>').attr('action', "/admin/scripts/edit_script_content/download_script/" + chatId).attr('method', 'post');
+            $('body').append(form);
+            form.submit();
+            form.remove();
         });
     });
 </script>

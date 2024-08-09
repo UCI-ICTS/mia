@@ -56,6 +56,6 @@ from app.routes.admin_main import admin
 from app.routes.admin_users import (admin_manage_users, add_update_user, get_user, get_user_chat_url,
                                     generate_new_chat_url, delete_user)
 from app.routes.admin_scripts import (get_scripts, edit_script, add_update_script, add_message, delete_script,
-                                      edit_script_content, save_script)
+                                      edit_script_content, download_script)
 
 

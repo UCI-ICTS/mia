@@ -1,6 +1,8 @@
-import shortuuid, json
-
-from flask import request, render_template, jsonify, redirect, Blueprint
+import shortuuid
+import json
+import os
+from datetime import datetime
+from flask import request, render_template, jsonify, redirect, Blueprint, send_file, current_app
 from flask_login import login_required, current_user
 from app import db
 from sqlalchemy.orm.attributes import flag_modified
@@ -117,19 +119,27 @@ def view_script_content(chat_id):
                            parent_to_children=parent_to_children)
 
 
-@admin_scripts_bp.route('/edit_script_content/save_script/<string:chat_id>', methods=['POST'])
-def save_script(chat_id):
+@admin_scripts_bp.route('/edit_script_content/download_script/<string:chat_id>', methods=['POST'])
+def download_script(chat_id):
     chat = db.session.get(Chat, chat_id)
     version = ChatScriptVersion.get_max_version_number(chat_id)
     chat_script_version = ChatScriptVersion.query.filter_by(chat_id=str(chat_id), version_number=version).first()
     script = chat_script_version.script
-
     if chat:
-        # save to a file for easy editing
-        with open(chat.name + '.json', 'w') as file:
+        # Generate filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{chat.name}_{timestamp}.json"
+
+        # Create the full path for the temp_scripts directory
+        temp_scripts_dir = os.path.abspath(os.path.join(current_app.root_path, '..', 'temp_scripts'))
+        os.makedirs(temp_scripts_dir, exist_ok=True)
+
+        # Save to the correct temporary file location
+        temp_file_path = os.path.join(temp_scripts_dir, filename)
+        with open(temp_file_path, 'w') as file:
             json.dump(script, file, indent=4)
 
-        # save to the database for safe keeping
+        # Save to the database for safe keeping
         if VERSION_SCRIPTS:
             new_version = version + 1
             new_chat_script_version = ChatScriptVersion(
@@ -140,7 +150,8 @@ def save_script(chat_id):
             db.session.add(new_chat_script_version)
             db.session.commit()
 
-        return jsonify({'message': 'Chat graph saved successfully!'})
+        # Send file to user using the absolute path
+        return send_file(temp_file_path, as_attachment=True, download_name=filename)
     else:
         return jsonify({'message': 'Error: script id not found'})
 
