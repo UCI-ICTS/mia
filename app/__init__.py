@@ -31,7 +31,9 @@ def create_app(config_type='local'):
     from app.routes.authentication import auth_bp
     from app.routes.members import member_users_bp
     from app.routes.admin_follow_up import admin_follow_up_bp
+    from app.routes.index import index_bp
 
+    app.register_blueprint(index_bp, url_prefix='/')
     app.register_blueprint(invite_bp, url_prefix='/invite')
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(admin_scripts_bp, url_prefix='/admin/scripts')

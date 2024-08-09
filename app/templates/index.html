@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet Mia</title>
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="blue darken-4">
+      <div class="nav-wrapper container">
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="/admin">Staff Login</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <div class="section no-pad-bot blue darken-3" id="hero-banner">
+      <div class="container">
+        <div class="row valign-wrapper">
+          <div class="col s12 m6">
+            <h1 class="header white-text">Meet Mia</h1>
+            <p class="white-text">Our virtual Medical Information Assistant (Mia)</p>
+            <p class="white-text">A HIPAA-compliant clinical chatbot, Mia facilitates virtual conversations with patients, including intake of medical history and automatic delivery of results.</p>
+          </div>
+          <div class="col s12 m6 center-align">
+            <img src="{{ url_for('static', filename='images/mia_logo.png') }}" alt="Mia" class="responsive-img circle">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2x3 Grid Section -->
+    <div class="container">
+      <div class="section">
+        <h5 class="center-align">Offering medical assistance is simple with Mia</h5>
+        <div class="row">
+          <div class="col s12 m6">
+            <h6><b>1. Share Mia</b></h6>
+            <p>Provide a link to your patients prior to their appointment.</p>
+            <p><em>Available for patients and clinicians in the US.</em></p>
+          </div>
+          <div class="col s12 m6">
+            <h6><b>2. Intake</b></h6>
+            <p>Via a virtual chat, Mia gathers intake information, including personal and medical history.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12 m6">
+            <h6><b>3. Education</b></h6>
+            <p>Mia guides your patients through pre-appointment education from the comfort of their home.</p>
+          </div>
+          <div class="col s12 m6">
+            <h6><b>4. Guidance</b></h6>
+            <p>You’re notified when a patient completes a chat and will receive a clinical summary note. You're also notified of your patient’s eligibility for treatment, their interest in medical services, and which tests to consider.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12 m6">
+            <h6><b>5. Ordering</b></h6>
+            <p>The order form automatically populates with patient information. Simply select the service and sign electronically.</p>
+          </div>
+          <div class="col s12 m6">
+            <h6><b>6. Results</b></h6>
+            <p>You’ll receive your patient’s results and can follow up with them directly. You can also choose for Mia to release results automatically, provide education, and facilitate an appointment with a specialist when appropriate.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  </body>
+</html>

@@ -383,3 +383,44 @@ input[type='tel'] {
 .user-info-btn .user-btn span + span {
     margin-left: 10px;
 }
+
+/* Hero Banner Styling */
+#hero-banner {
+    width: 100%;
+    padding: 50px 0;
+    background-color: #325594;
+}
+
+#hero-banner .header {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+#hero-banner p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+#hero-banner img {
+    max-width: 250px;
+    height: auto;
+    margin-top: 20px;
+}
+
+/* Grid Section Styling */
+.container .section {
+    padding: 50px 0;
+}
+
+.container .row {
+    margin-bottom: 40px;
+}
+
+.container h6 {
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.container p {
+    font-size: 1.125rem;
+}
