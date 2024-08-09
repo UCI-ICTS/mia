@@ -116,11 +116,7 @@
             event.preventDefault();
             $.getJSON(this.href, function(data) {
                 let text;
-                if (data.expired == false) {
-                    text = "127.0.0.1:5000/invite/" + data.text;
-                } else {
-                    text = data.text;
-                }
+                text = data.text;
                 $("#generatedURL").text(text);
 
                 // Finally, open the modal

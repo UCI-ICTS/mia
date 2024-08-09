@@ -1,4 +1,4 @@
-from flask import request, render_template, jsonify, redirect, Blueprint
+from flask import request, render_template, jsonify, redirect, Blueprint, current_app
 from flask_login import login_required, current_user
 from app import db
 from app.models.chat import Chat, ChatScriptVersion
@@ -82,14 +82,14 @@ def get_user(user_id):
 @admin_users_bp.route('/get_user_chat_url/<string:user_id>', methods=['GET'])
 def get_user_chat_url(user_id):
     user = db.session.get(User, user_id)
+    base_url = 'http://' + current_app.config['HOST'] + ':' + str(current_app.config['PORT'])
+
     if user.chat_url:
         data = {
-            'expired': False,
-            'text': user.chat_url
+            'text': base_url + '/invite/' + user.chat_url
         }
     else:
         data = {
-            'expired': True,
             'text': 'Invite link expired. Please regenerate a new link'
         }
     return jsonify(data)

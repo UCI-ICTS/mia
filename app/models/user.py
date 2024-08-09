@@ -71,8 +71,8 @@ class User(db.Model):
 class UserChatUrl(db.Model):
     chat_url_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     chat_url = db.Column(db.String(36), default=lambda: str(uuid.uuid4()), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    expires_at = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(weeks=1))
+    created_at = db.Column(db.DateTime, default=datetime.now())
+    expires_at = db.Column(db.DateTime, default=lambda: datetime.now() + timedelta(weeks=1))
     user_id = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=False)
 
 
@@ -93,7 +93,7 @@ class UserTest(db.Model):
     test_question = db.Column(db.String(200), nullable=False)
     user_answer = db.Column(db.String(200), nullable=False)
     answer_correct = db.Column(db.Boolean, default=False, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
 
 
 class ConsentAgeGroup(enum.Enum):
@@ -119,7 +119,7 @@ class UserConsent(db.Model):
     user_full_name_consent = db.Column(db.String(200), default='', nullable=False)
     child_full_name_consent = db.Column(db.String(200), nullable=True)
     consented_at = db.Column(db.DateTime, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
 
 
 class UserFollowUp(db.Model):
@@ -128,7 +128,7 @@ class UserFollowUp(db.Model):
     follow_up_reason = db.Column(db.String(200), default='', nullable=False)
     follow_up_info = db.Column(db.String(200), default='', nullable=False)
     resolved = db.Column(db.Boolean, default=False, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
 
 
 class UserFeedback(db.Model):
@@ -136,7 +136,7 @@ class UserFeedback(db.Model):
     user_id = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=False)
     satisfaction = db.Column(db.String(25), nullable=True)
     suggestions = db.Column(db.String(2000), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
 
 
 # Example queries

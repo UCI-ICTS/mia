@@ -20,8 +20,6 @@ def create_app(config_type='local'):
     else:
         app.config.from_object(Config)
 
-    host_name = app.config['HOST']  # Access host name anywhere in your application
-
     from app.auth import load_user
 
     from app.routes.chatbot import invite_bp
