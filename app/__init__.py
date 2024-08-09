@@ -2,7 +2,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from config import Config, DevConfig, TestConfig
+from config import Config, DevConfig, TestConfig, ProductionConfig
 
 
 db = SQLAlchemy()
@@ -10,15 +10,17 @@ migrate = Migrate()
 login_manager = LoginManager()
 
 
-def create_app(config_type='Config'):
+def create_app(config_type='local'):
     app = Flask(__name__)
 
-    if config_type == 'DevConfig':
+    if config_type == 'prd':
+        app.config.from_object(ProductionConfig)
+    elif config_type == 'dev':
         app.config.from_object(DevConfig)
-    elif config_type == 'TestConfig':
-        app.config.from_object(TestConfig)
     else:
         app.config.from_object(Config)
+
+    host_name = app.config['HOST']  # Access host name anywhere in your application
 
     from app.auth import load_user
 

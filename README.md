@@ -8,11 +8,14 @@
   * Create a `.miaenv` file in the repo directory 
   * The file should contain the following information:
   ```python
-  FLASK_CONFIG=local or DevConfig
+  FLASK_ENV=local or [prd, dev]
+  FLASK_RUN_HOST=0.0.0.0
+  FLASK_RUN_PORT=5000
   SECRET_KEY=mysecretkey
   DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mia_app
   TEST_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db
-  AWS_DATABASE_URL=postgresql://username:password@rds-instance:5432/mia_app
+  DEV_DATABASE_URL=[fill out]
+  PRD_DATABASE_URL=[fill out]
   ```
 * create the virtual environment
 ```python

@@ -1,11 +1,16 @@
+from flask import Flask
 import os
+from config import Config, DevConfig, TestConfig, ProductionConfig
 from app import create_app
 
-config_type = os.getenv('FLASK_CONFIG', 'Config')
-app = create_app(config_type)
+# Determine which configuration to use based on the FLASK_ENV environment variable
+env_config = os.getenv('FLASK_ENV', 'local')  # Default to 'local'
+app = create_app(env_config)
 
-if __name__ == "__main__":
-    if config_type in 'local':
-        app.run(debug=True)
-    else:
-        app.run(host='0.0.0.0', debug=False)
+# Use HOST, PORT, DEBUG from the configuration
+HOST = app.config['HOST']
+PORT = app.config['PORT']
+DEBUG = app.config['DEBUG']
+
+if __name__ == '__main__':
+    app.run(host=HOST, port=PORT, debug=True)
