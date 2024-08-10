@@ -10,7 +10,7 @@ class Chat(db.Model):
     name = db.Column(db.String(50), nullable=False)
     description = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
-    script_versions = db.relationship('ChatScriptVersion', backref='chat', lazy=True)
+    script_versions = db.relationship('ChatScriptVersion', backref='chat', lazy=True, cascade="all, delete-orphan")
 
     @classmethod
     def get_chat_names(cls):
