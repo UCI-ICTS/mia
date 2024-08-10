@@ -141,7 +141,7 @@
         "messages": [
             "All of the information we discuss will also be described in more detail in our consent document",
             "You can only sign the consent form electronically after reviewing it with me or with a study team member",
-            "You can access an example of the consent document by clicking this <a href=\"https://acrobat.adobe.com/link/review?uri=urn%3Aaaid%3Ascds%3AUS%3Ac2c31666-e549-4415-8bf1-c0d1b822242b\">link</a>, but please remember to return here to complete our chat"
+            "You can access an example of the consent document by clicking this <a href=\"/static/docs/Example_ConsentForm_UCIGREGoR.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">link</a>, but please remember to return here to complete our chat"
         ],
         "parent_ids": [
             "iLpXdAS",
@@ -1910,7 +1910,6 @@
         "messages": [
             "Okay, sounds good",
             "You may already know that your body is made of trillions of cells. DNA provides the instructions to tell our bodies how to grow and develop"
-
         ],
         "parent_ids": [
             "QXNa2cz"
@@ -2145,7 +2144,7 @@
         "type": "bot",
         "messages": [
             "Genetic variants are what make each person unique",
-            "Some variants may change a person’s eye color, height, or hair color, while others may change a person’s development, heart function, or kidney function"
+            "Some variants may change a person\u2019s eye color, height, or hair color, while others may change a person\u2019s development, heart function, or kidney function"
         ],
         "parent_ids": [
             "Ti3ZavP",
@@ -2344,7 +2343,8 @@
     "nVUpS6V": {
         "type": "bot",
         "messages": [
-            "So you've had some experience. That's good!"],
+            "So you've had some experience. That's good!"
+        ],
         "parent_ids": [
             "9cuqxwT"
         ],
