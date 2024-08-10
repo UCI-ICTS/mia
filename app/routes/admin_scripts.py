@@ -156,6 +156,33 @@ def download_script(chat_id):
         return jsonify({'message': 'Error: script id not found'})
 
 
+@admin_scripts_bp.route('/edit_script_content/upload_script/<string:chat_id>', methods=['POST'])
+def upload_script(chat_id):
+    chat = db.session.get(Chat, chat_id)
+    if not chat:
+        return jsonify({'message': 'Error: chat not found'}), 404
+
+    data = request.json
+    new_script = json.loads(data['script'])
+
+    version = ChatScriptVersion.get_max_version_number(chat_id)
+    chat_script_version = ChatScriptVersion.query.filter_by(chat_id=chat_id, version_number=version).first()
+
+    if chat_script_version:
+        chat_script_version.script = new_script
+        flag_modified(chat_script_version, 'script')
+    else:
+        new_chat_script_version = ChatScriptVersion(
+            chat_id=chat_id,
+            version_number=1,
+            script=new_script
+        )
+        db.session.add(new_chat_script_version)
+
+    db.session.commit()
+    return jsonify({'message': 'Script uploaded successfully!'})
+
+
 @admin_scripts_bp.route('/edit_script_content/add_message/<string:chat_id>', methods=['POST'])
 def add_message(chat_id):
     # get the most recent script

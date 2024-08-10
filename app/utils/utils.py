@@ -277,7 +277,7 @@ def create_follow_up_with_user(invite_id, reason, more_info):
 def clean_up_after_chat(invite_id):
     # set the chat url to expire in 24 hrs
     user_chat_url = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first()
-    user_chat_url.expires_at = datetime.utcnow() + timedelta(hours=24)
+    user_chat_url.expires_at = datetime.now() + timedelta(hours=24)
     db.session.commit()
 
 

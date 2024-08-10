@@ -15,7 +15,7 @@ class User(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=False)
     phone = db.Column(db.String(15), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
     referred_by = db.Column(db.String(36), db.ForeignKey('user.user_id'), nullable=True)
     consent_complete = db.Column(db.Boolean, default=False, nullable=False)
     declined_consent = db.Column(db.Boolean, default=False, nullable=False)
@@ -38,7 +38,7 @@ class User(db.Model):
     @hybrid_property
     def chat_url(self):
         for url in self.chat_urls:
-            if datetime.utcnow() < url.expires_at:
+            if datetime.now() < url.expires_at:
                 return url.chat_url
         return None
 

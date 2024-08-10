@@ -9,7 +9,7 @@ class Chat(db.Model):
     chat_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = db.Column(db.String(50), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
     script_versions = db.relationship('ChatScriptVersion', backref='chat', lazy=True)
 
     @classmethod
@@ -23,7 +23,7 @@ class ChatScriptVersion(db.Model):
     chat_id = db.Column(db.String(36), db.ForeignKey('chat.chat_id'), nullable=False)
     version_number = db.Column(db.Integer, nullable=False)
     script = db.Column(db.JSON, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
 
     __table_args__ = (
         db.UniqueConstraint('chat_id', 'version_number', name='_chat_version_uc'),

@@ -18,7 +18,7 @@ class Members(UserMixin, db.Model):
     full_name = db.Column(db.String(200), nullable=False)
     password = db.Column(db.String(200), nullable=False)  # this is hashed
     role = db.Column(Enum(MemberRoleGroup), default=MemberRoleGroup.MEMBER, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
 
     def __init__(self, **kwargs):
         super(Members, self).__init__(**kwargs)

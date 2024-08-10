@@ -27,7 +27,7 @@ def authenticate_user_invite_url(func):
 
         # Use invite_id to query the database and check expiration.
         chat_url_instance = UserChatUrl.query.filter_by(chat_url=str(invite_id)).filter(
-            UserChatUrl.expires_at > datetime.utcnow()).first()
+            UserChatUrl.expires_at > datetime.now()).first()
 
         if chat_url_instance is None:
             print("User invite id not found in the database")
@@ -321,7 +321,7 @@ def save_consent_preferences(invite_id):
 
         if request.form.get('consent'):
             # checkbox checked
-            user_consent.consented_at = datetime.utcnow()
+            user_consent.consented_at = datetime.now()
             user_consent.consent_statements = CONSENT_STATEMENTS
 
             if request.form.get('childname'):
