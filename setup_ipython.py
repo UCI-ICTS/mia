@@ -6,7 +6,7 @@ from app.utils.utils import *
 from app.utils.cache import *
 from app.utils.utils import _replace_db_script_with_json
 
-config_type = os.getenv('FLASK_CONFIG', 'Config')
+config_type = os.getenv('FLASK_ENV', 'local')
 app = create_app(config_type)
 app.app_context().push()
 
