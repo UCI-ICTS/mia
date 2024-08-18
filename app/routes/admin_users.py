@@ -82,7 +82,7 @@ def get_user(user_id):
 @admin_users_bp.route('/get_user_chat_url/<string:user_id>', methods=['GET'])
 def get_user_chat_url(user_id):
     user = db.session.get(User, user_id)
-    base_url = 'http://' + current_app.config['HOST'] + ':' + str(current_app.config['PORT'])
+    base_url = 'http://' + current_app.config['HOST']
 
     if user.chat_url:
         data = {
