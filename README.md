@@ -1,5 +1,47 @@
+## Install with AWS Cloud Formation
+* Add your Github deploy secret key to AWS SecretsManager. Add the private key as plaintext.
+  * name the key /mia/ssh/key (if you change this name, you need to update the cloudformation template)
+  * copy the ARN for the Secret into the cloudformation template
+* You need to create an ec2 keypair
+* Navigate to Cloud Formation and create a new stack using the template in this repo (with updated parameters)
+* Run the Cloud Formation Stack
+  * Remember to keep track of the database password
+* Log into the ec2 instance (for simplicity I connected directly from the console)
+* Run the following commands:
+```python
+cd /home/ubuntu/mia
 
-## Install & Setup
+nano .miaenv
+# fill out this info and save the file (double check parameters are correct)
+FLASK_ENV=prd
+FLASK_RUN_HOST=<IP ADDRESS FOR EC2 INSTANCE>
+FLASK_RUN_PORT=5001
+SECRET_KEY=<ADD_A_SECRET_KEY (E.G., UUID)>
+PRD_DATABASE_URL=postgresql://pgadmin:<DATABASE_PASSWORD>@miaprdpostgresdb.cb6yykkuuahw.us-east-1.rds.amazonaws.com:5432/mia_app
+# save the file
+
+sudo systemctl restart mia
+
+source/venv/bin/activate
+
+flask db upgrade
+
+# launch ipython and create an admin login account
+ipython -i setup_ipython.py
+
+In [1]: member = Members(full_name='John Smith', email='jsmith@hs.uci.edu', role=MemberRoleGroup.ADMIN, password='#SomethingSuperSecure')
+
+In [2]: db.session.add(member)
+
+In [3]: db.session.commit()
+
+In [4]: exit
+
+# you're done!
+exit
+```
+* You should be able to go to the http://IP_ADDRESS and log into the site. Need to configure https with other certificates.
+## Install & Setup (Local)
 * These instructions are for MacOS (Windows is possible but slightly different)
 * Download and install PostgreSQL (v16)
   * Configure PostgreSQL settings and create a database called `mia_app` and `test_db` 
@@ -57,6 +99,7 @@ http://127.0.0.1:5000/admin/
 ```
 ## How to use the application
 ### 1. Create a script
+#### Once you create a new script, you can select "Edit script content" and upload the JSON file in this repo instead of doing it through the command line
 First create a script that you can assign to users. The application comes with a consent script 
 JSON file to get started.
 ```python
