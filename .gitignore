@@ -161,3 +161,8 @@ cython_debug/
 /.miaenv
 
 temp_scripts/*.json
+
+# ViM swap files
+*~
+*.swp
+*.swo

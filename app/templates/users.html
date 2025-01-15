@@ -14,6 +14,8 @@
                 <th>Phone</th>
                 <th>Chat</th>
                 <th>Consent Complete</th>
+                <th>First Test Score</th>
+                <th>Test Tries</th>
                 <th>Invite Status</th>
                 <th>Created</th>
                 <th>Actions</th>
@@ -27,6 +29,8 @@
                     <td>{{ user.phone }}</td>
                     <td>{{ user.chat_name or '...' }}</td>
                     <td>{{ user.consent_complete }}</td>
+                    <td>{{ user.first_test_score }}</td>
+                    <td>{{ user.test_tries }}</td>
                     <td>
                         {% if user.invite_expired %}
                             <div class="chip red lighten-4">
