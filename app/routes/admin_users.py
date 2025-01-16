@@ -27,12 +27,13 @@ def admin_manage_users():
     for user, chat_name in users_and_chats:
         first_test_score = 'NA'
         if user.consent_complete:
-            correct_answers = db.session.query(UserTest).filter(UserTest.user_id == user.user_id
-                                                                and UserTest.answer_correct == True
-                                                                and UserTest.test_try_num == 1).count()
-            test_questions = db.session.query(UserTest).filter(UserTest.user_id == user.user_id
-                                                               and UserTest.test_try_num == 1).count()
-            first_test_score = float(correct_answers) / test_questions
+            correct_answers = db.session.query(UserTest).filter(UserTest.user_id == user.user_id,
+                                                                UserTest.answer_correct == True,
+                                                                UserTest.test_try_num == 1).count()
+            test_questions = db.session.query(UserTest).filter(UserTest.user_id == user.user_id,
+                                                               UserTest.test_try_num == 1).count()
+            first_test_score = f'{float(correct_answers)*100/test_questions}%'
+        #breakpoint()
         user_data.append({
             'user_id': user.user_id,
             'first_name': user.first_name,
@@ -41,7 +42,7 @@ def admin_manage_users():
             'phone': user.phone,
             'chat_name': chat_name,
             'consent_complete': user.consent_complete,
-            'first_test_score': f'{first_test_score*100}%',
+            'first_test_score': first_test_score,
             'test_tries': user.num_test_tries,
             'invite_expired': False if user.chat_url else True,
             'created_at': user.created_at
