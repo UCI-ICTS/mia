@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.models.chat import Chat, ChatScriptVersion
 from app.models.user import User, UserTest, UserConsent
+import re
 
 
 admin_users_bp = Blueprint('admin_users', __name__)
@@ -93,7 +94,11 @@ def get_user(user_id):
 @admin_users_bp.route('/get_user_chat_url/<string:user_id>', methods=['GET'])
 def get_user_chat_url(user_id):
     user = db.session.get(User, user_id)
-    base_url = 'http://' + current_app.config['HOST']
+    ipv4_pattern = r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    if re.match(ipv4_pattern, current_app.config['HOST']):  # HOST is an IP address; connect insecure over non-standard HTTP port
+        base_url = 'http://' + current_app.config['HOST'] + ':' + str(current_app.config['PORT'])
+    else:  # Assume host is a domain with SSL
+        base_url = 'https://' + current_app.config['HOST']
 
     if user.chat_url:
         data = {
