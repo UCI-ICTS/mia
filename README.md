@@ -41,23 +41,35 @@ In [4]: exit
 exit
 ```
 * You should be able to go to the http://IP_ADDRESS and log into the site. Need to configure https with other certificates.
-## Install & Setup (Local)
+## Install & Setup (Local or within an EC2 instance)
 * These instructions are for MacOS (Windows is possible but slightly different)
 * Download and install PostgreSQL (v16)
-  * Configure PostgreSQL settings and create a database called `mia_app` and `test_db` 
-  * You might want a database explorer tool like pgAdmin 4
+  * For Ubuntu, install with apt `sudo apt-get install postgresql`
+  * Configure a password for the default `postgres` user:
+    * Open a psql shell with the postgres user with: `sudo -u postgres psql`.
+    * At the `postgres=#` prompt, type `\password` to set the password for the default `postgres` user.
+    * Follow the prompts and enter the new password. Save it for the `.miaenv` config file.
+    * Create two databases `mia_app` and `test_db` in psql with:
+      * `CREATE DATABASE mia_app ;`
+      * `CREATE DATABASE test_db ;`
+      * Don't forget the `;` after each SQL statement.
+    * [Optional] If ufw (uncomplicated firewall) is enabled and running, allow ports 80 and 443 for the web server with:
+      * `sudo ufw allow 80/tcp`
+      * `sudo ufw allow 443/tcp`
+
 * git clone the repo
-  * Create a `.miaenv` file in the repo directory 
+  * Create a `.miaenv` file in the repo directory
+  * Generate a secret key with `python3 -c "import os ; print(os.urandom(24)"`. Copy the string between the quotes.
   * The file should contain the following information:
   ```python
-  FLASK_ENV=local or [prd, dev]
-  FLASK_RUN_HOST=0.0.0.0
-  FLASK_RUN_PORT=5000
-  SECRET_KEY=mysecretkey
-  DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mia_app
-  TEST_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db
-  DEV_DATABASE_URL=[fill out]
-  PRD_DATABASE_URL=[fill out]
+  FLASK_ENV=local  # local, dev or prd
+  FLASK_RUN_HOST=0.0.0.0  # local IP address for the instance
+  FLASK_RUN_PORT=[80 for testing without HTTPS, otherwise 443]
+  SECRET_KEY=[change this key with the value above for client-side security]
+  DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mia_app  # Change username:password@localhost accordingly to match what was set with psql earlier
+  TEST_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db  # Change username:password@localhost accordingly to match what was set with psql earlier
+  DEV_DATABASE_URL=[ignored if local or prd is set]
+  PRD_DATABASE_URL=[ignored if local or dev is set]
   ```
 * create the virtual environment
 ```python
@@ -70,14 +82,10 @@ source venv/bin/activate
 # pip install the requirements
 pip3 install -r requirements.txt
 
-# skip if you have an existing migration folder
-# initialize the database (only do this if you're starting from scratch)
-flask db init
-
-# update the database
+# update the database with the definitions in the migrations folder
 flask db upgrade
 ```
-Next create an admin user
+Next create the first admin user
 ```python
 # launch ipython and create an admin login account
 ipython -i setup_ipython.py
@@ -92,10 +100,10 @@ In [3]: db.session.commit()
 ## Run the application (in a new tab)
 ```python 
 source venv/bin/activate
-python mia.py
+sudo venv/bin/python mia.py
 
 # go to the admin page and login
-http://127.0.0.1:5000/admin/
+http://[aws-ec2-instance-ip-address]/admin/
 ```
 ## How to use the application
 ### 1. Create a script
@@ -103,7 +111,7 @@ http://127.0.0.1:5000/admin/
 First create a script that you can assign to users. The application comes with a consent script 
 JSON file to get started.
 ```python
-http://127.0.0.1:5000/admin/scripts/
+http://[aws-ec2-instance-ip-address]/admin/scripts/
 ```
 Click `Add New Script` and provide the name "PMGRC Consent" with a description "PMGRC GREGoR consent script"
 
@@ -120,7 +128,7 @@ This will load the current consent script into the database.
 ### 2. Create users
 Navigate to the `Users` and click `Add New User`
 ```python
-http://127.0.0.1:5000/admin/users/
+http://[aws-ec2-instance-ip-address]/admin/users/
 ```
 ![img.png](app/static/images/readme/users_admin.png)
 
