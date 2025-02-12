@@ -276,7 +276,7 @@ def save_consent_preferences(invite_id):
 
     user_consent = None
 
-    breakpoint()  # Troubleshoot https://github.com/UCI-GREGoR/mia/issues/35#issue-2788292690
+    #breakpoint()  # Troubleshoot https://github.com/UCI-GREGoR/mia/issues/35#issue-2788292690
     if get_consenting_myself(invite_id):
         user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
         user = db.session.get(User, user_id)
