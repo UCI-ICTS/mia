@@ -8,7 +8,7 @@ load_dotenv(dotenv_path)
 
 class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY', 'you-will-never-guess')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/mia_app')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///mia_app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     HOST = os.getenv('FLASK_RUN_HOST', '0.0.0.0')
     PORT = int(os.getenv('FLASK_RUN_PORT', 5000))
@@ -21,7 +21,7 @@ class DevConfig(Config):
 
 
 class TestConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/test_db')
+    SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URL', 'sqlite:///test_db.db')
     DEBUG = True
 
 
