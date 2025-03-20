@@ -1,1 +1,0 @@
-This folder is where the scripts are written to JSON before they are downloaded. The JSON files can safely be deleted.
