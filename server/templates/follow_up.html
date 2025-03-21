@@ -1,0 +1,62 @@
+{% extends 'admin_base.html' %} {% block content %}
+
+<div class="col s10" id="admin-main-content">
+    <h6>Follow up</h6>
+    <hr>
+    <br>
+    <br>
+    <table class="highlight centered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Chat</th>
+                <th>Reason</th>
+                <th>More Info</th>
+                <th>Resolved</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{{ user.chat_name or '...' }}</td>
+                    <td>{{ user.reason }}</td>
+                    <td>{{ user.more_info }}</td>
+                    <td>
+                        {% if user.resolved %}
+                            <div class="chip green lighten-4">
+                                Resolved
+                            </div>
+                        {% else %}
+                            <div class="chip red lighten-4">
+                                Unresolved
+                            </div>
+                        {% endif %}
+                    </td>
+                    <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <!-- Dropdown Trigger -->
+                        <a class='dropdown-trigger btn-small btn-flat user-options-dropdown' href='#' data-target="{{ user.user_follow_up_id }}">More options &#x25BC;</a>
+                        <!-- Dropdown Structure -->
+                        <ul id="{{ user.user_follow_up_id }}" class='dropdown-content'>
+                            <li><a href="/admin/follow_up/resolve/{{ user.user_follow_up_id }}">Mark as resolved</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+<script>
+    $(document).ready(function(){
+        $('.dropdown-trigger').dropdown({ constrainWidth: false });
+    });
+</script>
+{% endblock %}

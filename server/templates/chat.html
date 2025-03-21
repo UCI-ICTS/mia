@@ -1,0 +1,33 @@
+{% extends 'base.html' %} {% block content %}
+<div id="header">
+  <img src="{{ url_for('static', filename='images/mia_logo.png') }}" alt="Mia" id="header-logo">
+  <div>Mia by University of California, Irvine</div>
+</div>
+
+<div id="chat-window">
+    <div class="message-row bot"></div>
+</div>
+
+<!--clean up id vs class confusion (id is single # class is multiple uses-->
+<div class="user-response-container">
+  <div class="user-response-button-group" id="user-response-button-group">
+    <form class="user-response-form" id="user-response-form">
+        <button class="response user-response-button"></button>
+    </form>
+  </div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  var SCRIPT_ROOT = {{ request.script_root|tojson }};
+  ChatApp.initialize(SCRIPT_ROOT);
+
+  {% if next_chat_sequence %}
+    {% for chat in next_chat_sequence %}
+      var chatJson = {{ chat | tojson }};
+      ChatApp.processChatMessages(chatJson);
+    {% endfor %}
+  {% endif %}
+</script>
+{% endblock %}
