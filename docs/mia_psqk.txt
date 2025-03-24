@@ -3,16 +3,16 @@
 ---------------------+-------------------------------------+-----------------------------
  alembic_version     | version_num                         | character varying
  
- chat                | chat_id                             | character varying
- chat                | name                                | character varying
- chat                | description                         | text
- chat                | created_at                          | timestamp without time zone
+ consent                | consent_id                             | character varying
+ consent                | name                                | character varying
+ consent                | description                         | text
+ consent                | created_at                          | timestamp without time zone
  
- chat_script_version | chat_script_version_id              | character varying
- chat_script_version | chat_id                             | character varying
- chat_script_version | version_number                      | integer
- chat_script_version | script                              | json
- chat_script_version | created_at                          | timestamp without time zone
+ consent_script_version | consent_script_version_id           | character varying
+ consent_script_version | consent_id                          | character varying
+ consent_script_version | version_number                      | integer
+ consent_script_version | script                              | json
+ consent_script_version | created_at                          | timestamp without time zone
  
  members             | member_id                           | character varying
  members             | email                               | character varying
@@ -30,20 +30,20 @@
  user                | referred_by                         | character varying
  user                | consent_complete                    | boolean
  user                | enrolling_children                  | boolean
- user                | chat_script_version_id              | character varying
+ user                | consent_script_version_id           | character varying
  user                | num_test_tries                      | integer
  user                | enrolling_myself                    | boolean
  user                | num_children_enrolling              | integer
  user                | declined_consent                    | boolean
  
- user_chat_cache     | key                                 | character varying
- user_chat_cache     | value                               | text
+ user_consent_cache     | key                              | character varying
+ user_consent_cache     | value                            | text
  
- user_chat_url       | chat_url_id                         | character varying
- user_chat_url       | chat_url                            | character varying
- user_chat_url       | created_at                          | timestamp without time zone
- user_chat_url       | expires_at                          | timestamp without time zone
- user_chat_url       | user_id                             | character varying
+ user_consent_url       | consent_url_id                   | character varying
+ user_consent_url       | consent_url                      | character varying
+ user_consent_url       | created_at                       | timestamp without time zone
+ user_consent_url       | expires_at                       | timestamp without time zone
+ user_consent_url       | user_id                          | character varying
  
  user_consent        | user_consent_id                     | character varying
  user_consent        | user_id                             | character varying
@@ -77,7 +77,7 @@
  
  user_test           | user_test_id                        | character varying
  user_test           | user_id                             | character varying
- user_test           | chat_script_version_id              | character varying
+ user_test           | consent_script_version_id           | character varying
  user_test           | test_question                       | character varying
  user_test           | user_answer                         | character varying
  user_test           | answer_correct                      | boolean

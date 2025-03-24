@@ -3,17 +3,30 @@
 import { Card, Row, Col, Typography } from "antd";
 import { UserOutlined, MessageOutlined, SolutionOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
 
 const { Title } = Typography;
-
 const AdminConsole = () => {
+  const dataState = useSelector((state) => state.data);
+
   const [data, setData] = useState({
-    user_count: 0,
-    user_consent_complete_count: 0,
-    chat_count: 0,
-    user_followup_count: 0,
+    participant_count: dataState?.participants?.length || 0,
+    participant_consent_complete_count: dataState?.participants?.filter(p => p.consent_complete)?.length || 0,
+    consent_count: dataState?.scripts?.length || 0,
+    participant_followup_count: dataState?.followUps?.filter(f => !f.resolved)?.length || 0,
   });
+
+  // update counts when dataState changes
+  useEffect(() => {
+    setData({
+      participant_count: dataState?.participants?.length || 0,
+      participant_consent_complete_count: dataState?.participants?.filter(p => p.consent_complete)?.length || 0,
+      consent_count: dataState?.scripts?.length || 0,
+      participant_followup_count: dataState?.followUps?.filter(f => !f.resolved)?.length || 0,
+    });
+  }, [dataState]);
+
 
   useEffect(() => {
     axios.get("/api/admin-stats") // Update with correct API endpoint
@@ -26,20 +39,20 @@ const AdminConsole = () => {
       <Title level={3}>Admin Console</Title>
       <hr />
       <Row gutter={[16, 16]}>
-        {/* Users Card */}
+        {/* participants Card */}
         <Col xs={24} md={8}>
-          <Card title="Users" bordered>
+          <Card title="participants" bordered>
             <UserOutlined style={{ fontSize: "24px" }} />
-            <p>Total users: {data.user_count}</p>
-            <p>Consented users: {data.user_consent_complete_count}</p>
+            <p>Total participants: {data.participant_count}</p>
+            <p>Consented participants: {data.participant_consent_complete_count}</p>
           </Card>
         </Col>
 
-        {/* Scripted Chats Card */}
+        {/* Scripted Consents Card */}
         <Col xs={24} md={8}>
-          <Card title="Scripted Chats" bordered>
+          <Card title="Scripted Consents" bordered>
             <MessageOutlined style={{ fontSize: "24px" }} />
-            <p>Script count: {data.chat_count}</p>
+            <p>Script count: {data.consent_count}</p>
           </Card>
         </Col>
 
@@ -47,7 +60,7 @@ const AdminConsole = () => {
         <Col xs={24} md={8}>
           <Card title="Follow Up" bordered>
             <SolutionOutlined style={{ fontSize: "24px" }} />
-            <p>Unresolved questions: {data.user_followup_count}</p>
+            <p>Unresolved questions: {data.participant_followup_count}</p>
           </Card>
         </Col>
       </Row>

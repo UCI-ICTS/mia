@@ -73,7 +73,7 @@ hr {
   max-height: 70px;
 }
 
-#chat-window {
+#consent-window {
   height: calc(100vh - 67px - 220px);
   overflow-y: auto;
   position: relative;
@@ -90,7 +90,7 @@ hr {
   flex-direction: column;
 }
 
-/* determines which side the chat bubbles show up */
+/* determines which side the consent bubbles show up */
 .message-row.bot {
   align-self: flex-start;  /* default to the left side */
 }
@@ -340,7 +340,7 @@ input[type='tel'] {
     font-size: 11pt;
 }
 
-.bot-chat-bullets {
+.bot-consent-bullets {
     padding-left: 35px;
 }
 

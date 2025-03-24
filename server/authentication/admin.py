@@ -7,8 +7,8 @@
 from django.contrib import admin
 from authentication.models import (
     User,
-    UserChatCache,
-    UserChatUrl,
+    UserConsentCache,
+    UserConsentUrl,
     UserConsent,
     UserFeedback,
     UserFollowUp,
@@ -19,13 +19,13 @@ from authentication.models import (
 class UserAdmin(admin.ModelAdmin):
     list_display = ["email", "first_name", "last_name", "is_staff", "is_active"]
 
-@admin.register(UserChatCache)
-class UserChatCacheAdmin(admin.ModelAdmin):
+@admin.register(UserConsentCache)
+class UserConsentCacheAdmin(admin.ModelAdmin):
     list_display = ["key", "value"]
 
-@admin.register(UserChatUrl)
-class UserChatUrlAdmin(admin.ModelAdmin):
-    list_display = ["chat_url", "user", "created_at", "expires_at"]
+@admin.register(UserConsentUrl)
+class UserConsentUrlAdmin(admin.ModelAdmin):
+    list_display = ["consent_url", "user", "created_at", "expires_at"]
 
 @admin.register(UserConsent)
 class UserConsentAdmin(admin.ModelAdmin):

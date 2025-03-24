@@ -33,5 +33,5 @@ const logout = async (credentials) => {
       headers: getAuthHeaders() 
     });
   };
-  
+
 export const authService = { login, logout };

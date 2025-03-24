@@ -5,7 +5,7 @@ import uuid
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from datetime import datetime, timedelta
-from chatbot.models import ChatScriptVersion
+from consentbot.models import ConsentScriptVersion
 
 def generate_uuid():
     return uuid.uuid4()
@@ -16,20 +16,24 @@ def current_timestamp():
 def default_expiry():
     return datetime.now() + timedelta(weeks=2)
 
-from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.db import models
-import uuid
+
 
 class UserManager(BaseUserManager):
     """User Manager
     Custom manager for User model where email is the unique identifier instead of username. 
     """
     def create_user(self, email, password=None, **extra_fields):
+    
         if not email:
             raise ValueError("The Email field must be set")
         email = self.normalize_email(email)
+
+        # Automatically set username from email prefix
+        extra_fields.setdefault("username", email.split("@")[0])
+
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
+        if password:
+            user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -65,23 +69,23 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
 
-
-class UserChatUrl(models.Model):
-    chat_url_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    chat_url = models.UUIDField(default=uuid.uuid4, unique=True)
+class UserConsentUrl(models.Model):
+    consent_url_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    consent_url = models.UUIDField(default=uuid.uuid4, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(default=default_expiry)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_urls')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='consent_urls')
 
-class UserChatCache(models.Model):
+class UserConsentCache(models.Model):
     key = models.CharField(max_length=200, primary_key=True)
     value = models.TextField()
 
 class UserTest(models.Model):
     user_test_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_tests')
-    chat_script_version = models.ForeignKey(ChatScriptVersion, on_delete=models.CASCADE, related_name='user_tests')
+    consent_script_version = models.ForeignKey(ConsentScriptVersion, on_delete=models.CASCADE, related_name='user_tests')
     test_try_num = models.IntegerField(default=1, null=True, blank=True)
     test_question = models.CharField(max_length=200)
     user_answer = models.CharField(max_length=200)

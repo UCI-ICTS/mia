@@ -1,19 +1,22 @@
+#!/usr/bin/env python
+# utils/utility_functions.py
+
 import json
 import os
 from datetime import datetime, timedelta
 from django.db import transaction
 from django.core.cache import cache
 from django.db.models import Count, Max
-from chat.models import Chat, ChatScriptVersion
-from authentication.models import User, UserChatUrl, UserTest, UserConsent, ConsentAgeGroup, UserFollowUp
+from consentbot.models import Consent, ConsentScriptVersion
+from authentication.models import User, UserConsentUrl, UserTest, UserConsent, ConsentAgeGroup, UserFollowUp
 
 
 def get_script_from_invite_id(invite_id):
-    """Retrieve the chat script from an invite ID."""
+    """Retrieve the consent script from an invite ID."""
     try:
         return (
-            ChatScriptVersion.objects.filter(
-                chat_id=User.objects.get(user_chat_urls__chat_url=str(invite_id)).chat_script_version_id
+            ConsentScriptVersion.objects.filter(
+                consent_id=User.objects.get(user_consent_urls__consent_url=str(invite_id)).consent_script_version_id
             )
             .values_list("script", flat=True)
             .first()
@@ -22,7 +25,7 @@ def get_script_from_invite_id(invite_id):
         raise ValueError(f"ERROR: script not found for {invite_id}")
 
 
-def get_chat_start_id(conversation_graph):
+def get_consent_start_id(conversation_graph):
     """Find the starting node in the conversation graph."""
     for node_id, node in conversation_graph.items():
         if node.get("parent_ids") and node["parent_ids"][0] == "start":
@@ -40,25 +43,25 @@ def get_response(conversation_graph, node_id):
     return node.get("messages", [])
 
 
-def process_workflow(chat_id, invite_id):
+def process_workflow(consent_id, invite_id):
     """Process workflow logic based on user interactions."""
     conversation_graph = get_script_from_invite_id(invite_id)
     workflow = cache.get(f"user_workflow_{invite_id}", [])
 
-    if workflow and chat_id in workflow[0]:
-        next_chat_sequence, node_ids = get_next_chat_sequence(conversation_graph, chat_id)
+    if workflow and consent_id in workflow[0]:
+        next_consent_sequence, node_ids = get_next_consent_sequence(conversation_graph, consent_id)
         workflow[0] = [node for node in workflow[0] if node not in node_ids]
-        if not workflow[0] or next_chat_sequence.get("end_sequence"):
+        if not workflow[0] or next_consent_sequence.get("end_sequence"):
             workflow.pop(0)
             cache.set(f"user_workflow_{invite_id}", workflow)
     else:
-        next_chat_sequence, node_ids = get_next_chat_sequence(conversation_graph, chat_id)
+        next_consent_sequence, node_ids = get_next_consent_sequence(conversation_graph, consent_id)
 
-    return next_chat_sequence
+    return next_consent_sequence
 
 
-def get_next_chat_sequence(conversation_graph, node_id):
-    """Determine the next chat sequence in the conversation."""
+def get_next_consent_sequence(conversation_graph, node_id):
+    """Determine the next consent sequence in the conversation."""
     bot_messages = []
     user_responses = []
     node_ids = []
@@ -89,7 +92,7 @@ def get_next_chat_sequence(conversation_graph, node_id):
     }, node_ids
 
 
-def save_test_question(conversation_graph, current_node_id, user, chat_script_version_id):
+def save_test_question(conversation_graph, current_node_id, user, consent_script_version_id):
     """Save user responses to test questions."""
     node = conversation_graph.get(current_node_id)
     if node.get("metadata", {}).get("test_question_answer_correct") and node["type"] == "user":
@@ -98,7 +101,7 @@ def save_test_question(conversation_graph, current_node_id, user, chat_script_ve
         if parent_node.get("metadata", {}).get("test_question"):
             UserTest.objects.create(
                 user=user,
-                chat_script_version_id=chat_script_version_id,
+                consent_script_version_id=consent_script_version_id,
                 test_try_num=user.num_test_tries,
                 test_question=parent_node["messages"][0],
                 user_answer=node["messages"][0],
@@ -106,12 +109,12 @@ def save_test_question(conversation_graph, current_node_id, user, chat_script_ve
             )
 
 
-def get_test_results(user, chat_script_version_id):
+def get_test_results(user, consent_script_version_id):
     """Retrieve the number of correct test responses for a user."""
     return (
         UserTest.objects.filter(
             user=user,
-            chat_script_version_id=chat_script_version_id,
+            consent_script_version_id=consent_script_version_id,
             test_try_num=user.num_test_tries,
             answer_correct=True,
         )
@@ -122,21 +125,21 @@ def get_test_results(user, chat_script_version_id):
 
 def create_follow_up_with_user(invite_id, reason, more_info):
     """Create a follow-up entry for a user."""
-    user = User.objects.get(user_chat_urls__chat_url=str(invite_id))
+    user = User.objects.get(user_consent_urls__consent_url=str(invite_id))
     UserFollowUp.objects.create(user=user, follow_up_reason=reason, follow_up_info=more_info)
 
 
-def clean_up_after_chat(invite_id):
-    """Mark chat URL as expired 24 hours after conversation ends."""
-    user_chat_url = UserChatUrl.objects.get(chat_url=str(invite_id))
-    user_chat_url.expires_at = datetime.now() + timedelta(hours=24)
-    user_chat_url.save()
+def clean_up_after_consent(invite_id):
+    """Mark consent URL as expired 24 hours after conversation ends."""
+    user_consent_url = UserConsentUrl.objects.get(consent_url=str(invite_id))
+    user_consent_url.expires_at = datetime.now() + timedelta(hours=24)
+    user_consent_url.save()
 
 
-def _replace_db_script_with_json(chat_name, json_file):
-    """Replace an existing chat script with a JSON file."""
+def _replace_db_script_with_json(consent_name, json_file):
+    """Replace an existing consent script with a JSON file."""
     try:
-        chat = Chat.objects.get(name=chat_name)
+        consent = Chat.objects.get(name=chat_name)
         version = ChatScriptVersion.objects.filter(chat=chat).aggregate(Max("version_number"))["version_number__max"]
         chat_script_version = ChatScriptVersion.objects.get(chat=chat, version_number=version)
 
@@ -148,3 +151,80 @@ def _replace_db_script_with_json(chat_name, json_file):
         print("Saved!")
     except Chat.DoesNotExist:
         raise ValueError(f"Chat with name {chat_name} not found.")
+
+
+
+
+def generate_workflow(start_node_id, user_option_node_ids, invite_id):
+    conversation_graph = get_script_from_invite_id(invite_id)
+
+    # generate a sub workflow to dynamically process user responses
+    workflow = get_user_workflow(invite_id)
+
+    metadata_field = conversation_graph[start_node_id]['metadata']['workflow']
+    for user_option_node_id in user_option_node_ids:
+        sub_graph = traverse(conversation_graph, user_option_node_id, metadata_field)
+        workflow.append(sub_graph)
+    set_user_workflow(invite_id, workflow)
+    return workflow
+
+def process_test_question(conversation_graph, current_node_id, invite_id):
+    node = conversation_graph[current_node_id]['metadata']
+    if node['workflow'] == 'test_user_understanding':
+        user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+        user = db.session.get(User, user_id)
+        chat_script_version_id = db.session.get(User, user.user_id).chat_script_version.chat_script_version_id
+        save_test_question(conversation_graph, current_node_id, user, chat_script_version_id)
+        if node['end_sequence'] is True:
+            result = get_test_results(user, chat_script_version_id)
+            if result != NUM_TEST_QUESTIONS_CORRECT:
+                if user.num_test_tries < NUM_TEST_TRIES:
+                    # retry
+                    user.num_test_tries += 1
+                    db.session.commit()
+                    return node['retry_node_id']
+                else:
+                    # fail, contact someone
+                    return node['fail_node_id']
+            else:
+                # passed the test
+                return node['pass_node_id']
+    return ''
+
+def process_user_consent(conversation_graph, current_node_id, invite_id):
+    node = conversation_graph[current_node_id]['metadata']
+    if node['workflow'] in ['start_consent', 'end_consent']:
+        user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+        user = db.session.get(User, user_id)
+
+        # first we check if you're enrolling yourself and do that first
+        if user.enrolling_myself and user.consent_complete is False:
+            # create user consent db entry
+            adult = ConsentAgeGroup.EIGHTEEN_AND_OVER
+            user_consent = UserConsent(
+                user_id=user.user_id,
+                consent_age_group=adult
+            )
+            db.session.add(user_consent)
+            db.session.commit()
+            set_consenting_myself(invite_id, True)
+            set_consent_node(invite_id, current_node_id)
+            return node['enrolling_myself_node_id']
+
+        # then we'll check if you're enrolling children
+        elif user.enrolling_children:
+            set_consenting_myself(invite_id, False)
+            if get_consenting_children(invite_id) is None:
+                set_consenting_children(invite_id, True)
+                consent_node_id = get_consent_node(invite_id)
+                node = conversation_graph[consent_node_id]['metadata']
+                return node['enrolling_children_node_id']
+
+    elif node['workflow'] == 'decline_consent':
+        user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+        user = db.session.get(User, user_id)
+
+        user.declined_consent = True
+        db.session.commit()
+
+    return ''

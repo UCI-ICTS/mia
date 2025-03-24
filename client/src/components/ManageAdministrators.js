@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import dayjs from "dayjs";
 import {
-  fetchMembers,
-  addMember,
-  editMember,
-  deleteMember,
+  fetchUsers,
+  addUser,
+  updateUser,
+  deleteUser,
 } from "../slices/dataSlice";
 import {
   Table,
@@ -30,7 +31,7 @@ const { Option } = Select;
 
 const ManageAdministrators = () => {
   const dispatch = useDispatch();
-  const { members = [], loading, error } = useSelector(
+  const { staff = [], loading, error } = useSelector(
     (state) => state.data || {}
   );
 
@@ -39,7 +40,7 @@ const ManageAdministrators = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    dispatch(fetchMembers()).catch(() =>
+    dispatch(fetchUsers()).catch(() =>
       message.error("Failed to load members")
     );
   }, [dispatch]);
@@ -47,38 +48,73 @@ const ManageAdministrators = () => {
   const handleOpenModal = (member = null) => {
     setEditingMember(member);
     form.setFieldsValue({
-      full_name: member?.full_name || "",
+      first_name: member?.first_name || "",
+      last_name: member?.last_name || "",
       email: member?.email || "",
       password: "", // Don't preload password
-      role: member?.role || undefined,
+      role: staff?.is_superuser ? "admin" : staff?.is_staff ? "staff" : "staff",
     });
     setIsModalVisible(true);
   };
+  
 
   const handleSubmit = async () => {
     const values = await form.validateFields();
+  
+    // ✅ Split full name into first and last name
+    const nameParts = values.full_name.trim().split(" ");
+    const first_name = nameParts[0] || "";
+    const last_name = nameParts.slice(1).join(" ") || "";
+  
+    const updatedValues = {
+      ...values,
+      first_name,
+      last_name,
+      is_superuser: values.role === "admin",
+      is_staff: values.role === "admin" || values.role === "staff",
+    };
+  
+    // Remove full_name from payload
+    delete updatedValues.full_name;
+    delete updatedValues.role;
+  
     if (editingMember) {
-      await dispatch(editMember({ id: editingMember.member_id, ...values }));
-      message.success("Member updated.");
+      await dispatch(updateUser({ id: editingMember.username, ...updatedValues }));
+      message.success("Staff updated.");
     } else {
-      await dispatch(addMember(values));
-      message.success("Member added.");
+      await dispatch(addUser(updatedValues));
+      message.success("Staff added.");
     }
+  
     setIsModalVisible(false);
-    dispatch(fetchMembers());
+    dispatch(fetchUsers());
   };
+  
+  
 
   const handleDelete = async (id) => {
-    await dispatch(deleteMember(id));
-    message.success("Member deleted.");
-    dispatch(fetchMembers());
+    await dispatch(deleteUser(id));
+    message.success("Staff deleted.");
+    dispatch(fetchUsers());
   };
 
   const columns = [
-    { title: "Name", dataIndex: "full_name" },
+    {
+      title: "Name",
+      key: "name",
+      render: (text, record) => `${record.first_name} ${record.last_name}`,
+    },
     { title: "Email", dataIndex: "email" },
-    { title: "Role", dataIndex: "role" },
-    { title: "Created", dataIndex: "created_at" },
+    { 
+      title: "Role",
+      render: (_, record) => (record.is_superuser ? "Admin" : record.is_staff ? "Staff" : "User"),
+      dataIndex: "role"
+    },
+    {
+      title: "Date Joined",
+      dataIndex: "date_joined",
+      render: (date) => date ? dayjs(date).format("MMM D, YYYY h:mm A") : "N/A",
+    },
     {
       title: "Actions",
       render: (_, record) => (
@@ -91,7 +127,7 @@ const ManageAdministrators = () => {
           <Button
             icon={<DeleteOutlined />}
             danger
-            onClick={() => handleDelete(record.member_id)}
+            onClick={() => handleDelete(record.username)}
           />
         </>
       ),
@@ -107,14 +143,14 @@ const ManageAdministrators = () => {
           onClick={() => handleOpenModal()}
           style={{ marginBottom: 20 }}
         >
-          Add New Member
+          Add New Staff
         </Button>
 
         {loading ? (
           <Spin />
         ) : error ? (
           <Alert
-            message="Error fetching members"
+            message="Error fetching staff"
             description={error}
             type="error"
             showIcon
@@ -122,8 +158,8 @@ const ManageAdministrators = () => {
         ) : (
           <Table
             columns={columns}
-            dataSource={members}
-            rowKey="member_id"
+            dataSource={staff}
+            rowKey="username"
             bordered
           />
         )}

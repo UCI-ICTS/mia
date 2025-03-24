@@ -2,7 +2,7 @@
 import axios from "axios";
 import { store } from "../store"; // Redux store to access auth state
 
-const API = axios.create({ baseURL: "http://localhost:8000/api" });
+const API = axios.create({ baseURL: "http://localhost:8000/mia" });
 
 const getAuthHeaders = () => {
   const state = store.getState();
@@ -17,33 +17,33 @@ const getAuthHeaders = () => {
 
 // ✅ Fetch all users
 const getUsers = async () => {
-  const response = await API.get("/users", { headers: getAuthHeaders() });
+  const response = await API.get("auth/users/", { headers: getAuthHeaders() });
   return response.data;
 };
 
 // ✅ Create a new user
 const createUser = async (userData) => {
-  const response = await API.post("/users", userData, { headers: getAuthHeaders() });
+  const response = await API.post("auth/users/", userData, { headers: getAuthHeaders() });
   return response.data;
 };
 
 // ✅ Update an existing user
 const updateUser = async (userData) => {
-  const response = await API.put(`/users/${userData.user_id}`, userData, { headers: getAuthHeaders() });
+  const response = await API.put(`auth/users/${userData.username}/`, userData, { headers: getAuthHeaders() });
   return response.data;
 };
 
 // ✅ Delete a user
 const deleteUser = async (userId) => {
-  await API.delete(`/users/${userId}`, { headers: getAuthHeaders() });
+  await API.delete(`auth/users/${userId}`, { headers: getAuthHeaders() });
 };
 
 // ✅ Get user invite link
 const getInviteLink = async (userId) => {
-  const response = await API.get(`/users/${userId}/invite-link`, { headers: getAuthHeaders() });
+  const response = await API.get(`auth/users/${userId}/invite-link`, { headers: getAuthHeaders() });
   return response.data.link;
+  
 };
-
 // ✅ Fetch all follow-ups
 const getFollowUps = async () => {
 const response = await API.get("/follow-ups", { headers: getAuthHeaders() });
@@ -78,27 +78,6 @@ const getScripts = async () => {
   const deleteScript = async (id) => {
     await API.delete(`/scripts/${id}`, { headers: getAuthHeaders() });
   };
-
-  const getMembers = async () => {
-    const res = await API.get("/members", { headers: getAuthHeaders() });
-    return res.data;
-  };
-  
-  const addMember = async (data) => {
-    const res = await API.post("/members", data, { headers: getAuthHeaders() });
-    return res.data;
-  };
-  
-  const editMember = async (id, updates) => {
-    const res = await API.put(`/members/${id}`, updates, {
-      headers: getAuthHeaders(),
-    });
-    return res.data;
-  };
-  
-  const deleteMember = async (id) => {
-    await API.delete(`/members/${id}`, { headers: getAuthHeaders() });
-  };
   
 export const dataService = {
   getUsers,
@@ -111,9 +90,5 @@ export const dataService = {
   getScripts,
   addScript,
   editScript,
-  deleteScript,
-  getMembers,
-  addMember,
-  editMember,
-  deleteMember,
+  deleteScript
 };

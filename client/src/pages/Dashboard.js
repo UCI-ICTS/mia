@@ -34,10 +34,10 @@ const Dashboard = () => {
             <Link to="/dashboard/follow_up">Participant Follow Up</Link>
           </Menu.Item>
           <Menu.Item key="scripts" icon={<MessageOutlined />}>
-            <Link to="/dashboard/scripts">Chatbot Scripts</Link>
+            <Link to="/dashboard/scripts">Consentbot Scripts</Link>
           </Menu.Item>
-          <Menu.Item key="members" icon={<TeamOutlined />}>
-            <Link to="/dashboard/members">Manage Admin Users</Link>
+          <Menu.Item key="participants" icon={<TeamOutlined />}>
+            <Link to="/dashboard/participants">Manage Admin Users</Link>
           </Menu.Item>
         </Menu>
 

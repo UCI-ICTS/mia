@@ -58,11 +58,11 @@ CREATE TABLE public.alembic_version (
 ALTER TABLE public.alembic_version OWNER TO postgres;
 
 --
--- Name: chat; Type: TABLE; Schema: public; Owner: postgres
+-- Name: consent; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.chat (
-    chat_id character varying(36) NOT NULL,
+CREATE TABLE public.consent (
+    consent_id character varying(36) NOT NULL,
     name character varying(50) NOT NULL,
     description text,
     created_at timestamp without time zone
@@ -75,9 +75,9 @@ ALTER TABLE public.chat OWNER TO postgres;
 -- Name: chat_script_version; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.chat_script_version (
-    chat_script_version_id character varying(36) NOT NULL,
-    chat_id character varying(36) NOT NULL,
+CREATE TABLE public.consent_script_version (
+    consent_script_version_id character varying(36) NOT NULL,
+    consent_id character varying(36) NOT NULL,
     version_number integer NOT NULL,
     script json NOT NULL,
     created_at timestamp without time zone

@@ -25,7 +25,7 @@ const AppRoutes = () => {
             <Route path="users" element={<ManageParticipants/>} />
             <Route path="follow_up" element={<FollowUp />} />
             <Route path="scripts" element={<ConsentScripts />} />
-            <Route path="members" element={<ManageAdministrators />} />
+            <Route path="participants" element={<ManageAdministrators />} />
           </Route>
         </Route>
       </Routes>

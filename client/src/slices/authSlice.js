@@ -4,7 +4,7 @@ import { authService } from "../services/auth.service";
 import { message } from "antd"; // ✅ use Ant Design's message
 
 const storedUser = JSON.parse(localStorage.getItem("user"));
-console.log(storedUser)
+
 const initialState = storedUser
   ? {
       user: storedUser.user,

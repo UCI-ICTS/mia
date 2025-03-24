@@ -37,9 +37,9 @@ AUTH_USER_MODEL = 'authentication.User'
 
 INSTALLED_APPS = [
     'authentication',
-    'chatbot',
-    'administration',
+    'consentbot',
     "corsheaders",
+    'drf_yasg',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

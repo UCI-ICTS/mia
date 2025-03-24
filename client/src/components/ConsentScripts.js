@@ -30,7 +30,7 @@ const ConsentScripts = () => {
   const handleSubmit = async () => {
     const values = await form.validateFields();
     if (editingScript) {
-      await dispatch(editScript({ id: editingScript.chat_id, ...values }));
+      await dispatch(editScript({ id: editingScript.consent_id, ...values }));
       message.success("Script updated successfully.");
     } else {
       await dispatch(addScript(values));
@@ -55,7 +55,7 @@ const ConsentScripts = () => {
       render: (_, record) => (
         <>
           <Button icon={<EditOutlined />} onClick={() => handleOpenModal(record)} style={{ marginRight: 8 }} />
-          <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(record.chat_id)} />
+          <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(record.consent_id)} />
         </>
       ),
     },
@@ -67,7 +67,7 @@ const ConsentScripts = () => {
         <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal()} style={{ marginBottom: 20 }}>
           Add New Script
         </Button>
-        <Table columns={columns} dataSource={scripts || []} rowKey="chat_id" bordered />
+        <Table columns={columns} dataSource={scripts || []} rowKey="consent_id" bordered />
 
         {/* Modal for Adding/Editing Scripts */}
         <Modal title={editingScript ? "Edit Script" : "Add New Script"} open={isModalVisible} onCancel={() => setIsModalVisible(false)} onOk={handleSubmit}>

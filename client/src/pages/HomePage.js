@@ -27,7 +27,7 @@ const HomePage = () => {
               Our virtual Medical Information Assistant (Mia)
             </Paragraph>
             <Paragraph style={{ color: "white", fontSize: "18px", maxWidth: "500px" }}>
-              A HIPAA-compliant clinical chatbot that facilitates virtual conversations with patients.
+              A HIPAA-compliant clinical consentbot that facilitates virtual conversations with patients.
             </Paragraph>
           </Col>
           <Col xs={24} md={12} style={{ textAlign: "right" }}>
@@ -50,7 +50,7 @@ const HomePage = () => {
         <Row gutter={[24, 24]} justify="center">
           {[
             { title: "1. Share Mia", text: "Provide a link to your patients prior to their appointment.", italic: "Available for patients and clinicians in the US." },
-            { title: "2. Intake", text: "Via virtual chat, Mia gathers intake information, including personal and medical history." },
+            { title: "2. Intake", text: "Via virtual consent, Mia gathers intake information, including personal and medical history." },
             { title: "3. Education", text: "Mia guides your patients through pre-appointment education from home." },
             { title: "4. Guidance", text: "Clinicians receive a summary note and notifications about patient eligibility." },
             { title: "5. Ordering", text: "The order form auto-fills with patient data, allowing quick service selection." },
