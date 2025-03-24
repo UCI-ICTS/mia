@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Typography,
   Button,
@@ -19,11 +19,13 @@ import {
   UploadOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
+import { editScript } from "../slices/dataSlice";
 
 const { Title, Paragraph } = Typography;
 const { Option } = Select;
 
 const EditScriptContent = () => {
+  const dispatch = useDispatch();
   const { script_id } = useParams();
   const scriptMeta = useSelector((state) =>
     state.data.scripts.find((s) => s.consent_id === script_id)
@@ -123,11 +125,15 @@ const EditScriptContent = () => {
     form.setFieldsValue({ parent_ids: newId });
   };
 
-  const handleSaveEdits = () => {
-    console.log("Saving script:", editableScriptMap);
-    message.success("Script saved (stub). Connect this to your API!");
-    // Future: dispatch(saveScriptEdits(script_id, editableScriptMap));
+  const handleSaveEdits = async () => {
+    try {
+      await dispatch(editScript({ id: script_id, script: editableScriptMap })).unwrap();
+      message.success("Script saved successfully!");
+    } catch (err) {
+      message.error(err || "Failed to save script.");
+    }
   };
+  
 
   if (!scriptMeta) {
     return <Paragraph type="danger">Script not found.</Paragraph>;

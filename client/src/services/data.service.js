@@ -64,13 +64,13 @@ const getScripts = async () => {
   
   // ✅ Add a new script
   const addScript = async (scriptData) => {
-    console.log(scriptData)
     const response = await API.post("/consentbot/scripts/", scriptData, { headers: getAuthHeaders() });
     return response.data;
   };
   
   // ✅ Edit an existing script
   const editScript = async (id, updates) => {
+    console.log(id, updates)
     const response = await API.put(`/consentbot/scripts/${id}/`, updates, { headers: getAuthHeaders() });
     return response.data;
   };

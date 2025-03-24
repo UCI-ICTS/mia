@@ -115,6 +115,7 @@ export const addScript = createAsyncThunk("data/addScript", async (scriptData, t
 });
 
 export const editScript = createAsyncThunk("data/editScript", async ({ id, ...updates }, thunkAPI) => {
+  console.log(id, updates)
   try {
     return await dataService.editScript(id, updates);
   } catch (error) {

@@ -9,7 +9,7 @@ class ConsentInputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ConsentScript
-        fields = ['name', 'description', 'derived_from']
+        fields = ['name', 'description', 'derived_from', 'script']
 
 class ConsentOutputSerializer(serializers.ModelSerializer):
     class Meta:
