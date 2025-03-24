@@ -64,6 +64,7 @@ const getScripts = async () => {
   
   // ✅ Add a new script
   const addScript = async (scriptData) => {
+    console.log(scriptData)
     const response = await API.post("/consentbot/scripts/", scriptData, { headers: getAuthHeaders() });
     return response.data;
   };

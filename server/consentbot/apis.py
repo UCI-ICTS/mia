@@ -56,7 +56,7 @@ class ConsentScriptViewSet(viewsets.ViewSet):
             name=serializer.validated_data['name'],
             description=serializer.validated_data['description'],
             script={},
-            derrived_from=base_script,
+            derived_from=base_script,
             version_number=(ConsentScript.get_max_version_number(base_script_id) + 1 if base_script else 0)
         )
 

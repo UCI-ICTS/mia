@@ -7,10 +7,8 @@ import { fetchUsers, addUser, deleteUser, updateUser } from "../slices/dataSlice
 import {
   Alert,
   Button,
-  Dropdown,
   Form,
   Input,
-  Menu,
   Modal,
   Popconfirm,
   Spin,

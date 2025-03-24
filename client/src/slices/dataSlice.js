@@ -106,6 +106,7 @@ export const fetchScripts = createAsyncThunk("data/fetchScripts", async (_, thun
 
 export const addScript = createAsyncThunk("data/addScript", async (scriptData, thunkAPI) => {
   try {
+    console.log(scriptData)
     return await dataService.addScript(scriptData);
   } catch (error) {
     message.error("Failed to add script.");

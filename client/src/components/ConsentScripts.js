@@ -18,9 +18,11 @@ import {
 } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReadOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
+import { useNavigate } from "react-router-dom";
 
 const ConsentScripts = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { scripts = [], loading, error } = useSelector((state) => state.data || {});
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingScript, setEditingScript] = useState(null);
@@ -84,14 +86,14 @@ const ConsentScripts = () => {
           <Tooltip title="Edit content">
             <Button
               icon={<MenuUnfoldOutlined />}
-              // onClick={() => handleOpenModal(record)}
+              onClick={() => navigate(`/dashboard/scripts/edit/${record.consent_id}`)}
               style={{ marginRight: 8 }}
             />
           </Tooltip>
           <Tooltip title="View consent script content">
             <Button
               icon={<ReadOutlined />}
-              // onClick={() => handleOpenModal(record)}
+              onClick={() => navigate(`/dashboard/scripts/view/${record.consent_id}`)}
               style={{ marginRight: 8 }}
             />
           </Tooltip>
