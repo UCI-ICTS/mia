@@ -1,17 +1,20 @@
-#!/usr/bin/env python
 # consentbot/admin.py
-
 from django.contrib import admin
-from .models import Consent, ConsentScriptVersion
+from django_json_widget.widgets import JSONEditorWidget
+from django import forms
+from .models import ConsentScript
 
-@admin.register(Consent)
-class ConsentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'created_at')
-    search_fields = ('name',)
-    ordering = ('-created_at',)
+class ConsentScriptAdminForm(forms.ModelForm):
+    class Meta:
+        model = ConsentScript
+        fields = "__all__"
+        widgets = {
+            "script": JSONEditorWidget(),  # 👈 This is the magic
+        }
 
-@admin.register(ConsentScriptVersion)
-class ConsentScriptVersionAdmin(admin.ModelAdmin):
-    list_display = ('consent', 'version_number', 'created_at')
-    list_filter = ('consent',)
-    ordering = ('consent', 'version_number')
+@admin.register(ConsentScript)
+class ConsentScriptAdmin(admin.ModelAdmin):
+    form = ConsentScriptAdminForm
+    list_display = ("name", "version_number", "created_at")
+    search_fields = ("name",)
+    ordering = ("-created_at",)

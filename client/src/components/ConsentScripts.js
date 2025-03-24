@@ -1,10 +1,22 @@
-// src/components/ConsentScripts.js 
+// src/components/ConsentScripts.js
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchScripts, addScript, editScript, deleteScript } from "../slices/dataSlice";
-import { Table, Button, Modal, Input, Form, message, Spin, Alert } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  Alert,
+  Button,
+  Empty,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Table,
+  Tooltip,
+  Spin,
+  message,
+} from "antd";
+import { PlusOutlined, EditOutlined, DeleteOutlined, ReadOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
 
 const ConsentScripts = () => {
@@ -15,11 +27,10 @@ const ConsentScripts = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    dispatch(fetchScripts()).catch(() => message.error("Failed to load scripts."));
+    dispatch(fetchScripts()).catch((err) => {
+      message.error(err?.message || "Failed to load scripts.");
+    });
   }, [dispatch]);
-
-  if (loading) return <Spin tip="Loading scripts..." style={{ display: "block", textAlign: "center", marginTop: 50 }} />;
-  if (error) return <Alert message="Error fetching scripts" description={error} type="error" showIcon />;
 
   const handleOpenModal = (script = null) => {
     setEditingScript(script);
@@ -29,21 +40,30 @@ const ConsentScripts = () => {
 
   const handleSubmit = async () => {
     const values = await form.validateFields();
-    if (editingScript) {
-      await dispatch(editScript({ id: editingScript.consent_id, ...values }));
-      message.success("Script updated successfully.");
-    } else {
-      await dispatch(addScript(values));
-      message.success("Script added successfully.");
+    try {
+      if (editingScript) {
+        await dispatch(editScript({ id: editingScript.consent_id, ...values })).unwrap();
+        message.success("Script updated successfully.");
+      } else {
+        await dispatch(addScript(values)).unwrap();
+        message.success("Script added successfully.");
+      }
+      setIsModalVisible(false);
+      form.resetFields();
+      dispatch(fetchScripts());
+    } catch (err) {
+      message.error(err?.message || "Error saving script.");
     }
-    setIsModalVisible(false);
-    dispatch(fetchScripts());
   };
 
   const handleDelete = async (id) => {
-    await dispatch(deleteScript(id));
-    message.success("Script deleted.");
-    dispatch(fetchScripts());
+    try {
+      await dispatch(deleteScript(id)).unwrap();
+      message.success("Script deleted.");
+      dispatch(fetchScripts());
+    } catch (err) {
+      message.error(err?.message || "Failed to delete script.");
+    }
   };
 
   const columns = [
@@ -54,8 +74,37 @@ const ConsentScripts = () => {
       title: "Actions",
       render: (_, record) => (
         <>
-          <Button icon={<EditOutlined />} onClick={() => handleOpenModal(record)} style={{ marginRight: 8 }} />
-          <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(record.consent_id)} />
+          <Tooltip title="Edit metadata">
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => handleOpenModal(record)}
+              style={{ marginRight: 8 }}
+            />
+          </Tooltip>
+          <Tooltip title="Edit content">
+            <Button
+              icon={<MenuUnfoldOutlined />}
+              // onClick={() => handleOpenModal(record)}
+              style={{ marginRight: 8 }}
+            />
+          </Tooltip>
+          <Tooltip title="View consent script content">
+            <Button
+              icon={<ReadOutlined />}
+              // onClick={() => handleOpenModal(record)}
+              style={{ marginRight: 8 }}
+            />
+          </Tooltip>
+          <Tooltip title="Delete consent script">
+            <Popconfirm
+              title="Are you sure you want to delete this consent script?"
+              onConfirm={() => handleDelete(record.consent_id)} 
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button icon={<DeleteOutlined />} danger />
+            </Popconfirm>
+          </Tooltip>
         </>
       ),
     },
@@ -64,18 +113,60 @@ const ConsentScripts = () => {
   return (
     <ErrorBoundary>
       <div style={{ padding: 20 }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenModal()} style={{ marginBottom: 20 }}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => handleOpenModal()}
+          style={{ marginBottom: 20 }}
+        >
           Add New Script
         </Button>
-        <Table columns={columns} dataSource={scripts || []} rowKey="consent_id" bordered />
 
-        {/* Modal for Adding/Editing Scripts */}
-        <Modal title={editingScript ? "Edit Script" : "Add New Script"} open={isModalVisible} onCancel={() => setIsModalVisible(false)} onOk={handleSubmit}>
+        {/* === Conditional rendering === */}
+        {loading ? (
+          <Spin tip="Loading scripts..." style={{ display: "block", textAlign: "center", marginTop: 50 }} />
+        ) : error ? (
+          <Alert
+            message="Error fetching scripts"
+            description={error}
+            type="error"
+            showIcon
+            style={{ marginBottom: 20 }}
+          />
+        ) : scripts?.length === 0 ? (
+          <Empty description="No scripts available." />
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={scripts}
+            rowKey="consent_id"
+            bordered
+          />
+        )}
+
+        {/* Modal for Add/Edit */}
+        <Modal
+          title={editingScript ? "Edit Script" : "Add New Script"}
+          open={isModalVisible}
+          onCancel={() => {
+            setIsModalVisible(false);
+            form.resetFields();
+          }}
+          onOk={handleSubmit}
+        >
           <Form form={form} layout="vertical">
-            <Form.Item name="name" label="Script Name" rules={[{ required: true, message: "Please enter script name" }]}>
+            <Form.Item
+              name="name"
+              label="Script Name"
+              rules={[{ required: true, message: "Please enter script name" }]}
+            >
               <Input />
             </Form.Item>
-            <Form.Item name="description" label="Description" rules={[{ required: true, message: "Please enter description" }]}>
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[{ required: true, message: "Please enter description" }]}
+            >
               <Input.TextArea rows={3} />
             </Form.Item>
           </Form>

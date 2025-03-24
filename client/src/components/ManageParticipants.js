@@ -12,6 +12,7 @@ import {
   Input,
   Menu,
   Modal,
+  Popconfirm,
   Spin,
   Table,
   Tag,
@@ -101,9 +102,9 @@ const ManageParticipants = () => {
     }
   };
   
-  const handleDelete = async (userId) => {
+  const handleDelete = async (username) => {
     try {
-      await dispatch(deleteUser(userId)).unwrap();
+      await dispatch(deleteUser(username)).unwrap();
       message.success("Participant deleted.");
       dispatch(fetchUsers());
     } catch (err) {
@@ -148,28 +149,31 @@ const ManageParticipants = () => {
               icon={<LinkOutlined />}
               style={{ marginRight: 8 }}
               onClick={() => handleGetInviteLink(record.id)}
-              />
+            />
           </Tooltip>
           <Tooltip title="Edit participant">
             <Button
               icon={<EditOutlined />}
               style={{ marginRight: 8 }}
               onClick={() => handleEdit(record)}
-              />
+            />
           </Tooltip>
           <Tooltip title="Gernerate new invite link">
             <Button
               icon={<UserAddOutlined />}
               style={{ marginRight: 8 }}
-              onClick={() => handleGenerateNewInviteLink(record.id)}
-              />
+              onClick={() => handleGenerateNewInviteLink(record.username)}
+            />
           </Tooltip>
           <Tooltip title="Delete participant">
-            <Button
-              icon={<DeleteOutlined />}
-              danger
-              onClick={() => handleDelete(record.id)}
-              />
+            <Popconfirm
+              title="Are you sure you want to delete this user?"
+              onConfirm={() => handleDelete(record.username)} 
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button icon={<DeleteOutlined />} danger />
+            </Popconfirm>
           </Tooltip>
         </>
       ),
@@ -194,7 +198,7 @@ const ManageParticipants = () => {
         <Table
           columns={columns}
           dataSource={participants || []}
-          rowKey="username"
+          rowKey={(record) => record.username}
           bordered
         />
 

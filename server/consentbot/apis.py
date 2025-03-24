@@ -1,139 +1,155 @@
 #!/usr/bin/env python
 # consentbot/apis.py
 
-from rest_framework.views import APIView
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 from django.shortcuts import get_object_or_404
-from authentication.models import User, UserConsentUrl, UserFeedback
-from utils.cache import get_user_workflow, set_user_workflow, set_user_consent_history, get_user_consent_history
-from utils.utility_functions import (
-    get_script_from_invite_id,
-    get_consent_start_id,
-    process_workflow,
-    get_response,
-    generate_workflow,
-    process_test_question,
-    process_user_consent,
-    create_follow_up_with_user,
-    clean_up_after_consent,
-)
+from django.http import FileResponse
+from django.conf import settings
+import os
+import json
+from datetime import datetime
+import shortuuid
 
+from consentbot.models import ConsentScript
+from consentbot.services import ConsentInputSerializer, ConsentOutputSerializer
 
-class UserInviteAPIView(APIView):
+class ConsentScriptViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="Initialize or resume a consent session",
-        responses={200: openapi.Response("Consent sequence", examples={
-            "application/json": {
-                "next_consent_sequence": {}
-            }
-        })},
-        tags=["Consent"]
+        operation_description="List all consent scripts", 
+        tags=["Consent Scripts"],
+        responses={200: ConsentOutputSerializer(many=True)}
     )
-    def get(self, request, invite_id):
-        user_consent_history = get_user_consent_history(invite_id)
-        if not user_consent_history:
-            next_consent_sequence = {
-                'user_responses': [('start', 'Start')],
-                'user_html_type': 'button'
-            }
-            return Response({'next_consent_sequence': next_consent_sequence}, status=status.HTTP_200_OK)
-
-        workflow = get_user_workflow(invite_id)
-        if workflow is None:
-            set_user_workflow(invite_id, [])
-
-        return Response({'next_consent_sequence': user_consent_history}, status=status.HTTP_200_OK)
-
-
-class UserResponseAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    def list(self, request):
+        scripts = ConsentScript.objects.all()
+        serializer = ConsentOutputSerializer(scripts, many=True)
+        return Response(serializer.data)
 
     @swagger_auto_schema(
-        operation_description="Handle user response and return the next consent sequence",
-        manual_parameters=[
-            openapi.Parameter('id', openapi.IN_QUERY, description="Node ID", type=openapi.TYPE_STRING)
-        ],
-        responses={200: openapi.Response("Next consent sequence")},
-        tags=["Consent"]
+        operation_description="Get consent script details",
+        tags=["Consent Scripts"],
+        responses={200: ConsentOutputSerializer}
     )
-    def get(self, request, invite_id):
-        try:
-            conversation_graph = get_script_from_invite_id(invite_id)
-            user_response_node_id = request.GET.get('id')
-
-            if user_response_node_id == 'start':
-                start_node_id = get_consent_start_id(conversation_graph)
-                next_consent_sequence = process_workflow(start_node_id, invite_id)
-                user_consent_history = get_user_consent_history(invite_id)
-                user_consent_history.append({'next_consent_sequence': next_consent_sequence, 'echo_user_response': ''})
-                set_user_consent_history(invite_id, user_consent_history)
-                return Response({'reload': True})
-
-            echo_user_response = get_response(conversation_graph, user_response_node_id)
-            node_metadata = conversation_graph[user_response_node_id].get('metadata', {})
-            next_node_id = ''
-
-            workflow_type = node_metadata.get('workflow')
-            if workflow_type == 'test_user_understanding':
-                next_node_id = process_test_question(conversation_graph, user_response_node_id, invite_id)
-            elif workflow_type == 'start_consent':
-                next_node_id = process_user_consent(conversation_graph, user_response_node_id, invite_id)
-            elif workflow_type == 'follow_up':
-                create_follow_up_with_user(
-                    invite_id,
-                    node_metadata.get('follow_up_reason', ''),
-                    node_metadata.get('follow_up_info', '')
-                )
-            elif workflow_type == 'decline_consent':
-                next_node_id = process_user_consent(conversation_graph, user_response_node_id, invite_id)
-
-            if not next_node_id:
-                children = conversation_graph[user_response_node_id].get('child_ids', [])
-                next_node_id = children[0] if children else 'terminal_node'
-
-            next_consent_sequence = process_workflow(next_node_id, invite_id)
-            set_user_consent_history(invite_id, next_consent_sequence)
-
-            return Response({
-                'echo_user_response': echo_user_response,
-                'next_consent_sequence': next_consent_sequence
-            })
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class CreateUserFeedbackAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    def retrieve(self, request, pk=None):
+        script = get_object_or_404(ConsentScript, pk=pk)
+        serializer = ConsentOutputSerializer(script)
+        return Response(serializer.data)
 
     @swagger_auto_schema(
-        operation_description="Submit user feedback",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            required=['satisfaction', 'suggestions'],
-            properties={
-                'satisfaction': openapi.Schema(type=openapi.TYPE_STRING),
-                'suggestions': openapi.Schema(type=openapi.TYPE_STRING),
-            }
-        ),
-        responses={201: openapi.Response("Feedback created")},
-        tags=["Feedback"]
+        operation_description="Create consent script",
+        tags=["Consent Scripts"],
+        request_body=ConsentInputSerializer,
+        responses={201: ConsentOutputSerializer}
     )
-    def post(self, request, invite_id):
-        user_consent_url = get_object_or_404(UserConsentUrl, consent_url=str(invite_id))
-        user_id = user_consent_url.user_id
+    def create(self, request):
+        serializer = ConsentInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        satisfaction = request.data.get('satisfaction', '')
-        suggestions = request.data.get('suggestions', '')[:2000]  # Limit text length
+        base_script_id = serializer.validated_data.get('derived_from')
+        base_script = ConsentScript.objects.filter(consent_id=base_script_id).first() if base_script_id else None
 
-        UserFeedback.objects.create(
-            user_id=user_id,
-            satisfaction=satisfaction,
-            suggestions=suggestions
+        new_script = ConsentScript.objects.create(
+            name=serializer.validated_data['name'],
+            description=serializer.validated_data['description'],
+            script={},
+            derrived_from=base_script,
+            version_number=(ConsentScript.get_max_version_number(base_script_id) + 1 if base_script else 0)
         )
 
-        return Response({'message': 'Feedback submitted successfully'}, status=status.HTTP_201_CREATED)
+        output_serializer = ConsentOutputSerializer(new_script)
+        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+
+
+    @swagger_auto_schema(
+        operation_description="Create consent script",
+        tags=["Consent Scripts"],
+        request_body=ConsentInputSerializer,
+        responses={201: ConsentOutputSerializer}
+    )
+    def update(self, request, pk=None):
+        """Update consent script metadata"""
+        try:
+            script = get_object_or_404(ConsentScript, pk=pk)
+        except ConsentScript.DoesNotExist:
+            return Response({"detail": "Consent script not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ConsentInputSerializer(script, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(ConsentOutputSerializer(script).data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+    @swagger_auto_schema(
+        operation_description="Delete consent script",
+        tags=["Consent Scripts"]
+    )
+    def destroy(self, request, pk=None):
+        script = get_object_or_404(ConsentScript, pk=pk)
+        script.delete()
+        return Response({"message": "Consent script deleted"}, status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=["post"], url_path="download", url_name="download")
+    def download_script(self, request, pk=None):
+        script = get_object_or_404(ConsentScript, pk=pk)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{script.name}_{timestamp}.json"
+        temp_path = os.path.join(settings.BASE_DIR, 'temp_scripts', filename)
+        os.makedirs(os.path.dirname(temp_path), exist_ok=True)
+
+        with open(temp_path, 'w') as f:
+            json.dump(script.script, f, indent=4)
+
+        return FileResponse(open(temp_path, 'rb'), as_attachment=True, filename=filename)
+
+    @action(detail=True, methods=["post"], url_path="upload", url_name="upload")
+    def upload_script(self, request, pk=None):
+        script = get_object_or_404(ConsentScript, pk=pk)
+        data = json.loads(request.body)
+        new_script = json.loads(data['script'])
+        script.script = new_script
+        script.save()
+        return Response({"message": "Script uploaded successfully."})
+
+    @action(detail=True, methods=["post"], url_path="add-message", url_name="add-message")
+    def add_message(self, request, pk=None):
+        script = get_object_or_404(ConsentScript, pk=pk)
+        versioned_script = script.script
+
+        new_id = shortuuid.uuid()[:7]
+        while new_id in versioned_script:
+            new_id = shortuuid.uuid()[:7]
+
+        messages = [m.strip() for m in request.data.get('messages', '').split('\n')]
+        parent_ids = [p.strip() for p in request.data.get('parent_ids', '').split(',')]
+        new_message = {
+            "type": request.data.get('type'),
+            "messages": messages,
+            "parent_ids": parent_ids,
+            "child_ids": [],
+            "attachment": None,
+            "html_type": 'button',
+            "html_content": None,
+            "metadata": {
+                'workflow': '',
+                'end_sequence': False
+            }
+        }
+        versioned_script[new_id] = new_message
+
+        for parent_id in parent_ids:
+            if parent_id in versioned_script:
+                versioned_script[parent_id]['child_ids'].append(new_id)
+
+        script.script = versioned_script
+        script.save()
+
+        return Response({
+            "id": new_id,
+            "type": new_message["type"],
+            "messages": new_message["messages"],
+            "parent_ids": new_message["parent_ids"]
+        })

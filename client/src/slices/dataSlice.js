@@ -50,6 +50,7 @@ export const updateUser = createAsyncThunk("data/updateUser", async (userData, t
 
 export const deleteUser = createAsyncThunk("data/deleteUser", async (userId, thunkAPI) => {
   try {
+    console.log(userId)
     await dataService.deleteUser(userId);
     message.success("User deleted successfully!");
     return userId;

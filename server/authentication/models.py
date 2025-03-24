@@ -5,7 +5,7 @@ import uuid
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from datetime import datetime, timedelta
-from consentbot.models import ConsentScriptVersion
+from consentbot.models import ConsentScript
 
 def generate_uuid():
     return uuid.uuid4()
@@ -85,7 +85,7 @@ class UserConsentCache(models.Model):
 class UserTest(models.Model):
     user_test_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_tests')
-    consent_script_version = models.ForeignKey(ConsentScriptVersion, on_delete=models.CASCADE, related_name='user_tests')
+    consent_script_version = models.ForeignKey(ConsentScript, on_delete=models.CASCADE, related_name='user_tests')
     test_try_num = models.IntegerField(default=1, null=True, blank=True)
     test_question = models.CharField(max_length=200)
     user_answer = models.CharField(max_length=200)

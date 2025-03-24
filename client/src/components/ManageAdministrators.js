@@ -10,15 +10,17 @@ import {
   deleteUser,
 } from "../slices/dataSlice";
 import {
-  Table,
+  Alert,
   Button,
-  Modal,
   Form,
   Input,
+  Modal,
+  Popconfirm,
   Select,
-  message,
   Spin,
-  Alert,
+  Table,
+  Tooltip,
+  message,
 } from "antd";
 import {
   PlusOutlined,
@@ -26,11 +28,13 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import ErrorBoundary from "./ErrorBoundary";
+import { current } from "@reduxjs/toolkit";
 
 const { Option } = Select;
 
 const ManageAdministrators = () => {
   const dispatch = useDispatch();
+  const currentUsername = useSelector((state) => state.auth.user?.username); 
   const { staff = [], loading, error } = useSelector(
     (state) => state.data || {}
   );
@@ -117,20 +121,34 @@ const ManageAdministrators = () => {
     },
     {
       title: "Actions",
-      render: (_, record) => (
-        <>
-          <Button
-            icon={<EditOutlined />}
-            onClick={() => handleOpenModal(record)}
-            style={{ marginRight: 8 }}
-          />
-          <Button
-            icon={<DeleteOutlined />}
-            danger
-            onClick={() => handleDelete(record.username)}
-          />
-        </>
-      ),
+      render: (_, record) => {
+        const isSelf = record.username === currentUsername;
+
+        return (<>
+          <Tooltip title="Edit administrator">
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => handleOpenModal(record)}
+              style={{ marginRight: 8 }}
+            />
+          </Tooltip>
+          <Tooltip title={isSelf ? "You cannot delete yourself" : "Delete Administrator"}>
+          <Popconfirm
+            title="Are you sure you want to delete this user?"
+            onConfirm={() => handleDelete(record.username)}
+            okText="Yes"
+            cancelText="No"
+            disabled={isSelf}
+          >
+            <Button
+              icon={<DeleteOutlined />}
+              danger
+              disabled={isSelf}
+            />
+          </Popconfirm>
+        </Tooltip>
+        </>)
+      },
     },
   ];
 

@@ -1,15 +1,12 @@
-#!/usr/bin/env python
 # consentbot/urls.py
 
-from django.urls import path
-from consentbot.apis import (
-    UserInviteAPIView,
-    UserResponseAPIView,
-    CreateUserFeedbackAPIView,
-)
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from consentbot.apis import ConsentScriptViewSet
+
+router = DefaultRouter()
+router.register(r'scripts', ConsentScriptViewSet, basename='consent-scripts')
 
 urlpatterns = [
-    path('invite/<uuid:invite_id>/', UserInviteAPIView.as_view(), name='user-invite'),
-    path('invite/<uuid:invite_id>/response/', UserResponseAPIView.as_view(), name='user-response'),
-    path('invite/<uuid:invite_id>/feedback/', CreateUserFeedbackAPIView.as_view(), name='user-feedback'),
+    path('', include(router.urls)),
 ]

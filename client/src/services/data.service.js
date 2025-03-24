@@ -58,25 +58,25 @@ await API.post(`/follow-ups/${id}/resolve`, {}, { headers: getAuthHeaders() });
 
 // ✅ Fetch all scripts
 const getScripts = async () => {
-    const response = await API.get("/scripts", { headers: getAuthHeaders() });
+    const response = await API.get("/consentbot/scripts/", { headers: getAuthHeaders() });
     return response.data;
   };
   
   // ✅ Add a new script
   const addScript = async (scriptData) => {
-    const response = await API.post("/scripts", scriptData, { headers: getAuthHeaders() });
+    const response = await API.post("/consentbot/scripts/", scriptData, { headers: getAuthHeaders() });
     return response.data;
   };
   
   // ✅ Edit an existing script
   const editScript = async (id, updates) => {
-    const response = await API.put(`/scripts/${id}`, updates, { headers: getAuthHeaders() });
+    const response = await API.put(`/consentbot/scripts/${id}/`, updates, { headers: getAuthHeaders() });
     return response.data;
   };
   
   // ✅ Delete a script
   const deleteScript = async (id) => {
-    await API.delete(`/scripts/${id}`, { headers: getAuthHeaders() });
+    await API.delete(`/consentbot/scripts/${id}/`, { headers: getAuthHeaders() });
   };
   
 export const dataService = {
