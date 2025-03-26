@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
-import { fetchUsers, addUser, deleteUser, updateUser } from "../slices/dataSlice";
+import { fetchUsers, addUser, deleteUser, updateUser, getInviteLink, generateInviteLink } from "../slices/dataSlice";
 import {
   Alert,
   Button,
@@ -11,6 +11,7 @@ import {
   Input,
   Modal,
   Popconfirm,
+  Select,
   Spin,
   Table,
   Tag,
@@ -19,24 +20,26 @@ import {
 } from "antd";
 import {
   DeleteOutlined,
-  DownOutlined,
   EditOutlined,
   LinkOutlined,
   UserAddOutlined,
+  CopyOutlined,
+  ReloadOutlined
 } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
 
 const ManageParticipants = () => {
   const dispatch = useDispatch();
-  const { participants = [], loading, error } = useSelector((state) => state.data || {});
+  const { 
+    participants = [],
+    scripts = [],
+    loading,
+    error
+  } = useSelector((state) => state.data || {});
   const [isModalVisible, setModalVisible] = useState(false);
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [editingUserId, setEditingUserId] = useState(null);
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    if (dispatch) dispatch(fetchUsers()).catch(() => message.error("Failed to load participantss."));
-  }, [dispatch]);
 
   const handleAddUser = async () => {
     try {
@@ -76,27 +79,53 @@ const ManageParticipants = () => {
     setEditingUserId(user.username);
     setEditModalVisible(true);
   };
-  
-  const handleGetInviteLink = async (userId) => {
+
+  const handleGetInviteLink = async (username) => {
     try {
-      const res = await fetch(`/api/users/${userId}/chat_url/`);
-      const data = await res.json();
+      const result = await dispatch(getInviteLink(username)).unwrap();
+  
+      if (!result?.invite_link) {
+        Modal.info({
+          title: "No Invite Link",
+          content: "This user does not have an invite link available.",
+        });
+        return;
+      }
+  
       Modal.info({
         title: "Invite Link",
-        content: data.text || "No invite URL available",
+        content: (
+          <Input
+            value={result.invite_link}
+            addonAfter={
+              <CopyOutlined
+                onClick={() => {
+                  navigator.clipboard.writeText(result.invite_link);
+                  message.success("Copied to clipboard!");
+                }}
+                style={{ cursor: "pointer" }}
+              />
+            }
+            readOnly
+          />
+        ),
       });
     } catch (err) {
-      message.error("Failed to fetch invite link");
+      const status = err?.status;
+      const msg =
+        status === 404
+          ? "Invite link not found for this user."
+          : err?.msg || "Failed to fetch invite link.";
+      message.error(msg);
     }
   };
   
-  const handleGenerateNewInviteLink = async (userId) => {
+  const handleGenerateNewInviteLink = async (username) => {
     try {
-      await fetch(`/api/users/${userId}/regenerate_chat_url/`, { method: "POST" });
-      message.success("New invite link generated.");
-      dispatch(fetchUsers());
+      await dispatch(generateInviteLink(username)).unwrap();
+      message.success("Invite link generated.");
     } catch (err) {
-      message.error("Failed to generate new link");
+      message.error("Failed to delete participant.");
     }
   };
   
@@ -133,6 +162,26 @@ const ManageParticipants = () => {
         ),
     },
     {
+      title: "Invite Status",
+      dataIndex: "invite_expired",
+      render: (invite) =>
+        invite ? (
+          <Tag color="red">Expired/DNE</Tag>
+        ) : (
+          <Tag color="green">Valid</Tag>
+        ),
+    },
+    {
+      title: "Consent Started",
+      dataIndex: "created_at",
+      render: (created_at) =>
+        created_at ? (
+          <Tag color="green">{dayjs(created_at).format("MMM D, YYYY h:mm A")}</Tag>
+        ) : (
+          <Tag color="red">No</Tag>
+        ),
+    },
+    {
       title: "Date Joined",
       dataIndex: "date_joined",
       render: (date) => date ? dayjs(date).format("MMM D, YYYY h:mm A") : "N/A",
@@ -142,13 +191,6 @@ const ManageParticipants = () => {
       key: "actions",
       render: (_, record) => (
         <>
-          <Tooltip title="Get invite link">
-            <Button
-              icon={<LinkOutlined />}
-              style={{ marginRight: 8 }}
-              onClick={() => handleGetInviteLink(record.id)}
-            />
-          </Tooltip>
           <Tooltip title="Edit participant">
             <Button
               icon={<EditOutlined />}
@@ -156,9 +198,17 @@ const ManageParticipants = () => {
               onClick={() => handleEdit(record)}
             />
           </Tooltip>
+          <Tooltip title="Get invite link">
+            <Button
+              icon={<LinkOutlined />}
+              style={{ marginRight: 8 }}
+              onClick={() => handleGetInviteLink(record.username)}
+              disabled={record.invite_expired}
+            />
+          </Tooltip>
           <Tooltip title="Gernerate new invite link">
             <Button
-              icon={<UserAddOutlined />}
+              icon={<ReloadOutlined />}
               style={{ marginRight: 8 }}
               onClick={() => handleGenerateNewInviteLink(record.username)}
             />
@@ -223,6 +273,19 @@ const ManageParticipants = () => {
             </Form.Item>
             <Form.Item name="phone" label="Phone">
               <Input />
+            </Form.Item>
+            <Form.Item
+              name="consent_script_id"
+              label="Consent Script"
+              rules={[{ required: true, message: "Please select a consent script" }]}
+            >
+              <Select placeholder="Select a consent script">
+                {scripts.map((script) => (
+                  <Select.Option key={script.consent_id} value={script.consent_id}>
+                    {script.name} (v{script.version_number})
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Form>
         </Modal>

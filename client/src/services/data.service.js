@@ -1,4 +1,5 @@
 // src/services/data.service.js
+
 import axios from "axios";
 import { store } from "../store"; // Redux store to access auth state
 
@@ -23,6 +24,7 @@ const getUsers = async () => {
 
 // ✅ Create a new user
 const createUser = async (userData) => {
+  console.log("Service ",userData)
   const response = await API.post("auth/users/", userData, { headers: getAuthHeaders() });
   return response.data;
 };
@@ -35,18 +37,41 @@ const updateUser = async (userData) => {
 
 // ✅ Delete a user
 const deleteUser = async (userId) => {
-  await API.delete(`auth/users/${userId}`, { headers: getAuthHeaders() });
+  await API.delete(`auth/users/${userId}/`, { headers: getAuthHeaders() });
 };
 
 // ✅ Get user invite link
-const getInviteLink = async (userId) => {
-  const response = await API.get(`auth/users/${userId}/invite-link`, { headers: getAuthHeaders() });
-  return response.data.link;
-  
+const getInviteLink = async (username) => {
+  const response = await API.get(`auth/consent-url/${username}/invite-link/`, { headers: getAuthHeaders() });
+  return response.data;
 };
+
+// ✅ Generate new user invite link
+const generateInviteLink = async (username) => {
+  const response = await API.post(`auth/consent-url/`, {username}, { headers: getAuthHeaders() });
+  return response.data;
+};
+
+// ✅ Submit Consent Response
+const submitConsentResponse = async (invite_id, node_id ) => {
+
+const response = await API.get(`auth/consent-response/${invite_id}/`, 
+    {params: {"node_id": node_id}
+  });
+  return response.data;
+};
+
+
+// ✅ Get consent from link
+const getConsentByInvite = async (invite_id) => {
+  const response = await API.get(`auth/consent/${invite_id}/`, { headers: getAuthHeaders() });
+  return response.data
+};
+
+
 // ✅ Fetch all follow-ups
 const getFollowUps = async () => {
-const response = await API.get("/follow-ups", { headers: getAuthHeaders() });
+const response = await API.get("auth/follow_ups/", { headers: getAuthHeaders() });
 return response.data;
 };
 
@@ -86,6 +111,9 @@ export const dataService = {
   updateUser,
   deleteUser,
   getInviteLink,
+  generateInviteLink,
+  getConsentByInvite,
+  submitConsentResponse,
   getFollowUps,
   markFollowUpResolved,
   getScripts,

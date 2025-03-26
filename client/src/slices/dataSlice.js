@@ -8,6 +8,8 @@ const initialState = {
   staff: [],
   participants: [],
   followUps: [],
+  chat: [],
+  consent: {},
   scripts: [],
   loading: false,
   error: null,
@@ -26,6 +28,7 @@ export const fetchUsers = createAsyncThunk("data/fetchUsers", async (_, thunkAPI
 
 export const addUser = createAsyncThunk("data/addUser", async (userData, thunkAPI) => {
   try {
+    console.log("Slice ",userData)
     const res = await dataService.createUser(userData);
     message.success("User added successfully!");
     return res;
@@ -60,16 +63,72 @@ export const deleteUser = createAsyncThunk("data/deleteUser", async (userId, thu
   }
 });
 
-export const getInviteLink = createAsyncThunk("data/getInviteLink", async (userId, thunkAPI) => {
-  try {
-    const res = await dataService.getInviteLink(userId);
-    message.success("Invite link generated!");
-    return res;
-  } catch (error) {
-    message.error("Failed to generate invite link.");
-    return thunkAPI.rejectWithValue(error.message);
-  }
+//--- Invite Links ---
+export const getInviteLink = createAsyncThunk(
+  "data/getInviteLink",
+  async (username, thunkAPI) => {
+    try {
+      const res = await dataService.getInviteLink(username);
+      message.success("Invite link generated!");
+      console.log(res)
+      return res;
+    } catch (error) {
+      const status = error?.response?.status;
+      const msg =
+        status === 404
+          ? "Invite link not found."
+          : error.message || "Unknown error";
+
+      return thunkAPI.rejectWithValue({ status, msg });
+    }
 });
+
+export const generateInviteLink = createAsyncThunk(
+  "data/generateInviteLink",
+  async (username, thunkAPI) => {
+    try {
+      console.log("Slice invite link", username)
+      const res = await dataService.generateInviteLink(username);
+      message.success("Invite link generated!");
+      console.log(res)
+      return res;
+    } catch (error) {
+      const status = error?.response?.status;
+      const msg =
+        status === 404
+          ? "Invite link not found."
+          : error.message || "Unknown error";
+
+      return thunkAPI.rejectWithValue({ status, msg });
+    }
+});
+
+// --- Consent Process ---
+export const fetchConsentByInvite = createAsyncThunk(
+  "data/fetchConsentByInvite",
+  async (invite_id, thunkAPI) => {
+    try {
+      const response = await dataService.getConsentByInvite(invite_id);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const submitConsentResponse = createAsyncThunk(
+  "data/submitConsentResponse",
+  async ({ invite_id, node_id }, thunkAPI) => {
+    try {
+      const response = await dataService.submitConsentResponse(invite_id, node_id);
+      console.log("Slice ", response)
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
 
 // --- Follow Ups ---
 
@@ -187,11 +246,59 @@ const dataSlice = createSlice({
       })
       .addCase(getInviteLink.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload?.msg || "Failed to fetch invite link.";
+      })
+
+      // --- Invite ---
+
+      .addCase(generateInviteLink.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(generateInviteLink.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(generateInviteLink.rejected, (state, action) => {
+        console.log(action)
+        state.loading = false;
+      })
+
+      // --- Consents ---
+      .addCase(fetchConsentByInvite.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchConsentByInvite.fulfilled, (state, action) => {
+        if (action.payload?.chat) {
+          state.chat = action.payload.chat;
+        }
+        state.consent = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchConsentByInvite.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
-      });
+      })
+      .addCase(submitConsentResponse.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(submitConsentResponse.fulfilled, (state, action) => {
+        console.log("New chat from response:", action.payload.chat);
+      
+        // Replace the full chat history with updated array from backend
+        if (Array.isArray(action.payload?.chat)) {
+          state.chat = action.payload.chat;
+        }
+      
+        state.loading = false;
+      })      
+      .addCase(submitConsentResponse.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
 
     // --- FOLLOW UPS ---
-    builder
       .addCase(fetchFollowUps.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -209,10 +316,9 @@ const dataSlice = createSlice({
         state.followUps = state.followUps.map((f) =>
           f.user_follow_up_id === id ? { ...f, resolved: true } : f
         );
-      });
+      })
 
     // --- SCRIPTS ---
-    builder
       .addCase(fetchScripts.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -232,9 +338,6 @@ const dataSlice = createSlice({
         state.scripts = state.scripts.map((s) =>
           s.consent_id === action.payload.consent_id ? action.payload : s
         );
-      })
-      .addCase(deleteScript.fulfilled, (state, action) => {
-        state.scripts = state.scripts.filter((s) => s.chat_id !== action.payload);
       });
   },
 });

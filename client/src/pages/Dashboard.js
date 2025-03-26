@@ -1,10 +1,14 @@
 // src/pages/Dashboard.js
 
+import React, { useEffect } from "react";
 import { Layout, Menu, Button, Typography } from "antd";
 import { HomeOutlined, UserOutlined, ScheduleOutlined, MessageOutlined, TeamOutlined } from "@ant-design/icons";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
+import { fetchUsers, fetchFollowUps, fetchScripts } from "../slices/dataSlice"
+import react from "react";
+
 const { Sider, Content } = Layout;
 const { Title } = Typography;
 
@@ -12,6 +16,15 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
+  const {staff,participants,followUps,consent,scripts,loading,error} = useSelector((state) => state.data || {});
+  
+  useEffect(() => {
+    if (!participants || participants.length === 0) {
+      dispatch(fetchUsers());
+      dispatch(fetchFollowUps());
+      dispatch(fetchScripts());
+    }
+  }, [participants, dispatch]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -25,10 +38,10 @@ const Dashboard = () => {
         <Title level={4} style={{ textAlign: "center" }}>Admin</Title>
         <Menu mode="vertical" defaultSelectedKeys={["home"]} style={{ borderRight: 0 }}>
           <Menu.Item key="home" icon={<HomeOutlined />}>
-            <Link to="/dashboard/home">Home</Link>
+            <Link to="/dashboard">Home</Link>
           </Menu.Item>
-          <Menu.Item key="users" icon={<UserOutlined />}>
-            <Link to="/dashboard/users">Participants</Link>
+          <Menu.Item key="participants" icon={<UserOutlined />}>
+            <Link to="/dashboard/participants">Participants</Link>
           </Menu.Item>
           <Menu.Item key="follow-up" icon={<ScheduleOutlined />}>
             <Link to="/dashboard/follow_up">Participant Follow Up</Link>
@@ -36,8 +49,8 @@ const Dashboard = () => {
           <Menu.Item key="scripts" icon={<MessageOutlined />}>
             <Link to="/dashboard/scripts">Consentbot Scripts</Link>
           </Menu.Item>
-          <Menu.Item key="participants" icon={<TeamOutlined />}>
-            <Link to="/dashboard/participants">Manage Admin Users</Link>
+          <Menu.Item key="admin" icon={<TeamOutlined />}>
+            <Link to="/dashboard/admin">Manage Admin Users</Link>
           </Menu.Item>
         </Menu>
 

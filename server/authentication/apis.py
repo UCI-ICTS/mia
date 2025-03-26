@@ -3,10 +3,11 @@
 
 from django.db import IntegrityError
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status, permissions, viewsets
-from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import (
     TokenBlacklistView,
@@ -14,50 +15,41 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
-from authentication.services import ChangePasswordSerializer
+from rest_framework.views import APIView
 
+from authentication.models import (
+    UserFollowUp,
+    UserConsentUrl,
+    UserConsent,
+    ConsentAgeGroup
+)
+from authentication.services import (
+    ChangePasswordSerializer,
+    UserInputSerializer,
+    UserOutputSerializer,
+    UserConsentInputSerializer, 
+    UserConsentOutputSerializer,
+    UserUserFollowUpInputSerializer,
+    UserUserFollowUpOutputSerializer,
+    UserConsentUrlInputSerializer,
+    UserConsentUrlOutputSerializer,
+    retrieve_or_initialize_user_consent,
+    )
+
+from authentication.selectors import get_or_initialize_consent_history
+
+from utils.utility_functions import (
+    get_script_from_invite_id,
+    get_consent_start_id,
+    process_workflow,
+    get_response,
+    process_test_question,
+    process_user_consent,
+    create_follow_up_with_user
+)
+from utils.cache import (get_user_consent_history, set_user_consent_history)
 User = get_user_model()
 
-class UserInputSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['email', 'first_name', 'last_name', 'phone', 'password', 'is_staff', 'is_superuser']
-        extra_kwargs = {
-            'password': {'write_only': True, 'required': False},
-            'is_staff': {'required': False},
-            'is_superuser': {'required': False},
-        }
-
-    def create(self, validated_data):
-        email = validated_data.get("email")
-        username = email.split("@")[0] if email else ""
-
-        password = validated_data.pop("password", None)
-
-        is_staff = validated_data.pop("is_staff", False)
-        is_superuser = validated_data.pop("is_superuser", False)
-
-        user = User(
-            username=username,
-            is_staff=is_staff,
-            is_superuser=is_superuser,
-            **validated_data  # now safe to unpack
-        )
-
-        if password:
-            user.set_password(password)
-        else:
-            user.set_unusable_password()
-
-        user.save()
-        return user
-    
-
-class UserOutputSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(read_only=True)
-    class Meta:
-        model = User
-        fields = ['email', 'username', 'first_name', 'last_name', 'phone', 'is_staff', 'is_superuser', 'date_joined']
 
 class ChangePasswordView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -232,3 +224,198 @@ class UserViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except User.DoesNotExist:
             return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class FollowUpVieWSet(viewsets.ViewSet):
+    # permission_classes = {permissions.IsAuthenticated}
+    @swagger_auto_schema(
+        operation_description="Retrieve all follow ups",
+        responses={200: UserOutputSerializer(many=True)},
+        tags=["Follow Ups"]
+    )
+
+    def list(slef, request):
+        """Retrieve all Follow up instances
+        """
+        follow_ups = UserFollowUp.objects.all()
+        serializer = UserUserFollowUpOutputSerializer(follow_ups, many=True)
+        return Response(serializer.data)
+    
+
+class UserConsentViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="List all user consent records",
+        responses={200: UserConsentOutputSerializer(many=True)},
+        tags=["User Consent"]
+    )
+    def list(self, request):
+        queryset = UserConsent.objects.all()
+        serializer = UserConsentOutputSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        operation_description="Load or initialize a consent session using invite UUID",
+        responses={200: UserConsentOutputSerializer},
+        tags=["User Consent"]
+    )
+    def retrieve(self, request, pk=None):
+        print("This works")
+        consent, created = retrieve_or_initialize_user_consent(pk)
+        history, just_created = get_or_initialize_consent_history(pk)
+
+        response_data = UserConsentOutputSerializer(consent).data
+        response_data["chat"] = history
+        return Response(response_data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+
+    @swagger_auto_schema(
+        operation_description="Create a new user consent record",
+        request_body=UserConsentInputSerializer,
+        responses={201: UserConsentOutputSerializer},
+        tags=["User Consent"]
+    )
+    def create(self, request):
+        serializer = UserConsentInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = serializer.save()
+        return Response(UserConsentOutputSerializer(instance).data, status=status.HTTP_201_CREATED)
+
+    @swagger_auto_schema(
+        operation_description="Update a user consent record",
+        request_body=UserConsentInputSerializer,
+        responses={200: UserConsentOutputSerializer},
+        tags=["User Consent"]
+    )
+    def update(self, request, pk=None):
+        instance = get_object_or_404(UserConsent, pk=pk)
+        serializer = UserConsentInputSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated = serializer.save()
+        return Response(UserConsentOutputSerializer(updated).data)
+
+    @swagger_auto_schema(
+        operation_description="Delete a user consent record",
+        tags=["User Consent"]
+    )
+    def destroy(self, request, pk=None):
+        instance = get_object_or_404(UserConsent, pk=pk)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserConsentUrlViewSet(viewsets.ViewSet):
+    lookup_field = 'username'
+    # permission_classes = {permissions.IsAuthenticated}
+    
+    @swagger_auto_schema(
+        operation_description="Retrieve a consent URL",
+        responses={200: UserConsentUrlOutputSerializer(many=True)},
+        tags=["Consent URLs"]
+    )
+    def get(self, request):
+        """Retrieve all Follow up instances
+        """
+        follow_ups = UserConsentUrl.objects.all()
+        serializer = UserUserFollowUpOutputSerializer(follow_ups, many=True)
+        return Response(serializer.data)
+    
+    @swagger_auto_schema(
+        operation_description="Retrieve the latest consent URL for a user by username",
+        responses={200: UserConsentUrlOutputSerializer},
+        tags=["Consent URLs"]
+    )
+    
+    def invite_link_by_username(self, request, username=None):
+        user = get_object_or_404(User, username=username)
+        invite = user.consent_urls.order_by('-created_at').first()
+
+        if not invite:
+            return Response({"detail": "No invite link found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserConsentUrlOutputSerializer(invite)
+        return Response(serializer.data)
+
+    
+    @swagger_auto_schema(
+        operation_description="Create a consent URL",
+        responses={200: UserOutputSerializer(many=True)},
+        tags=["Consent URLs"]
+    )
+    def create(self, request):
+        """Create the consent object"""
+        serializer = UserConsentUrlInputSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                consent = serializer.save()
+                return Response(UserConsentUrlOutputSerializer(consent).data, status=status.HTTP_200_OK)
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserConsentResponseView(APIView):
+    """
+    Handles user response during the consent workflow.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, invite_id):
+        node_id = request.query_params.get('node_id')
+        if not node_id:
+            return Response({'error': 'Missing node ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            conversation_graph = get_script_from_invite_id(invite_id)
+
+            if node_id == 'start':
+                start_node_id = get_consent_start_id(conversation_graph)
+                first_sequence = process_workflow(start_node_id, invite_id)
+
+                history = get_user_consent_history(invite_id)
+                history.append({
+                    "next_consent_sequence": first_sequence,
+                    "echo_user_response": ""
+                })
+                set_user_consent_history(invite_id, history)
+
+                return Response({"chat": history})
+
+            # Handle regular flow
+            echo_user_response = get_response(conversation_graph, node_id)
+            metadata = conversation_graph[node_id].get('metadata', {})
+            next_node_id = ''
+
+            workflow = metadata.get('workflow')
+            if workflow == 'test_user_understanding':
+                next_node_id = process_test_question(conversation_graph, node_id, invite_id)
+            elif workflow == 'start_consent':
+                next_node_id = process_user_consent(conversation_graph, node_id, invite_id)
+            elif workflow == 'follow_up':
+                create_follow_up_with_user(
+                    invite_id,
+                    metadata.get('follow_up_reason', ''),
+                    metadata.get('follow_up_info', '')
+                )
+            elif workflow == 'decline_consent':
+                next_node_id = process_user_consent(conversation_graph, node_id, invite_id)
+
+            if not next_node_id:
+                children = conversation_graph[node_id].get('child_ids', [])
+                next_node_id = children[0] if children else 'terminal_node'
+
+            next_sequence = process_workflow(next_node_id, invite_id)
+
+            # Update chat history
+            history = get_user_consent_history(invite_id)
+            history.append({
+                "next_consent_sequence": next_sequence,
+                "echo_user_response": echo_user_response
+            })
+            set_user_consent_history(invite_id, history)
+
+            return Response({"chat": history})
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

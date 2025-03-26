@@ -9,11 +9,18 @@ from authentication.apis import (
     DecoratedTokenRefreshView,
     DecoratedTokenVerifyView,
     DecoratedTokenBlacklistView,
-    UserViewSet
+    UserViewSet,
+    FollowUpVieWSet,
+    UserConsentViewSet,
+    UserConsentUrlViewSet,
+    UserConsentResponseView
 )
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
+router.register(r'follow_ups', FollowUpVieWSet, basename='follow_up')
+router.register(r'consent', UserConsentViewSet, basename='consent')
+router.register(r'consent-url', UserConsentUrlViewSet, basename='consent-url')
 
 urlpatterns = [
     path("change_password/", ChangePasswordView.as_view()),
@@ -21,5 +28,11 @@ urlpatterns = [
     path("verify/", DecoratedTokenRefreshView.as_view()),
     path("login/", DecoratedTokenObtainPairView.as_view()),
     path("logout/", DecoratedTokenBlacklistView.as_view()),
+    path('consent-response/<uuid:invite_id>/', UserConsentResponseView.as_view(), name='consent-response'),
     path('', include(router.urls)),
+    path(
+        'consent-url/<str:username>/invite-link/',
+        UserConsentUrlViewSet.as_view({'get': 'invite_link_by_username'}),
+        name='invite-link-by-username'
+    ),
 ]

@@ -11,10 +11,6 @@ const FollowUp = () => {
   const dispatch = useDispatch();
   const { followUps = [], loading, error } = useSelector((state) => state.data || {});
 
-  useEffect(() => {
-    dispatch(fetchFollowUps()).catch(() => message.error("Failed to load follow-ups."));
-  }, [dispatch]);
-
   if (loading) return <Spin tip="Loading follow-ups..." style={{ display: "block", textAlign: "center", marginTop: 50 }} />;
   if (error) return <Alert message="Error fetching follow-ups" description={error} type="error" showIcon />;
 
@@ -29,8 +25,8 @@ const FollowUp = () => {
     { title: "Email", dataIndex: "email" },
     { title: "Phone", dataIndex: "phone", render: (text) => text || "N/A" },
     { title: "Consent", dataIndex: "consent_name", render: (text) => text || "..." },
-    { title: "Reason", dataIndex: "reason" },
-    { title: "More Info", dataIndex: "more_info" },
+    { title: "Reason", dataIndex: "follow_up_reason" },
+    { title: "More Info", dataIndex: "follow_up_info" },
     {
       title: "Resolved",
       dataIndex: "resolved",

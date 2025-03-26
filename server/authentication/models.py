@@ -4,17 +4,18 @@
 import uuid
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from datetime import datetime, timedelta
+from django.utils import timezone
+from datetime import timedelta
 from consentbot.models import ConsentScript
 
 def generate_uuid():
     return uuid.uuid4()
 
 def current_timestamp():
-    return datetime.now()
+    return timezone.now()
 
 def default_expiry():
-    return datetime.now() + timedelta(weeks=2)
+    return timezone.now() + timedelta(weeks=2)
 
 
 
@@ -48,11 +49,13 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+
 class User(AbstractUser):
     user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15, null=True, blank=True)
     referred_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='referrals')
+    consent_script = models.ForeignKey(ConsentScript, on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
     consent_complete = models.BooleanField(default=False)
     declined_consent = models.BooleanField(default=False)
     enrolling_myself = models.BooleanField(default=False)
@@ -78,9 +81,11 @@ class UserConsentUrl(models.Model):
     expires_at = models.DateTimeField(default=default_expiry)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='consent_urls')
 
+
 class UserConsentCache(models.Model):
     key = models.CharField(max_length=200, primary_key=True)
     value = models.TextField()
+
 
 class UserTest(models.Model):
     user_test_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -92,16 +97,19 @@ class UserTest(models.Model):
     answer_correct = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
 class ConsentAgeGroup(models.TextChoices):
     LESS_THAN_SIX = '<=6', '<=6'
     SEVEN_TO_SEVENTEEN = '7-17', '7-17'
     EIGHTEEN_AND_OVER = '>=18', '>=18'
     EIGHTEEN_AND_OVER_GUARDIANSHIP = '>=18 guardianship', '>=18 guardianship'
 
+
 class UserConsent(models.Model):
     user_consent_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_consents')
     dependent_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='dependent_consents')
+    consent_script = models.ForeignKey("consentbot.ConsentScript", on_delete=models.CASCADE, related_name="user_consents", null=True, blank=True)
     consent_age_group = models.CharField(max_length=20, choices=ConsentAgeGroup.choices)
     store_sample_this_study = models.BooleanField(default=True)
     store_sample_other_studies = models.BooleanField(default=False)
@@ -116,6 +124,7 @@ class UserConsent(models.Model):
     consented_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
 class UserFollowUp(models.Model):
     user_follow_up_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_follow_up')
@@ -123,6 +132,7 @@ class UserFollowUp(models.Model):
     follow_up_info = models.CharField(max_length=200, default='')
     resolved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 class UserFeedback(models.Model):
     user_feedback_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

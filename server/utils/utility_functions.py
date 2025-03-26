@@ -7,22 +7,21 @@ from datetime import datetime, timedelta
 from django.db import transaction
 from django.core.cache import cache
 from django.db.models import Count, Max
-from consentbot.models import Consent, ConsentScriptVersion
+from consentbot.models import ConsentScript
 from authentication.models import User, UserConsentUrl, UserTest, UserConsent, ConsentAgeGroup, UserFollowUp
 
 
 def get_script_from_invite_id(invite_id):
-    """Retrieve the consent script from an invite ID."""
+    """Retrieve the consent script JSON from a UserConsentUrl UUID."""
     try:
-        return (
-            ConsentScriptVersion.objects.filter(
-                consent_id=User.objects.get(user_consent_urls__consent_url=str(invite_id)).consent_script_version_id
-            )
-            .values_list("script", flat=True)
-            .first()
-        )
-    except User.DoesNotExist:
-        raise ValueError(f"ERROR: script not found for {invite_id}")
+        consent_id = UserConsentUrl.objects.get(consent_url=invite_id).user.consent_script_id
+        if not consent_id:
+            raise ValueError("User does not have a consent_script assigned.")
+        return ConsentScript.objects.get(consent_id=consent_id).script
+    except UserConsentUrl.DoesNotExist:
+        raise ValueError(f"Invite ID {invite_id} not found.")
+    except ConsentScript.DoesNotExist:
+        raise ValueError(f"ConsentScript for invite ID {invite_id} not found.")
 
 
 def get_consent_start_id(conversation_graph):
@@ -132,25 +131,25 @@ def create_follow_up_with_user(invite_id, reason, more_info):
 def clean_up_after_consent(invite_id):
     """Mark consent URL as expired 24 hours after conversation ends."""
     user_consent_url = UserConsentUrl.objects.get(consent_url=str(invite_id))
-    user_consent_url.expires_at = datetime.now() + timedelta(hours=24)
+    user_consent_url.expires_at = timezone.now() + timedelta(hours=24)
     user_consent_url.save()
 
 
-def _replace_db_script_with_json(consent_name, json_file):
-    """Replace an existing consent script with a JSON file."""
-    try:
-        consent = Chat.objects.get(name=chat_name)
-        version = ChatScriptVersion.objects.filter(chat=chat).aggregate(Max("version_number"))["version_number__max"]
-        chat_script_version = ChatScriptVersion.objects.get(chat=chat, version_number=version)
+# def _replace_db_script_with_json(consent_name, json_file):
+#     """Replace an existing consent script with a JSON file."""
+#     try:
+#         consent = ConsentScript.objects.get(name=consent_name)
+#         version = ConsentScript.objects.filter(chat=chat).aggregate(Max("version_number"))["version_number__max"]
+#         chat_script_version = ConsentScript.objects.get(chat=chat, version_number=version)
 
-        if os.path.exists(json_file):
-            with open(json_file, "r") as file:
-                chat_script_version.script = json.load(file)
+#         if os.path.exists(json_file):
+#             with open(json_file, "r") as file:
+#                 chat_script_version.script = json.load(file)
 
-        chat_script_version.save()
-        print("Saved!")
-    except Chat.DoesNotExist:
-        raise ValueError(f"Chat with name {chat_name} not found.")
+#         chat_script_version.save()
+#         print("Saved!")
+#     except Chat.DoesNotExist:
+#         raise ValueError(f"Chat with name {chat_name} not found.")
 
 
 

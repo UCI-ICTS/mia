@@ -96,7 +96,7 @@ class ConsentScriptViewSet(viewsets.ViewSet):
     @action(detail=True, methods=["post"], url_path="download", url_name="download")
     def download_script(self, request, pk=None):
         script = get_object_or_404(ConsentScript, pk=pk)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = timezone.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{script.name}_{timestamp}.json"
         temp_path = os.path.join(settings.BASE_DIR, 'temp_scripts', filename)
         os.makedirs(os.path.dirname(temp_path), exist_ok=True)

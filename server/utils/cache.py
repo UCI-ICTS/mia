@@ -6,18 +6,21 @@ from authentication.models import UserConsentCache
 
 
 def _get_cache_value(key):
-    user_consent_cache = db.session.get(UserConsentCache, key)
-    return user_consent_cache.value if user_consent_cache else None
+    try:
+        user_consent_cache = UserConsentCache.objects.get(pk=key)
+        return user_consent_cache.value
+    except UserConsentCache.DoesNotExist:
+        return None
+
 
 
 def _set_cache_value(key, value):
-    user_consent_cache = db.session.get(UserConsentCache, key)
-    if user_consent_cache:
-        user_consent_cache.value = value
+    obj, _ = UserConsentCache.objects.get_or_create(pk=key)
+    if isinstance(value, (dict, list)):
+        obj.value = json.dumps(value)
     else:
-        user_consent_cache = UserConsentCache(key=key, value=value)
-        db.session.add(user_consent_cache)
-    db.session.commit()
+        obj.value = str(value)
+    obj.save()
 
 
 def _build_key(invite_id, suffix):

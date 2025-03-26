@@ -17,22 +17,15 @@ const AdminConsole = () => {
     participant_followup_count: dataState?.followUps?.filter(f => !f.resolved)?.length || 0,
   });
 
-  // update counts when dataState changes
+  // Update counts when dataState changes
   useEffect(() => {
     setData({
       participant_count: dataState?.participants?.length || 0,
-      participant_consent_complete_count: dataState?.participants?.filter(p => p.consent_complete)?.length || 0,
+      participant_consent_complete_count: (dataState?.participants || []).filter(p => p.consent_complete)?.length || 0,
       consent_count: dataState?.scripts?.length || 0,
-      participant_followup_count: dataState?.followUps?.filter(f => !f.resolved)?.length || 0,
+      participant_followup_count: (dataState?.followUps || []).filter(f => !f.resolved)?.length || 0,
     });
   }, [dataState]);
-
-
-  useEffect(() => {
-    axios.get("/api/admin-stats") // Update with correct API endpoint
-      .then(response => setData(response.data))
-      .catch(error => console.error("Error fetching admin stats:", error));
-  }, []);
 
   return (
     <div style={{ padding: 20 }}>
