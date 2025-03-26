@@ -228,6 +228,12 @@ class UserViewSet(viewsets.ViewSet):
 
 class FollowUpVieWSet(viewsets.ViewSet):
     # permission_classes = {permissions.IsAuthenticated}
+    permission_classes = {permissions.AllowAny}
+    # def get_permissions(self):
+    #     if self.action == 'create':
+    #         return [permissions.AllowAny()]
+    #     return [permissions.IsAuthenticated()]
+    
     @swagger_auto_schema(
         operation_description="Retrieve all follow ups",
         responses={200: UserOutputSerializer(many=True)},
@@ -241,6 +247,19 @@ class FollowUpVieWSet(viewsets.ViewSet):
         serializer = UserUserFollowUpOutputSerializer(follow_ups, many=True)
         return Response(serializer.data)
     
+    @swagger_auto_schema(
+        operation_description="Create a new follow-up entry",
+        request_body=UserUserFollowUpInputSerializer,
+        responses={201: UserUserFollowUpOutputSerializer()},
+        tags=["Follow Ups"]
+    )
+    def create(self, request):
+        serializer = UserUserFollowUpInputSerializer(data=request.data)
+        if serializer.is_valid():
+            instance = serializer.save()
+            output = UserUserFollowUpOutputSerializer(instance)
+            return Response(output.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserConsentViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -406,12 +425,13 @@ class UserConsentResponseView(APIView):
                 next_node_id = children[0] if children else 'terminal_node'
 
             next_sequence = process_workflow(next_node_id, invite_id)
-
+            print(node_id)
             # Update chat history
             history = get_user_consent_history(invite_id)
             history.append({
                 "next_consent_sequence": next_sequence,
-                "echo_user_response": echo_user_response
+                "echo_user_response": echo_user_response,
+                "node_id": node_id,
             })
             set_user_consent_history(invite_id, history)
 

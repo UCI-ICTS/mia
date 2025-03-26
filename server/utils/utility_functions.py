@@ -3,13 +3,17 @@
 
 import json
 import os
-from datetime import datetime, timedelta
+from django.utils import timezone
 from django.db import transaction
-from django.core.cache import cache
 from django.db.models import Count, Max
+from django.core.cache import cache
+from django.shortcuts import get_object_or_404
 from consentbot.models import ConsentScript
 from authentication.models import User, UserConsentUrl, UserTest, UserConsent, ConsentAgeGroup, UserFollowUp
 
+# flags
+NUM_TEST_QUESTIONS_CORRECT = 10
+NUM_TEST_TRIES = 2
 
 def get_script_from_invite_id(invite_id):
     """Retrieve the consent script JSON from a UserConsentUrl UUID."""
@@ -124,7 +128,9 @@ def get_test_results(user, consent_script_version_id):
 
 def create_follow_up_with_user(invite_id, reason, more_info):
     """Create a follow-up entry for a user."""
-    user = User.objects.get(user_consent_urls__consent_url=str(invite_id))
+
+    consent_url = UserConsentUrl.objects.get(consent_url=invite_id)
+    user = consent_url.user
     UserFollowUp.objects.create(user=user, follow_up_reason=reason, follow_up_info=more_info)
 
 
@@ -167,33 +173,59 @@ def generate_workflow(start_node_id, user_option_node_ids, invite_id):
     set_user_workflow(invite_id, workflow)
     return workflow
 
+
+from django.shortcuts import get_object_or_404
+
 def process_test_question(conversation_graph, current_node_id, invite_id):
-    node = conversation_graph[current_node_id]['metadata']
-    if node['workflow'] == 'test_user_understanding':
-        user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
-        user = db.session.get(User, user_id)
-        chat_script_version_id = db.session.get(User, user.user_id).chat_script_version.chat_script_version_id
-        save_test_question(conversation_graph, current_node_id, user, chat_script_version_id)
-        if node['end_sequence'] is True:
-            result = get_test_results(user, chat_script_version_id)
-            if result != NUM_TEST_QUESTIONS_CORRECT:
+    node_metadata = conversation_graph.get(current_node_id, {}).get("metadata", {})
+    
+    if node_metadata.get("workflow") != "test_user_understanding":
+        return ''
+
+    try:
+        # Get user from invite
+        consent_url = get_object_or_404(UserConsentUrl, consent_url=str(invite_id))
+        user = consent_url.user
+        script_version = getattr(user, "consent_script_version", None)
+
+        if not script_version:
+            return node_metadata.get("fail_node_id", "")
+
+        # Save current test question for tracking
+        save_test_question(conversation_graph, current_node_id, user, script_version.pk)
+
+        # If this is the end of the test sequence
+        if node_metadata.get("end_sequence") is True:
+            correct = get_test_results(user, script_version.pk)
+
+            if correct < NUM_TEST_QUESTIONS_CORRECT:
                 if user.num_test_tries < NUM_TEST_TRIES:
-                    # retry
                     user.num_test_tries += 1
-                    db.session.commit()
-                    return node['retry_node_id']
+                    user.save(update_fields=["num_test_tries"])
+                    return node_metadata.get("retry_node_id", "")
                 else:
-                    # fail, contact someone
-                    return node['fail_node_id']
+                    return node_metadata.get("fail_node_id", "")
             else:
-                # passed the test
-                return node['pass_node_id']
+                return node_metadata.get("pass_node_id", "")
+
+    except UserConsentUrl.DoesNotExist:
+        # If the invite ID is invalid
+        return node_metadata.get("fail_node_id", "")
+    
+    except Exception as e:
+        # Log it for debugging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error processing test question: {e}")
+        return node_metadata.get("fail_node_id", "")
+
     return ''
+
 
 def process_user_consent(conversation_graph, current_node_id, invite_id):
     node = conversation_graph[current_node_id]['metadata']
     if node['workflow'] in ['start_consent', 'end_consent']:
-        user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+        user_id = UserConsentUrl.query.filter_by(consent_url=str(invite_id)).first().user_id
         user = db.session.get(User, user_id)
 
         # first we check if you're enrolling yourself and do that first
@@ -220,7 +252,7 @@ def process_user_consent(conversation_graph, current_node_id, invite_id):
                 return node['enrolling_children_node_id']
 
     elif node['workflow'] == 'decline_consent':
-        user_id = UserChatUrl.query.filter_by(chat_url=str(invite_id)).first().user_id
+        user_id = UserConsentUrl.query.filter_by(consent_url=str(invite_id)).first().user_id
         user = db.session.get(User, user_id)
 
         user.declined_consent = True

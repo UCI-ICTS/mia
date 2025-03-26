@@ -24,7 +24,6 @@ const getUsers = async () => {
 
 // ✅ Create a new user
 const createUser = async (userData) => {
-  console.log("Service ",userData)
   const response = await API.post("auth/users/", userData, { headers: getAuthHeaders() });
   return response.data;
 };
@@ -54,8 +53,7 @@ const generateInviteLink = async (username) => {
 
 // ✅ Submit Consent Response
 const submitConsentResponse = async (invite_id, node_id ) => {
-
-const response = await API.get(`auth/consent-response/${invite_id}/`, 
+  const response = await API.get(`auth/consent-response/${invite_id}/`, 
     {params: {"node_id": node_id}
   });
   return response.data;
@@ -68,6 +66,12 @@ const getConsentByInvite = async (invite_id) => {
   return response.data
 };
 
+// ✅ Create a follow-up 
+const createFollowUp = async ({email, follow_up_reason, follow_up_info}) => {
+  console.log("Service ", {email, follow_up_reason, follow_up_info})
+  const response = await API.post(`auth/follow_ups/`, {email, follow_up_reason, follow_up_info}, { headers: getAuthHeaders() });
+  return response
+  };
 
 // ✅ Fetch all follow-ups
 const getFollowUps = async () => {
@@ -114,6 +118,7 @@ export const dataService = {
   generateInviteLink,
   getConsentByInvite,
   submitConsentResponse,
+  createFollowUp,
   getFollowUps,
   markFollowUpResolved,
   getScripts,

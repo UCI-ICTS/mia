@@ -1,23 +1,28 @@
 // src/components.FollowUpModal.js
 
 import React from "react";
-import { Modal, Form, Input, Select, Button, message } from "antd";
+import { Modal, Form, Input, Select, Button } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { createFollowUp } from "../slices/dataSlice";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const FollowUpFormModal = ({ visible, onClose, onSubmit, userInfo = {} }) => {
+const FollowUpFormModal = ({ visible, onClose, userInfo = {} }) => {
+  const dispatch = useDispatch();
+  const { chat = [], consent, loading, error } = useSelector((state) => state.data);
   const [form] = Form.useForm();
-
-  const handleFinish = async (values) => {
-    try {
-      await onSubmit(values);
-      message.success("Your message has been sent!");
-      form.resetFields();
-      onClose();
-    } catch (err) {
-      message.error("Failed to submit follow-up.");
-    }
+  const lastMessage = chat[chat.length - 1]?.node_id;
+  
+  const handleFinish = (values) => {
+    const updatedMoreInfo = `${values.more_info || ""}\n\nLast Node ID: ${lastMessage}`;
+    dispatch(createFollowUp({
+        "email": values.email,
+        "follow_up_reason": values.reason,
+        "follow_up_info": updatedMoreInfo
+      }))
+    form.resetFields();
+    onClose();
   };
 
   return (

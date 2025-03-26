@@ -152,6 +152,19 @@ export const resolveFollowUp = createAsyncThunk("data/resolveFollowUp", async (i
   }
 });
 
+export const createFollowUp = createAsyncThunk(
+  "data/createFollowUp",
+  async ({email, follow_up_reason, follow_up_info}, thunkAPI) => {
+    try {
+      console.log("Slice ", {email, follow_up_reason, follow_up_info})
+      const response = await dataService.createFollowUp({email, follow_up_reason, follow_up_info});
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error?.response?.data || error.message);
+    }
+  }
+);
+
 // --- Scripts ---
 
 export const fetchScripts = createAsyncThunk("data/fetchScripts", async (_, thunkAPI) => {
@@ -238,6 +251,7 @@ const dataSlice = createSlice({
         state.participants = state.participants.filter((u) => u.id !== id);
       })
 
+      // --- Invite ---
       .addCase(getInviteLink.pending, (state) => {
         state.loading = true;
       })
@@ -248,8 +262,6 @@ const dataSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.msg || "Failed to fetch invite link.";
       })
-
-      // --- Invite ---
 
       .addCase(generateInviteLink.fulfilled, (state, action) => {
         state.loading = false;
@@ -317,6 +329,35 @@ const dataSlice = createSlice({
           f.user_follow_up_id === id ? { ...f, resolved: true } : f
         );
       })
+      .addCase(createFollowUp.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createFollowUp.fulfilled, (state, action) => {
+        state.loading = false;
+        message.success("Message sent!");
+      })
+      .addCase(createFollowUp.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      
+        let errorMsg = "Something went wrong.";
+        const payload = action.payload;
+      
+        if (typeof payload === "string") {
+          errorMsg = payload;
+        } else if (typeof payload === "object" && payload !== null) {
+          // Combine all key-value pairs into readable messages
+          errorMsg = Object.entries(payload)
+            .map(([field, messages]) => {
+              const msgText = Array.isArray(messages) ? messages.join(", ") : messages;
+              return `${field}: ${msgText}`;
+            })
+            .join("\n");
+        }
+      
+        message.error(errorMsg);
+      })      
 
     // --- SCRIPTS ---
       .addCase(fetchScripts.pending, (state) => {

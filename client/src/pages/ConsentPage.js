@@ -1,19 +1,20 @@
 // src/pages/ConsentPage.js
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Dropdown, Input, Menu, Modal, Space, Typography } from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { QuestionCircleOutlined, UserOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConsentByInvite, submitConsentResponse } from "../slices/dataSlice";
 import CheckboxForm from "../components/CheckboxForm";
 import FollowUpModal from "../components/FollowUpModal";
+import { Bubble } from "@ant-design/x";
 
 const { Title, Paragraph } = Typography;
 
 const ConsentPage = () => {
   const { invite_id } = useParams();
   const dispatch = useDispatch();
-  const { chat = [], loading, error } = useSelector((state) => state.data);
+  const { chat = [], consent, loading, error } = useSelector((state) => state.data);
   const lastMessage = chat[chat.length - 1]?.next_consent_sequence;
   const [contactModalVisible, setContactModalVisible] = useState(false);
 
@@ -72,20 +73,9 @@ const ConsentPage = () => {
   const handleResponseClick = (id) => {
     dispatch(submitConsentResponse({ invite_id, node_id: id }));
   };
-  
-  const handleSubmitFollowUp = async (values) => {
-    // You can POST to your API here
-    await fetch(`/api/follow-up/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
-  };
 
   const hasStarted = chat.length > 0;
-  console.log(hasStarted)
+  // console.log(hasStarted)
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -163,14 +153,23 @@ const ConsentPage = () => {
           <div style={{ maxWidth: 800, margin: "0 auto" }}>
             {chat.map((entry, index) => (
               <div key={index} style={{ marginBottom: 24 }}>
-                {entry.echo_user_response && (
-                  <Paragraph><strong>You:</strong> {entry.echo_user_response}</Paragraph>
+                {entry.echo_user_response && (  
+                  <Bubble
+                    header={<strong>{consent.email}</strong>}
+                    placement="end"
+                    shape="round"
+                    avatar={{icon:<UserOutlined />}}
+                    content={<span dangerouslySetInnerHTML={{ __html: entry.echo_user_response }} />}
+                  />
                 )}
-                {entry.next_consent_sequence?.bot_messages?.map((msg, idx) => (
-                  <Paragraph key={idx}>
-                    <strong>Mia:</strong>{" "}
-                    <span dangerouslySetInnerHTML={{ __html: msg }} />
-                  </Paragraph>
+                {entry.next_consent_sequence?.bot_messages?.map((msg, idx) => (  
+                  <Bubble
+                    header={<strong>Mia</strong>}
+                    placement="start"
+                    shape="round"
+                    content={<span dangerouslySetInnerHTML={{ __html: msg }} />}
+                    avatar={{icon:<img src="/images/mia_logo.png"/>}}
+                  />
                 ))}
               </div>
             ))}
@@ -242,8 +241,7 @@ const ConsentPage = () => {
           <FollowUpModal
             visible={contactModalVisible}
             onClose={() => setContactModalVisible(false)}
-            onSubmit={handleSubmitFollowUp}
-            userInfo={{ /* Optionally pass in name/email */ }}
+            userInfo={{ email: consent.email }}
           />
         </div>
       )}

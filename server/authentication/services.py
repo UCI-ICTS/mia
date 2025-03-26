@@ -146,9 +146,21 @@ class UserConsentOutputSerializer(serializers.ModelSerializer):
 
 
 class UserUserFollowUpInputSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(write_only=True)
+
     class Meta: 
         model = UserFollowUp
-        fields = ['user_follow_up_id', 'user', 'follow_up_reason', 'follow_up_info', 'resolved', 'created_at']
+        fields = ['email', 'follow_up_reason', 'follow_up_info']  # exclude 'user', 'resolved', etc.
+
+    def create(self, validated_data):
+        email = validated_data.pop('email')
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("No user found with that email.")
+
+        follow_up = UserFollowUp.objects.create(user=user, **validated_data)
+        return follow_up
 
 
 class UserUserFollowUpOutputSerializer(serializers.ModelSerializer):
@@ -194,7 +206,6 @@ class UserConsentUrlInputSerializer(serializers.ModelSerializer):
         user = User.objects.get(username=username)
 
         return UserConsentUrl.objects.create(user=user, **validated_data)
-
 
 
 class UserConsentUrlOutputSerializer(serializers.ModelSerializer):
