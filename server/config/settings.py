@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -28,8 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React frontend
-    "http://127.0.0.1:3000",
+    "http://genomics.icts.uci.edu",  # React frontend
+    "http://icts8001.hs.uci.edu",
 ]
 AUTH_USER_MODEL = 'authentication.User'
 
@@ -106,9 +106,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mia_app_local',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'NAME': 'mia_app_prod',
+        'USER': 'miauser',
+        'PASSWORD': 'miauser',
         'HOST': 'localhost',  # Or your PostgreSQL server
         'PORT': '5432',       # Default PostgreSQL port
     }
@@ -150,7 +150,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/django-static/"
+STATIC_ROOT = "/var/www/github/GREGor_dashboard/server/static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

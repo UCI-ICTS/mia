@@ -3,7 +3,7 @@
 import axios from "axios";
 import { store } from "../store"; // Redux store to access auth state
 
-const API = axios.create({ baseURL: "http://localhost:8000/mia" });
+const API = axios.create({ baseURL: "https://genomics.icts.uci.edu/mia" });
 
 const getAuthHeaders = () => {
   const state = store.getState();
@@ -62,14 +62,14 @@ const submitConsentResponse = async (invite_id, node_id ) => {
 
 // ✅ Get consent from link
 const getConsentByInvite = async (invite_id) => {
-  const response = await API.get(`auth/consent/${invite_id}/`, { headers: getAuthHeaders() });
+  const response = await API.get(`auth/consent/${invite_id}/`);
   return response.data
 };
 
 // ✅ Create a follow-up 
 const createFollowUp = async ({email, follow_up_reason, follow_up_info}) => {
   console.log("Service ", {email, follow_up_reason, follow_up_info})
-  const response = await API.post(`auth/follow_ups/`, {email, follow_up_reason, follow_up_info}, { headers: getAuthHeaders() });
+  const response = await API.post(`auth/follow_ups/`, {email, follow_up_reason, follow_up_info});
   return response
   };
 

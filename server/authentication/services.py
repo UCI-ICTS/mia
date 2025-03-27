@@ -226,8 +226,8 @@ class UserConsentUrlOutputSerializer(serializers.ModelSerializer):
         ]
 
     def get_invite_link(self, obj):
-        base_url = getattr(settings, 'CONSENT_INVITE_BASE_URL', 'http://localhost:3000')
-        return f"{base_url}/mia/consent/{obj.consent_url}/"
+        base_url = getattr(settings, 'CONSENT_INVITE_BASE_URL', 'https://genomics.icts.uci.edu')
+        return f"{base_url}/consent/{obj.consent_url}/"
 
 
 class UserInputSerializer(serializers.ModelSerializer):

@@ -4,7 +4,7 @@ import axios from "axios";
 import { store } from "../store";
 
 
-const API = axios.create({ baseURL: "http://localhost:8000/mia" });
+const API = axios.create({ baseURL: "https://genomics.icts.uci.edu/mia" });
 
 const getAuthHeaders = () => {
     const state = store.getState();

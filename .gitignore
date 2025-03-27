@@ -1,4 +1,7 @@
 client/node_modules
+client/build
 
 server/env
 **.DS_Store*
+**.pyc
+server/static

@@ -19,7 +19,7 @@ const AppRoutes = () => {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/mia/consent/:invite_id" element={<ConsentPage />} />
+        <Route path="/consent/:invite_id" element={<ConsentPage />} />
         <Route path="/login" element={<LoginPage />} />
 
         {/* Protected Admin Dashboard */}

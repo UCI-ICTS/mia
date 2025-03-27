@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn socket for MIA
+
+[Socket]
+ListenStream=/var/run/mia.sock
+SocketMode=0660
+DirectoryMode=0750
+User=nginx
+Group=developers
+
+[Install]
+WantedBy=sockets.target

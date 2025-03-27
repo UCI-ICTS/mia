@@ -1,0 +1,23 @@
+[Unit]
+Description=MIA gunicorn daemon
+Requires=mia.socket
+After=network.target
+
+[Service]
+User=nginx
+Group=developers
+WorkingDirectory=/var/www/github/mia/server
+ExecStart=/var/www/github/mia/server/env/bin/python \
+    /var/www/github/mia/server/env/bin/gunicorn \
+    --access-logfile /var/log/gunicorn/mia_stdout.log \
+    --log-level=debug \
+    --log-file /var/log/gunicorn/mia_stderr.log \
+    --workers 3 \
+    --bind unix:/var/run/mia.sock \
+    config.wsgi:application
+
+Environment="PATH=/var/www/github/mia/server/env/bin:/usr/bin:/bin"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
