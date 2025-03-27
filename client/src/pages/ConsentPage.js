@@ -17,7 +17,7 @@ const ConsentPage = () => {
   const { chat = [], consent, loading, error } = useSelector((state) => state.data);
   const lastMessage = chat[chat.length - 1]?.next_consent_sequence;
   const [contactModalVisible, setContactModalVisible] = useState(false);
-
+  
   const bottomRef = useRef(null);
 
   // Automatically scroll to the bottom of chat

@@ -28,8 +28,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOWED_ORIGINS = [
-    "http://genomics.icts.uci.edu",  # React frontend
+    "http://genomics.icts.uci.edu",
     "http://icts8001.hs.uci.edu",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3333",
 ]
 AUTH_USER_MODEL = 'authentication.User'
 
