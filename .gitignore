@@ -1,7 +1,11 @@
+#Frontend ignores
 client/node_modules
 client/build
+client/.env
 
+#Backend ignores
 server/env
 **.DS_Store*
 **.pyc
 server/static
+.secretes

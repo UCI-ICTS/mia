@@ -3,7 +3,9 @@
 import axios from "axios";
 import { store } from "../store"; // Redux store to access auth state
 
-const API = axios.create({ baseURL: "https://genomics.icts.uci.edu/mia" });
+const MIADBURL = process.env.REACT_APP_MIADB;
+
+const API = axios.create({ baseURL: `${MIADBURL}/mia/` });
 
 const getAuthHeaders = () => {
   const state = store.getState();
