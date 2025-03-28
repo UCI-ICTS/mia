@@ -121,7 +121,6 @@ export const submitConsentResponse = createAsyncThunk(
   async ({ invite_id, node_id }, thunkAPI) => {
     try {
       const response = await dataService.submitConsentResponse(invite_id, node_id);
-      console.log("Slice ", response)
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error?.response?.data || error.message);
