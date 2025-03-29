@@ -19,12 +19,12 @@ const Dashboard = () => {
   const {staff,participants,followUps,consent,scripts,loading,error} = useSelector((state) => state.data || {});
   
   useEffect(() => {
-    if (!participants || participants.length === 0) {
+    if (!loading && !error && (!staff || staff.length === 0)) {
       dispatch(fetchUsers());
       dispatch(fetchFollowUps());
       dispatch(fetchScripts());
     }
-  }, [participants, dispatch]);
+  }, [participants, loading, error, dispatch]);
 
   const handleLogout = () => {
     dispatch(logout());

@@ -53,6 +53,18 @@ const generateInviteLink = async (username) => {
   return response.data;
 };
 
+// ✅ Submit Consent Form
+const submitConsentForm = async ({invite_id, form_type, node_id, form_responses} ) => {
+  console.log("Service: ", invite_id, form_type, node_id, form_responses)
+  const response = await API.post(`auth/consent-response/`, {
+    invite_id,
+    form_type,
+    node_id,
+    form_responses,
+  });
+  return response.data;
+};
+
 // ✅ Submit Consent Response
 const submitConsentResponse = async (invite_id, node_id ) => {
   const response = await API.get(`auth/consent-response/${invite_id}/`, 
@@ -120,6 +132,7 @@ export const dataService = {
   generateInviteLink,
   getConsentByInvite,
   submitConsentResponse,
+  submitConsentForm,
   createFollowUp,
   getFollowUps,
   markFollowUpResolved,

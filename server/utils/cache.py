@@ -30,8 +30,7 @@ def _build_key(invite_id, suffix):
 def get_user_workflow(invite_id):
     key = _build_key(invite_id, 'workflow')
     value = _get_cache_value(key)
-    return json.loads(value) if value else None
-
+    return json.loads(value) if value else []
 
 def set_user_workflow(invite_id, workflow):
     key = _build_key(invite_id, 'workflow')

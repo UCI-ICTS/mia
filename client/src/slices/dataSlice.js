@@ -128,6 +128,24 @@ export const submitConsentResponse = createAsyncThunk(
   }
 );
 
+export const submitConsentForm = createAsyncThunk(
+  "data/submitConsentForm",
+  async ({ invite_id, form_type, node_id, form_responses }, { rejectWithValue }) => {
+    try {
+      console.log("SLice: ", invite_id, form_type, node_id, form_responses )
+      const response = await dataService.submitConsentForm({
+        invite_id,
+        form_type,
+        node_id,
+        form_responses,
+      });
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 
 // --- Follow Ups ---
 
@@ -307,7 +325,26 @@ const dataSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      
+      .addCase(submitConsentForm.pending, (state) => {
+        console.log("submitConsentForm.pending")
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(submitConsentForm.fulfilled, (state, action) => {
+        console.log("submitConsentForm.fulfilled", action.payload)
+        state.loading = false;
+        if (Array.isArray(action.payload?.chat)) {
+          state.chat = action.payload.chat;
+        }
+        state.error = null;
+        message.success("Form submitted!");
+      })
+      .addCase(submitConsentForm.rejected, (state, action) => {
+        console.log("submitConsentForm.rejected", action)
+        state.loading = false;
+        state.error = action.payload || "Form submission failed";
+        message.error(state.error);
+      })
 
     // --- FOLLOW UPS ---
       .addCase(fetchFollowUps.pending, (state) => {

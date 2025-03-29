@@ -132,7 +132,7 @@ class ConsentScriptViewSet(viewsets.ViewSet):
             "parent_ids": parent_ids,
             "child_ids": [],
             "attachment": None,
-            "html_type": 'button',
+            "render_type": 'button',
             "html_content": None,
             "metadata": {
                 'workflow': '',

@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConsentByInvite, submitConsentResponse } from "../slices/dataSlice";
 import useInActivityTimer from "../components/InActivityTimer";
-import CheckboxForm from "../components/CheckboxForm";
+import ConsentFormSubmission from "../components/ConsentFormSubmission";
 import FollowUpModal from "../components/FollowUpModal";
 import { Bubble } from "@ant-design/x";
 
@@ -16,20 +16,45 @@ const ConsentPage = () => {
   const { invite_id } = useParams();
   const dispatch = useDispatch();
   const { chat = [], consent, loading, error } = useSelector((state) => state.data);
-  const lastMessage = chat[chat.length - 1]?.next_consent_sequence;
+  const lastMessage = chat[chat.length - 1];
+  const lastNodeId = chat[chat.length - 1]?.node_id;
   const [contactModalVisible, setContactModalVisible] = useState(false);
   const isInactive = useInActivityTimer(5*60*1000)
   const [hasStarted, setHasStarted] = useState(false);
   const [showTimeoutModal, setShowTimeoutModal] = useState(false);
   const [countdown, setCountdown] = useState(10);
+  const [visibleBotMessages, setVisibleBotMessages] = useState({});
   const bottomRef = useRef(null);
 
   // Automatically scroll to the bottom of chat
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        if (bottomRef.current) {
+          bottomRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100); // small delay to allow render
+    
+      return () => clearTimeout(timer);
+    }, [visibleBotMessages]);
+
   useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [chat, hasStarted]);
+    chat.forEach((entry, entryIndex) => {
+      const botMsgs = entry?.bot_messages;
+      if (botMsgs?.length > 0 && !visibleBotMessages[entry.node_id]) {
+        botMsgs.forEach((_, msgIndex) => {
+          setTimeout(() => {
+            setVisibleBotMessages((prev) => {
+              const current = prev[entry.node_id] || 0;
+              return {
+                ...prev,
+                [entry.node_id]: Math.max(current, msgIndex + 1),
+              };
+            });
+          }, msgIndex * 1500); // 1.5 seconds per message
+        });
+      }
+    });  
+  }, [chat])
 
   // Fetch consent on first load
   useEffect(() => {
@@ -61,45 +86,10 @@ const ConsentPage = () => {
 
     return () => clearTimeout(timer);
   }, [showTimeoutModal, countdown]);
-
-
-   // Hook into injected form HTML
-   useEffect(() => {
-    const form = document.getElementById("checkbox-form");
-    const submitButton = document.getElementById("submit-button");
-  
-    if (!form || !submitButton) return;
-    
-    const handleFormSubmit = (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
-      const payload = Object.fromEntries(formData.entries());
-      const node_id = payload["id_node"];
-      delete payload["id_node"];
-  
-      dispatch(submitConsentResponse({ invite_id, node_id }));
-    };
-  
-    const checkboxes = form.querySelectorAll("input[type='checkbox']");
-    const updateSubmitState = () => {
-      const anyChecked = Array.from(checkboxes).some((cb) => cb.checked);
-      submitButton.disabled = !anyChecked;
-    };
-  
-    form.addEventListener("submit", handleFormSubmit);
-    checkboxes.forEach((cb) => cb.addEventListener("change", updateSubmitState));
-  
-    // Trigger once on mount in case some are pre-checked
-    updateSubmitState();
-  
-    return () => {
-      form.removeEventListener("submit", handleFormSubmit);
-      checkboxes.forEach((cb) => cb.removeEventListener("change", updateSubmitState));
-    };
-  }, [chat]);
   
 
   const handleResponseClick = (id) => {
+    console.log("handleResponseClick", id)
     dispatch(submitConsentResponse({ invite_id, node_id: id }));
   };
 
@@ -164,8 +154,6 @@ const ConsentPage = () => {
           <QuestionCircleOutlined style={{ fontSize: 20, cursor: "pointer" }} />
         </Dropdown>
       </div>
-
-
       
       <div style={{ flexGrow: 1, padding: "40px 20px", backgroundColor: "#f9f9f9" }}>
         {/* Start Page */}
@@ -210,17 +198,28 @@ const ConsentPage = () => {
                     placement="end"
                     shape="round"
                     avatar={{icon:<UserOutlined />}}
-                    content={<span dangerouslySetInnerHTML={{ __html: entry.echo_user_response }} />}
+                    content={
+                      <div style={{ fontFamily: "Georgia, serif", fontSize: 16 }}>
+                        {entry.echo_user_response}
+                      </div>
+                    }
                   />
                 )}
-                {entry.next_consent_sequence?.bot_messages?.map((msg, idx) => (  
-                  <Bubble
-                    header={<strong>Mia</strong>}
-                    placement="start"
-                    shape="round"
-                    content={<span dangerouslySetInnerHTML={{ __html: msg }} />}
-                    avatar={{icon:<img src="/images/mia_logo.png"/>}}
-                  />
+                {entry.bot_messages
+                  ?.slice(0, visibleBotMessages[entry.node_id] || 0)
+                  .map((msg, idx) => (
+                    <Bubble
+                      key={idx}
+                      header={<strong>Mia</strong>}
+                      placement="start"
+                      shape="round"
+                      content={
+                        <div style={{ fontFamily: "Georgia, serif", fontSize: 16 }}>
+                          <span dangerouslySetInnerHTML={{ __html: msg }} />
+                        </div>
+                      }
+                      avatar={{ icon: <img src="/images/mia_logo.png" alt="Mia" /> }}
+                    />
                 ))}
               </div>
             ))}
@@ -230,7 +229,9 @@ const ConsentPage = () => {
       </div>
 
      {/* Button or Form */}
-     {hasStarted && (
+     {console.log(lastMessage)}
+     {hasStarted &&
+      lastMessage?.bot_messages?.length === (visibleBotMessages[lastNodeId] || 0) && (
         <div style={{ textAlign: "center", margin: "20px 0" }}>
           <div
             style={{
@@ -239,55 +240,23 @@ const ConsentPage = () => {
               justifyContent: "center",
             }}
           >
-            {lastMessage?.user_html_type === "form" ? (
-            <div style={{ maxWidth: 600, margin: "0 auto", padding: 20 }}>
-                <style>
-                {`
-                    #checkbox-form {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 12px;
-                    margin-bottom: 16px;
-                    }
-
-                    .user-form-row {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    }
-
-                    .user-form-row-label {
-                    font-size: 16px;
-                    }
-
-                    #submit-button {
-                    margin-top: 10px;
-                    }
-                `}
-                </style>
-                <div
-                dangerouslySetInnerHTML={{
-                    __html: lastMessage.user_responses?.[0]?.[1],
-                }}
-                />
-            </div>
+            {lastMessage?.user_render_type === "form" ? (
+              <ConsentFormSubmission
+                form={lastMessage?.user_responses}
+                invite_id={invite_id}
+              />
             ) : (
-                lastMessage?.user_html_type === "form" ? (
-                    <CheckboxForm nodeId={lastMessage.user_responses[0][0]} invite_id={invite_id} onSubmit={handleResponseClick} />
-                  ) : (
-                    lastMessage?.user_responses?.map(([id, label]) => (
-                      <Button
-                        key={id}
-                        onClick={() => handleResponseClick(id)}
-                        type="primary"
-                        style={{ fontSize: 16, minWidth: 200, margin: 8 }}
-                      >
-                        {label}
-                      </Button>
-                    ))
-                  )                  
-          )}
+              lastMessage?.user_responses?.map(({ id, label }) => (
+                <Button
+                  key={id}
+                  onClick={() => handleResponseClick(id)}
+                  type="primary"
+                  style={{ fontSize: 16, minWidth: 200, margin: 8 }}
+                >
+                  {label}
+                </Button>
+              ))              
+            )}
           </div>
           <FollowUpModal
             visible={contactModalVisible}

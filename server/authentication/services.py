@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # authentication/services.py
 
+import configparser
 from rest_framework import serializers
 from django.conf import settings
 from django.contrib.auth.hashers import check_password
@@ -18,7 +19,8 @@ from authentication.models import (
 from authentication.selectors import get_first_test_score, get_latest_consent
 from utils.cache import set_user_consent_history, set_user_workflow
 
-
+config = configparser.ConfigParser()
+CONSENT_INVITE_BASE_URL = config.get("SERVER", "DASHBOARD_URL", fallback="http://localhost:3000/")
 User = get_user_model()
 
 def retrieve_or_initialize_user_consent(invite_id):
@@ -63,6 +65,73 @@ def set_workflow(invite_id, workflow):
     Set the user's workflow in the cache.
     """
     set_user_workflow(invite_id, workflow)
+
+
+class UserConsentResponseInputSerializer(serializers.Serializer):
+    invite_id = serializers.UUIDField(
+        help_text="UUID of the invite link provided to the user."
+    )
+    node_id = serializers.CharField(
+        required=False,
+        help_text="ID of the current node in the conversation graph. Required for GET requests."
+    )
+    form_type = serializers.CharField(
+        required=False,
+        help_text="Type of form being submitted. Required for POST requests."
+    )
+    form_responses = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+        help_text="List of form response values, e.g., checkbox names or field values. Required for POST requests."
+    )
+
+    def validate(self, data):
+        method = self.context['request'].method
+        if method == 'POST':
+            if not data.get('form_type'):
+                raise serializers.ValidationError("'form_type' is required for POST requests.")
+            if 'form_responses' not in data:
+                raise serializers.ValidationError("'form_responses' is required for POST requests.")
+        elif method == 'GET':
+            if not data.get('node_id'):
+                raise serializers.ValidationError("'node_id' is required for GET requests.")
+        return data
+
+
+class ChatTurnSerializer(serializers.Serializer):
+    node_id = serializers.CharField()
+    bot_messages = serializers.ListField(
+        child=serializers.CharField(),
+        help_text="List of bot messages sent at this step."
+    )
+    user_responses = serializers.ListField(
+        child=serializers.JSONField(),
+        help_text="List of response options for the user. Can be buttons or form definitions."
+    )
+    user_render_type = serializers.CharField()
+    echo_user_response = serializers.JSONField(allow_null=True)
+    end_sequence = serializers.BooleanField()
+
+
+class UserConsentResponseOutputSerializer(serializers.Serializer):
+    chat = serializers.ListField(
+        child=ChatTurnSerializer(),
+        help_text="Conversation turns between the user and the bot."
+    )
+    next_node_id = serializers.CharField(
+        required=False,
+        help_text="The ID of the next node in the conversation graph."
+    )
+    status = serializers.CharField(
+        default="success",
+        help_text="Status of the response. Usually 'success' or 'error'."
+    )
+    error = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        help_text="Any error that occurred. Only present when status is 'error'."
+    )
+
 
 
 class UserConsentInputSerializer(serializers.ModelSerializer):
