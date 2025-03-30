@@ -229,7 +229,7 @@ const ConsentPage = () => {
       </div>
 
      {/* Button or Form */}
-     {console.log(lastMessage)}
+     {/* {console.log(lastMessage)} */}
      {hasStarted &&
       lastMessage?.bot_messages?.length === (visibleBotMessages[lastNodeId] || 0) && (
         <div style={{ textAlign: "center", margin: "20px 0" }}>
@@ -242,7 +242,7 @@ const ConsentPage = () => {
           >
             {lastMessage?.user_render_type === "form" ? (
               <ConsentFormSubmission
-                form={lastMessage?.user_responses}
+                form={lastMessage?.user_responses[0].label}
                 invite_id={invite_id}
               />
             ) : (

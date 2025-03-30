@@ -296,8 +296,7 @@ class UserConsentViewSet(viewsets.ViewSet):
             }
             for entry in history if "next_consent_sequence" in entry
         ]
-        # response_data["chat"] = history
-        # import pdb; pdb.set_trace()
+
         return Response(response_data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
@@ -490,6 +489,7 @@ class UserConsentResponseViewSet(viewsets.ViewSet):
         tags=["Consent Response"]
     )
     def create(self, request):
+        import pdb; pdb.set_trace()
         serializer = UserConsentResponseInputSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data

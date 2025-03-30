@@ -1,31 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
+import { Form, Checkbox, Button, Space, Radio } from "antd";
 import { submitConsentForm } from "../slices/dataSlice";
-import { Button, Input, Checkbox, Radio, Select, Typography, Form, Space } from "antd";
-import ErrorBoundary from "antd/es/alert/ErrorBoundary";
-const { TextArea } = Input;
-const { Title, Paragraph } = Typography;
 
 const ConsentFormSubmission = ({ form, invite_id }) => {
   const dispatch = useDispatch();
-  const [formValues, setFormValues] = useState({});
   const [formInstance] = Form.useForm();
-  const [, formDef] = form[0]; // Safe destructuring
 
   const handleFinish = (values) => {
+    // Convert all form values to { name, value } pairs
+    const checkedNames = values.checkbox_group || [];
     const formatted = Object.entries(values).map(([name, value]) => ({
       name,
       value
     }));
-
-    dispatch(submitConsentForm({
-      invite_id,
-      node_id: form.node_id,
-      form_type: form.form_type || "generic",
-      form_responses: formatted
-    }));
+    console.log(invite_id, form.node_id,form.form_type, checkedNames)
+    dispatch(
+      submitConsentForm({
+        invite_id,
+        node_id: form.id_node || form.node_id, // support both
+        form_type: form.form_type || form.type || "generic",
+        form_responses: checkedNames,
+      })
+    );
   };
-  console.log("form ", formDef)
+  
+
+  const formType = form.type;
+  console.log(form)
   return (
     <Form
       form={formInstance}
@@ -33,98 +35,43 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
       onFinish={handleFinish}
       style={{ maxWidth: 700, margin: "0 auto", marginTop: 24 }}
     >
-      {/* Optional Form Description */}
-      {formDef.description && (
-        <>
-          {Array.isArray(form.description)
-            ? form.description.map((line, idx) => <Paragraph key={idx}>{line}</Paragraph>)
-            : <Paragraph>{form.description}</Paragraph>
-          }
-        </>
+      {formType === "checkbox_group" && (
+        <Form.Item
+          name="checkbox_group"
+          label="Who might consider enrolling?"
+          rules={[{ required: true, message: "Please select at least one option" }]}
+        >
+          <Checkbox.Group>
+            <Space direction="vertical">
+              {form.fields.map((f) => (
+                <Checkbox key={f.value} value={f.name}>
+                  {f.label}
+                </Checkbox>
+              ))}
+            </Space>
+          </Checkbox.Group>
+        </Form.Item>
       )}
 
-      {formDef.fields.map((field) => {
-        const commonProps = {
-          name: field.name,
-          label: field.label,
-          rules: field.required ? [{ required: true, message: `Please complete "${field.label}"` }] : []
-        };
+      {formType === "radio" && (
+        <Form.Item
+          name="radio_selection"
+          label="Please choose one"
+          rules={[{ required: true, message: "Please select an option" }]}
+        >
+          <Radio.Group>
+            <Space direction="vertical">
+              {form.fields.map((f) => (
+                <Radio key={f.value} value={f.name}>
+                  {f.label}
+                </Radio>
+              ))}
+            </Space>
+          </Radio.Group>
+        </Form.Item>
+      )}
 
-        switch (formDef.type) {
-          case "input":
-            return (
-              <Form.Item key={field.name} {...commonProps}>
-                <Input
-                  type={field.input_type || "text"}
-                  placeholder={field.placeholder}
-                  pattern={field.pattern}
-                />
-              </Form.Item>
-            );
-
-          case "textarea":
-            return (
-              <Form.Item key={field.name} {...commonProps}>
-                <TextArea rows={4} placeholder={field.placeholder} />
-              </Form.Item>
-            );
-
-          case "checkbox":
-            return (
-              <Form.Item key={field.name} valuePropName="checked" {...commonProps}>
-                <Checkbox>{field.label}</Checkbox>
-              </Form.Item>
-            );
-
-            case "checkbox_group":
-              const checkboxOptions = field.fields?.map((f) => ({
-                label: f.label,
-                value: f.value
-              })) || [];
-            console.log(checkboxOptions)
-              return (
-                <Form.Item key={field.name} {...commonProps}>
-                  <Checkbox.Group
-                    options={checkboxOptions}
-                    style={{ display: "flex", flexDirection: "column", gap: 8 }}
-                  />
-                </Form.Item>
-              );
-            
-
-          case "radio":
-            return (
-              <Form.Item key={field.name} {...commonProps}>
-                <Radio.Group>
-                  <Space direction="vertical">
-                    {field.options?.map((opt) => (
-                      <Radio key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </Radio>
-                    ))}
-                  </Space>
-                </Radio.Group>
-              </Form.Item>
-            );
-
-          case "select":
-            return (
-              
-              <Form.Item key={field.name} {...commonProps}>
-                <Select placeholder={`Select ${field.label}`}>
-                  {field.options?.map((opt) => (
-                    <Select.Option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            );
-
-          default:
-            return null;
-        }
-      })}
+      {/* Add more formType conditions like 'input', 'textarea', etc. as needed */}
 
       <Form.Item style={{ textAlign: "center" }}>
         <Button type="primary" htmlType="submit">
