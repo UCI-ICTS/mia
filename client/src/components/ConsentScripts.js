@@ -16,9 +16,10 @@ import {
   Spin,
   message,
 } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined, ReadOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined, DeleteOutlined, ReadOutlined, MenuUnfoldOutlined, UploadOutlined } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
 import { useNavigate } from "react-router-dom";
+import UploadModal from "./UploadModal";
 
 const ConsentScripts = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const ConsentScripts = () => {
   const { scripts = [], loading, error } = useSelector((state) => state.data || {});
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingScript, setEditingScript] = useState(null);
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -39,6 +41,31 @@ const ConsentScripts = () => {
     form.setFieldsValue(script || { name: "", description: "" });
     setIsModalVisible(true);
   };
+
+  const handleUpload = async (file) => {
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+  
+      const scriptPayload = {
+        name: parsed.name || "Uploaded Script",
+        description: parsed.description || "Imported from JSON",
+        script: parsed, // assuming parsed is the full script graph
+      };
+  
+      await dispatch(addScript(scriptPayload)).unwrap();
+      message.success("Script uploaded successfully.");
+      dispatch(fetchScripts());
+      setUploadModalVisible(false);
+      setIsModalVisible(false);
+      form.resetFields();
+    } catch (err) {
+      console.error("Upload error:", err);
+      message.error("Invalid or corrupt JSON file.");
+    }
+    return false; // prevent default upload
+  };
+  
 
   const handleSubmit = async () => {
     const values = await form.validateFields();
@@ -171,8 +198,20 @@ const ConsentScripts = () => {
             >
               <Input.TextArea rows={3} />
             </Form.Item>
+            <Button
+              icon={<UploadOutlined />}
+              style={{ marginLeft: 12 }}
+              onClick={() => setUploadModalVisible(true)}
+            >
+              Upload Script
+            </Button>
           </Form>
         </Modal>
+        <UploadModal
+          visible={uploadModalVisible}
+          onClose={() => setUploadModalVisible(false)}
+          handleUpload={handleUpload}
+        />
       </div>
     </ErrorBoundary>
   );

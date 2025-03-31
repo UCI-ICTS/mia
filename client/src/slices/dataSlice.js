@@ -340,9 +340,9 @@ const dataSlice = createSlice({
         message.success("Form submitted!");
       })
       .addCase(submitConsentForm.rejected, (state, action) => {
-        console.log("submitConsentForm.rejected", action)
+        console.log("submitConsentForm.rejected", action.payload)
         state.loading = false;
-        state.error = action.payload || "Form submission failed";
+        state.error = action.payload.error || "Form submission failed";
         message.error(state.error);
       })
 

@@ -50,7 +50,7 @@ const ConsentPage = () => {
                 [entry.node_id]: Math.max(current, msgIndex + 1),
               };
             });
-          }, msgIndex * 1500); // 1.5 seconds per message
+          }, msgIndex * 15); // 1.5 seconds per message
         });
       }
     });  
@@ -257,6 +257,24 @@ const ConsentPage = () => {
                 </Button>
               ))              
             )}
+            {/* Close page button */}
+            {(lastMessage?.user_responses.length == 0) && (
+              <div style={{ textAlign: "center", marginTop: 24 }}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    if (window.opener) {
+                      window.close(); // Works if this window was opened by script
+                    } else {
+                      window.location.href = "https://gregorconsortium.org/learning"; // Or your home page
+                    }
+                  }}
+                  style={{ minWidth: 200 }}
+                >
+                  Finish & Close
+                </Button>
+              </div>
+            )}
           </div>
           <FollowUpModal
             visible={contactModalVisible}
@@ -282,7 +300,7 @@ const ConsentPage = () => {
             </Button>
           </Modal>
         </div>
-      )}
+      )}{console.log(lastMessage?.user_responses.length)}
     </div>
   );
 };

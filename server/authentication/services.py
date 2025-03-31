@@ -14,7 +14,8 @@ from authentication.models import (
     UserFollowUp,
     UserConsentUrl,
     UserConsent,
-    ConsentAgeGroup
+    ConsentAgeGroup,
+    UserFeedback
 )
 from authentication.selectors import get_first_test_score, get_latest_consent
 from utils.cache import set_user_consent_history, set_user_workflow
@@ -66,6 +67,31 @@ def set_workflow(invite_id, workflow):
     """
     set_user_workflow(invite_id, workflow)
 
+class UserFeedbackInputSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        required=False,
+        allow_null=True
+    )
+
+    class Meta:
+        model = UserFeedback
+        fields = ["user", "satisfaction", "suggestions"]
+
+
+class UserFeedbackOutputSerializer(serializers.ModelSerializer):
+    user_id = serializers.UUIDField(source="user.id", read_only=True)
+
+    class Meta:
+        model = UserFeedback
+        fields = [
+            "user_feedback_id",
+            "user_id",
+            "satisfaction",
+            "suggestions",
+            "created_at",
+        ]
+
 
 class UserConsentResponseInputSerializer(serializers.Serializer):
     invite_id = serializers.UUIDField(
@@ -80,10 +106,13 @@ class UserConsentResponseInputSerializer(serializers.Serializer):
         help_text="Type of form being submitted. Required for POST requests."
     )
     form_responses = serializers.ListField(
-        child=serializers.CharField(),
+        child=serializers.DictField(
+            child=serializers.JSONField(allow_null=True)
+        ),
         required=False,
-        help_text="List of form response values, e.g., checkbox names or field values. Required for POST requests."
+        help_text="List of form response objects. Supports string, boolean, or null values."
     )
+
 
     def validate(self, data):
         method = self.context['request'].method
@@ -109,8 +138,14 @@ class ChatTurnSerializer(serializers.Serializer):
         help_text="List of response options for the user. Can be buttons or form definitions."
     )
     user_render_type = serializers.CharField()
+    render_content = serializers.JSONField(
+        required=False,
+        allow_null=True,
+        help_text="Additional content to render, such as images or form definitions."
+    )
     echo_user_response = serializers.JSONField(allow_null=True)
     end_sequence = serializers.BooleanField()
+
 
 
 class UserConsentResponseOutputSerializer(serializers.Serializer):

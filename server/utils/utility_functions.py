@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # utils/utility_functions.py
 
-import json
 import os
-
+import json
+from datetime import timedelta
 from django.utils import timezone
 from django.db import transaction
 from django.db.models import Count, Max
@@ -22,6 +22,8 @@ from utils.cache import (
     set_user_consent_history,
     get_user_consent_history
 )
+
+
 # flags
 NUM_TEST_QUESTIONS_CORRECT = 10
 NUM_TEST_TRIES = 2
@@ -37,6 +39,17 @@ def get_script_from_invite_id(invite_id):
         raise ValueError(f"Invite ID {invite_id} not found.")
     except ConsentScript.DoesNotExist:
         raise ValueError(f"ConsentScript for invite ID {invite_id} not found.")
+
+
+def clean_up_after_chat(invite_id):
+    """Set the invite URL to expire 24 hours from now."""
+    try:
+        consent_url = UserConsentUrl.objects.get(consent_url=str(invite_id))
+        consent_url.expires_at = timezone.now() + timedelta(hours=24)
+        consent_url.save()
+    except UserConsentUrl.DoesNotExist:
+        # Log or raise if needed
+        pass
 
 
 def get_consent_start_id(conversation_graph):
@@ -310,10 +323,10 @@ def process_user_consent(conversation_graph, current_node_id, invite_id):
 
     return ''
 
-def handle_family_enrollment_form(conversation_graph, invite_id, responses):
-    checked_checkboxes = []
-    checkbox_workflow_ids = []
 
+def handle_family_enrollment_form(conversation_graph, invite_id, responses):
+    checked_checkboxes = responses[0]["value"]
+    checkbox_workflow_ids = []
     user = UserConsentUrl.objects.get(consent_url=invite_id).user
 
     # Assume last node in history is the parent node
@@ -326,40 +339,271 @@ def handle_family_enrollment_form(conversation_graph, invite_id, responses):
     parent_node = conversation_graph[parent_node_id]
 
     try:
-        fields = history[-1]['next_consent_sequence']['user_responses'][0][1]['fields']
+        fields = history[-1]['next_consent_sequence']['user_responses'][0]['label']['fields']
     except Exception:
         raise Exception("Checkbox fields missing from chat history")
-    
+
     # Build a lookup for checkbox names → child node IDs
     checkbox_node_ids = {field['name']: field['id_value'] for field in fields}
-    
+
     # Match submitted values to their corresponding IDs
-    for checkbox_name in responses:
-        if checkbox_name in checkbox_node_ids:
-            checkbox_workflow_ids.append(checkbox_node_ids[checkbox_name])
-            checked_checkboxes.append(checkbox_name)
-
+    for item in checked_checkboxes:
+        if item in checkbox_node_ids:
+            checkbox_workflow_ids.append(checkbox_node_ids[item])
             # Save user state
-            if checkbox_name == "myself":
+            if item == "myself":
                 user.enrolling_myself = True
-            elif checkbox_name == "myChildChildren":
+            elif item == "myChildChildren":
                 user.enrolling_children = True
-
         else:
-            print(f"{checkbox_name} not in checkbox_node_ids")
+            print(f"{item} not in checkbox_node_ids")
     
         user.save()
-    
+    # import pdb; pdb.set_trace()
     start_node_id = checkbox_workflow_ids[0]
     generate_workflow(start_node_id, checkbox_workflow_ids, invite_id)
     next_chat_sequence = process_workflow(start_node_id, invite_id)
     echo_user_response = ", ".join(checked_checkboxes)
+    print("Appending node_id:", start_node_id, "→", next_chat_sequence.get("bot_messages", []))
 
     history.append({
         "next_consent_sequence": next_chat_sequence,
         "echo_user_response": echo_user_response,
-        "node_id": parent_node_id,
+        "node_id": start_node_id,
     })
     set_user_consent_history(invite_id, history)
     
-    return {"chat": history}
+    chat = [
+        {
+            "node_id": entry.get("node_id", ""),
+            "echo_user_response": entry.get("echo_user_response"),
+            **entry.get("next_consent_sequence", {})
+        }
+        for entry in history if "next_consent_sequence" in entry
+    ]
+    return chat
+
+
+def handle_user_feedback_form(invite_id, responses):
+    from authentication.services import UserFeedbackInputSerializer
+    node_id = None
+    feedback_data = {}
+
+    # Convert list of responses to a dictionary
+    response_dict = {r.get("name"): r.get("value") for r in responses if r.get("name")}
+
+    # Extract node_id and feedback fields
+    node_id = response_dict.get("node_id")
+    feedback_data = {
+        "satisfaction": response_dict.get("satisfaction", ""),
+        "suggestions": (response_dict.get("suggestions") or "")[:2000]
+    }
+    if not node_id:
+        return "error: Missing node ID"
+
+    # Get the user from the invite
+    consent_url = get_object_or_404(UserConsentUrl, consent_url=invite_id)
+    if response_dict['anonymize'] == None:
+        feedback_data["user"] = consent_url.user.pk  # assign user for serializer
+    # Validate and save with serializer
+    serializer = UserFeedbackInputSerializer(data=feedback_data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+
+    # Determine next node and sequence
+    conversation_graph = get_script_from_invite_id(invite_id)
+    next_node_id = conversation_graph[node_id]["child_ids"][0]
+    next_chat_sequence = process_workflow(next_node_id, invite_id)
+
+    # Update chat history
+    echo_user_response = "feedback submitted!"
+    history = get_user_consent_history(invite_id)
+    history.append({
+        "node_id": node_id,
+        "echo_user_response": echo_user_response,
+        "next_consent_sequence": next_chat_sequence
+    })
+    set_user_consent_history(invite_id, history)
+
+    clean_up_after_chat(invite_id)
+    chat = [
+        {
+            "node_id": entry.get("node_id", ""),
+            "echo_user_response": entry.get("echo_user_response"),
+            **entry.get("next_consent_sequence", {})
+        }
+        for entry in history if "next_consent_sequence" in entry
+    ]
+    return chat
+
+
+def handle_sample_storage(conversation_graph, invite_id, responses):
+    """
+    """
+    samples = responses[0]['value']
+    node_id = responses[1]['value']
+
+    consent_url = UserConsentUrl.objects.get(consent_url=invite_id)
+    user = consent_url.user
+    consent = UserConsent.objects.filter(user=user).order_by('-created_at').first()
+    consent.store_sample_this_study = True
+    if samples == "storeSamplesOtherStudies":
+        consent.store_sample_other_studies = True
+    else:
+        consent.store_sample_other_studies = False
+    consent.save()
+
+        # Determine next node and sequence
+    conversation_graph = get_script_from_invite_id(invite_id)
+    next_node_id = conversation_graph[node_id]["child_ids"][0]
+    next_chat_sequence = process_workflow(next_node_id, invite_id)
+
+    # Update chat history
+    echo_user_response = "Sample use submitted!"
+    history = get_user_consent_history(invite_id)
+    history.append({
+        "node_id": node_id,
+        "echo_user_response": echo_user_response,
+        "next_consent_sequence": next_chat_sequence
+    })
+    set_user_consent_history(invite_id, history)
+
+    clean_up_after_chat(invite_id)
+    chat = [
+        {
+            "node_id": entry.get("node_id", ""),
+            "echo_user_response": entry.get("echo_user_response"),
+            **entry.get("next_consent_sequence", {})
+        }
+        for entry in history if "next_consent_sequence" in entry
+    ]
+    return chat
+
+
+def handle_phi_use(conversation_graph, invite_id, responses):
+    """
+    """
+    samples = responses[0]['value']
+    node_id = responses[1]['value']
+
+    consent_url = UserConsentUrl.objects.get(consent_url=invite_id)
+    user = consent_url.user
+    consent = UserConsent.objects.filter(user=user).order_by('-created_at').first()
+    consent.store_phi_this_study = True
+    if samples == "storePhiOtherStudies":
+        consent.store_phi_other_studies = True
+    else:
+        consent.store_phi_other_studies = False
+    consent.save()
+
+        # Determine next node and sequence
+    conversation_graph = get_script_from_invite_id(invite_id)
+    next_node_id = conversation_graph[node_id]["child_ids"][0]
+    next_chat_sequence = process_workflow(next_node_id, invite_id)
+
+    # Update chat history
+    echo_user_response = "PHI use submitted!"
+    history = get_user_consent_history(invite_id)
+    history.append({
+        "node_id": node_id,
+        "echo_user_response": echo_user_response,
+        "next_consent_sequence": next_chat_sequence
+    })
+    set_user_consent_history(invite_id, history)
+
+    clean_up_after_chat(invite_id)
+    chat = [
+        {
+            "node_id": entry.get("node_id", ""),
+            "echo_user_response": entry.get("echo_user_response"),
+            **entry.get("next_consent_sequence", {})
+        }
+        for entry in history if "next_consent_sequence" in entry
+    ]
+    return chat
+
+def handle_result_return(conversation_graph, invite_id, responses):
+    """
+    """
+    response_dict = {r.get("name"): r.get("value") for r in responses if r.get("name")}
+    node_id = response_dict["node_id"] 
+
+    consent_url = UserConsentUrl.objects.get(consent_url=invite_id)
+    user = consent_url.user
+    consent = UserConsent.objects.filter(user=user).order_by('-created_at').first()
+    if response_dict["rorPrimary"]:
+        consent.return_primary_results = True
+    if response_dict["rorSecondary"]:
+        consent.return_actionable_secondary_results = True
+    if response_dict["rorSecondaryNot"]:
+        consent.return_secondary_results = True
+    consent.save()
+    
+        # Determine next node and sequence
+    conversation_graph = get_script_from_invite_id(invite_id)
+    next_node_id = conversation_graph[node_id]["child_ids"][0]
+    next_chat_sequence = process_workflow(next_node_id, invite_id)
+
+    # Update chat history
+    echo_user_response = "PHI use submitted!"
+    history = get_user_consent_history(invite_id)
+    history.append({
+        "node_id": node_id,
+        "echo_user_response": echo_user_response,
+        "next_consent_sequence": next_chat_sequence
+    })
+    set_user_consent_history(invite_id, history)
+
+    clean_up_after_chat(invite_id)
+    chat = [
+        {
+            "node_id": entry.get("node_id", ""),
+            "echo_user_response": entry.get("echo_user_response"),
+            **entry.get("next_consent_sequence", {})
+        }
+        for entry in history if "next_consent_sequence" in entry
+    ]
+    return chat
+
+def handle_consent(conversation_graph, invite_id, responses):
+    """
+    """
+
+    response_dict = {r.get("name"): r.get("value") for r in responses if r.get("name")}
+    node_id = response_dict["node_id"] 
+    # import pdb; pdb.set_trace()
+    consent_url = UserConsentUrl.objects.get(consent_url=invite_id)
+    user = consent_url.user
+    consent = UserConsent.objects.filter(user=user).order_by('-created_at').first()
+    if response_dict["consent"] is True:
+        consent.user_full_name_consent = response_dict["fullname"]
+        consent.consented_at = timezone.now()
+        user.consent_complete = True
+    user.save()
+    consent.save()
+    
+        # Determine next node and sequence
+    conversation_graph = get_script_from_invite_id(invite_id)
+    next_node_id = conversation_graph[node_id]["child_ids"][0]
+    next_chat_sequence = process_workflow(next_node_id, invite_id)
+
+    # Update chat history
+    echo_user_response = "PHI use submitted!"
+    history = get_user_consent_history(invite_id)
+    history.append({
+        "node_id": node_id,
+        "echo_user_response": echo_user_response,
+        "next_consent_sequence": next_chat_sequence
+    })
+    set_user_consent_history(invite_id, history)
+
+    clean_up_after_chat(invite_id)
+    chat = [
+        {
+            "node_id": entry.get("node_id", ""),
+            "echo_user_response": entry.get("echo_user_response"),
+            **entry.get("next_consent_sequence", {})
+        }
+        for entry in history if "next_consent_sequence" in entry
+    ]
+    return chat

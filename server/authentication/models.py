@@ -136,7 +136,7 @@ class UserFollowUp(models.Model):
 
 class UserFeedback(models.Model):
     user_feedback_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_feedback')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_feedback', blank=True, null=True)
     satisfaction = models.CharField(max_length=25, null=True, blank=True)
     suggestions = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

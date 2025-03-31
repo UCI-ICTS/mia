@@ -49,6 +49,11 @@ from utils.utility_functions import (
     process_user_consent,
     create_follow_up_with_user,
     handle_family_enrollment_form,
+    handle_user_feedback_form,
+    handle_sample_storage,
+    handle_phi_use,
+    handle_result_return,
+    handle_consent
 )
 from utils.cache import (get_user_consent_history, set_user_consent_history)
 User = get_user_model()
@@ -286,7 +291,6 @@ class UserConsentViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         consent, created = retrieve_or_initialize_user_consent(pk)
         history, just_created = get_or_initialize_consent_history(pk)
-
         response_data = UserConsentOutputSerializer(consent).data
         response_data["chat"] = [
             {
@@ -489,7 +493,6 @@ class UserConsentResponseViewSet(viewsets.ViewSet):
         tags=["Consent Response"]
     )
     def create(self, request):
-        import pdb; pdb.set_trace()
         serializer = UserConsentResponseInputSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
@@ -498,10 +501,19 @@ class UserConsentResponseViewSet(viewsets.ViewSet):
             invite_id = str(data["invite_id"])
             form_type = data["form_type"]
             responses = data["form_responses"]
+            responses.append({'name': 'node_id', 'value': data["node_id"]})
             conversation_graph = get_script_from_invite_id(invite_id)
 
-            if form_type == "family_enrollment":
+            if form_type == "family_enrollment" or form_type == "checkbox_group":
                 result = handle_family_enrollment_form(conversation_graph, invite_id, responses)
+            elif form_type == "sample_storage":
+                result = handle_sample_storage(conversation_graph, invite_id, responses)
+            elif form_type == "phi_use":
+                result = handle_phi_use(conversation_graph, invite_id, responses)
+            elif form_type == "result_return":
+                result = handle_result_return(conversation_graph, invite_id, responses)
+            elif form_type == "consent":
+                result = handle_consent(conversation_graph, invite_id, responses)
             elif form_type == "contact_other_adult":
                 result = handle_other_adult_contact_form(invite_id, responses)
             elif form_type == "child_contact":
@@ -510,11 +522,11 @@ class UserConsentResponseViewSet(viewsets.ViewSet):
                 result = handle_user_feedback_form(invite_id, responses)
             else:
                 raise ValueError(f"Unknown form_type: {form_type}")
-
+            
             return Response(UserConsentResponseOutputSerializer({
-                "chat": result["chat"],
-                "next_node_id": result.get("next_node_id"),
-                "end_sequence": result["chat"][-1]["next_consent_sequence"].get("end_sequence", False),
+                "chat": result,
+                "next_node_id": result[-1].get("next_node_id", False),
+                "end_sequence": result[-1].get("end_sequence", False),
             }).data)
 
         except Exception as e:
