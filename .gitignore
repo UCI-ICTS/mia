@@ -8,4 +8,4 @@ server/env
 **.DS_Store*
 **.pyc
 server/static
-.secretes
+server/.secrets

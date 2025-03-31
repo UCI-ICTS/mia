@@ -3,7 +3,10 @@
 
 from django.db import IntegrityError
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status, permissions, viewsets
@@ -58,6 +61,9 @@ from utils.utility_functions import (
 from utils.cache import (get_user_consent_history, set_user_consent_history)
 User = get_user_model()
 
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return JsonResponse({"message": "CSRF cookie set"})
 
 class ChangePasswordView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -161,7 +167,7 @@ class DecoratedTokenBlacklistView(TokenBlacklistView):
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
-
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class UserViewSet(viewsets.ViewSet):
     lookup_field = 'username'
     # permission_classes = [permissions.IsAuthenticated]

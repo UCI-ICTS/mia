@@ -4,6 +4,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from authentication.apis import (
+    get_csrf_token,
     ChangePasswordView,
     DecoratedTokenObtainPairView,
     DecoratedTokenRefreshView,
@@ -29,6 +30,7 @@ urlpatterns = [
     path("verify/", DecoratedTokenRefreshView.as_view()),
     path("login/", DecoratedTokenObtainPairView.as_view()),
     path("logout/", DecoratedTokenBlacklistView.as_view()),
+    path("csrf/", get_csrf_token),
     path('', include(router.urls)),
     path(
         'consent-url/<str:username>/invite-link/',

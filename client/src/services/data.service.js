@@ -18,6 +18,12 @@ const getAuthHeaders = () => {
   return { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
 };
 
+function getCSRFToken() {
+  return document.cookie.split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1];
+}
+
 // ✅ Fetch all users
 const getUsers = async () => {
   const response = await API.get("auth/users/", { headers: getAuthHeaders() });
@@ -61,6 +67,13 @@ const submitConsentForm = async ({invite_id, form_type, node_id, form_responses}
     form_type,
     node_id,
     form_responses,
+  },
+  {
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken(),
+    },
+    withCredentials: true, 
   });
   return response.data;
 };
@@ -83,7 +96,18 @@ const getConsentByInvite = async (invite_id) => {
 // ✅ Create a follow-up 
 const createFollowUp = async ({email, follow_up_reason, follow_up_info}) => {
   console.log("Service ", {email, follow_up_reason, follow_up_info})
-  const response = await API.post(`auth/follow_ups/`, {email, follow_up_reason, follow_up_info});
+  const response = await API.post(`auth/follow_ups/`, {
+    email,
+    follow_up_reason,
+    follow_up_info
+  },
+  {
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken(), // ✅ Add CSRF token
+    },
+    withCredentials: true, // ✅ Axios equivalent of credentials: "include"
+  });
   return response
   };
 

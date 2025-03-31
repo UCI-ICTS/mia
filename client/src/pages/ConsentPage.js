@@ -26,6 +26,13 @@ const ConsentPage = () => {
   const [visibleBotMessages, setVisibleBotMessages] = useState({});
   const bottomRef = useRef(null);
 
+  // get CSRF token and save it
+  useEffect(() => {
+    fetch("/mia/auth/csrf/", {
+      credentials: "include", // important!
+    });
+  }, []);
+  
   // Automatically scroll to the bottom of chat
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -276,11 +283,6 @@ const ConsentPage = () => {
               </div>
             )}
           </div>
-          <FollowUpModal
-            visible={contactModalVisible}
-            onClose={() => setContactModalVisible(false)}
-            userInfo={{ email: consent.email }}
-          />
           <Modal
             title="Are you still there?"
             visible={showTimeoutModal}
@@ -300,7 +302,12 @@ const ConsentPage = () => {
             </Button>
           </Modal>
         </div>
-      )}{console.log(lastMessage?.user_responses.length)}
+      )}
+      <FollowUpModal
+        visible={contactModalVisible}
+        onClose={() => setContactModalVisible(false)}
+        userInfo={{ email: consent.email }}
+      />
     </div>
   );
 };
