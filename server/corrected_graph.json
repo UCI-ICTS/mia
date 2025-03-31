@@ -7,6 +7,7 @@
       "CaLvKv4"
     ],
     "metadata": {
+      "start": true,
       "workflow": "",
       "end_sequence": "false"
     }
@@ -727,7 +728,7 @@
     "render_type": "form",
     "render_content": 	{
       "form_id": "checkbox-form",
-      "id_node": "b5nYNf6",
+      "node_id": "b5nYNf6",
       "type": "checkbox_group",
       "fields": [
         {
@@ -1237,7 +1238,7 @@
     "render_type": "form",
     "render_content": {
       "form_id": "child-ages-checkbox-form",
-      "id_node": "GkgFmXm",
+      "node_id": "GkgFmXm",
       "type": "checkbox_group",
       "fields": [
         {

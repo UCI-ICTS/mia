@@ -43,6 +43,7 @@ def retrieve_or_initialize_user_consent(invite_id):
     # Otherwise, create a new UserConsent (with placeholder values)
     new_consent = UserConsent.objects.create(
         user=invite.user,
+        consent_script = invite.user.consent_script,
         consent_age_group=ConsentAgeGroup.EIGHTEEN_AND_OVER  # Default; you can change this logic
     )
 
@@ -203,7 +204,6 @@ class UserConsentInputSerializer(serializers.ModelSerializer):
                 dependent_user = User.objects.get(user_id=dependent_user_id)
 
         # 🔍 Find latest consent URL for the user
-        import pdb; pdb.set_trace()
         invite = UserConsentUrl.objects.filter(user=user).order_by('-created_at').first()
         if not invite:
             raise serializers.ValidationError("No invite URL found for this user.")
