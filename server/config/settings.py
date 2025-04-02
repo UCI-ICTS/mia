@@ -51,7 +51,12 @@ MEDIA_ROOT=secrets.get("STATIC", "MEDIA_ROOT", fallback=f"{BASE_DIR}/media")
 
 DATABASES = {
     'default': {
-        'ENGINE': ENGINE,'NAME': NAME,'USER': USER,'PASSWORD': PASSWORD,'HOST': HOST,'PORT': PORT
+        'ENGINE': ENGINE,
+        'NAME': NAME,
+        'USER': USER,
+        'PASSWORD': PASSWORD,
+        'HOST': HOST,
+        'PORT': PORT
     }
 }
 
