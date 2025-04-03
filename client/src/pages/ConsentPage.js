@@ -228,6 +228,7 @@ const ConsentPage = () => {
                       avatar={{ icon: <img src="/images/mia_logo.png" alt="Mia" /> }}
                     />
                 ))}
+                {console.log(JSON.stringify(entry.render_content))}
               </div>
             ))}
             <div ref={bottomRef} />

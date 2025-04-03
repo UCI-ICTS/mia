@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # authentication/services.py
 
-import configparser
 from rest_framework import serializers
 from django.conf import settings
 from django.contrib.auth.hashers import check_password
@@ -17,11 +16,9 @@ from authentication.models import (
     ConsentAgeGroup,
     UserFeedback
 )
-from authentication.selectors import get_first_test_score, get_latest_consent
+from authentication.selectors import get_first_test_score, get_latest_consent, get_script_from_invite_id
 from utils.cache import set_user_consent_history, set_user_workflow
 
-config = configparser.ConfigParser()
-CONSENT_INVITE_BASE_URL = config.get("SERVER", "DASHBOARD_URL", fallback="http://localhost:3000/")
 User = get_user_model()
 
 def retrieve_or_initialize_user_consent(invite_id):
@@ -126,48 +123,6 @@ class UserConsentResponseInputSerializer(serializers.Serializer):
             if not data.get('node_id'):
                 raise serializers.ValidationError("'node_id' is required for GET requests.")
         return data
-
-
-class ChatTurnSerializer(serializers.Serializer):
-    node_id = serializers.CharField()
-    bot_messages = serializers.ListField(
-        child=serializers.CharField(),
-        help_text="List of bot messages sent at this step."
-    )
-    user_responses = serializers.ListField(
-        child=serializers.JSONField(),
-        help_text="List of response options for the user. Can be buttons or form definitions."
-    )
-    user_render_type = serializers.CharField()
-    render_content = serializers.JSONField(
-        required=False,
-        allow_null=True,
-        help_text="Additional content to render, such as images or form definitions."
-    )
-    echo_user_response = serializers.JSONField(allow_null=True)
-    end_sequence = serializers.BooleanField()
-
-
-
-class UserConsentResponseOutputSerializer(serializers.Serializer):
-    chat = serializers.ListField(
-        child=ChatTurnSerializer(),
-        help_text="Conversation turns between the user and the bot."
-    )
-    next_node_id = serializers.CharField(
-        required=False,
-        help_text="The ID of the next node in the conversation graph."
-    )
-    status = serializers.CharField(
-        default="success",
-        help_text="Status of the response. Usually 'success' or 'error'."
-    )
-    error = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        help_text="Any error that occurred. Only present when status is 'error'."
-    )
-
 
 
 class UserConsentInputSerializer(serializers.ModelSerializer):
@@ -330,7 +285,7 @@ class UserConsentUrlOutputSerializer(serializers.ModelSerializer):
         ]
 
     def get_invite_link(self, obj):
-        base_url = getattr(settings, 'CONSENT_INVITE_BASE_URL', 'https://genomics.icts.uci.edu')
+        base_url = getattr(settings, 'PUBLIC_HOSTNAME', 'https://genomics.icts.uci.edu')
         return f"{base_url}/consent/{obj.consent_url}/"
 
 

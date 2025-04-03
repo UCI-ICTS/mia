@@ -9,6 +9,7 @@ import os
 import configparser
 from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -66,11 +67,31 @@ ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_raw.split(",")]
 cors_origins = secrets.get("SERVER", "CORS_ALLOWED_ORIGINS", fallback=None)
 if cors_origins:
     CORS_ALLOWED_ORIGINS = cors_origins.split(",")
+    CSRF_TRUSTED_ORIGINS = cors_origins.split(",")
 else:
     CORS_ALLOWED_ORIGINS = [
         "https://localhost:3000",
         "https://127.0.0.1:3000"
     ]
+    CSRF_TRUSTED_ORIGINS = [
+        "https://localhost:3000",
+        "https://127.0.0.1:3000"
+    ]
+
+CORS_ALLOW_CREDENTIALS = True  # Needed for CSRF with cookies
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-CSRFToken',
+]
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",  # ✅ Crucial for preflight checks
+    "PATCH",
+    "POST",
+    "PUT",
+]
 
 AUTH_USER_MODEL = 'authentication.User'
 

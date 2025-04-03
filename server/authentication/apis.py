@@ -37,20 +37,26 @@ from authentication.services import (
     UserConsentUrlInputSerializer,
     UserConsentUrlOutputSerializer,
     UserConsentResponseInputSerializer,
-    UserConsentResponseOutputSerializer,
     retrieve_or_initialize_user_consent,
     )
 
 from authentication.selectors import get_or_initialize_consent_history
 
 from utils.utility_functions import (
-    get_script_from_invite_id,
     get_consent_start_id,
     process_workflow,
     get_response,
     process_test_question,
     process_user_consent,
     create_follow_up_with_user,
+)
+from utils.cache import (get_user_consent_history, set_user_consent_history)
+from consentbot.selectors import (
+    get_script_from_invite_id,
+    format_turn
+)
+
+from consentbot.services import (
     handle_family_enrollment_form,
     handle_user_feedback_form,
     handle_sample_storage,
@@ -58,7 +64,7 @@ from utils.utility_functions import (
     handle_result_return,
     handle_consent
 )
-from utils.cache import (get_user_consent_history, set_user_consent_history)
+
 User = get_user_model()
 
 @ensure_csrf_cookie
@@ -166,6 +172,7 @@ class DecoratedTokenBlacklistView(TokenBlacklistView):
     )
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
+
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class UserViewSet(viewsets.ViewSet):
@@ -298,14 +305,7 @@ class UserConsentViewSet(viewsets.ViewSet):
         consent, created = retrieve_or_initialize_user_consent(pk)
         history, just_created = get_or_initialize_consent_history(pk)
         response_data = UserConsentOutputSerializer(consent).data
-        response_data["chat"] = [
-            {
-                "node_id": entry.get("node_id", ""),
-                "echo_user_response": entry.get("echo_user_response"),
-                **entry.get("next_consent_sequence", {})
-            }
-            for entry in history if "next_consent_sequence" in entry
-        ]
+        response_data["chat"] = history
 
         return Response(response_data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
@@ -401,7 +401,6 @@ class UserConsentResponseViewSet(viewsets.ViewSet):
     @swagger_auto_schema(
         operation_description="Retrieve the next part of the consent chat based on a node_id and invite_id.",
         query_serializer=UserConsentResponseInputSerializer,
-        responses={200: UserConsentResponseOutputSerializer},
         tags=["Consent Response"]
     )
     def retrieve(self, request, pk=None):
@@ -429,17 +428,15 @@ class UserConsentResponseViewSet(viewsets.ViewSet):
                 start_node_id = get_consent_start_id(conversation_graph)
                 first_sequence = process_workflow(start_node_id, invite_id)
                 history = get_user_consent_history(invite_id)
-                history.append({
-                    "next_consent_sequence": first_sequence,
-                    "echo_user_response": "",
-                    "node_id": "start"
-                })
+                chat_turn = format_turn(conversation_graph, "start", "", first_sequence)
+                history.append(chat_turn)
                 set_user_consent_history(invite_id, history)
-                return Response(UserConsentResponseOutputSerializer({
+
+                return Response({
                     "chat": history,
                     "next_node_id": start_node_id,
                     "end_sequence": first_sequence.get("end_sequence", False),
-                }).data)
+                })
 
             echo_user_response = get_response(conversation_graph, node_id)
             metadata = conversation_graph[node_id].get("metadata", {})
@@ -463,39 +460,31 @@ class UserConsentResponseViewSet(viewsets.ViewSet):
 
             next_sequence = process_workflow(next_node_id, invite_id)
             history = get_user_consent_history(invite_id)
-            history.append({
-                "next_consent_sequence": next_sequence,
-                "echo_user_response": echo_user_response,
-                "node_id": node_id,
-            })
-            # import pdb; pdb.set_trace()
+
+            chat_turn = format_turn(conversation_graph, node_id, echo_user_response, next_sequence)
+            history.append(chat_turn)
             set_user_consent_history(invite_id, history)
-            chat = [
-                {
-                    "node_id": entry.get("node_id", ""),
-                    "echo_user_response": entry.get("echo_user_response"),
-                    **entry.get("next_consent_sequence", {})
-                }
-                for entry in history if "next_consent_sequence" in entry
-            ]
-            print("next_node_id: ", next_node_id)
-            return Response(UserConsentResponseOutputSerializer({
-                "chat": chat,
+            # for entry in history:
+            #     print(entry.keys())
+                # if 'node_id' not in entry:
+                #     print("⚠️ Missing node_id in chat entry:", entry)
+
+            return Response({
+                "chat": history,
                 "next_node_id": next_node_id,
                 "end_sequence": next_sequence.get("end_sequence", False),
-            }).data)
+            })
 
         except Exception as e:
-            return Response(UserConsentResponseOutputSerializer({
+            return Response({
                 "chat": [],
                 "status": "error",
                 "error": str(e)
-            }).data, status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
         operation_description="Submit a form response during the consent chat.",
         request_body=UserConsentResponseInputSerializer,
-        responses={200: UserConsentResponseOutputSerializer},
         tags=["Consent Response"]
     )
     def create(self, request):
@@ -529,88 +518,15 @@ class UserConsentResponseViewSet(viewsets.ViewSet):
             else:
                 raise ValueError(f"Unknown form_type: {form_type}")
             
-            return Response(UserConsentResponseOutputSerializer({
+            return Response({
                 "chat": result,
-                "next_node_id": result[-1].get("next_node_id", False),
+                "next_node_id": result[-1].get("node_id"),
                 "end_sequence": result[-1].get("end_sequence", False),
-            }).data)
+            })
 
         except Exception as e:
-            return Response(UserConsentResponseOutputSerializer({
+            return Response({
                 "chat": [],
                 "status": "error",
                 "error": str(e),
-            }).data, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class UserConsentResponseView(APIView):
-#     """
-#     Handles user response during the consent workflow.
-#     """
-#     permission_classes = [AllowAny]
-
-#     def get(self, request, invite_id):
-#         import pdb; pdb.set_trace()
-#         node_id = request.query_params.get('node_id')
-#         import pdb; pdb.set_trace()
-#         if not node_id:
-#             return Response({'error': 'Missing node ID'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         try:
-#             conversation_graph = get_script_from_invite_id(invite_id)
-
-#             if node_id == 'start':
-#                 start_node_id = get_consent_start_id(conversation_graph)
-#                 first_sequence = process_workflow(start_node_id, invite_id)
-
-#                 history = get_user_consent_history(invite_id)
-#                 history.append({
-#                     "next_consent_sequence": first_sequence,
-#                     "echo_user_response": ""
-#                 })
-#                 set_user_consent_history(invite_id, history)
-
-#                 return Response({"chat": history})
-
-#             # Handle regular flow
-#             echo_user_response = get_response(conversation_graph, node_id)
-#             metadata = conversation_graph[node_id].get('metadata', {})
-#             next_node_id = ''
-
-#             workflow = metadata.get('workflow')
-#             print("workflow type: ", workflow, node_id)
-#             if workflow == 'test_user_understanding':
-#                 next_node_id = process_test_question(conversation_graph, node_id, invite_id)
-
-#             elif workflow == 'start_consent':
-#                 import pdb; pdb.set_trace()
-#                 next_node_id = process_user_consent(conversation_graph, node_id, invite_id)
-#             elif workflow == 'follow_up':
-#                 create_follow_up_with_user(
-#                     invite_id,
-#                     metadata.get('follow_up_reason', ''),
-#                     metadata.get('follow_up_info', '')
-#                 )
-#             elif workflow == 'decline_consent':
-#                 next_node_id = process_user_consent(conversation_graph, node_id, invite_id)
-
-#             if not next_node_id:
-#                 children = conversation_graph[node_id].get('child_ids', [])
-#                 next_node_id = children[0] if children else 'terminal_node'
-
-#             next_sequence = process_workflow(next_node_id, invite_id)
-
-#             # Update chat history
-
-#             history = get_user_consent_history(invite_id)
-#             history.append({
-#                 "next_consent_sequence": next_sequence,
-#                 "echo_user_response": echo_user_response,
-#                 "node_id": node_id,
-#             })
-#             set_user_consent_history(invite_id, history)
-
-#             return Response({"chat": history})
-
-#         except Exception as e:
-#             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUEST)

@@ -10,10 +10,12 @@ from utils.cache import (
     set_user_consent_history
 )
 from utils.utility_functions import (
-    get_script_from_invite_id,
     get_consent_start_id,
     process_workflow,
-    
+)
+
+from consentbot.selectors import (
+    get_script_from_invite_id
 )
 
 def get_or_initialize_consent_history(invite_id):
@@ -24,22 +26,20 @@ def get_or_initialize_consent_history(invite_id):
     Returns:
         tuple: (history, just_created)
     """
-    # Try to fetch existing history from cache
     history = get_user_consent_history(invite_id)
     if history:
         return history, False
 
-    # If no history exists, initialize it with the first chat sequence
     conversation_graph = get_script_from_invite_id(invite_id)
     start_node_id = get_consent_start_id(conversation_graph)
     first_sequence = process_workflow(start_node_id, invite_id)
 
     history = [{
+        "node_id": start_node_id,  # ✅ Fix: add this
         "next_consent_sequence": first_sequence,
         "echo_user_response": ""
     }]
 
-    # Cache the initialized history
     set_user_consent_history(invite_id, history)
     return history, True
 
