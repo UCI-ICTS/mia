@@ -125,7 +125,7 @@ const ManageParticipants = () => {
       await dispatch(generateInviteLink(username)).unwrap();
       message.success("Invite link generated.");
     } catch (err) {
-      message.error("Failed to delete participant.");
+      message.error("Failed to generate link.");
     }
   };
   
@@ -210,7 +210,7 @@ const ManageParticipants = () => {
             <Button
               icon={<ReloadOutlined />}
               style={{ marginRight: 8 }}
-              onClick={() => handleGenerateNewInviteLink(record.username)}
+              onClick={() => {handleGenerateNewInviteLink(record.username)}}
             />
           </Tooltip>
           <Tooltip title="Delete participant">
@@ -275,13 +275,13 @@ const ManageParticipants = () => {
               <Input />
             </Form.Item>
             <Form.Item
-              name="consent_script_id"
+              name="script_id"
               label="Consent Script"
               rules={[{ required: true, message: "Please select a consent script" }]}
             >
               <Select placeholder="Select a consent script">
                 {scripts.map((script) => (
-                  <Select.Option key={script.consent_id} value={script.consent_id}>
+                  <Select.Option key={script.script_id} value={script.script_id}>
                     {script.name} (v{script.version_number})
                   </Select.Option>
                 ))}
@@ -290,6 +290,7 @@ const ManageParticipants = () => {
           </Form>
         </Modal>
         
+        {/* Edit User Modal */}
         <Modal
           title="Edit Participant"
           open={isEditModalVisible}

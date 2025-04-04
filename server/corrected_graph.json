@@ -2389,11 +2389,30 @@
       "Zgg7vB9"
     ],
     "child_ids": [
-      "jczufDn"
+      "GLzHadvB"
     ],
     "attachment": null,
     "render_type": "video",
     "render_content": "https://www.youtube.com/embed/jhJW69Ols14?si=SKQcWSinLxkwrlhR",
+    "metadata": {
+      "workflow": "",
+      "end_sequence": "false"
+    }
+  },
+  "GLzHadvB": {
+    "type": "user",
+    "messages": [
+      "Interesting"
+    ],
+    "parent_ids": [
+      "iCSWyTS"
+    ],
+    "child_ids": [
+      "jczufDn" 
+    ],
+    "attachment": null,
+    "render_type": "button",
+    "render_content": null,
     "metadata": {
       "workflow": "",
       "end_sequence": "false"
@@ -4188,8 +4207,7 @@
     "messages": [
       "Yes, you have probably reviewed the HIPAA information at medical visits",
       "HIPAA is a privacy law that protects your individually identifiable health information (also called \u201cProtected Health Information\u201d or \u201cPHI\u201d)",
-      "The <b>HIPAA</b> law also describes how information about you may be used or shared if you are in a research study",
-      ""
+      "The <b>HIPAA</b> law also describes how information about you may be used or shared if you are in a research study"
     ],
     "parent_ids": [
       "eq8AgVx"

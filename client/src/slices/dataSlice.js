@@ -402,6 +402,7 @@ const dataSlice = createSlice({
       })
       .addCase(fetchScripts.fulfilled, (state, action) => {
         state.loading = false;
+        console.log(action.payload)
         state.scripts = action.payload;
       })
       .addCase(fetchScripts.rejected, (state, action) => {

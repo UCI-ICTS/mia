@@ -24,7 +24,7 @@ const FollowUp = () => {
     { title: "Name", dataIndex: "first_name", render: (text, record) => `${record.first_name} ${record.last_name}` },
     { title: "Email", dataIndex: "email" },
     { title: "Phone", dataIndex: "phone", render: (text) => text || "N/A" },
-    { title: "Consent", dataIndex: "consent_name", render: (text) => text || "..." },
+    { title: "Consent", dataIndex: "consent_name", render: (text, record) => `${record.consent_script_name} ${record.consent_script_version}`|| "..." },
     { title: "Reason", dataIndex: "follow_up_reason" },
     { title: "More Info", dataIndex: "follow_up_info" },
     {

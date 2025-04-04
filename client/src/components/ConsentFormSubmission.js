@@ -18,10 +18,11 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
     }));
   
     console.log("Stringified values", JSON.stringify(formatted))
+    console.log(invite_id, form.id_submit_node)
     dispatch(
       submitConsentForm({
         invite_id,
-        node_id: form.id_node || form.node_id, // support both
+        node_id: form.id_submit_node || form.node_id, // support both
         form_type: form.form_type || form.type || "generic",
         form_responses: formatted,
       })
@@ -54,6 +55,21 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
             </Space>
           </Checkbox.Group>
         </Form.Item>
+      )}
+
+      {formType === "text_fields" && (
+        <Space direction="vertical">
+          {form.fields.map((field) => (
+          <Form.Item
+            name={field.name}
+            label={field.label}
+            rules={[{ required: true, message: 'This field is required.' }]}
+          >
+            <Input.TextArea rows={1} placeholder={`Enter their ${field.name}...`} />
+          </Form.Item>
+          ))}
+        </Space>
+
       )}
 
       {formType === "feedback" && (() => {

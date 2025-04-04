@@ -2,22 +2,102 @@
 # authentication/services.py
 
 from rest_framework import serializers
+from django.conf import settings
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import update_last_login
 from django.contrib.auth import get_user_model, authenticate
+from django.shortcuts import get_object_or_404
+from rest_framework_simplejwt.tokens import RefreshToken
 from authentication.models import (
     User,
-    Feedback,
-    FollowUp
+    FollowUp,
+    ConsentUrl,
+    Consent,
+    ConsentAgeGroup,
+    Feedback
 )
-from authentication.selectors import (
-    get_latest_consent,
-    get_first_test_score
-)
-from consentbot.models import ConsentScript
-from consentbot.selectors import get_user_from_invite_id
+from authentication.selectors import get_first_test_score, get_latest_consent, get_script_from_invite_id
+from utils.cache import set_user_consent_history, set_user_workflow
 
 User = get_user_model()
+
+def retrieve_or_initialize_user_consent(invite_id:str) -> bool:
+    """
+    Given an invite ID (UUID), retrieve the existing Consent or initialize one.
+
+    Returns:
+        tuple: (Consent instance, bool indicating if it was created)
+    """
+    # Get the ConsentUrl instance (or 404 if invalid/expired)
+    invite = get_object_or_404(ConsentUrl, consent_url=invite_id)
+
+    # Check for an existing Consent record
+    existing = Consent.objects.filter(user=invite.user, dependent_user=None).order_by('-created_at').first()
+
+    if existing:
+        return existing, False
+
+    # Otherwise, create a new Consent (with placeholder values)
+    new_consent = Consent.objects.create(
+        user=invite.user,
+        consent_script = invite.user.consent_script,
+        consent_age_group=ConsentAgeGroup.EIGHTEEN_AND_OVER  # Default; you can change this logic
+    )
+
+    return new_consent, True
+
+
+def initialize_consent_history(invite_id, first_sequence):
+    """
+    Initialize the user consent chat history using the given first sequence.
+    """
+    history = [{
+        "next_consent_sequence": first_sequence,
+        "echo_user_response": ""
+    }]
+    set_user_consent_history(invite_id, history)
+    return history
+
+
+def set_workflow(invite_id, workflow):
+    """
+    Set the user's workflow in the cache.
+    """
+    set_user_workflow(invite_id, workflow)
+
+
+class ConsentResponseInputSerializer(serializers.Serializer):
+    invite_id = serializers.UUIDField(
+        help_text="UUID of the invite link provided to the user."
+    )
+    node_id = serializers.CharField(
+        required=False,
+        help_text="ID of the current node in the conversation graph. Required for GET requests."
+    )
+    form_type = serializers.CharField(
+        required=False,
+        help_text="Type of form being submitted. Required for POST requests."
+    )
+    form_responses = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.JSONField(allow_null=True)
+        ),
+        required=False,
+        help_text="List of form response objects. Supports string, boolean, or null values."
+    )
+
+
+    def validate(self, data):
+        method = self.context['request'].method
+        if method == 'POST':
+            if not data.get('form_type'):
+                raise serializers.ValidationError("'form_type' is required for POST requests.")
+            if 'form_responses' not in data:
+                raise serializers.ValidationError("'form_responses' is required for POST requests.")
+        elif method == 'GET':
+            if not data.get('node_id'):
+                raise serializers.ValidationError("'node_id' is required for GET requests.")
+        return data
 
 
 class UserInputSerializer(serializers.ModelSerializer):
@@ -41,13 +121,12 @@ class UserInputSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        request = self.context.get("request")
-        referring_user = request.user if request and request.user.is_authenticated else None
+        from consentbot.models import ConsentScript
 
         script_id = validated_data.pop("script_id", None)
         consent_script = None
         if script_id:
-            consent_script = ConsentScript.objects.filter(script_id=script_id).first()
+            consent_script = ConsentScript.objects.filter(consent_id=script_id).first()
 
         email = validated_data.get("email")
         username = email.split("@")[0] if email else ""
@@ -61,7 +140,6 @@ class UserInputSerializer(serializers.ModelSerializer):
             is_staff=is_staff,
             is_superuser=is_superuser,
             consent_script=consent_script,
-            referred_by=referring_user,
             **validated_data
         )
 
@@ -113,86 +191,32 @@ class UserOutputSerializer(serializers.ModelSerializer):
         ]
 
     def get_first_test_score(self, user):
+        from authentication.services import get_first_test_score
         return get_first_test_score(user)
 
     def get_invite_expired(self, user):
         return not user.consent_urls.exists()
 
     def get_consent_age_group(self, user):
+        from authentication.services import get_latest_consent
         consent = get_latest_consent(user)
         if consent and consent.consent_age_group:
             return consent.consent_age_group  
         return None
 
     def get_consent_name(self, user):
+        from authentication.services import get_latest_consent
         consent = get_latest_consent(user)
         if consent and consent.consent_script:
             return consent.consent_script.name
         return None
 
     def get_created_at(self, user):
+        from authentication.services import get_latest_consent
         consent = get_latest_consent(user)
         if consent and consent.created_at:
             return consent.created_at
         return None
-
-
-class FollowUpInputSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(write_only=True)
-
-    class Meta: 
-        model = FollowUp
-        fields = ['email', 'follow_up_reason', 'follow_up_info']  # exclude 'user', 'resolved', etc.
-
-    def create(self, validated_data):
-        email = validated_data.pop('email')
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            raise serializers.ValidationError("No user found with that email.")
-
-        follow_up = FollowUp.objects.create(user=user, **validated_data)
-        return follow_up
-
-
-class FollowUpOutputSerializer(serializers.ModelSerializer):
-    class Meta: 
-        model = FollowUp
-        fields = [
-            'user_follow_up_id',
-            'follow_up_reason',
-            'follow_up_info',
-            'resolved',
-            'created_at',
-            'user'  # required for DRF relation mapping
-        ]
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        user = instance.user
-        
-        # Flatten user fields into the top level
-        data['user_id'] = user.user_id
-        data['first_name'] = user.first_name
-        data['last_name'] = user.last_name
-        data['email'] = user.email
-        data['phone'] = user.phone
-
-        # Add consent script details if available
-        if user.consent_script:
-            data['consent_script_id'] = str(user.consent_script.script_id)
-            data['consent_script_name'] = user.consent_script.name
-            data['consent_script_version'] = user.consent_script.version_number
-        else:
-            data['consent_script_id'] = None
-            data['consent_script_name'] = None
-            data['consent_script_version'] = None
-
-        # Remove nested user field
-        data.pop('user', None)
-
-
-        return data
 
 
 class LoginSerializer(serializers.Serializer):
@@ -234,44 +258,3 @@ class ChangePasswordSerializer(serializers.Serializer):
         instance.save()
         update_last_login(None, instance)
         return instance
-
-
-class FeedbackInputSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(),
-        required=False,
-        allow_null=True
-    )
-
-    class Meta:
-        model = Feedback
-        fields = ["user", "satisfaction", "suggestions"]
-
-
-class FeedbackOutputSerializer(serializers.ModelSerializer):
-    user_id = serializers.UUIDField(source="user.id", read_only=True)
-
-    class Meta:
-        model = Feedback
-        fields = [
-            "user_feedback_id",
-            "user_id",
-            "satisfaction",
-            "suggestions",
-            "created_at",
-        ]
-
-
-def create_follow_up_with_user(invite_id, reason, more_info):
-    """Create a follow-up entry for a user."""
-    user = get_user_from_invite_id(invite_id)
-
-    serializer = FollowUpInputSerializer(
-        data={
-            "email": user.email,
-            "follow_up_reason": reason,
-            "follow_up_info": more_info
-        }
-    )
-    serializer.is_valid(raise_exception=True)
-    return serializer.save()

@@ -49,20 +49,21 @@ const deleteUser = async (userId) => {
 
 // ✅ Get user invite link
 const getInviteLink = async (username) => {
-  const response = await API.get(`auth/consent-url/${username}/invite-link/`, { headers: getAuthHeaders() });
+  const response = await API.get(`consentbot/consent-url/${username}/invite-link/`, { headers: getAuthHeaders() });
   return response.data;
 };
 
 // ✅ Generate new user invite link
 const generateInviteLink = async (username) => {
-  const response = await API.post(`auth/consent-url/`, {username}, { headers: getAuthHeaders() });
+  console.log("SERVICE: ", username)
+  const response = await API.post(`consentbot/consent-url/`, {username}, { headers: getAuthHeaders() });
   return response.data;
 };
 
 // ✅ Submit Consent Form
 const submitConsentForm = async ({invite_id, form_type, node_id, form_responses} ) => {
   console.log("Service: ", invite_id, form_type, node_id, form_responses)
-  const response = await API.post(`auth/consent-response/`, {
+  const response = await API.post(`consentbot/consent-response/`, {
     invite_id,
     form_type,
     node_id,
@@ -80,7 +81,7 @@ const submitConsentForm = async ({invite_id, form_type, node_id, form_responses}
 
 // ✅ Submit Consent Response
 const submitConsentResponse = async (invite_id, node_id ) => {
-  const response = await API.get(`auth/consent-response/${invite_id}/`, 
+  const response = await API.get(`consentbot/consent-response/${invite_id}/`, 
     {params: {"node_id": node_id}
   });
   return response.data;
@@ -89,7 +90,7 @@ const submitConsentResponse = async (invite_id, node_id ) => {
 
 // ✅ Get consent from link
 const getConsentByInvite = async (invite_id) => {
-  const response = await API.get(`auth/consent/${invite_id}/`);
+  const response = await API.get(`consentbot/consent/${invite_id}/`);
   return response.data
 };
 
