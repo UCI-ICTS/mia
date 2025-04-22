@@ -1,4 +1,5 @@
 // src/pages/ConsentPage.js
+
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Dropdown, Input, Menu, Modal, Space, Typography, Image } from "antd";
 import { QuestionCircleOutlined, UserOutlined } from "@ant-design/icons";
@@ -9,7 +10,7 @@ import useInActivityTimer from "../components/InActivityTimer";
 import ConsentFormSubmission from "../components/ConsentFormSubmission";
 import FollowUpModal from "../components/FollowUpModal";
 import { Bubble } from "@ant-design/x";
-import "../style.css";
+
 
 const { Title, Paragraph } = Typography;
 
