@@ -142,7 +142,7 @@ class FollowUpInputSerializer(serializers.ModelSerializer):
 
     class Meta: 
         model = FollowUp
-        fields = ['email', 'follow_up_reason', 'follow_up_info']  # exclude 'user', 'resolved', etc.
+        fields = ['email', 'follow_up_reason', 'follow_up_info', 'resolved']
 
     def create(self, validated_data):
         email = validated_data.pop('email')
@@ -265,7 +265,7 @@ class FeedbackOutputSerializer(serializers.ModelSerializer):
 def create_follow_up_with_user(invite_id, reason, more_info):
     """Create a follow-up entry for a user."""
     user = get_user_from_invite_id(invite_id)
-
+    print("create_follow_up_with_user")
     serializer = FollowUpInputSerializer(
         data={
             "email": user.email,

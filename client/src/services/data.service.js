@@ -120,7 +120,7 @@ return response.data;
 
 // ✅ Mark a follow-up as resolved
 const markFollowUpResolved = async (id) => {
-await API.post(`/follow-ups/${id}/resolve`, {}, { headers: getAuthHeaders() });
+await API.patch(`auth/follow_ups/${id}/`, {}, { headers: getAuthHeaders() });
 };
 
 

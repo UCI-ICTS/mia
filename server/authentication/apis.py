@@ -12,6 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status, permissions, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+
 from rest_framework_simplejwt.views import (
     TokenBlacklistView,
     TokenObtainPairView,
@@ -213,16 +214,14 @@ class UserViewSet(viewsets.ViewSet):
 
 
 class FollowUpVieWSet(viewsets.ViewSet):
-    # permission_classes = {permissions.IsAuthenticated}
-    permission_classes = {permissions.AllowAny}
-    # def get_permissions(self):
-    #     if self.action == 'create':
-    #         return [permissions.AllowAny()]
-    #     return [permissions.IsAuthenticated()]
+    def get_permissions(self):
+        if self.action == 'create':
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
     
     @swagger_auto_schema(
         operation_description="Retrieve all follow ups",
-        # responses={200: UserOutputSerializer(many=True)},
+        responses={200: FollowUpOutputSerializer(many=True)},
         tags=["Follow Ups"]
     )
 
@@ -247,4 +246,17 @@ class FollowUpVieWSet(viewsets.ViewSet):
             return Response(output.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+    @swagger_auto_schema(
+        operation_description="Resolve a follow-up entry",
+        request_body=FollowUpInputSerializer,
+        responses={200: FollowUpOutputSerializer()},
+        tags=["Follow Ups"]
+    )
+    def partial_update(self, request, pk=None):
+        follow_up = get_object_or_404(FollowUp, pk=pk)
+        serializer = FollowUpInputSerializer(follow_up, data=request.data, partial=True)
+        if serializer.is_valid():
+            instance = serializer.save()
+            output = FollowUpOutputSerializer(instance)
+            return Response(output.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

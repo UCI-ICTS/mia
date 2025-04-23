@@ -9948,40 +9948,5 @@
             "app_label": "sessions",
             "model": "session"
         }
-    },
-    {
-        "model": "contenttypes.contenttype",
-        "pk": 14,
-        "fields": {
-            "app_label": "token_blacklist",
-            "model": "outstandingtoken"
-        }
-    },
-    {
-        "model": "contenttypes.contenttype",
-        "pk": 15,
-        "fields": {
-            "app_label": "token_blacklist",
-            "model": "blacklistedtoken"
-        }
-    },
-    {
-        "model": "sessions.session",
-        "pk": "3d0a8q66h1m3stvzuyk8mjy7xrk7f3a4",
-        "fields": {
-            "session_data": ".eJxVjjsOwjAQRO_imljxf01Jzxmi9e6aBFAi5VMh7g6RUkA9783MS3W4rX23LTJ3A6uzMh6ECsSGYkqN91gbzMyNRyJrhFuGrE6_WkF6yLi7fMfxNmmaxnUeit4RfaSLvk4sz8vB_hX0uPT7MqbWALhiQq5gc7SE4hCyxZYK2eJcFROSFVdNjlw5SYDvHy81VAD1_gBF3UHA:1tysUn:aDg-WIVp9IsicoLIKvlgnv2KrCS-IZJ4_QnVY81yGto",
-            "expire_date": "2025-04-13T13:14:37.943Z"
-        }
-    },
-    {
-        "model": "token_blacklist.outstandingtoken",
-        "pk": 1,
-        "fields": {
-            "user": "148ecb86-c677-44af-a9dd-4acc21ed0d89",
-            "jti": "ce6f0a4bebba4684b8e0eccf817884cf",
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0Mzk0MjkyMSwiaWF0IjoxNzQzMzM4MTIxLCJqdGkiOiJjZTZmMGE0YmViYmE0Njg0YjhlMGVjY2Y4MTc4ODRjZiIsInVzZXJfaWQiOiIxNDhlY2I4Ni1jNjc3LTQ0YWYtYTlkZC00YWNjMjFlZDBkODkifQ.peBbn50hL1WaBaIwCVF5nRsmyRpHj1gKiKc-WbOMVrk",
-            "created_at": "2025-03-30T12:35:21.932Z",
-            "expires_at": "2025-04-06T12:35:21Z"
-        }
     }
 ]

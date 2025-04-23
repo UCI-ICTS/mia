@@ -25,7 +25,7 @@ urlpatterns = [
     path('mia/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('mia/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path("mia/django-admin/", admin.site.urls),
-    path('mia/auth/', include('authentication.urls')),
+    path('mia/auth/', include(('authentication.urls', 'authentication'), namespace='authentication')),
     path('mia/consentbot/', include('consentbot.urls')),
     # path('api/admin/', include('administration.urls')),
 ]

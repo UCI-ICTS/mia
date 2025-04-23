@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFollowUps, resolveFollowUp } from "../slices/dataSlice";
-import { Table, Button, Tag, Spin, Alert, message } from "antd";
+import { Table, Button, Tag, Spin, Alert, message, Popconfirm, Tooltip } from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
 
@@ -14,9 +14,8 @@ const FollowUp = () => {
   if (loading) return <Spin tip="Loading follow-ups..." style={{ display: "block", textAlign: "center", marginTop: 50 }} />;
   if (error) return <Alert message="Error fetching follow-ups" description={error} type="error" showIcon />;
 
-  const handleResolve = async (id) => {
-    await dispatch(resolveFollowUp(id));
-    message.success("Marked as resolved!");
+  const handleResolve = (id) => {
+    dispatch(resolveFollowUp(id));
     dispatch(fetchFollowUps()); // Refresh list
   };
 
@@ -37,13 +36,21 @@ const FollowUp = () => {
       title: "Actions",
       render: (_, record) =>
         !record.resolved ? (
-          <Button
-            type="primary"
-            icon={<CheckCircleOutlined />}
-            onClick={() => handleResolve(record.user_follow_up_id)}
-          >
-            Mark as Resolved
-          </Button>
+          <>
+          <Tooltip title="Delete participant">
+            <Popconfirm
+              title="Are you sure you want to resolve this item?"
+              onConfirm={() => handleResolve(record.user_follow_up_id)} 
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                type="primary"
+                icon={<CheckCircleOutlined />}
+              >Mark as Resolved</Button>
+            </Popconfirm>
+          </Tooltip>
+          </>
         ) : (
           <Tag color="green">Resolved</Tag>
         ),

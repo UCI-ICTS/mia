@@ -21,11 +21,11 @@ router.register(r'follow_ups', FollowUpVieWSet, basename='follow_up')
 # router.register(r'feedback', FeedbackViewSet, basename='feedback')
 
 urlpatterns = [
-    path("change_password/", ChangePasswordView.as_view()),
-    path("refresh/", DecoratedTokenVerifyView.as_view()),
-    path("verify/", DecoratedTokenRefreshView.as_view()),
-    path("login/", DecoratedTokenObtainPairView.as_view()),
-    path("logout/", DecoratedTokenBlacklistView.as_view()),
-    path("csrf/", get_csrf_token),
+    path("change_password/", ChangePasswordView.as_view(), name="change_password"),
+    path("refresh/", DecoratedTokenRefreshView.as_view(), name="token_refresh"),
+    path("verify/", DecoratedTokenVerifyView.as_view(), name="token_verify"),
+    path("login/", DecoratedTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("logout/", DecoratedTokenBlacklistView.as_view(), name="token_blacklist"),
+    path("csrf/", get_csrf_token, name="get_csrf_token"),
     path('', include(router.urls)),
 ]

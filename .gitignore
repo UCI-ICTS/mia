@@ -9,3 +9,4 @@ server/env
 **.pyc
 server/static
 server/.secrets
+server/.coverage
