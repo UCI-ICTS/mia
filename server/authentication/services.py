@@ -144,13 +144,14 @@ class FollowUpInputSerializer(serializers.ModelSerializer):
         model = FollowUp
         fields = ['email', 'follow_up_reason', 'follow_up_info', 'resolved']
 
+    def validate_email(self, value):
+        if not User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("No user found with that email.")
+        return value
+
     def create(self, validated_data):
         email = validated_data.pop('email')
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            raise serializers.ValidationError("No user found with that email.")
-
+        user = User.objects.get(email=email)
         follow_up = FollowUp.objects.create(user=user, **validated_data)
         return follow_up
 
