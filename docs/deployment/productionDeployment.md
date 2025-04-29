@@ -257,32 +257,21 @@ sudo cp mia/admin/mia.conf /etc/nginx/conf.d/mia.conf
 sudo nginx -t
 ```
 
-#### Run Server
-`python3 manage.py runserver`
+#### Check Server
 
 Make sure API is accessible via web browser.
 
 If it worked you should be able to see the API Documentation site at:
 
-`http://localhost:8000/mia/swagger/`
+`http://[public IP or domain]/mia/swagger/`
 
 and the Admin site at:
 
-`http://localhost:8000/mia/django-admin/`
+`http://[public IP or domain]/mia/django-admin/`
 
-Use the following credentials to log in:
+Use the following credentials to log in if you loaded the test data:
 
 ````
-username: wheel@wheel.sh
+username: wheel@wheel.tst
 password: wheel
 ````
-
-
-
-### **Start service**
-
-`npm run start`
-
-This will open `http://localhost:3000/` in your default webbrowser if everything went according to plan. If not, see the [troubleshooting tips](troubleshooting.md).
-
-This terminal will be serving the React frontend.
