@@ -26,9 +26,9 @@ PORT=5432
 
 
 [STATIC]
-STATIC_URL=/Users/hadleyking/GitHub/UCI-GREGoR/mia/server/static/
+STATIC_URL=/PATH/TO/PROJECT/mia/server/static/
 STATIC_ROOT=static
-MEDIA_URL=/Users/hadleyking/GitHub/UCI-GREGoR/mia/server/media/
+MEDIA_URL=/PATH/TO/PROJECT/mia/server/media/
 MEDIA_ROOT=media
 ```
 

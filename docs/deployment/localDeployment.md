@@ -38,11 +38,11 @@
 
 - For HTTPS access: 
 
-		git clone https://github.com/UCI-GREGoR/mia/
+		git clone https://github.com/UCI-ICTS/mia/
 
 - For SSH access*(RECCOMENDED)*: 
 
-		git@github.com:UCI-GREGoR/mia.git
+		git@github.com:UCI-ICTS/mia.git
 
 **Then**
 

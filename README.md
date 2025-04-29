@@ -5,6 +5,21 @@ MIA is designed to be deployed in a variaty of environments. If configurd proper
 
 This repository is composed of two serivce applications. The server application is a Django API DB and the client application is a Redux/React UI.
 
+## Deployment
+
+- [Local deployment](docs/deployment/localDeployment.md) 
+    - For develpment or internal use only
+- [Production deployment](docs/deployment/productionDeployment.md)
+    - For deployment that is exposed to the internet
+- [Docker deployment](docs/deployment/dockerDeployment.md)
+    - WIP: comming soon
+
+## Development and troubleshooting
+- [Contribution Guide lines](docs/CONTRIBUTING.md)
+- [FAQ and trouble shooting](docs/faq.md)
+- [`.secretes` configuration](docs/config.md)
+- [Testing](docs/testing.md)
+
 # MIA Consent Chat Engine – Architecture Overview
 
 The **MIA Consent Chat Engine** is a **graph-driven, stateful conversation system** designed to guide users through personalized consent flows for research studies. It combines structured metadata, dynamic branching, and real-time user interactions to deliver a responsive and compliant experience.
@@ -99,19 +114,3 @@ User: [Sounds good]
 Bot: [Video or Image Rendered]
 User: [Submit feedback form]
 ```
-
-
-## Deployment
-
-- [Local deployment](docs/deployment/localDeployment.md) 
-    - For develpment or internal use only
-- [Production deployment](docs/deployment/productionDeployment.md)
-    - For deployment that is exposed to the internet
-- [Docker deployment](docs/deployment/dockerDeployment.md)
-    - WIP: comming soon
-
-## Development and troubleshooting
-- [Contribution Guide lines](docs/CONTRIBUTING.md)
-- [FAQ and trouble shooting](docs/faq.md)
-- [`.secretes` configuration](docs/config.md)
-- [Testing](docs/testing.md)
