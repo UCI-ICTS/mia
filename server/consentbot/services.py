@@ -9,6 +9,7 @@ from django.core.cache import cache
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from typing import Optional
 from authentication.services import FeedbackInputSerializer
 from consentbot.models import (
     Consent,
@@ -41,6 +42,16 @@ User = get_user_model()
 # flags
 NUM_TEST_QUESTIONS_CORRECT = 10
 NUM_TEST_TRIES = 2
+
+
+class RenderBlockSerializer(serializers.Serializer):
+    type = serializers.ChoiceField(choices=["button", "form"])
+    fields = serializers.ListField(
+        child=serializers.DictField(),
+        required=False,
+        help_text="Used only if render.type == 'form'"
+    )
+
 
 class ConsentInputSerializer(serializers.ModelSerializer):
     user_id = serializers.UUIDField(write_only=True)
@@ -139,6 +150,13 @@ class ConsentScriptInputSerializer(serializers.ModelSerializer):
 class ConsentScriptOutputSerializer(serializers.ModelSerializer):
     derived_from = serializers.StringRelatedField()
     versions = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    script = serializers.DictField(
+        child=serializers.DictField(
+            help_text="Each node in the conversation graph",
+            child=serializers.JSONField()
+        ),
+        help_text="Consent conversation graph keyed by node_id. Each value is a node dict with type, messages, child_ids, parent_ids, render, metadata, etc."
+    )
 
     class Meta:
         model = ConsentScript
@@ -283,27 +301,49 @@ def get_or_initialize_user_consent(invite_id:str) -> bool:
     return new_consent, True
 
 
-def process_consent_sequence(node_id, invite_id, graph=None):
+from typing import Optional
+from utils.cache import get_user_workflow, set_user_workflow
+from consentbot.selectors import get_next_consent_sequence, get_script_from_invite_id
+
+
+def process_consent_sequence(
+    node_id: str,
+    invite_id: str,
+    graph: Optional[dict] = None
+) -> dict:
     """
-    Given a node_id and invite_id, compute the next consent sequence.
-    Uses workflow cache to determine progress and clean up as needed.
+    Process the next step in the consent chat graph from a given node.
+
+    This retrieves the next bot message sequence and updates the cached
+    workflow state by removing nodes that have already been visited.
+
+    Args:
+        node_id (str): The node to begin traversal from.
+        invite_id (str): The session ID (usually a UUID) identifying the consent URL.
+        graph (dict, optional): Parsed conversation graph. If None, it will be loaded from the invite ID.
+
+    Returns:
+        dict: A chat sequence dict containing:
+            - messages: Bot messages
+            - responses: User options (buttons or form)
+            - render: Render metadata (form config)
+            - end: Whether this sequence ends the conversation
+            - visited: List of node IDs traversed in this step
     """
     if graph is None:
         graph = get_script_from_invite_id(invite_id)
 
-    workflow = cache.get(f"user_workflow_{invite_id}", [])
+    workflow = get_user_workflow(invite_id)
+    sequence = get_next_consent_sequence(graph, node_id)
 
     if workflow and workflow[0] and node_id in workflow[0]:
-        sequence, visited_nodes = get_next_consent_sequence(graph, node_id)
-        # Remove visited nodes from the current workflow path
-        workflow[0] = [n for n in workflow[0] if n not in visited_nodes]
-        if not workflow[0] or sequence.get("end_sequence"):
+        workflow[0] = [n for n in workflow[0] if n not in sequence["visited"]]
+        if not workflow[0] or sequence["end"]:
             workflow.pop(0)
-        cache.set(f"user_workflow_{invite_id}", workflow)
-    else:
-        sequence, _ = get_next_consent_sequence(graph, node_id)
+        set_user_workflow(invite_id, workflow)
 
     return sequence
+
 
 
 def append_chat_history(invite_id:str, chat_turn:dict):
@@ -320,6 +360,8 @@ def append_chat_history(invite_id:str, chat_turn:dict):
 
 
 def update_consent_and_advance(invite_id, node_id, graph, echo_user_response):
+    if node_id not in graph:
+        return [{"messages": [f"Invalid node: {node_id}"], "responses": []}]
     next_node_id = graph[node_id]["child_ids"][0]
     next_sequence = process_consent_sequence(next_node_id, invite_id)
     history = get_user_consent_history(invite_id)
@@ -327,6 +369,7 @@ def update_consent_and_advance(invite_id, node_id, graph, echo_user_response):
     history.append(format_turn(graph, node_id, echo_user_response, next_sequence))
     set_user_consent_history(invite_id, history)
     clean_up_after_chat(invite_id)
+
     return build_chat_from_history(invite_id)
 
 

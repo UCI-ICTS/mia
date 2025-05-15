@@ -19,7 +19,7 @@ class ConsentAgeGroup(models.TextChoices):
 
 class Consent(models.Model):
     user_consent_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='user_consents')
+    user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='consents')
     dependent_user = models.ForeignKey("authentication.User", on_delete=models.SET_NULL, null=True, blank=True, related_name='dependent_consents')
     consent_script = models.ForeignKey("consentbot.ConsentScript", on_delete=models.CASCADE, related_name="user_consents", null=True, blank=True)
     consent_age_group = models.CharField(max_length=20, choices=ConsentAgeGroup.choices)
