@@ -22,8 +22,8 @@ router.register(r'follow_ups', FollowUpVieWSet, basename='follow_up')
 
 urlpatterns = [
     path("change_password/", ChangePasswordView.as_view()),
-    path("refresh/", DecoratedTokenVerifyView.as_view()),
-    path("verify/", DecoratedTokenRefreshView.as_view()),
+    path("refresh/", DecoratedTokenRefreshView.as_view()),
+    path("verify/", DecoratedTokenVerifyView.as_view()),
     path("login/", DecoratedTokenObtainPairView.as_view()),
     path("logout/", DecoratedTokenBlacklistView.as_view()),
     path("csrf/", get_csrf_token),

@@ -10,12 +10,8 @@ from authentication.models import (
     Feedback,
     FollowUp
 )
-from authentication.selectors import (
-    get_latest_consent,
-    get_first_test_score
-)
 from consentbot.models import ConsentScript
-from consentbot.selectors import get_user_from_invite_id
+from consentbot.selectors import get_user_from_invite_id, get_latest_consent
 
 User = get_user_model()
 
@@ -113,7 +109,8 @@ class UserOutputSerializer(serializers.ModelSerializer):
         ]
 
     def get_first_test_score(self, user):
-        return get_first_test_score(user)
+        test = user.user_tests.order_by("created_at").first()
+        return test.score if test else "NA"
 
     def get_invite_expired(self, user):
         return not user.consent_urls.exists()
@@ -195,24 +192,6 @@ class FollowUpOutputSerializer(serializers.ModelSerializer):
         return data
 
 
-class LoginSerializer(serializers.Serializer):
-    """Serializer for user login"""
-    email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
-
-    def validate(self, data):
-        """Authenticate user"""
-        email = data.get("email").lower()
-        password = data.get("password")
-        user = authenticate(username=email, password=password)
-
-        if user is None:
-            raise serializers.ValidationError("Invalid email or password")
-
-        data["user"] = user
-        return data
-
-
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(write_only=True)
     new_password = serializers.CharField(write_only=True)
@@ -249,7 +228,7 @@ class FeedbackInputSerializer(serializers.ModelSerializer):
 
 
 class FeedbackOutputSerializer(serializers.ModelSerializer):
-    user_id = serializers.UUIDField(source="user.id", read_only=True)
+    user_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Feedback
@@ -260,7 +239,8 @@ class FeedbackOutputSerializer(serializers.ModelSerializer):
             "suggestions",
             "created_at",
         ]
-
+    def get_user_id(self, obj):
+            return str(obj.user.pk) if obj.user else None
 
 def create_follow_up_with_user(invite_id, reason, more_info):
     """Create a follow-up entry for a user."""
