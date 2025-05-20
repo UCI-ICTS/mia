@@ -10,7 +10,7 @@ const { Option } = Select;
 
 const FollowUpFormModal = ({ visible, onClose, userInfo = {} }) => {
   const dispatch = useDispatch();
-  const { chat = [], consent, loading, error } = useSelector((state) => state.data);
+  const { chat = [], consent, loading, error } = useSelector((state) => state.consent);
   const [form] = Form.useForm();
   const lastMessage = chat[chat.length - 1]?.node_id;
   
@@ -24,7 +24,7 @@ const FollowUpFormModal = ({ visible, onClose, userInfo = {} }) => {
     form.resetFields();
     onClose();
   };
-
+  
   return (
     <Modal
       title="Contact the Study Team"

@@ -1,13 +1,14 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Form, Checkbox, Button, Space, Radio, Select, Input, Typography } from "antd";
-import { submitConsentForm } from "../slices/dataSlice";
+import { submitConsentForm } from "../slices/consentSlice";
 
 
 const ConsentFormSubmission = ({ form, invite_id }) => {
   const { Paragraph } = Typography;
   const dispatch = useDispatch();
   const [formInstance] = Form.useForm();
+  console.log(form)
   const handleFinish = (values) => {
     // Convert all form values to { name, value } pairs
     const { anonymize = false, ...formValues } = values
@@ -18,7 +19,7 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
     }));
   
     console.log("Stringified values", JSON.stringify(formatted))
-    console.log(invite_id, form.id_submit_node)
+    console.log(invite_id, form.node_id)
     dispatch(
       submitConsentForm({
         invite_id,
@@ -30,8 +31,8 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
   };
   
 
-  const formType = (form.type || form.form_type);
-  console.log(form)
+  const formType = (form.form_type);
+  console.log(formType)
   return (
     <Form
       form={formInstance}
