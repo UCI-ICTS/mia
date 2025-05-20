@@ -15,7 +15,8 @@ from consentbot.models import (
     Consent,
     ConsentAgeGroup,
     ConsentScript,
-    ConsentTest,
+    ConsentTestAnswer,
+    ConsentTestAttempt,
     ConsentUrl,
 )
 from consentbot.selectors import (
@@ -40,7 +41,7 @@ from utils.cache import (
 
 User = get_user_model()  
 # flags
-NUM_TEST_QUESTIONS_CORRECT = 10
+NUM_TEST_QUESTIONS_CORRECT = 8
 NUM_TEST_TRIES = 2
 
 
@@ -490,7 +491,7 @@ def handle_family_enrollment_form(conversation_graph, invite_id, responses):
         raise Exception("Invalid or missing parent node")
 
     try:
-        fields = history[-1]['user_responses'][0]['label']['fields']
+        fields = history[-1]['responses'][0]['label']['fields']
         checkbox_node_ids = {f['name']: f['id_value'] for f in fields}
     except Exception:
         raise Exception("Checkbox fields missing from chat history")
@@ -649,22 +650,29 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
         return ''
 
     try:
-        # Get user from invite
+        # Get user and script
         consent_url = get_object_or_404(ConsentUrl, consent_url=str(invite_id))
         user = consent_url.user
         script_version = getattr(user, "consent_script", None)
-
         if not script_version:
             return node_metadata.get("fail_node_id", "")
 
-        # Save current test question for tracking
-        save_test_question(conversation_graph, current_node_id, user, script_version.pk)
+        # Start or retrieve the current test attempt
+        attempt, _ = ConsentTestAttempt.objects.get_or_create(
+            user=user,
+            consent_script_version=script_version,
+            test_try_num=user.num_test_tries,
+        )
 
-        # If this is the end of the test sequence
-        if node_metadata.get("end_sequence") is True:
-            correct = get_test_results(user, script_version.pk)
+        # Save this question/response to the attempt
+        save_test_question(conversation_graph, current_node_id, attempt)
+
+        # Final question? Evaluate
+        if node_metadata.get("end_sequence") is True or node_metadata.get("end_sequence") == 'true':
+            correct = attempt.score() 
 
             if correct < NUM_TEST_QUESTIONS_CORRECT:
+                import pdb; pdb.set_trace()
                 if user.num_test_tries < NUM_TEST_TRIES:
                     user.num_test_tries += 1
                     user.save(update_fields=["num_test_tries"])
@@ -675,11 +683,9 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
                 return node_metadata.get("pass_node_id", "")
 
     except ConsentUrl.DoesNotExist:
-        # If the invite ID is invalid
         return node_metadata.get("fail_node_id", "")
     
     except Exception as e:
-        # Log it for debugging
         import logging
         logger = logging.getLogger(__name__)
         logger.error(f"Error processing test question: {e}")
@@ -687,26 +693,33 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
 
     return ''
 
-def save_test_question(conversation_graph, current_node_id, user, consent_script_version_id):
-    """Save user responses to test questions."""
+def save_test_question(conversation_graph, current_node_id, attempt):
     node = conversation_graph.get(current_node_id)
-    if node.get("metadata", {}).get("test_question_answer_correct") and node["type"] == "user":
-        parent_id = node["parent_ids"][0]
-        parent_node = conversation_graph.get(parent_id, {})
-        if parent_node.get("metadata", {}).get("test_question"):
-            ConsentTest.objects.create(
-                user=user,
-                consent_script_version_id=consent_script_version_id,
-                test_try_num=user.num_test_tries,
-                test_question=parent_node["messages"][0],
-                user_answer=node["messages"][0],
-                answer_correct=node["metadata"]["test_question_answer_correct"],
-            )
+    if node.get("type") != "user":
+        return
+
+    parent_id = node.get("parent_ids", [None])[0]
+    parent_node = conversation_graph.get(parent_id, {})
+
+    if not parent_node.get("metadata", {}).get("test_question"):
+        return
+
+    question_text = parent_node.get("messages", [""])[0]
+    user_answer = node.get("messages", [""])[0]
+    is_correct = node.get("metadata", {}).get("test_question_answer_correct", False)
+
+    ConsentTestAnswer.objects.create(
+        attempt=attempt,
+        question_node_id=parent_id,
+        question_text=question_text,
+        user_answer=user_answer,
+        answer_correct=is_correct,
+    )
 
 def get_test_results(user, consent_script_version_id):
     """Retrieve the number of correct test responses for a user."""
     return (
-        ConsentTest.objects.filter(
+        ConsentTestAnswer.objects.filter(
             user=user,
             consent_script_version_id=consent_script_version_id,
             test_try_num=user.num_test_tries,

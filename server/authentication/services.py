@@ -77,7 +77,7 @@ class UserOutputSerializer(serializers.ModelSerializer):
     This serializer extends the base User model to include additional metadata
     relevant to consent and participation in the study, including:
 
-    - First test score (from ConsentTest)
+    - First test score (from ConsentTestAnswer)
     - Number of test attempts
     - Whether the user's invite link has expired
     - Consent script name
@@ -109,7 +109,7 @@ class UserOutputSerializer(serializers.ModelSerializer):
         ]
 
     def get_first_test_score(self, user):
-        test = user.user_tests.order_by("created_at").first()
+        test = user.test_attempts.order_by("started_at").first()
         return test.score if test else "NA"
 
     def get_invite_expired(self, user):

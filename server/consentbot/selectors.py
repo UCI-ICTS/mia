@@ -190,15 +190,27 @@ def format_turn(
             - end: Whether this ends the sequence
     """
     node = conversation_graph.get(node_id, {})
-    sequence = next_sequence or {}
+
+    # Prefer data from the graph unless rendering a special next_sequence node
+    messages = node.get("messages", [])
+    responses = node.get("responses", [])
+    render = node.get("render")
+    end = node.get("metadata", {}).get("end_sequence", False)
+
+    if next_sequence:
+        # This is only valid when formatting a bot response *after* get_next_consent_sequence
+        messages = next_sequence.get("messages", messages)
+        responses = next_sequence.get("responses", responses)
+        render = next_sequence.get("render", render)
+        end = next_sequence.get("end", end)
 
     return {
         "node_id": node_id,
         "echo_user_response": echo_user_response,
-        "messages": sequence.get("messages", []),
-        "responses": sequence.get("responses", []),
-        "render": sequence.get("render", node.get("render")),
-        "end": sequence.get("end", False),
+        "messages": messages,
+        "responses": responses,
+        "render": render,
+        "end": end,
     }
 
 

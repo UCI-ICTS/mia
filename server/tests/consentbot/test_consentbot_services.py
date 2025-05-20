@@ -41,7 +41,7 @@ class ConsentServiceTests(TestCase):
     def test_handle_family_enrollment_form_processes_workflow(self):
         history = [{
             "node_id": "b5nYNf6",
-            "user_responses": [{
+            "responses": [{
                 "label": {
                     "fields": [
                         {"name": "myself", "id_value": "eca6cQF"},

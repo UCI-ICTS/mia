@@ -17,7 +17,7 @@ from authentication.apis import (
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
-router.register(r'follow_ups', FollowUpVieWSet, basename='follow_up')
+router.register(r'follow-ups', FollowUpVieWSet, basename='follow_up')
 # router.register(r'feedback', FeedbackViewSet, basename='feedback')
 
 urlpatterns = [

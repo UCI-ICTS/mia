@@ -7,7 +7,8 @@ from consentbot.models import (
     ConsentCache,
     ConsentUrl,
     Consent,
-    ConsentTest
+    ConsentTestAnswer,
+    ConsentTestAttempt
 ) 
 
 class ConsentScriptAdminForm(forms.ModelForm):
@@ -37,7 +38,10 @@ class ConsentUrlAdmin(admin.ModelAdmin):
 class ConsentAdmin(admin.ModelAdmin):
     list_display = ["user", "store_sample_this_study", "return_primary_results", "consented_at"]
 
-@admin.register(ConsentTest)
-class ConsentTestAdmin(admin.ModelAdmin):
-    list_display = ["user", "test_question", "user_answer", "answer_correct", "created_at"]
+@admin.register(ConsentTestAnswer)
+class ConsentTestAnswerAdmin(admin.ModelAdmin):
+    list_display = ["answer_id", "question_text", "user_answer", "answer_correct", "submitted_at"]
 
+@admin.register(ConsentTestAttempt)
+class ConsentTestAttemptAdmin(admin.ModelAdmin):
+    list_display = ["attempt_id", "score"]

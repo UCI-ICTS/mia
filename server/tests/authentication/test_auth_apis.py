@@ -157,7 +157,7 @@ class AuthApiTests(TestCase):
 
     def test_followup_list(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.get("/mia/auth/follow_ups/")
+        response = self.client.get("/mia/auth/follow-ups/")
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.data, list)
 
@@ -168,6 +168,6 @@ class AuthApiTests(TestCase):
             "message": "This is a test message",
             "full_name": "Test User"
         }
-        response = self.client.post("/mia/auth/follow_ups/", payload, format="json")
+        response = self.client.post("/mia/auth/follow-ups/", payload, format="json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["email"], payload["email"])
