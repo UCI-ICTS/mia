@@ -36,4 +36,36 @@ const logout = async (credentials) => {
     });
   };
 
-export const authService = { login, logout };
+// password reset received via email
+const resetPassword = async (email) => {
+  console.log("Service password reset: ", email);
+  const response = await API.post("auth/password/reset/", {
+    email,
+  });
+  return response.data;
+};
+
+// confirm password reset received via email
+const confirmPasswordReset = async ({ uid, token, new_password }) => {
+  console.log("service", uid, token, new_password)
+  const response = await API.post("auth/password/confirm/", {
+    uid,
+    token,
+    new_password,
+  });
+  return response.data;
+};
+
+// activate user/create password received via email
+const createPassword = async ({ uid, token, new_password }) => {
+  console.log("Service password create: ", uid, token, new_password);
+  const response = await API.post(`auth/users/activate/`, {
+    uid,
+    token,
+    new_password,
+  })
+  return response.data;
+};
+
+export const authService = { login, logout, resetPassword, confirmPasswordReset, createPassword };
+

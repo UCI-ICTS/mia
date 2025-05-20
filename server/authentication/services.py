@@ -192,6 +192,16 @@ class FollowUpOutputSerializer(serializers.ModelSerializer):
         return data
 
 
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    uid = serializers.UUIDField()
+    token = serializers.CharField()
+    new_password = serializers.CharField(min_length=8)
+
+
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(write_only=True)
     new_password = serializers.CharField(write_only=True)
@@ -213,6 +223,16 @@ class ChangePasswordSerializer(serializers.Serializer):
         instance.save()
         update_last_login(None, instance)
         return instance
+
+class ActivateUserSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    new_password = serializers.CharField(min_length=8)
+
+    def validate(self, data):
+        if not data["uid"] or not data["token"] or not data["new_password"]:
+            raise serializers.ValidationError("All fields are required.")
+        return data
 
 
 class FeedbackInputSerializer(serializers.ModelSerializer):

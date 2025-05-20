@@ -72,7 +72,7 @@ class AuthApiTests(TestCase):
 
     def test_change_password(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.post("/mia/auth/change_password/", {
+        response = self.client.post("/mia/auth/password/change/", {
             "old_password": self.password,
             "new_password": "newsecurepassword123",
             "confirm_new_password": "newsecurepassword123"
@@ -82,7 +82,7 @@ class AuthApiTests(TestCase):
 
     def test_change_password_fail(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.post("/mia/auth/change_password/", {
+        response = self.client.post("/mia/auth/password/change/", {
             "old_password": "bad password",
             "new_password": "newsecurepassword123",
             "confirm_new_password": "newsecurepassword123"
@@ -114,7 +114,7 @@ class AuthApiTests(TestCase):
         }
         response = self.client.post("/mia/auth/users/", payload, format="json")
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data["email"], payload["email"])
+        self.assertIn(payload["email"], response.data['message'])
 
     def test_user_re_create(self):
         self.client.force_authenticate(user=self.user)

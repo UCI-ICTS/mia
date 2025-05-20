@@ -1,15 +1,21 @@
 #!/usr/bin/env python
 # authentication/apis.py
 
-from django.db import IntegrityError
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import ensure_csrf_cookie
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status, permissions, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import (
@@ -25,7 +31,10 @@ from authentication.services import (
     UserInputSerializer,
     UserOutputSerializer,
     FollowUpInputSerializer,
-    FollowUpOutputSerializer
+    FollowUpOutputSerializer,
+    PasswordResetRequestSerializer, 
+    PasswordResetConfirmSerializer,
+    ActivateUserSerializer
     )
 from authentication.models import FollowUp
 
@@ -34,22 +43,6 @@ User = get_user_model()
 @ensure_csrf_cookie
 def get_csrf_token(request):
     return JsonResponse({"message": "CSRF cookie set"})
-
-class ChangePasswordView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    @swagger_auto_schema(
-        request_body=ChangePasswordSerializer,
-        responses={status.HTTP_200_OK: "Password changed successfully"},
-        tags=["Account Management"]
-    )
-    def post(self, request, *args, **kwargs):
-        serializer = ChangePasswordSerializer(data=request.data, context={"request": request})
-        if serializer.is_valid():
-            serializer.update(request.user, serializer.validated_data)
-            return Response({"detail": "Password changed successfully"}, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DecoratedTokenObtainPairView(TokenObtainPairView):
@@ -164,18 +157,54 @@ class UserViewSet(viewsets.ViewSet):
         """Create a new user with password hashing."""
 
         serializer = UserInputSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            try:
-                user = serializer.save()
-                return Response(UserOutputSerializer(user).data, status=status.HTTP_201_CREATED)
-            except IntegrityError as e:
-                print(e)
-                return Response(
-                    {"error": "A user with this email or username already exists."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data["email"]
+
+        # Set temp password and mark user inactive
+        temp_password = get_random_string(
+            length=10,
+            allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+        )
+        validated_data = {
+            **serializer.validated_data,
+            "password": temp_password,
+            "is_active": False,
+        }
+        user = UserInputSerializer().create(validated_data)
+
+        # Build token and activation URL
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        activation_url = (
+            f"{settings.PUBLIC_HOSTNAME}password-create?uid={uid}&token={token}"
+        )
+
+        # Email the activation link
+        # Compose HTML email
+        subject = "You're invited to join UCI ICTS Dashboard!"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = email
+
+        context = {
+            "activation_url": activation_url,
+        }
+
+        text_content = f"Use this link to activate your account and set your password: {activation_url}"
+        html_content = render_to_string("emails/invite_email.html", context)
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+        return Response(
+            {
+                "message": f"Invite sent to {email}.",
+                "user": UserOutputSerializer(user).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
     
+
     @swagger_auto_schema(
         operation_description="Update an existing user",
         request_body=UserInputSerializer,
@@ -210,6 +239,43 @@ class UserViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except User.DoesNotExist:
             return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    @swagger_auto_schema(
+        method="post",
+        request_body=UserInputSerializer,
+        responses={200: "User activated and password set"},
+        operation_description="Activate a user using UID and token, and set a new password.",
+        tags=["Account Management"],
+    )
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="activate",
+        permission_classes=[permissions.AllowAny],
+    )
+    def activate(self, request):
+        serializer = ActivateUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        uid = serializer.validated_data["uid"]
+        token = serializer.validated_data["token"]
+        new_password = serializer.validated_data["new_password"]
+
+        try:
+            user_id = urlsafe_base64_decode(uid).decode()
+            user = User.objects.get(pk=user_id)
+        except (User.DoesNotExist, ValueError, TypeError):
+            return Response({"error": "Invalid user ID"}, status=400)
+
+        if not default_token_generator.check_token(user, token):
+            return Response({"error": "Invalid or expired token"}, status=400)
+
+        user.set_password(new_password)
+        user.is_active = True
+        user.save()
+
+        return Response({"message": "Account activated and password set."}, status=200)
 
 
 class FollowUpVieWSet(viewsets.ViewSet):
@@ -247,4 +313,108 @@ class FollowUpVieWSet(viewsets.ViewSet):
             return Response(output.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class PasswordViewSet(viewsets.ViewSet):
+    """
+    Handles requesting a reset link, confirming reset, and changing password.
+    """
+
+    permission_classes_by_action = {
+        "change_password": [permissions.IsAuthenticated],
+        "request_reset": [permissions.AllowAny],
+        "confirm_reset": [permissions.AllowAny],
+    }
+
+    def get_permissions(self):
+        return [
+            permission()
+            for permission in self.permission_classes_by_action.get(
+                self.action, self.permission_classes
+            )
+        ]
+
+    @swagger_auto_schema(
+        request_body=PasswordResetRequestSerializer,
+        responses={200: "Password reset link sent"},
+        operation_description="Request a password reset link by email.",
+        tags=["Account Management"],
+    )
+    @action(detail=False, methods=["post"], url_path="reset")
+    def request_reset(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"]
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"error": "No user found with this email"}, status=404)
+
+        token = default_token_generator.make_token(user)
+        uid = user.pk
+        reset_link = f"{settings.PUBLIC_HOSTNAME}/password-reset?uid={uid}&token={token}"
+
+        context = {"reset_link": reset_link}
+
+        # Email content
+        subject = "Reset your password – UCI ICTS Dashboard"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = [email]
+        text_content = f"Use this link to reset your password: {reset_link}"
+        html_content = render_to_string("emails/password_reset_email.html", context)
+
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+        return Response({"message": "Password reset link sent."}, status=200)
+
+    @swagger_auto_schema(
+        request_body=PasswordResetConfirmSerializer,
+        responses={200: "Password reset successful."},
+        operation_description="Confirm reset with UID + token and set new password.",
+        tags=["Account Management"],
+    )
+    @action(detail=False, methods=["post"], url_path="confirm")
+    def confirm_reset(self, request):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        uid = serializer.validated_data["uid"]
+        token = serializer.validated_data["token"]
+        new_password = serializer.validated_data["new_password"]
+
+        try:
+            user = User.objects.get(pk=uid)
+        except User.DoesNotExist:
+            return Response({"error": "Invalid user."}, status=404)
+
+        if not default_token_generator.check_token(user, token):
+            return Response({"error": "Invalid or expired token."}, status=400)
+
+        user.set_password(new_password)
+        user.save()
+        return Response({"message": "Password reset successful."}, status=200)
+
+    @swagger_auto_schema(
+        request_body=ChangePasswordSerializer,
+        responses={200: "Password changed successfully"},
+        operation_description="Authenticated user can change password with old password.",
+        tags=["Account Management"],
+    )
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="change",
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def change_password(self, request):
+        serializer = ChangePasswordSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            serializer.update(request.user, serializer.validated_data)
+            return Response({"detail": "Password changed successfully"}, status=200)
+
+        return Response(serializer.errors, status=400)
 

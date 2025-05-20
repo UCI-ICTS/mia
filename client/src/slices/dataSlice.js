@@ -172,6 +172,21 @@ const dataSlice = createSlice({
       })
       .addCase(fetchFollowUps.fulfilled, (state, action) => {
         state.followUps = action.payload;
+      })
+      .addCase(addUser.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(addUser.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(addUser.fulfilled, (state, action) => {
+        state.loading = false;
+        const user = action.payload.user;
+        if (user.is_staff) {
+          state.staff.push(user)
+        } else {
+          state.participants.push(user)
+        }
       });
   },
 });
