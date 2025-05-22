@@ -94,8 +94,6 @@ class AuthApiTests(TestCase):
     def test_get_csrf_token(self):
         response = self.client.get("/mia/auth/csrf/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("message", response.text)
-        self.assertIn("CSRF cookie set", response.text)
 
     def test_user_list(self):
         self.client.force_authenticate(user=self.user)

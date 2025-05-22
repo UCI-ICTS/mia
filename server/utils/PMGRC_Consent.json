@@ -761,8 +761,9 @@
       "end_sequence": "false"
     },
     "render": {
-      "type": "checkbox_group",
+      "type": "form",
       "form_id": "checkbox-form",
+      "form_type": "checkbox_form",
       "node_id": "b5nYNf6",
       "fields": [
         {
@@ -1081,8 +1082,9 @@
       "end_sequence": "false"
     },
     "render": {
-      "type": "text_fields",
+      "type": "form",
       "form_id": "contact-other-adult-form",
+      "form_type": "text_fields",
       "id_submit_node": "UiJSrG3",
       "id_skip_node": "WnXoffX",
       "fields": [
@@ -1295,8 +1297,9 @@
       "end_sequence": "false"
     },
     "render": {
-      "type": "checkbox_group",
+      "type": "from",
       "form_id": "child-ages-checkbox-form",
+      "form_type": "checkbox_group",
       "node_id": "GkgFmXm",
       "fields": [
         {
