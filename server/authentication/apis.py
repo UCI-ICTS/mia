@@ -171,39 +171,46 @@ class UserViewSet(viewsets.ViewSet):
             "is_active": False,
         }
         user = UserInputSerializer().create(validated_data)
+        if user.is_staff:
+            # Build token and activation URL
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            activation_url = (
+                f"{settings.PUBLIC_HOSTNAME}password-create?uid={uid}&token={token}"
+            )
 
-        # Build token and activation URL
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = default_token_generator.make_token(user)
-        activation_url = (
-            f"{settings.PUBLIC_HOSTNAME}password-create?uid={uid}&token={token}"
-        )
+            # Email the activation link
+            # Compose HTML email
+            subject = "You're invited to join UCI ICTS' !"
+            from_email = settings.DEFAULT_FROM_EMAIL
+            to_email = email
 
-        # Email the activation link
-        # Compose HTML email
-        subject = "You're invited to join UCI ICTS Dashboard!"
-        from_email = settings.DEFAULT_FROM_EMAIL
-        to_email = email
+            context = {
+                "activation_url": activation_url,
+            }
 
-        context = {
-            "activation_url": activation_url,
-        }
+            text_content = f"Use this link to activate your account and set your password: {activation_url}"
+            html_content = render_to_string("emails/invite_email.html", context)
 
-        text_content = f"Use this link to activate your account and set your password: {activation_url}"
-        html_content = render_to_string("emails/invite_email.html", context)
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
 
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-
+            return Response(
+                {
+                    "message": f"Invite sent to {email}.",
+                    "user": UserOutputSerializer(user).data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        
         return Response(
             {
-                "message": f"Invite sent to {email}.",
+                "message": f"Participant {user.username} created.",
                 "user": UserOutputSerializer(user).data,
             },
             status=status.HTTP_201_CREATED,
         )
-    
 
     @swagger_auto_schema(
         operation_description="Update an existing user",
@@ -357,7 +364,7 @@ class PasswordViewSet(viewsets.ViewSet):
         context = {"reset_link": reset_link}
 
         # Email content
-        subject = "Reset your password – UCI ICTS Dashboard"
+        subject = "Reset your password – UCI ICTS' Medical Information Assistant (MIA)"
         from_email = settings.DEFAULT_FROM_EMAIL
         to_email = [email]
         text_content = f"Use this link to reset your password: {reset_link}"

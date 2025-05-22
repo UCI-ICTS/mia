@@ -2549,7 +2549,7 @@
         "type": "user",
         "render": {
             "type": "form",
-            "form_type": "checkbox_group",
+            "form_type": "checkbox_form",
             "fields": [
                 {
                     "name": "ageSixOrLess",

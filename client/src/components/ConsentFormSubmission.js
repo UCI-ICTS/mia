@@ -12,7 +12,7 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
   const handleFinish = (values) => {
     // Convert all form values to { name, value } pairs
     const { anonymize = false, ...formValues } = values
-    const checkedNames = values.checkbox_group || [];
+    const checkedNames = values.checkbox_form || [];
     const formatted = Object.entries(values).map(([name, value]) => ({
       name,
       value: value ?? null
@@ -24,7 +24,7 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
       submitConsentForm({
         invite_id,
         node_id: form.id_submit_node || form.node_id, // support both
-        form_type: form.form_type || form.type || "generic",
+        form_type: form.form_type || "generic",
         form_responses: formatted,
       })
     );
@@ -40,9 +40,9 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
       onFinish={handleFinish}
       style={{ maxWidth: 700, margin: "0 auto", marginTop: 24 }}
     >
-      {formType === "checkbox_group" && (
+      {formType === "checkbox_form" && (
         <Form.Item
-          name="checkbox_group"
+          name="checkbox_form"
           label="Who might consider enrolling?"
           rules={[{ required: true, message: "Please select at least one option" }]}
         >

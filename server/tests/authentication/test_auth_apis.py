@@ -12,7 +12,7 @@ class AuthApiTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.get(username="test")
+        self.user = User.objects.get(username="wheel")
         self.password = "example-password"
         self.user.set_password(self.password)
         self.user.save()
@@ -62,6 +62,7 @@ class AuthApiTests(TestCase):
             "email": self.user.email,
             "password": self.password
         }, format="json")
+
         access_token = login_response.data["access"]
         refresh_token = login_response.data["refresh"]
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
@@ -112,7 +113,7 @@ class AuthApiTests(TestCase):
         }
         response = self.client.post("/mia/auth/users/", payload, format="json")
         self.assertEqual(response.status_code, 201)
-        self.assertIn(payload["email"], response.data['message'])
+        self.assertIn(payload["email"].split('@')[0], response.data['message'])
 
     def test_user_re_create(self):
         self.client.force_authenticate(user=self.user)

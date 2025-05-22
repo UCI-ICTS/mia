@@ -58,7 +58,7 @@ from utils.cache import set_user_consent_history
 User = get_user_model()
 FORM_HANDLER_MAP = {
     "family_enrollment": handle_family_enrollment_form,
-    "checkbox_group": handle_family_enrollment_form,
+    "checkbox_form": handle_family_enrollment_form,
     "sample_storage": handle_sample_storage,
     "phi_use": handle_phi_use,
     "result_return": handle_result_return,
@@ -393,7 +393,7 @@ class ConsentResponseViewSet(viewsets.ViewSet):
         serializer = ConsentResponseInputSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-
+    
         try:
             return self._handle_form_submission(data)
 

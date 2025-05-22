@@ -1299,7 +1299,7 @@
     "render": {
       "type": "from",
       "form_id": "child-ages-checkbox-form",
-      "form_type": "checkbox_group",
+      "form_type": "checkbox_form",
       "node_id": "GkgFmXm",
       "fields": [
         {
