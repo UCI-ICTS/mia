@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { store } from "../store";
+import { getCSRFToken } from "../utils/csrf";
 
 const MIADBURL = process.env.REACT_APP_MIADB;
 
@@ -47,23 +48,33 @@ const resetPassword = async (email) => {
 
 // confirm password reset received via email
 const confirmPasswordReset = async ({ uid, token, new_password }) => {
-  console.log("service", uid, token, new_password)
-  const response = await API.post("auth/password/confirm/", {
-    uid,
-    token,
-    new_password,
-  });
+  const response = await API.post(
+    "auth/password/confirm/",
+    { uid, token, new_password },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCSRFToken(),
+      },
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
 
 // activate user/create password received via email
 const createPassword = async ({ uid, token, new_password }) => {
-  console.log("Service password create: ", uid, token, new_password);
-  const response = await API.post(`auth/users/activate/`, {
-    uid,
-    token,
-    new_password,
-  })
+  const response = await API.post(
+    "auth/users/activate/",
+    { uid, token, new_password },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCSRFToken(),
+      },
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
 

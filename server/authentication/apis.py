@@ -181,7 +181,7 @@ class UserViewSet(viewsets.ViewSet):
 
             # Email the activation link
             # Compose HTML email
-            subject = "You're invited to join UCI ICTS' !"
+            subject = "You're invited to join UCI ICTS' Medical Information Assistant (MIA)!"
             from_email = settings.DEFAULT_FROM_EMAIL
             to_email = email
 
@@ -250,7 +250,7 @@ class UserViewSet(viewsets.ViewSet):
 
     @swagger_auto_schema(
         method="post",
-        request_body=UserInputSerializer,
+        request_body=ActivateUserSerializer,
         responses={200: "User activated and password set"},
         operation_description="Activate a user using UID and token, and set a new password.",
         tags=["Account Management"],
