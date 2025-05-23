@@ -8,7 +8,7 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
   const { Paragraph } = Typography;
   const dispatch = useDispatch();
   const [formInstance] = Form.useForm();
-  console.log(form)
+
   const handleFinish = (values) => {
     // Convert all form values to { name, value } pairs
     const { anonymize = false, ...formValues } = values
@@ -18,8 +18,6 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
       value: value ?? null
     }));
   
-    console.log("Stringified values", JSON.stringify(formatted))
-    console.log(invite_id, form.node_id)
     dispatch(
       submitConsentForm({
         invite_id,
@@ -32,7 +30,7 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
   
 
   const formType = (form.form_type);
-  console.log(formType)
+
   return (
     <Form
       form={formInstance}

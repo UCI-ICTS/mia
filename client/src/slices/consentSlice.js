@@ -100,7 +100,6 @@ const consentSlice = createSlice({
         }
       })
       .addCase(submitConsentForm.rejected, (state, action) => {
-        console.log(action.payload)
         state.loading = false;
         state.error = action.payload.error;
       });

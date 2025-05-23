@@ -69,14 +69,10 @@ export const resetPassword = createAsyncThunk(
   "auth/reset_password",
   async (email, thunkAPI) => {
     try {
-      console.log("Slice password reset: ", email);
       const response = await authService.resetPassword(email);
-      console.log(response.message)
       message.success(response.message)
       return response.data;
     } catch (error) {
-      console.log("Slice password reset error: ", error);
-
       let errorMessage = "An error occurred";
 
       if (error.response) {

@@ -20,7 +20,6 @@ const submitConsentResponse = async ({ invite_id, node_id, form_type, form_respo
     invite_id,
     node_id,
   };
-  console.log(invite_id, node_id, form_type, form_responses)
   if (form_type && form_responses) {
     payload.form_type = form_type;
     payload.form_responses = form_responses;

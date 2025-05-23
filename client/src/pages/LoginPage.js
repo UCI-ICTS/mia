@@ -21,7 +21,6 @@ const LoginPage = () => {
   };
 
   const submitReset = (values) => {
-    console.log(values);
     dispatch(resetPassword(values.email))
     form.resetFields();
     setPasswordResetModal(false);

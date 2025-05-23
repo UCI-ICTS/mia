@@ -1,11 +1,16 @@
 // src/App.js
 
-import AppRoutes from "./routes";
+import { useEffect } from "react";
 import { message } from "antd";
+import AppRoutes from "./routes";
+import PageTitleManager from "./components/PageTitleManager";
 
 function App() {
-  {message.config({ top: 80, duration: 2 })} {/* Ensure messages are visible */}
-  return <AppRoutes />;
+  useEffect(() => {
+    message.config({ top: 80, duration: 5 });
+  }, []);
+
+  return (<AppRoutes />);
 }
 
 export default App;

@@ -42,7 +42,7 @@ from utils.cache import (
 
 User = get_user_model()  
 # flags
-NUM_TEST_QUESTIONS_CORRECT = 8
+NUM_TEST_QUESTIONS_CORRECT = 10
 NUM_TEST_TRIES = 2
 
 
@@ -344,13 +344,17 @@ def process_consent_sequence(
         ).order_by("started_at")
 
         if len(attempts) == 2:
-            correct = set(attempts[0].correct_question_ids())
-            sequence = get_next_consent_sequence(
-                graph,
-                node_id,
-                skip_correct_test_nodes=True,
-                correct_questions=correct
-            )
+            if len(attempts[1].incorrect_question_ids()) > 0:
+                # sequence = get_next_consent_sequence(graph, "iH6N9fF")
+                node_id = "iH6N9fF"
+            else:
+                correct = set(attempts[0].correct_question_ids())
+                sequence = get_next_consent_sequence(
+                    graph,
+                    node_id,
+                    skip_correct_test_nodes=True,
+                    correct_questions=correct
+                )
     
     # Fallback to default behavior
     if sequence is None:
@@ -690,7 +694,6 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
         # Final question? Evaluate
         if node_metadata.get("end_sequence") is True or node_metadata.get("end_sequence") == 'true':
             correct = attempt.score() 
-
             if correct < NUM_TEST_QUESTIONS_CORRECT:
                 if user.num_test_tries < NUM_TEST_TRIES:
                     user.num_test_tries += 1

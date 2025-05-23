@@ -25,7 +25,7 @@ const ConsentPage = () => {
   const [contactModalVisible, setContactModalVisible] = useState(false);
 
   const { chat, consent, loading, error } = useSelector((state) => state.consent);
-  
+  const email = consent ? consent.email : "Participant"
   // Inactivity timer
   useEffect(() => {
     if (isInactive) {
@@ -225,7 +225,7 @@ const ConsentPage = () => {
       ) : (
         <div style={{ marginBottom: 100 }}>
           {chat.map((turn, idx) => (
-            <ChatBubbles key={idx} turn={turn} />
+            <ChatBubbles key={idx} turn={turn} username={email}/>
           ))}
           <div ref={bottomRef} />
         </div>

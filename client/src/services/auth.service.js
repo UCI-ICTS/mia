@@ -25,7 +25,6 @@ const getAuthHeaders = () => {
 
 // Log in function
 const login = async (credentials) => {
-  console.log(credentials, MIADBURL)
   const response = await API.post("/auth/login/", credentials);
   return response.data; // Return the full JSON response
 };
@@ -39,7 +38,6 @@ const logout = async (credentials) => {
 
 // password reset received via email
 const resetPassword = async (email) => {
-  console.log("Service password reset: ", email);
   const response = await API.post("auth/password/reset/", {
     email,
   });

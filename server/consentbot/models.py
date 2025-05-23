@@ -98,6 +98,9 @@ class ConsentTestAttempt(models.Model):
 
     def correct_question_ids(self):
         return self.answers.filter(answer_correct=True).values_list("question_node_id", flat=True)
+    
+    def incorrect_question_ids(self):
+        return self.answers.filter(answer_correct=False).values_list("question_node_id", flat=True)
 
 
 

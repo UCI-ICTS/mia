@@ -21,14 +21,14 @@ const ChatBubbles = ({ turn, username }) => {
             shape="round"
             avatar={{icon:<UserOutlined />}}
             content={
-              <div style={{ fontFamily: "San Sarif, serif", fontSize: 16 }}>
+              <div style={{ fontFamily: "sans-serif", fontSize: 16 }}>
                 {echo_user_response}
               </div>
             }
           />
         </Row>
       )}
-      {console.log(render.type, turn)}
+
       {/* Bot messages */}
       {render.type === "image" && (
         <div style={{ textAlign: "left", marginTop: 16 }}>
@@ -76,7 +76,7 @@ const ChatBubbles = ({ turn, username }) => {
             placement="start"
             shape="round"
             content={
-              <div style={{ fontFamily: "San Sarif, serif", fontSize: 16 }}>
+              <div style={{ fontFamily: "sans-serif", fontSize: 16 }}>
                 <span dangerouslySetInnerHTML={{ __html: msg }} />
                 {/* <div ref={bottomRef} /> */}
               </div>

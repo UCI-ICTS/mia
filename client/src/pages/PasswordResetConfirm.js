@@ -20,7 +20,6 @@ const PasswordResetConfirm = () => {
 
   const onFinish = async (values) => {
     setLoading(true);
-    console.log("Component", params, isActivation, uid,token, values.new_password)
     const endpoint = isActivation ? (
         dispatch(activateUserAccount({uid,token,new_password: values.new_password}))
       ) : (

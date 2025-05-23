@@ -76,7 +76,6 @@ export const getInviteLink = createAsyncThunk("data/getInviteLink", async (usern
 
 export const fetchConsentScripts = createAsyncThunk("data/fetchConsentScripts", async (_, { rejectWithValue }) => {
   try {
-    console.log("stuff")
     return await dataService.fetchConsentScripts();
   } catch (error) {
     return rejectWithValue(error.response?.data || error.message);

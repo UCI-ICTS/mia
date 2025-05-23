@@ -35,9 +35,7 @@ const generateInviteLink = async (username) => {
 
 // Scripts
 const fetchConsentScripts = async () => {
-  console.log("stuff")
   const response = await API.get(`consentbot/scripts/`);
-  console.log(response)
   return response.data;
 };
 
