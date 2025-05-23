@@ -110,7 +110,7 @@ class UserOutputSerializer(serializers.ModelSerializer):
 
     def get_first_test_score(self, user):
         test = user.test_attempts.order_by("started_at").first()
-        return test.score if test else "NA"
+        return test.score() if test else "NA"
 
     def get_invite_expired(self, user):
         return not user.consent_urls.exists()

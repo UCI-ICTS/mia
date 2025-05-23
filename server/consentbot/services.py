@@ -25,6 +25,7 @@ from consentbot.selectors import (
     get_script_from_invite_id,
     get_next_consent_sequence,
     get_consent_start_id,
+    get_user_label
 )
 
 from utils.cache import (
@@ -37,7 +38,7 @@ from utils.cache import (
     get_consenting_children,
     set_consenting_children,
     get_consent_node
-)
+) 
 
 User = get_user_model()  
 # flags
@@ -302,11 +303,6 @@ def get_or_initialize_user_consent(invite_id:str) -> bool:
     return new_consent, True
 
 
-from typing import Optional
-from utils.cache import get_user_workflow, set_user_workflow
-from consentbot.selectors import get_next_consent_sequence, get_script_from_invite_id
-
-
 def process_consent_sequence(
     node_id: str,
     invite_id: str,
@@ -331,12 +327,37 @@ def process_consent_sequence(
             - end: Whether this sequence ends the conversation
             - visited: List of node IDs traversed in this step
     """
+    sequence = None
     if graph is None:
         graph = get_script_from_invite_id(invite_id)
+    node = graph.get(node_id, {})
 
+    # Handle second test attempt traversal
+    if (
+        node.get("type") == "bot"
+        and node.get("metadata", {}).get("workflow") == "test_user_understanding"
+        # and node.get("metadata", {}).get("test_question") is True
+    ):
+        user = ConsentUrl.objects.get(consent_url=invite_id).user
+        attempts = ConsentTestAttempt.objects.filter(
+            user=user, consent_script_version=user.consent_script
+        ).order_by("started_at")
+
+        if len(attempts) == 2:
+            correct = set(attempts[0].correct_question_ids())
+            sequence = get_next_consent_sequence(
+                graph,
+                node_id,
+                skip_correct_test_nodes=True,
+                correct_questions=correct
+            )
+    
+    # Fallback to default behavior
+    if sequence is None:
+        sequence = get_next_consent_sequence(graph, node_id)
+    
+    # Update workflow cache
     workflow = get_user_workflow(invite_id)
-    sequence = get_next_consent_sequence(graph, node_id)
-
     if workflow and workflow[0] and node_id in workflow[0]:
         workflow[0] = [n for n in workflow[0] if n not in sequence["visited"]]
         if not workflow[0] or sequence["end"]:
@@ -344,7 +365,6 @@ def process_consent_sequence(
         set_user_workflow(invite_id, workflow)
 
     return sequence
-
 
 
 def append_chat_history(invite_id:str, chat_turn:dict):
@@ -661,7 +681,7 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
         attempt, _ = ConsentTestAttempt.objects.get_or_create(
             user=user,
             consent_script_version=script_version,
-            test_try_num=user.num_test_tries,
+            test_try_num=user.num_test_tries
         )
 
         # Save this question/response to the attempt
@@ -672,7 +692,6 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
             correct = attempt.score() 
 
             if correct < NUM_TEST_QUESTIONS_CORRECT:
-                import pdb; pdb.set_trace()
                 if user.num_test_tries < NUM_TEST_TRIES:
                     user.num_test_tries += 1
                     user.save(update_fields=["num_test_tries"])

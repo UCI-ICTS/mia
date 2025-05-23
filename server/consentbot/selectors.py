@@ -68,7 +68,27 @@ def get_consent_start_id(graph):
     raise ValueError("Consent start node not found — check graph parent_ids")
 
 
-def get_next_consent_sequence(conversation_graph: dict, node_id: str) -> dict:
+def infer_test_question_id(graph: dict, node_id: str) -> str | None:
+    """Walk upward from `node_id` to find the test question's bot node."""
+    seen, queue = set(), [node_id]
+    while queue:
+        current = queue.pop(0)
+        if current in seen:
+            continue
+        seen.add(current)
+        node = graph.get(current, {})
+        if node.get("metadata", {}).get("test_question") is True:
+            return current
+        queue.extend(node.get("parent_ids", []))
+    return None
+
+
+def get_next_consent_sequence(
+    conversation_graph: dict,
+    node_id: str,
+    skip_correct_test_nodes: bool = False,
+    correct_questions: set[str] = None
+) -> dict:
     """
     Traverses the conversation graph starting from `node_id` and collects:
     - Bot messages
@@ -96,8 +116,19 @@ def get_next_consent_sequence(conversation_graph: dict, node_id: str) -> dict:
     while True:
         node = conversation_graph.get(current_id, {})
         visited.append(current_id)
+        if current_id == "VUipQHn":
+            skip_correct_test_nodes = None
+        
+        # Check for skip if second test and node already answered correctly
+        if skip_correct_test_nodes:
+            test_node_id = infer_test_question_id(conversation_graph, current_id)
+            if test_node_id in (correct_questions or set()):
+                children = node.get("child_ids", [])
+                if children:
+                    current_id = children[0]
+                    continue
+                break
 
-        # Collect messages if this is a bot node
         if node.get("type") == "bot":
             messages.extend(node.get("messages", []))
             if str(node.get("metadata", {}).get("end_sequence", "false")).lower() == "true":
@@ -110,33 +141,38 @@ def get_next_consent_sequence(conversation_graph: dict, node_id: str) -> dict:
             all_users = all(conversation_graph.get(cid, {}).get("type") == "user" for cid in children)
             if all_users:
                 for cid in children:
-                    child = conversation_graph.get(cid, {})
-                    responses.append({
-                        "id": cid,
-                        "label": get_user_label(child)
-                    })
-                    visited.append(cid)
+                    if not skip_correct_test_nodes or (
+                        infer_test_question_id(conversation_graph, cid) not in correct_questions
+                    ):
+                        responses.append({
+                            "id": cid,
+                            "label": get_user_label(conversation_graph[cid])
+                        })
+                        visited.append(cid)
                 break
             elif len(children) == 1:
                 current_id = children[0]
-            else:
-                break
+                continue
+            break
 
         elif node.get("type") == "user":
             responses.append({
                 "id": current_id,
                 "label": get_user_label(node)
             })
+            children = node.get("child_ids", [])
+            if children:
+                current_id = children[0]
+                continue
             break
 
         else:
             break
 
-    render = node.get("render", None)
     return {
         "messages": messages,
         "responses": responses,
-        "render": render,
+        "render": node.get("render", None),
         "end": end,
         "visited": visited,
     }
@@ -196,7 +232,7 @@ def format_turn(
     responses = node.get("responses", [])
     render = node.get("render")
     end = node.get("metadata", {}).get("end_sequence", False)
-
+    
     if next_sequence:
         # This is only valid when formatting a bot response *after* get_next_consent_sequence
         messages = next_sequence.get("messages", messages)

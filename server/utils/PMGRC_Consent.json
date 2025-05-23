@@ -9,13 +9,13 @@
     "metadata": {
       "start": true,
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     }
   },
   "CaLvKv4": {
     "type": "bot",
     "messages": [
-      "I\u2019m Mia, your automated Medical Information Assistant from the University of California, Irvine (UCI). I'm inviting you to participate in the <b>Pediatric Mendelian Genomics Research Center (PMGRC)</b> research study.",
+      "I\u2019m Mia, your automated Medical Information Assistant from the University of California, Irvine (UCI). I\u2019m inviting you to participate in the <b>Pediatric Mendelian Genomics Research Center (PMGRC)</b> research study.",
       "I\u2019m here to tell you all about the PMGRC study and help you decide if you want to participate"
     ],
     "parent_ids": [
@@ -27,7 +27,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -47,7 +47,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -68,7 +68,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -88,7 +88,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -110,7 +110,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -130,7 +130,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -150,7 +150,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -173,7 +173,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -193,7 +193,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -213,7 +213,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -233,7 +233,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -253,7 +253,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -273,7 +273,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -296,7 +296,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -316,7 +316,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -336,7 +336,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -345,7 +345,7 @@
   "DdxFUae": {
     "type": "user",
     "messages": [
-      "I'd prefer to talk to someone from the research team"
+      "I\u2019d prefer to talk to someone from the research team"
     ],
     "parent_ids": [
       "S2nH9zZ"
@@ -356,7 +356,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "follow_up",
-      "end_sequence": "false",
+      "end_sequence": false,
       "follow_up_reason": "consent",
       "follow_up_info": "prefer to talk with someone from the research team"
     },
@@ -382,7 +382,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -404,7 +404,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -425,7 +425,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -434,7 +434,7 @@
   "87q8gWG": {
     "type": "user",
     "messages": [
-      "I'm ready to chat now"
+      "I\u2019m ready to chat now"
     ],
     "parent_ids": [
       "jbs93Hc"
@@ -445,7 +445,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -465,7 +465,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -488,7 +488,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -508,7 +508,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -528,7 +528,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -549,7 +549,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -569,7 +569,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -592,7 +592,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -612,7 +612,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -633,7 +633,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -653,7 +653,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -677,7 +677,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -697,7 +697,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -717,7 +717,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -738,7 +738,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -758,7 +758,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -808,7 +808,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -828,7 +828,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "button"
@@ -850,7 +850,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -870,7 +870,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -879,7 +879,7 @@
   "8dehgq7": {
     "type": "user",
     "messages": [
-      "I'd like to send them a link to the chat"
+      "I\u2019d like to send them a link to the chat"
     ],
     "parent_ids": [
       "axvGUBt"
@@ -890,7 +890,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -911,7 +911,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -931,7 +931,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -951,7 +951,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -974,7 +974,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -995,7 +995,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1004,7 +1004,7 @@
   "QXNa2cz": {
     "type": "user",
     "messages": [
-      "Let's keep it simple"
+      "Let\u2019s keep it simple"
     ],
     "parent_ids": [
       "Ey8gJrc",
@@ -1016,7 +1016,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1040,7 +1040,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1061,7 +1061,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1079,7 +1079,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -1117,7 +1117,7 @@
   "UiJSrG3": {
     "type": "bot",
     "messages": [
-      "Thank you! We\u2019ll contact them with the information you've provided",
+      "Thank you! We\u2019ll contact them with the information you\u2019ve provided",
       "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>GREGOR@hs.uci.edu</b>"
     ],
     "parent_ids": [
@@ -1129,7 +1129,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1149,7 +1149,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "button"
@@ -1169,7 +1169,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "enroll_form",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "button"
@@ -1190,7 +1190,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "image",
@@ -1211,7 +1211,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1233,7 +1233,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1242,7 +1242,7 @@
   "AonpoZW": {
     "type": "user",
     "messages": [
-      "That's complicated"
+      "That\u2019s complicated"
     ],
     "parent_ids": [
       "SfPWkep"
@@ -1253,7 +1253,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1274,7 +1274,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1294,7 +1294,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "from",
@@ -1337,7 +1337,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1357,7 +1357,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "button"
@@ -1379,7 +1379,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1399,7 +1399,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1408,7 +1408,7 @@
   "eWd55kR": {
     "type": "bot",
     "messages": [
-      "So, after you complete the consent chat with me, I can help arrange a time for you (and your child) to talk to a member of our study team to finalize your child's enrollment."
+      "So, after you complete the consent chat with me, I can help arrange a time for you (and your child) to talk to a member of our study team to finalize your child\u2019s enrollment."
     ],
     "parent_ids": [
       "gUoc5B6"
@@ -1419,7 +1419,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1439,7 +1439,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "button"
@@ -1460,7 +1460,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1480,7 +1480,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1500,7 +1500,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1522,7 +1522,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1542,7 +1542,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1562,7 +1562,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1572,7 +1572,7 @@
     "type": "bot",
     "messages": [
       "Sure!",
-      "Can you tell me your child's name, cell phone number, and/or email?"
+      "Can you tell me your child\u2019s name, cell phone number, and/or email?"
     ],
     "parent_ids": [
       "3ENuxt7"
@@ -1584,7 +1584,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1602,7 +1602,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -1644,7 +1644,7 @@
   "ZykT2RX": {
     "type": "bot",
     "messages": [
-      "Thank you! We'll contact them with the information you've provided.",
+      "Thank you! We\u2019ll contact them with the information you\u2019ve provided.",
       "If you have other adult family members who are considering enrolling, please let our study team know by emailing us at <b>GREGOR@hs.uci.edu</b>"
     ],
     "parent_ids": [
@@ -1657,7 +1657,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1677,7 +1677,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "button"
@@ -1697,7 +1697,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1717,7 +1717,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "button"
@@ -1738,7 +1738,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1758,7 +1758,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1767,7 +1767,7 @@
   "k5zGiMq": {
     "type": "bot",
     "messages": [
-      "So, after you complete the consent chat with me, I can help arrange a time for you (and your child) to talk to a member of our study team to finalize your child's participation.",
+      "So, after you complete the consent chat with me, I can help arrange a time for you (and your child) to talk to a member of our study team to finalize your child\u2019s participation.",
       "If your child is developmentally not able to communicate, you can let us know when you talk with our study team."
     ],
     "parent_ids": [
@@ -1779,7 +1779,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1799,7 +1799,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_age_form",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "button"
@@ -1823,7 +1823,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1845,7 +1845,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "image",
@@ -1866,7 +1866,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1886,7 +1886,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1908,7 +1908,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "image",
@@ -1918,7 +1918,7 @@
   "8Pvoowc": {
     "type": "user",
     "messages": [
-      "That's interesting"
+      "That\u2019s interesting"
     ],
     "parent_ids": [
       "BF3k6W7"
@@ -1929,7 +1929,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1950,7 +1950,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1959,7 +1959,7 @@
   "kvTbHhw": {
     "type": "user",
     "messages": [
-      "That's cool!"
+      "That\u2019s cool!"
     ],
     "parent_ids": [
       "WQFz456"
@@ -1970,7 +1970,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -1991,7 +1991,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "image",
@@ -2012,7 +2012,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2033,7 +2033,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2053,7 +2053,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2074,7 +2074,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "image",
@@ -2095,7 +2095,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2116,7 +2116,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "image",
@@ -2137,7 +2137,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2159,7 +2159,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "image",
@@ -2180,7 +2180,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2200,7 +2200,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2222,7 +2222,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2231,7 +2231,7 @@
   "VNSy2sy": {
     "type": "user",
     "messages": [
-      "That's interesting"
+      "That\u2019s interesting"
     ],
     "parent_ids": [
       "2wRsFE8"
@@ -2242,7 +2242,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2264,7 +2264,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2284,7 +2284,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2293,7 +2293,7 @@
   "fFHd2uw": {
     "type": "user",
     "messages": [
-      "That's cool!"
+      "That\u2019s cool!"
     ],
     "parent_ids": [
       "6cFB5vN"
@@ -2304,7 +2304,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2325,7 +2325,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2345,7 +2345,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2354,7 +2354,7 @@
   "PiTC5fc": {
     "type": "bot",
     "messages": [
-      "When a gene has a variant it gives the body different instructions. It's like changing an ingredient in a recipe"
+      "When a gene has a variant it gives the body different instructions. It\u2019s like changing an ingredient in a recipe"
     ],
     "parent_ids": [
       "TXdMNWZ"
@@ -2365,7 +2365,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "image",
@@ -2386,7 +2386,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2409,7 +2409,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2429,7 +2429,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2449,7 +2449,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2472,7 +2472,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2492,7 +2492,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2501,7 +2501,7 @@
   "iCSWyTS": {
     "type": "bot",
     "messages": [
-      "Here's a 1-minute video that talks about one common type of testing, called sequencing"
+      "Here\u2019s a 1-minute video that talks about one common type of testing, called sequencing"
     ],
     "parent_ids": [
       "Zgg7vB9"
@@ -2512,7 +2512,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "video",
@@ -2533,7 +2533,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2556,7 +2556,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2565,7 +2565,7 @@
   "GLzDUvB": {
     "type": "user",
     "messages": [
-      "Never had genetic testing / I don't recall..."
+      "Never had genetic testing / I don\u2019t recall..."
     ],
     "parent_ids": [
       "jczufDn"
@@ -2576,7 +2576,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2596,7 +2596,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2618,7 +2618,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2627,7 +2627,7 @@
   "nVUpS6V": {
     "type": "bot",
     "messages": [
-      "So you've had some experience. That's good!"
+      "So you\u2019ve had some experience. That\u2019s good!"
     ],
     "parent_ids": [
       "9cuqxwT"
@@ -2638,7 +2638,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2659,7 +2659,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2680,7 +2680,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2702,7 +2702,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2722,7 +2722,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2742,7 +2742,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2764,7 +2764,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2784,7 +2784,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2807,7 +2807,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "video",
@@ -2828,7 +2828,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2849,7 +2849,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2869,7 +2869,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2889,7 +2889,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2909,7 +2909,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2933,7 +2933,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2953,7 +2953,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2973,7 +2973,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -2993,7 +2993,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3016,7 +3016,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3036,7 +3036,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3056,7 +3056,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3078,7 +3078,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3098,7 +3098,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3118,7 +3118,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3141,7 +3141,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3161,7 +3161,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3182,7 +3182,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3203,7 +3203,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3223,7 +3223,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3243,7 +3243,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3264,7 +3264,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3284,7 +3284,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3308,7 +3308,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3328,7 +3328,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3348,7 +3348,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3368,7 +3368,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3388,7 +3388,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3409,7 +3409,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3429,7 +3429,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3451,7 +3451,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3460,7 +3460,7 @@
   "7SXetE5": {
     "type": "user",
     "messages": [
-      "That's reassuring"
+      "That\u2019s reassuring"
     ],
     "parent_ids": [
       "FWCoeMN"
@@ -3471,7 +3471,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3481,7 +3481,7 @@
     "type": "bot",
     "messages": [
       "Once enrolled, you will be asked to provide some medical information and a detailed family health history",
-      "The medical information we collect may include things like doctors' notes, current or previous diagnoses, and past test results (both genetic and non-genetic)",
+      "The medical information we collect may include things like doctors\u2019 notes, current or previous diagnoses, and past test results (both genetic and non-genetic)",
       "If you had previous genetic testing (such as whole genome sequencing), you may be asked to provide the data from this testing"
     ],
     "parent_ids": [
@@ -3495,7 +3495,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3515,7 +3515,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3524,7 +3524,7 @@
   "XxZNtXo": {
     "type": "user",
     "messages": [
-      "Where do I get my doctor's notes?"
+      "Where do I get my doctor\u2019s notes?"
     ],
     "parent_ids": [
       "LUuSmzi"
@@ -3535,7 +3535,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3556,7 +3556,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3565,7 +3565,7 @@
   "ikGZqyF": {
     "type": "bot",
     "messages": [
-      "Usually, you will provide a signed medical release to us, which we will send to the lab that did the original testing or to your doctor's office. Our study team can help you take the next steps, if necessary"
+      "Usually, you will provide a signed medical release to us, which we will send to the lab that did the original testing or to your doctor\u2019s office. Our study team can help you take the next steps, if necessary"
     ],
     "parent_ids": [
       "6wCXYUp"
@@ -3577,7 +3577,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3597,7 +3597,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3606,7 +3606,7 @@
   "SvnYgFC": {
     "type": "user",
     "messages": [
-      "Where do I get my doctor's notes?"
+      "Where do I get my doctor\u2019s notes?"
     ],
     "parent_ids": [
       "ikGZqyF"
@@ -3617,7 +3617,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3626,7 +3626,7 @@
   "nUA9owA": {
     "type": "bot",
     "messages": [
-      "Most doctor's offices and hospitals have a \u201cMedical Records\u201d office or a patient portal where notes and test results can be sent directly to the patient.",
+      "Most doctor\u2019s offices and hospitals have a \u201cMedical Records\u201d office or a patient portal where notes and test results can be sent directly to the patient.",
       "Our study staff can help you take the next steps, if necessary"
     ],
     "parent_ids": [
@@ -3640,7 +3640,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3660,7 +3660,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3682,7 +3682,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3702,7 +3702,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3725,7 +3725,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3745,7 +3745,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3766,7 +3766,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3775,7 +3775,7 @@
   "i6bA6Jp": {
     "type": "user",
     "messages": [
-      "What's a buccal swab?"
+      "What\u2019s a buccal swab?"
     ],
     "parent_ids": [
       "Af3kSyQ",
@@ -3787,7 +3787,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3810,7 +3810,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3830,7 +3830,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3852,7 +3852,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3872,7 +3872,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3894,7 +3894,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3914,7 +3914,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3936,7 +3936,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3945,7 +3945,7 @@
   "DQsLsQj": {
     "type": "user",
     "messages": [
-      "That's easy!"
+      "That\u2019s easy!"
     ],
     "parent_ids": [
       "Fok52cR"
@@ -3956,7 +3956,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3976,7 +3976,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -3997,7 +3997,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4018,7 +4018,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4038,7 +4038,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4058,7 +4058,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4078,7 +4078,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4100,7 +4100,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4109,7 +4109,7 @@
   "SS9NdGi": {
     "type": "user",
     "messages": [
-      "That's good to know"
+      "That\u2019s good to know"
     ],
     "parent_ids": [
       "2kEyysx"
@@ -4120,7 +4120,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4141,7 +4141,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4161,7 +4161,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4182,7 +4182,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4202,7 +4202,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4225,7 +4225,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4245,7 +4245,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4267,7 +4267,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4287,7 +4287,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4309,7 +4309,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4329,7 +4329,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4349,7 +4349,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4369,7 +4369,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4389,7 +4389,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4409,7 +4409,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4431,7 +4431,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4451,7 +4451,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4472,7 +4472,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4492,7 +4492,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4512,7 +4512,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4532,7 +4532,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4541,7 +4541,7 @@
   "bTii8uW": {
     "type": "bot",
     "messages": [
-      "We will make every effort to keep your information private, but no one's privacy can be totally guaranteed",
+      "We will make every effort to keep your information private, but no one\u2019s privacy can be totally guaranteed",
       "To help protect your privacy, the research team has obtained a <b>Certificate of Confidentiality</b> from the Department of Health and Human Services (DHHS)",
       "With this certificate, the investigators cannot be forced (for example, by a court order or subpoena) to give information that may identify you in any federal, state or local civil or criminal court, or in any administrative, legislative, or other proceeding"
     ],
@@ -4555,7 +4555,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4575,7 +4575,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4584,7 +4584,7 @@
   "NP5jatP": {
     "type": "user",
     "messages": [
-      "What if I tell people I'm part of this study?"
+      "What if I tell people I\u2019m part of this study?"
     ],
     "parent_ids": [
       "bTii8uW"
@@ -4595,7 +4595,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4617,7 +4617,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4637,7 +4637,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4658,7 +4658,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4678,7 +4678,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4699,7 +4699,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4719,7 +4719,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4741,7 +4741,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4761,7 +4761,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4782,7 +4782,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4802,7 +4802,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4823,7 +4823,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4843,7 +4843,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4864,7 +4864,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4873,7 +4873,7 @@
   "Py4Sw9s": {
     "type": "user",
     "messages": [
-      "That's good to know"
+      "That\u2019s good to know"
     ],
     "parent_ids": [
       "Et3pvov"
@@ -4884,7 +4884,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4904,7 +4904,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4913,7 +4913,7 @@
   "n2xeLXt": {
     "type": "user",
     "messages": [
-      "I'll keep that in mind"
+      "I\u2019ll keep that in mind"
     ],
     "parent_ids": [
       "Qakavzg"
@@ -4924,7 +4924,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4944,7 +4944,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4964,7 +4964,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4985,7 +4985,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -4994,7 +4994,7 @@
   "DqZpVap": {
     "type": "user",
     "messages": [
-      "That's good to know"
+      "That\u2019s good to know"
     ],
     "parent_ids": [
       "NETsCwx"
@@ -5005,7 +5005,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5015,7 +5015,7 @@
     "type": "bot",
     "messages": [
       "Sometimes genetic testing can find unexpected or surprising results that aren\u2019t related to your health",
-      "For example, sometimes testing can reveal that a child's parent is not actually their biological parent or that two parents are related to each other by blood",
+      "For example, sometimes testing can reveal that a child\u2019s parent is not actually their biological parent or that two parents are related to each other by blood",
       "These types of unexpected results are called <b>incidental findings</b>"
     ],
     "parent_ids": [
@@ -5027,7 +5027,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5047,7 +5047,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5068,7 +5068,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5088,7 +5088,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5111,7 +5111,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5132,7 +5132,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5153,7 +5153,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5174,7 +5174,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5194,7 +5194,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5217,7 +5217,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5237,7 +5237,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5259,7 +5259,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5279,7 +5279,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5302,7 +5302,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5322,7 +5322,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5342,7 +5342,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5362,7 +5362,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5385,7 +5385,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5406,7 +5406,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5427,7 +5427,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5447,7 +5447,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5469,7 +5469,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5489,7 +5489,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5510,7 +5510,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5530,7 +5530,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5554,7 +5554,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5574,7 +5574,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5594,7 +5594,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5614,7 +5614,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5636,7 +5636,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5656,7 +5656,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5677,7 +5677,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5697,7 +5697,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5721,7 +5721,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5741,7 +5741,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5763,7 +5763,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5783,7 +5783,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5805,7 +5805,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5814,7 +5814,7 @@
   "YcJnDbx": {
     "type": "user",
     "messages": [
-      "That's good to know"
+      "That\u2019s good to know"
     ],
     "parent_ids": [
       "R87ndyg"
@@ -5825,7 +5825,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5848,7 +5848,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5868,7 +5868,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5888,7 +5888,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5909,7 +5909,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5918,7 +5918,7 @@
   "D8z5whK": {
     "type": "user",
     "messages": [
-      "Okay, I'll keep that in mind"
+      "Okay, I\u2019ll keep that in mind"
     ],
     "parent_ids": [
       "fsbFZtR"
@@ -5929,7 +5929,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5951,7 +5951,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5971,7 +5971,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -5993,7 +5993,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6013,7 +6013,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6035,7 +6035,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6044,7 +6044,7 @@
   "9hePugt": {
     "type": "user",
     "messages": [
-      "That's good to know"
+      "That\u2019s good to know"
     ],
     "parent_ids": [
       "d4nnpdr"
@@ -6055,7 +6055,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6076,7 +6076,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6096,7 +6096,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6118,7 +6118,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6138,7 +6138,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6158,7 +6158,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6181,7 +6181,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6201,7 +6201,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6222,7 +6222,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6242,7 +6242,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6252,7 +6252,7 @@
     "type": "bot",
     "messages": [
       "If you have any questions or concerns about your privacy rights, you may contact the UCI Health Privacy Office at 714-456-3916",
-      "If you have questions or concerns about your rights as a study participant, you can contact UCI's Human Research Protections unit in the Office of Research at 949-824-6068, or by email (IRB@research.uci.edu), or by writing to us at 160 Aldrich Hall, Irvine, CA 92697"
+      "If you have questions or concerns about your rights as a study participant, you can contact UCI\u2019s Human Research Protections unit in the Office of Research at 949-824-6068, or by email (IRB@research.uci.edu), or by writing to us at 160 Aldrich Hall, Irvine, CA 92697"
     ],
     "parent_ids": [
       "5UhK2Hy"
@@ -6263,7 +6263,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6283,7 +6283,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6293,7 +6293,7 @@
     "type": "bot",
     "messages": [
       "Whew! \ud83d\ude05 We just went through a lot of information together",
-      "I've gone through all the topics I need to cover",
+      "I\u2019ve gone through all the topics I need to cover",
       "Now, it\u2019s up to you to decide if you would like to give your consent for yourself or your child to participate in the PMGRC study"
     ],
     "parent_ids": [
@@ -6308,7 +6308,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6330,7 +6330,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6352,7 +6352,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "decline_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6361,7 +6361,7 @@
   "NsfXTD7": {
     "type": "user",
     "messages": [
-      "I'm not ready to decide yet"
+      "I\u2019m not ready to decide yet"
     ],
     "parent_ids": [
       "Dq4hG9k"
@@ -6372,7 +6372,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "follow_up",
-      "end_sequence": "false",
+      "end_sequence": false,
       "follow_up_reason": "consent",
       "follow_up_info": "not ready or have questions"
     },
@@ -6394,7 +6394,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "follow_up",
-      "end_sequence": "false",
+      "end_sequence": false,
       "follow_up_reason": "consent",
       "follow_up_info": "not ready or have questions"
     },
@@ -6419,7 +6419,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6439,7 +6439,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6459,7 +6459,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6482,7 +6482,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6504,7 +6504,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6524,7 +6524,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6545,7 +6545,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6554,7 +6554,7 @@
   "bmorWZo": {
     "type": "user",
     "messages": [
-      "Okay - I'm ready"
+      "Okay - I\u2019m ready"
     ],
     "parent_ids": [
       "SZabuK4"
@@ -6565,7 +6565,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6587,8 +6587,8 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
-      "test_question": "true"
+      "end_sequence": false,
+      "test_question": true
     },
     "render": {
       "type": "button"
@@ -6597,7 +6597,7 @@
   "c3jUXWd": {
     "type": "user",
     "messages": [
-      "No - it's voluntary"
+      "No - it\u2019s voluntary"
     ],
     "parent_ids": [
       "VWzWNAK"
@@ -6608,7 +6608,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": true
     },
     "render": {
@@ -6618,7 +6618,7 @@
   "6PJ8q9D": {
     "type": "user",
     "messages": [
-      "Yes - it's required"
+      "Yes - it\u2019s required"
     ],
     "parent_ids": [
       "VWzWNAK"
@@ -6629,7 +6629,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -6651,7 +6651,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6671,7 +6671,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6680,7 +6680,7 @@
   "YxYN9RX": {
     "type": "bot",
     "messages": [
-      "That's right!"
+      "That\u2019s right!"
     ],
     "parent_ids": [
       "c3jUXWd"
@@ -6691,7 +6691,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6713,8 +6713,8 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
-      "test_question": "true"
+      "end_sequence": false,
+      "test_question": true
     },
     "render": {
       "type": "button"
@@ -6734,7 +6734,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": true
     },
     "render": {
@@ -6755,7 +6755,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -6765,7 +6765,7 @@
   "JqyNDaX": {
     "type": "bot",
     "messages": [
-      "Actually, that's not true",
+      "Actually, that\u2019s not true",
       "You have the option to decide NOT to enroll in the study, and this will not impact the medical care you or your family receive"
     ],
     "parent_ids": [
@@ -6777,7 +6777,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6786,7 +6786,7 @@
   "9nbunFh": {
     "type": "bot",
     "messages": [
-      "That's correct"
+      "That\u2019s correct"
     ],
     "parent_ids": [
       "KyvB8Qe"
@@ -6797,7 +6797,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6817,7 +6817,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6839,8 +6839,8 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
-      "test_question": "true"
+      "end_sequence": false,
+      "test_question": true
     },
     "render": {
       "type": "button"
@@ -6860,7 +6860,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -6881,7 +6881,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": true
     },
     "render": {
@@ -6891,7 +6891,7 @@
   "PBhQ5Mj": {
     "type": "bot",
     "messages": [
-      "That's right!"
+      "That\u2019s right!"
     ],
     "parent_ids": [
       "KmYUkXf"
@@ -6902,7 +6902,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6923,7 +6923,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6943,7 +6943,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -6965,8 +6965,8 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
-      "test_question": "true"
+      "end_sequence": false,
+      "test_question": true
     },
     "render": {
       "type": "button"
@@ -6986,7 +6986,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": true
     },
     "render": {
@@ -7007,7 +7007,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -7029,7 +7029,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7049,7 +7049,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7058,7 +7058,7 @@
   "TEL5iQi": {
     "type": "bot",
     "messages": [
-      "That's correct"
+      "That\u2019s correct"
     ],
     "parent_ids": [
       "EgapBwq"
@@ -7069,7 +7069,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7092,8 +7092,8 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
-      "test_question": "true"
+      "end_sequence": false,
+      "test_question": true
     },
     "render": {
       "type": "button"
@@ -7113,7 +7113,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -7134,7 +7134,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -7155,7 +7155,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": true
     },
     "render": {
@@ -7177,7 +7177,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7199,7 +7199,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7219,7 +7219,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7242,7 +7242,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7262,7 +7262,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7285,8 +7285,8 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
-      "test_question": "true"
+      "end_sequence": false,
+      "test_question": true
     },
     "render": {
       "type": "button"
@@ -7306,7 +7306,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": true
     },
     "render": {
@@ -7327,7 +7327,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -7349,7 +7349,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7369,7 +7369,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7389,7 +7389,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7411,8 +7411,8 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
-      "test_question": "true"
+      "end_sequence": false,
+      "test_question": true
     },
     "render": {
       "type": "button"
@@ -7432,7 +7432,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -7453,7 +7453,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": true
     },
     "render": {
@@ -7463,7 +7463,7 @@
   "7YuvMHb": {
     "type": "bot",
     "messages": [
-      "Yes, that's correct"
+      "Yes, that\u2019s correct"
     ],
     "parent_ids": [
       "Yj34Tnd"
@@ -7474,7 +7474,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7495,7 +7495,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7515,7 +7515,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7537,8 +7537,8 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
-      "test_question": "true"
+      "end_sequence": false,
+      "test_question": true
     },
     "render": {
       "type": "button"
@@ -7558,7 +7558,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": true
     },
     "render": {
@@ -7579,7 +7579,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -7603,7 +7603,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7623,7 +7623,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7632,7 +7632,7 @@
   "XskwUVW": {
     "type": "bot",
     "messages": [
-      "That's correct"
+      "That\u2019s correct"
     ],
     "parent_ids": [
       "b3HAamY"
@@ -7643,7 +7643,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7665,8 +7665,8 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
-      "test_question": "true"
+      "end_sequence": false,
+      "test_question": true
     },
     "render": {
       "type": "button"
@@ -7686,7 +7686,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": true
     },
     "render": {
@@ -7707,7 +7707,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -7729,7 +7729,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7738,7 +7738,7 @@
   "F276og8": {
     "type": "user",
     "messages": [
-      "Okay, that's good to know"
+      "Okay, that\u2019s good to know"
     ],
     "parent_ids": [
       "97RE52j"
@@ -7749,7 +7749,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7758,7 +7758,7 @@
   "22qZY38": {
     "type": "bot",
     "messages": [
-      "That's right"
+      "That\u2019s right"
     ],
     "parent_ids": [
       "TBaxMHp"
@@ -7769,7 +7769,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7791,8 +7791,8 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
-      "test_question": "true"
+      "end_sequence": false,
+      "test_question": true
     },
     "render": {
       "type": "button"
@@ -7812,7 +7812,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": false
     },
     "render": {
@@ -7833,7 +7833,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false",
+      "end_sequence": false,
       "test_question_answer_correct": true
     },
     "render": {
@@ -7854,7 +7854,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7875,7 +7875,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7895,7 +7895,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7917,7 +7917,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7939,7 +7939,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "test_user_understanding",
-      "end_sequence": "true",
+      "end_sequence": true,
       "pass_node_id": "VUipQHn",
       "retry_node_id": "G3EXSPz",
       "fail_node_id": "iH6N9fF"
@@ -7953,7 +7953,7 @@
     "messages": [
       "You got 10 out of 10 questions right! \ud83e\udd47",
       "Now we\u2019re ready to collect your consent for participation in the study",
-      "We'll start by capturing your enrollment preferences and then we'll ask for your electronic signature"
+      "We\u2019ll start by capturing your enrollment preferences and then we\u2019ll ask for your electronic signature"
     ],
     "parent_ids": [
       "nFpTPVg"
@@ -7964,7 +7964,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -7974,22 +7974,45 @@
     "type": "bot",
     "messages": [
       "It seems like you had a little trouble with these questions",
-      "I hope my responses helped clarify.  Let\u2019s go through them one more time"
+      "I hope my responses helped clarify.",
+      "Would you like to go through them one more time, or would you like to talk to a member of our study team?"
     ],
     "parent_ids": [
       "nFpTPVg"
     ],
     "child_ids": [
-      "VWzWNAK"
+      "DdxFUae",
+      "kZ6qj4C"
     ],
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
     }
+  },
+  "kZ6qj4C": {
+      "type": "user",
+      "render": {
+          "type": "button"
+      },
+      "messages": [
+          "Retry the questions."
+      ],
+      "metadata": {
+          "workflow": "test_user_understanding",
+          "end_sequence": true,
+          "test_question": true
+      },
+      "child_ids": [
+          "VWzWNAK"
+      ],
+      "attachment": null,
+      "parent_ids": [
+          "G3EXSPz"
+      ]
   },
   "iH6N9fF": {
     "type": "bot",
@@ -8005,7 +8028,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8025,7 +8048,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "follow_up",
-      "end_sequence": "false",
+      "end_sequence": false,
       "follow_up_reason": "consent",
       "follow_up_info": "did not pass knowledge test"
     },
@@ -8047,7 +8070,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8068,7 +8091,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "start_consent",
-      "end_sequence": "false",
+      "end_sequence": false,
       "enrolling_myself_node_id": "QKNbLGv",
       "enrolling_children_node_id": "nbkJ3g7"
     },
@@ -8093,7 +8116,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8111,7 +8134,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -8167,7 +8190,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8176,7 +8199,7 @@
   "bdmfVYQ": {
     "type": "user",
     "messages": [
-      "That's good to know"
+      "That\u2019s good to know"
     ],
     "parent_ids": [
       "Psu2bBx"
@@ -8187,7 +8210,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8209,7 +8232,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8227,7 +8250,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -8285,7 +8308,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8305,7 +8328,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8325,7 +8348,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8346,7 +8369,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8366,7 +8389,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8388,7 +8411,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8408,7 +8431,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8429,7 +8452,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8449,7 +8472,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8470,7 +8493,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8488,7 +8511,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -8559,7 +8582,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8577,7 +8600,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "end_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -8624,7 +8647,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8645,7 +8668,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8664,7 +8687,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -8718,7 +8741,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8738,7 +8761,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8761,7 +8784,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8770,7 +8793,7 @@
   "33yRxHn": {
     "type": "bot",
     "messages": [
-      "Please provide your child's information below"
+      "Please provide your child\u2019s information below"
     ],
     "parent_ids": [
       "nm8saM4"
@@ -8781,7 +8804,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8799,7 +8822,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -8866,7 +8889,7 @@
     "messages": [
       "We would like to store your child\u2019s samples (such as genetic material including DNA, RNA, or protein, or cells) in a tissue bank for future research as identified below",
       "The biobank is maintained by the study team at UCI",
-      "Please let us know how you would like your child's samples to be used"
+      "Please let us know how you would like your child\u2019s samples to be used"
     ],
     "parent_ids": [
       "XGa7LFM"
@@ -8877,7 +8900,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8895,7 +8918,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -8906,7 +8929,7 @@
         {
           "type": "radio",
           "name": "storeSamplesThisStudy",
-          "label": "Can we store this person's samples for purposes of this research study? (Required for participation in the study)",
+          "label": "Can we store this person\u2019s samples for purposes of this research study? (Required for participation in the study)",
           "options": [
             {
               "label": "Yes",
@@ -8917,7 +8940,7 @@
         {
           "type": "radio",
           "name": "storeSamplesOtherStudies",
-          "label": "Can we store this person's samples in UCI\u2019s biobank for purposes of unrelated research?",
+          "label": "Can we store this person\u2019s samples in UCI\u2019s biobank for purposes of unrelated research?",
           "options": [
             {
               "label": "Yes",
@@ -8947,7 +8970,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8956,7 +8979,7 @@
   "6KTYnrc": {
     "type": "user",
     "messages": [
-      "That's good to know"
+      "That\u2019s good to know"
     ],
     "parent_ids": [
       "Ycq8NGN"
@@ -8967,7 +8990,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8989,7 +9012,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9007,7 +9030,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -9065,7 +9088,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9085,7 +9108,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9105,7 +9128,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9127,7 +9150,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9147,7 +9170,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9168,7 +9191,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9188,7 +9211,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9209,7 +9232,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9227,7 +9250,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -9298,7 +9321,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9317,7 +9340,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "form",
@@ -9329,7 +9352,7 @@
         {
           "type": "input",
           "input_type": "text",
-          "label": "Child's full name",
+          "label": "Child\u2019s full name",
           "name": "childname",
           "required": true
         },
@@ -9364,7 +9387,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9387,7 +9410,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9408,7 +9431,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9429,7 +9452,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9449,7 +9472,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9470,7 +9493,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9490,7 +9513,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9515,7 +9538,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9524,7 +9547,7 @@
   "BUgU8Tq": {
     "type": "user",
     "messages": [
-      "I'd like to leave feedback"
+      "I\u2019d like to leave feedback"
     ],
     "parent_ids": [
       "nJgsH7y"
@@ -9536,7 +9559,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9556,7 +9579,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9575,7 +9598,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "button"
@@ -9595,7 +9618,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -9614,7 +9637,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "false"
+      "end_sequence": false
     },
     "render": {
       "type": "form",
@@ -9671,7 +9694,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": "true"
+      "end_sequence": true
     },
     "render": {
       "type": "button"

@@ -29,7 +29,7 @@ class SelectorFunctionTests(TestCase):
         self.graph = self.script.script
 
     def test_get_latest_consent(self):
-        # import pdb; pdb.set_trace()
+        
         consent = get_latest_consent(self.user)
         self.assertIsInstance(consent, Consent)
 

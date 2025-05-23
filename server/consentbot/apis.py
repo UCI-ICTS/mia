@@ -129,7 +129,6 @@ class ConsentScriptViewSet(viewsets.ViewSet):
         except ConsentScript.DoesNotExist:
             return Response({"detail": "Consent script not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = ConsentInputSerializer(script, data=request.data, partial=True)
-        import pdb; pdb.set_trace()
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(ConsentScriptOutputSerializer(script).data)
@@ -393,7 +392,7 @@ class ConsentResponseViewSet(viewsets.ViewSet):
         serializer = ConsentResponseInputSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-    
+
         try:
             return self._handle_form_submission(data)
 

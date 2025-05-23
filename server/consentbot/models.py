@@ -96,6 +96,10 @@ class ConsentTestAttempt(models.Model):
         total = self.total_questions()
         return (self.score() / total) * 100 if total else 0
 
+    def correct_question_ids(self):
+        return self.answers.filter(answer_correct=True).values_list("question_node_id", flat=True)
+
+
 
 class ConsentTestAnswer(models.Model):
     answer_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
