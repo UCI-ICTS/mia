@@ -5,9 +5,11 @@ import os
 import json
 import shortuuid
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import get_user_model
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, permissions, status
@@ -129,6 +131,7 @@ class ConsentScriptViewSet(viewsets.ViewSet):
         except ConsentScript.DoesNotExist:
             return Response({"detail": "Consent script not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = ConsentInputSerializer(script, data=request.data, partial=True)
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(ConsentScriptOutputSerializer(script).data)
@@ -301,7 +304,33 @@ class ConsentUrlViewSet(viewsets.ViewSet):
         if serializer.is_valid():
             try:
                 consent = serializer.save()
-                return Response(ConsentUrlOutputSerializer(consent).data, status=status.HTTP_200_OK)
+                # import pdb; pdb.set_trace()
+                # Email the activation link
+                # Compose HTML email
+                subject = "You're invited to join UCI ICTS' Medical Information Assistant (MIA)!"
+                from_email = settings.DEFAULT_FROM_EMAIL
+                user = User.objects.get(pk=consent.user_id)
+                to_email = user.email
+                consent_url = f"{settings.PUBLIC_HOSTNAME}/consent/{consent.consent_url}"
+                context = {
+                    "consent_url": consent_url,
+                }
+
+                text_content = f"Use this link to access the chat: {consent_url}"
+                html_content = render_to_string("emails/consent_invite.html", context)
+
+                msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+
+                return Response(
+                    {
+                        "message": f"Invite sent to {to_email}.",
+                        "user": UserOutputSerializer(user).data,
+                    },
+                    status=status.HTTP_201_CREATED,
+                )
+                # return Response(ConsentUrlOutputSerializer(consent).data, status=status.HTTP_200_OK)
             except:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
