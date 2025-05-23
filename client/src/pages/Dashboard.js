@@ -6,7 +6,8 @@ import { HomeOutlined, UserOutlined, ScheduleOutlined, MessageOutlined, TeamOutl
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
-import { fetchUsers, fetchFollowUps, fetchScripts } from "../slices/dataSlice"
+import { fetchUsers, fetchFollowUps, fetchConsentScripts } from "../slices/dataSlice"
+
 import react from "react";
 
 const { Sider, Content } = Layout;
@@ -22,7 +23,7 @@ const Dashboard = () => {
     if (!loading && !error && (!staff || staff.length === 0)) {
       dispatch(fetchUsers());
       dispatch(fetchFollowUps());
-      dispatch(fetchScripts());
+      dispatch(fetchConsentScripts());
     }
   }, [participants, loading, error, dispatch]);
 

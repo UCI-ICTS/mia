@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchScripts, addScript, editScript, deleteScript } from "../slices/dataSlice";
+import { fetchConsentScripts, addScript, editScript, deleteScript } from "../slices/dataSlice";
 import {
   Alert,
   Button,
@@ -31,7 +31,7 @@ const ConsentScripts = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    dispatch(fetchScripts()).catch((err) => {
+    dispatch(fetchConsentScripts()).catch((err) => {
       message.error(err?.message || "Failed to load scripts.");
     });
   }, [dispatch]);
@@ -55,7 +55,7 @@ const ConsentScripts = () => {
   
       await dispatch(addScript(scriptPayload)).unwrap();
       message.success("Script uploaded successfully.");
-      dispatch(fetchScripts());
+      dispatch(fetchConsentScripts());
       setUploadModalVisible(false);
       setIsModalVisible(false);
       form.resetFields();
@@ -79,7 +79,7 @@ const ConsentScripts = () => {
       }
       setIsModalVisible(false);
       form.resetFields();
-      dispatch(fetchScripts());
+      dispatch(fetchConsentScripts());
     } catch (err) {
       message.error(err?.message || "Error saving script.");
     }
@@ -89,7 +89,7 @@ const ConsentScripts = () => {
     try {
       await dispatch(deleteScript(id)).unwrap();
       message.success("Script deleted.");
-      dispatch(fetchScripts());
+      dispatch(fetchConsentScripts());
     } catch (err) {
       message.error(err?.message || "Failed to delete script.");
     }

@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ConsentPage from "./pages/ConsentPage";
+import PasswordResetConfirm from "./pages/PasswordResetConfirm";
 import AdminConsole from "./components/AdminConsole";
 import ManageParticipants from "./components/ManageParticipants";
 import FollowUp from "./components/FollowUp";
@@ -21,6 +22,8 @@ const AppRoutes = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/consent/:invite_id" element={<ConsentPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/password-reset" element={<PasswordResetConfirm />} />
+        <Route path="/password-create" element={<PasswordResetConfirm />} />
 
         {/* Protected Admin Dashboard */}
         <Route element={<PrivateRoute />}>
