@@ -3,6 +3,7 @@
 
 import os
 import json
+from django.forms import ValidationError
 import shortuuid
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -221,7 +222,7 @@ class ConsentViewSet(viewsets.ViewSet):
     def list(self, request):
         queryset = Consent.objects.all()
         serializer = ConsentOutputSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_description="Load or initialize a consent session using invite UUID",
@@ -229,13 +230,15 @@ class ConsentViewSet(viewsets.ViewSet):
         tags=["User Consent"]
     )
     def retrieve(self, request, pk=None):
-        consent, created = get_or_initialize_user_consent(pk)
-        history, just_created = get_or_initialize_consent_history(pk)
-        response_data = ConsentOutputSerializer(consent).data
-        response_data["chat"] = history
+        try:
+            consent, created = get_or_initialize_user_consent(pk)
+            history, just_created = get_or_initialize_consent_history(pk)
+            response_data = ConsentOutputSerializer(consent).data
+            response_data["chat"] = history
 
-        return Response(response_data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
-
+            return Response(response_data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        except ValidationError as error:
+            return Response(data={"message": f"{error}"}, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
         operation_description="Create a new user consent record",
@@ -295,6 +298,7 @@ class ConsentUrlViewSet(viewsets.ViewSet):
     
     @swagger_auto_schema(
         operation_description="Create a consent URL",
+        request_body=ConsentUrlInputSerializer,
         responses={200: UserOutputSerializer(many=True)},
         tags=["Consent URLs"]
     )
@@ -304,7 +308,6 @@ class ConsentUrlViewSet(viewsets.ViewSet):
         if serializer.is_valid():
             try:
                 consent = serializer.save()
-                # import pdb; pdb.set_trace()
                 # Email the activation link
                 # Compose HTML email
                 subject = "You're invited to join UCI ICTS' Medical Information Assistant (MIA)!"
@@ -441,7 +444,6 @@ class ConsentResponseViewSet(viewsets.ViewSet):
         handler = FORM_HANDLER_MAP.get(form_type)
         if not handler:
             raise ValueError(f"Unknown form_type: {form_type}")
-
         result = handler(graph, invite_id, responses)
         return Response({
             "chat": result,
