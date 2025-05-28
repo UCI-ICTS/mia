@@ -4,8 +4,7 @@ from django_json_widget.widgets import JSONEditorWidget
 from django import forms
 from consentbot.models import (
     ConsentScript,
-    ConsentCache,
-    ConsentUrl,
+    ConsentSession,
     Consent,
     ConsentTestAnswer,
     ConsentTestAttempt
@@ -26,13 +25,9 @@ class ConsentScriptAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     ordering = ("-created_at",)
 
-@admin.register(ConsentCache)
-class ConsentCacheAdmin(admin.ModelAdmin):
-    list_display = ["key", "value"]
-
-@admin.register(ConsentUrl)
-class ConsentUrlAdmin(admin.ModelAdmin):
-    list_display = ["consent_url", "user", "created_at", "expires_at"]
+@admin.register(ConsentSession)
+class ConsentSessionAdmin(admin.ModelAdmin):
+    list_display = ["session_slug", "user", "created_at", "expires_at"]
 
 @admin.register(Consent)
 class ConsentAdmin(admin.ModelAdmin):

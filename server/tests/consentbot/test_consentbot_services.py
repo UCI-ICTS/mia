@@ -2,7 +2,7 @@
 # tests/consentbot/test_consentbot_services.py
 
 from django.test import TestCase
-from consentbot.models import Consent, ConsentUrl
+from consentbot.models import Consent, ConsentSession
 from consentbot.services import (
     handle_consent,
     handle_family_enrollment_form,
@@ -11,7 +11,7 @@ from consentbot.services import (
     update_consent_and_advance
 )
 from utils.cache import set_user_consent_history
-from consentbot.selectors import get_script_from_invite_id
+from consentbot.selectors import get_script_from_session_slug
 import uuid
 
 
@@ -19,11 +19,11 @@ class ConsentServiceTests(TestCase):
     fixtures = ["tests/fixtures/test_data.json"]
 
     def setUp(self):
-        self.invite = ConsentUrl.objects.first()
+        self.invite = ConsentSession.objects.first()
         self.user = self.invite.user
         self.script = self.user.consent_script
         self.graph = self.script.script
-        self.invite_id = str(self.invite.consent_url)
+        self.session_slug = str(self.invite.session_slug)
 
     def test_handle_consent_sets_flags_and_returns_chat(self):
         responses = [
@@ -31,7 +31,7 @@ class ConsentServiceTests(TestCase):
             {"name": "consent", "value": "true"},
             {"name": "fullname", "value": "Jane Tester"}
         ]
-        result = handle_consent(self.graph, self.invite_id, responses)
+        result = handle_consent(self.graph, self.session_slug, responses)
         self.assertIsInstance(result, list)
         self.user.refresh_from_db()
         self.assertTrue(self.user.consent_complete)
@@ -50,9 +50,9 @@ class ConsentServiceTests(TestCase):
                 }
             }]
         }]
-        set_user_consent_history(self.invite_id, history)
+        set_user_consent_history(self.session_slug, history)
         responses = [{"value": ["myself", "myChildChildren"]}]
-        result = handle_family_enrollment_form(self.graph, self.invite_id, responses)
+        result = handle_family_enrollment_form(self.graph, self.session_slug, responses)
         self.assertIsInstance(result, list)
         self.user.refresh_from_db()
         self.assertTrue(self.user.enrolling_myself)
@@ -64,7 +64,7 @@ class ConsentServiceTests(TestCase):
             {"name": "satisfaction", "value": "Satisfied"},
             {"name": "suggestions", "value": "No issues."}
         ]
-        result = handle_user_feedback_form(self.graph, self.invite_id, responses)
+        result = handle_user_feedback_form(self.graph, self.session_slug, responses)
         self.assertIsInstance(result, list)
 
     def test_handle_other_adult_contact_form_progresses_chat(self):
@@ -74,15 +74,15 @@ class ConsentServiceTests(TestCase):
             {"name": "email", "value": "john@example.com"},
             {"name": "relationship", "value": "Other Adult"},
         ]
-        result = handle_other_adult_contact_form(self.graph, self.invite_id, responses)
+        result = handle_other_adult_contact_form(self.graph, self.session_slug, responses)
         self.assertIsInstance(result, list)
 
     def test_handle_consent_raises_with_missing_node_id(self):
         with self.assertRaises(KeyError):
-            handle_consent(self.graph, self.invite_id, [{"name": "consent", "value": "true"}])
+            handle_consent(self.graph, self.session_slug, [{"name": "consent", "value": "true"}])
 
     def test_update_consent_and_advance_invalid_node(self):
-        result = update_consent_and_advance(self.invite_id, "nonexistent", self.graph, "test")
+        result = update_consent_and_advance(self.session_slug, "nonexistent", self.graph, "test")
         self.assertIn("Invalid node", result[0]["messages"][0])
 
     # def test_store_consent_form_data_populates_consent_fields(self):

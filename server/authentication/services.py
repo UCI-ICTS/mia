@@ -11,7 +11,7 @@ from authentication.models import (
     FollowUp
 )
 from consentbot.models import ConsentScript
-from consentbot.selectors import get_user_from_invite_id, get_latest_consent
+from consentbot.selectors import get_user_from_session_slug, get_latest_consent
 
 User = get_user_model()
 
@@ -113,7 +113,7 @@ class UserOutputSerializer(serializers.ModelSerializer):
         return test.score() if test else "NA"
 
     def get_invite_expired(self, user):
-        return not user.consent_urls.exists()
+        return not user.consent_sessions.exists()
 
     def get_consent_age_group(self, user):
         consent = get_latest_consent(user)
@@ -262,9 +262,9 @@ class FeedbackOutputSerializer(serializers.ModelSerializer):
     def get_user_id(self, obj):
             return str(obj.user.pk) if obj.user else None
 
-def create_follow_up_with_user(invite_id, reason, more_info):
+def create_follow_up_with_user(session_slug, reason, more_info):
     """Create a follow-up entry for a user."""
-    user = get_user_from_invite_id(invite_id)
+    user = get_user_from_session_slug(session_slug)
 
     serializer = FollowUpInputSerializer(
         data={
