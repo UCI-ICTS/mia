@@ -58,18 +58,126 @@ export const login = createAsyncThunk(
 export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
   try {
     await authService.logout();
-    message.info("Logged out successfully."); // ✅ logout info
+    message.info("Logged out successfully.");
   } catch (e) {
-    message.warning("Logout error."); // optionally warn
+    message.warning("Logout error.");
     console.warn("Logout error", e);
   }
 });
+
+export const resetPassword = createAsyncThunk(
+  "auth/reset_password",
+  async (email, thunkAPI) => {
+    try {
+      const response = await authService.resetPassword(email);
+      message.success(response.message)
+      return response.data;
+    } catch (error) {
+      let errorMessage = "An error occurred";
+
+      if (error.response) {
+        const errorData = error.response.data;
+
+        if (typeof errorData === "string") {
+          // If backend just returns a plain error message
+          errorMessage = errorData;
+        } else if (errorData?.detail) {
+          errorMessage = errorData.detail;
+        } else if (typeof errorData === "object") {
+          errorMessage = Object.entries(errorData)
+            .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(", ") : errors}`)
+            .join(" | ");
+        } else {
+          errorMessage = `Request failed with status ${error.response.status}`;
+        }
+
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      message.error(errorMessage);
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const confirmPasswordReset = createAsyncThunk(
+  "auth/confirm_password_reset",
+  async ({ uid, token, new_password }, thunkAPI) => {
+    try {
+      const response = await authService.confirmPasswordReset({ uid, token, new_password });
+      message.success("Password reset successful")
+      return response.data;
+    } catch (error) {
+      console.log("Slice confirm reset error:", error);
+
+      let errorMessage = "An error occurred";
+
+      if (error.response) {
+        const errorData = error.response.data;
+
+        if (typeof errorData === "string") {
+          errorMessage = errorData;
+        } else if (errorData?.detail) {
+          errorMessage = errorData.detail;
+        } else if (typeof errorData === "object") {
+          errorMessage = Object.entries(errorData)
+            .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(", ") : errors}`)
+            .join(" | ");
+        } else {
+          errorMessage = `Request failed with status ${error.response.status}`;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      message.error(errorMessage);
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const activateUserAccount = createAsyncThunk(
+  "auth/activate_account",
+  async ({ uid, token, new_password }, thunkAPI) => {
+    try {
+      const response = await authService.createPassword({ uid, token, new_password });
+      return response.data;
+    } catch (error) {
+      console.log("Slice activation error:", error);
+
+      let errorMessage = "An error occurred";
+
+      if (error.response) {
+        const errorData = error.response.data;
+
+        if (typeof errorData === "string") {
+          errorMessage = errorData;
+        } else if (errorData?.detail) {
+          errorMessage = errorData.detail;
+        } else if (typeof errorData === "object") {
+          errorMessage = Object.entries(errorData)
+            .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(", ") : errors}`)
+            .join(" | ");
+        } else {
+          errorMessage = `Request failed with status ${error.response.status}`;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      message.error(errorMessage);
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    
     // --- LOGIN ---
     builder.addCase(login.pending, (state) => {
       state.loading = true;
@@ -104,6 +212,45 @@ const authSlice = createSlice({
       });
     builder.addCase(logout.rejected, (state) => {
       state.loading = false;
+    });
+
+    // --- Submit Password Reset ---
+    builder.addCase(resetPassword.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    builder.addCase(resetPassword.fulfilled, (state, action) => {
+      state.loading = false;
+    })
+    builder.addCase(resetPassword.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    })
+
+    // --- Confirm Password Reset ---
+    builder.addCase(confirmPasswordReset.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(confirmPasswordReset.fulfilled, (state, action) => {
+      state.loading = false;
+    });
+    builder.addCase(confirmPasswordReset.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+
+    // --- Activate Account ---
+    builder.addCase(activateUserAccount.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(activateUserAccount.fulfilled, (state, action) => {
+      state.loading = false;
+    });
+    builder.addCase(activateUserAccount.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
     });
   },
 });

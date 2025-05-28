@@ -3,11 +3,14 @@
 
 import os
 import json
+from django.forms import ValidationError
 import shortuuid
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import get_user_model
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, permissions, status
@@ -58,7 +61,7 @@ from utils.cache import set_user_consent_history
 User = get_user_model()
 FORM_HANDLER_MAP = {
     "family_enrollment": handle_family_enrollment_form,
-    "checkbox_group": handle_family_enrollment_form,
+    "checkbox_form": handle_family_enrollment_form,
     "sample_storage": handle_sample_storage,
     "phi_use": handle_phi_use,
     "result_return": handle_result_return,
@@ -129,7 +132,7 @@ class ConsentScriptViewSet(viewsets.ViewSet):
         except ConsentScript.DoesNotExist:
             return Response({"detail": "Consent script not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = ConsentInputSerializer(script, data=request.data, partial=True)
-        import pdb; pdb.set_trace()
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(ConsentScriptOutputSerializer(script).data)
@@ -219,7 +222,7 @@ class ConsentViewSet(viewsets.ViewSet):
     def list(self, request):
         queryset = Consent.objects.all()
         serializer = ConsentOutputSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_description="Load or initialize a consent session using invite UUID",
@@ -227,13 +230,15 @@ class ConsentViewSet(viewsets.ViewSet):
         tags=["User Consent"]
     )
     def retrieve(self, request, pk=None):
-        consent, created = get_or_initialize_user_consent(pk)
-        history, just_created = get_or_initialize_consent_history(pk)
-        response_data = ConsentOutputSerializer(consent).data
-        response_data["chat"] = history
+        try:
+            consent, created = get_or_initialize_user_consent(pk)
+            history, just_created = get_or_initialize_consent_history(pk)
+            response_data = ConsentOutputSerializer(consent).data
+            response_data["chat"] = history
 
-        return Response(response_data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
-
+            return Response(response_data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        except ValidationError as error:
+            return Response(data={"message": f"{error}"}, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
         operation_description="Create a new user consent record",
@@ -293,6 +298,7 @@ class ConsentUrlViewSet(viewsets.ViewSet):
     
     @swagger_auto_schema(
         operation_description="Create a consent URL",
+        request_body=ConsentUrlInputSerializer,
         responses={200: UserOutputSerializer(many=True)},
         tags=["Consent URLs"]
     )
@@ -302,7 +308,32 @@ class ConsentUrlViewSet(viewsets.ViewSet):
         if serializer.is_valid():
             try:
                 consent = serializer.save()
-                return Response(ConsentUrlOutputSerializer(consent).data, status=status.HTTP_200_OK)
+                # Email the activation link
+                # Compose HTML email
+                subject = "You're invited to join UCI ICTS' Medical Information Assistant (MIA)!"
+                from_email = settings.DEFAULT_FROM_EMAIL
+                user = User.objects.get(pk=consent.user_id)
+                to_email = user.email
+                consent_url = f"{settings.PUBLIC_HOSTNAME}/consent/{consent.consent_url}"
+                context = {
+                    "consent_url": consent_url,
+                }
+
+                text_content = f"Use this link to access the chat: {consent_url}"
+                html_content = render_to_string("emails/consent_invite.html", context)
+
+                msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+
+                return Response(
+                    {
+                        "message": f"Invite sent to {to_email}.",
+                        "user": UserOutputSerializer(user).data,
+                    },
+                    status=status.HTTP_201_CREATED,
+                )
+                # return Response(ConsentUrlOutputSerializer(consent).data, status=status.HTTP_200_OK)
             except:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -413,7 +444,6 @@ class ConsentResponseViewSet(viewsets.ViewSet):
         handler = FORM_HANDLER_MAP.get(form_type)
         if not handler:
             raise ValueError(f"Unknown form_type: {form_type}")
-
         result = handler(graph, invite_id, responses)
         return Response({
             "chat": result,

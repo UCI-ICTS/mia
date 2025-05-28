@@ -9,12 +9,14 @@ from django.core.cache import cache
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from typing import Optional
 from authentication.services import FeedbackInputSerializer
 from consentbot.models import (
     Consent,
     ConsentAgeGroup,
     ConsentScript,
-    ConsentTest,
+    ConsentTestAnswer,
+    ConsentTestAttempt,
     ConsentUrl,
 )
 from consentbot.selectors import (
@@ -23,6 +25,7 @@ from consentbot.selectors import (
     get_script_from_invite_id,
     get_next_consent_sequence,
     get_consent_start_id,
+    get_user_label
 )
 
 from utils.cache import (
@@ -35,12 +38,22 @@ from utils.cache import (
     get_consenting_children,
     set_consenting_children,
     get_consent_node
-)
+) 
 
 User = get_user_model()  
 # flags
-NUM_TEST_QUESTIONS_CORRECT = 10
+PERCENT_TEST_QUESTIONS_CORRECT = 100
 NUM_TEST_TRIES = 2
+
+
+class RenderBlockSerializer(serializers.Serializer):
+    type = serializers.ChoiceField(choices=["button", "form"])
+    fields = serializers.ListField(
+        child=serializers.DictField(),
+        required=False,
+        help_text="Used only if render.type == 'form'"
+    )
+
 
 class ConsentInputSerializer(serializers.ModelSerializer):
     user_id = serializers.UUIDField(write_only=True)
@@ -139,6 +152,13 @@ class ConsentScriptInputSerializer(serializers.ModelSerializer):
 class ConsentScriptOutputSerializer(serializers.ModelSerializer):
     derived_from = serializers.StringRelatedField()
     versions = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    script = serializers.DictField(
+        child=serializers.DictField(
+            help_text="Each node in the conversation graph",
+            child=serializers.JSONField()
+        ),
+        help_text="Consent conversation graph keyed by node_id. Each value is a node dict with type, messages, child_ids, parent_ids, render, metadata, etc."
+    )
 
     class Meta:
         model = ConsentScript
@@ -283,25 +303,69 @@ def get_or_initialize_user_consent(invite_id:str) -> bool:
     return new_consent, True
 
 
-def process_consent_sequence(node_id, invite_id, graph=None):
+def process_consent_sequence(
+    node_id: str,
+    invite_id: str,
+    graph: Optional[dict] = None
+) -> dict:
     """
-    Given a node_id and invite_id, compute the next consent sequence.
-    Uses workflow cache to determine progress and clean up as needed.
+    Process the next step in the consent chat graph from a given node.
+
+    This retrieves the next bot message sequence and updates the cached
+    workflow state by removing nodes that have already been visited.
+
+    Args:
+        node_id (str): The node to begin traversal from.
+        invite_id (str): The session ID (usually a UUID) identifying the consent URL.
+        graph (dict, optional): Parsed conversation graph. If None, it will be loaded from the invite ID.
+
+    Returns:
+        dict: A chat sequence dict containing:
+            - messages: Bot messages
+            - responses: User options (buttons or form)
+            - render: Render metadata (form config)
+            - end: Whether this sequence ends the conversation
+            - visited: List of node IDs traversed in this step
     """
+    sequence = None
     if graph is None:
         graph = get_script_from_invite_id(invite_id)
+    node = graph.get(node_id, {})
 
-    workflow = cache.get(f"user_workflow_{invite_id}", [])
+    # Handle second test attempt traversal
+    if (
+        node.get("type") == "bot"
+        and node.get("metadata", {}).get("workflow") == "test_user_understanding"
+        # and node.get("metadata", {}).get("test_question") is True
+    ):
+        user = ConsentUrl.objects.get(consent_url=invite_id).user
+        attempts = ConsentTestAttempt.objects.filter(
+            user=user, consent_script_version=user.consent_script
+        ).order_by("started_at")
 
+        if len(attempts) == 2:
+            if len(attempts[1].incorrect_question_ids()) > 0:
+                node_id = "iH6N9fF"
+            else:
+                correct = set(attempts[0].correct_question_ids())
+                sequence = get_next_consent_sequence(
+                    graph,
+                    node_id,
+                    skip_correct_test_nodes=True,
+                    correct_questions=correct
+                )
+    
+    # Fallback to default behavior
+    if sequence is None:
+        sequence = get_next_consent_sequence(graph, node_id)
+    
+    # Update workflow cache
+    workflow = get_user_workflow(invite_id)
     if workflow and workflow[0] and node_id in workflow[0]:
-        sequence, visited_nodes = get_next_consent_sequence(graph, node_id)
-        # Remove visited nodes from the current workflow path
-        workflow[0] = [n for n in workflow[0] if n not in visited_nodes]
-        if not workflow[0] or sequence.get("end_sequence"):
+        workflow[0] = [n for n in workflow[0] if n not in sequence["visited"]]
+        if not workflow[0] or sequence["end"]:
             workflow.pop(0)
-        cache.set(f"user_workflow_{invite_id}", workflow)
-    else:
-        sequence, _ = get_next_consent_sequence(graph, node_id)
+        set_user_workflow(invite_id, workflow)
 
     return sequence
 
@@ -320,6 +384,8 @@ def append_chat_history(invite_id:str, chat_turn:dict):
 
 
 def update_consent_and_advance(invite_id, node_id, graph, echo_user_response):
+    if node_id not in graph:
+        return [{"messages": [f"Invalid node: {node_id}"], "responses": []}]
     next_node_id = graph[node_id]["child_ids"][0]
     next_sequence = process_consent_sequence(next_node_id, invite_id)
     history = get_user_consent_history(invite_id)
@@ -327,6 +393,7 @@ def update_consent_and_advance(invite_id, node_id, graph, echo_user_response):
     history.append(format_turn(graph, node_id, echo_user_response, next_sequence))
     set_user_consent_history(invite_id, history)
     clean_up_after_chat(invite_id)
+
     return build_chat_from_history(invite_id)
 
 
@@ -447,7 +514,7 @@ def handle_family_enrollment_form(conversation_graph, invite_id, responses):
         raise Exception("Invalid or missing parent node")
 
     try:
-        fields = history[-1]['user_responses'][0]['label']['fields']
+        fields = history[-1]['responses'][0]['label']['fields']
         checkbox_node_ids = {f['name']: f['id_value'] for f in fields}
     except Exception:
         raise Exception("Checkbox fields missing from chat history")
@@ -606,22 +673,27 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
         return ''
 
     try:
-        # Get user from invite
+        # Get user and script
         consent_url = get_object_or_404(ConsentUrl, consent_url=str(invite_id))
         user = consent_url.user
         script_version = getattr(user, "consent_script", None)
-
         if not script_version:
             return node_metadata.get("fail_node_id", "")
 
-        # Save current test question for tracking
-        save_test_question(conversation_graph, current_node_id, user, script_version.pk)
+        # Start or retrieve the current test attempt
+        attempt, _ = ConsentTestAttempt.objects.get_or_create(
+            user=user,
+            consent_script_version=script_version,
+            test_try_num=user.num_test_tries
+        )
 
-        # If this is the end of the test sequence
-        if node_metadata.get("end_sequence") is True:
-            correct = get_test_results(user, script_version.pk)
+        # Save this question/response to the attempt
+        save_test_question(conversation_graph, current_node_id, attempt)
 
-            if correct < NUM_TEST_QUESTIONS_CORRECT:
+        # Final question? Evaluate
+        if node_metadata.get("end_sequence") is True or node_metadata.get("end_sequence") == 'true':
+            test_pass = attempt.percent_correct() 
+            if test_pass < PERCENT_TEST_QUESTIONS_CORRECT:
                 if user.num_test_tries < NUM_TEST_TRIES:
                     user.num_test_tries += 1
                     user.save(update_fields=["num_test_tries"])
@@ -632,11 +704,9 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
                 return node_metadata.get("pass_node_id", "")
 
     except ConsentUrl.DoesNotExist:
-        # If the invite ID is invalid
         return node_metadata.get("fail_node_id", "")
     
     except Exception as e:
-        # Log it for debugging
         import logging
         logger = logging.getLogger(__name__)
         logger.error(f"Error processing test question: {e}")
@@ -644,26 +714,33 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
 
     return ''
 
-def save_test_question(conversation_graph, current_node_id, user, consent_script_version_id):
-    """Save user responses to test questions."""
+def save_test_question(conversation_graph, current_node_id, attempt):
     node = conversation_graph.get(current_node_id)
-    if node.get("metadata", {}).get("test_question_answer_correct") and node["type"] == "user":
-        parent_id = node["parent_ids"][0]
-        parent_node = conversation_graph.get(parent_id, {})
-        if parent_node.get("metadata", {}).get("test_question"):
-            ConsentTest.objects.create(
-                user=user,
-                consent_script_version_id=consent_script_version_id,
-                test_try_num=user.num_test_tries,
-                test_question=parent_node["messages"][0],
-                user_answer=node["messages"][0],
-                answer_correct=node["metadata"]["test_question_answer_correct"],
-            )
+    if node.get("type") != "user":
+        return
+
+    parent_id = node.get("parent_ids", [None])[0]
+    parent_node = conversation_graph.get(parent_id, {})
+
+    if not parent_node.get("metadata", {}).get("test_question"):
+        return
+
+    question_text = parent_node.get("messages", [""])[0]
+    user_answer = node.get("messages", [""])[0]
+    is_correct = node.get("metadata", {}).get("test_question_answer_correct", False)
+
+    ConsentTestAnswer.objects.create(
+        attempt=attempt,
+        question_node_id=parent_id,
+        question_text=question_text,
+        user_answer=user_answer,
+        answer_correct=is_correct,
+    )
 
 def get_test_results(user, consent_script_version_id):
     """Retrieve the number of correct test responses for a user."""
     return (
-        ConsentTest.objects.filter(
+        ConsentTestAnswer.objects.filter(
             user=user,
             consent_script_version_id=consent_script_version_id,
             test_try_num=user.num_test_tries,

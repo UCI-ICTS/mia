@@ -1,37 +1,36 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Form, Checkbox, Button, Space, Radio, Select, Input, Typography } from "antd";
-import { submitConsentForm } from "../slices/dataSlice";
+import { submitConsentForm } from "../slices/consentSlice";
 
 
 const ConsentFormSubmission = ({ form, invite_id }) => {
   const { Paragraph } = Typography;
   const dispatch = useDispatch();
   const [formInstance] = Form.useForm();
+
   const handleFinish = (values) => {
     // Convert all form values to { name, value } pairs
     const { anonymize = false, ...formValues } = values
-    const checkedNames = values.checkbox_group || [];
+    const checkedNames = values.checkbox_form || [];
     const formatted = Object.entries(values).map(([name, value]) => ({
       name,
       value: value ?? null
     }));
   
-    console.log("Stringified values", JSON.stringify(formatted))
-    console.log(invite_id, form.id_submit_node)
     dispatch(
       submitConsentForm({
         invite_id,
         node_id: form.id_submit_node || form.node_id, // support both
-        form_type: form.form_type || form.type || "generic",
+        form_type: form.form_type || "generic",
         form_responses: formatted,
       })
     );
   };
   
 
-  const formType = (form.type || form.form_type);
-  console.log(form)
+  const formType = (form.form_type);
+
   return (
     <Form
       form={formInstance}
@@ -39,9 +38,9 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
       onFinish={handleFinish}
       style={{ maxWidth: 700, margin: "0 auto", marginTop: 24 }}
     >
-      {formType === "checkbox_group" && (
+      {formType === "checkbox_form" && (
         <Form.Item
-          name="checkbox_group"
+          name="checkbox_form"
           label="Who might consider enrolling?"
           rules={[{ required: true, message: "Please select at least one option" }]}
         >

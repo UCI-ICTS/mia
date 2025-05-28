@@ -1,88 +1,32 @@
 // src/pages/ConsentPage.js
 
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Dropdown, Input, Menu, Modal, Space, Typography, Image } from "antd";
-import { QuestionCircleOutlined, UserOutlined } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchConsentByInvite, submitConsentResponse } from "../slices/dataSlice";
-import useInActivityTimer from "../components/InActivityTimer";
+import { fetchConsentByInvite, submitConsentResponse } from "../slices/consentSlice";
+import { Button, Spin, Alert, Dropdown, Modal, Space, Typography } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import ChatBubbles from "../components/ChatBubbles";
 import ConsentFormSubmission from "../components/ConsentFormSubmission";
+import useInActivityTimer from "../components/InActivityTimer";
 import FollowUpModal from "../components/FollowUpModal";
-import { Bubble } from "@ant-design/x";
-
 
 const { Title, Paragraph } = Typography;
 
 const ConsentPage = () => {
   const { invite_id } = useParams();
   const dispatch = useDispatch();
-  const { chat = [], consent, loading, error } = useSelector((state) => state.data);
-  const lastMessage = chat[chat.length - 1];
-  const lastNodeId = chat[chat.length - 1]?.node_id;
-  const [contactModalVisible, setContactModalVisible] = useState(false);
+  const bottomRef = useRef(null);
   const isInactive = useInActivityTimer(5*60*1000)
   const [hasStarted, setHasStarted] = useState(false);
   const [showTimeoutModal, setShowTimeoutModal] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
   const [countdown, setCountdown] = useState(10);
-  const [visibleBotMessages, setVisibleBotMessages] = useState({});
-  const bottomRef = useRef(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const [contactModalVisible, setContactModalVisible] = useState(false);
 
-  // get CSRF token and save it
-  useEffect(() => {
-    fetch("/mia/auth/csrf/", {
-      credentials: "include", // important!
-    });
-  }, []);
-  
-  useEffect(() => {
-    if (chat.length === 0) return;
-  
-    const lastEntry = chat[chat.length - 1];
-    const { node_id, bot_messages } = lastEntry;
-  
-    if (!bot_messages || visibleBotMessages[node_id] === bot_messages.length) return;
-  
-    let index = 0;
-    setIsTyping(true);
-  
-    // Add initial delay before showing the first message
-    const startDelay = setTimeout(() => {
-      const interval = setInterval(() => {
-        if (index < bot_messages.length) {
-          index++;
-          setVisibleBotMessages(prev => ({
-            ...prev,
-            [node_id]: index
-          }));
-  
-          setTimeout(() => {
-            if (bottomRef.current) {
-              bottomRef.current.scrollIntoView({ behavior: "smooth" });
-            }
-          }, 50);
-        }
-  
-        if (index === bot_messages.length) {
-          clearInterval(interval);
-          setIsTyping(false);
-        }
-      }, 1500);
-    }, 800); // wait before starting first message
-  
-    return () => {
-      clearTimeout(startDelay);
-    };
-  }, [chat]);
-   
-  // Fetch consent on first load
-  useEffect(() => {
-    if (invite_id) {
-      dispatch(fetchConsentByInvite(invite_id));
-    }
-  }, [dispatch, invite_id]);
-
+  const { chat, consent, loading, error } = useSelector((state) => state.consent);
+  const email = consent ? consent.email : "Participant"
+  // Inactivity timer
   useEffect(() => {
     if (isInactive) {
       setShowTimeoutModal(true);
@@ -106,40 +50,90 @@ const ConsentPage = () => {
 
     return () => clearTimeout(timer);
   }, [showTimeoutModal, countdown]);
-  
+
+  // Automatically scroll to bottom when chat updates
   useEffect(() => {
-    if (!hasStarted || chat.length === 0) return;
-    const hydrated = {};
-    chat.forEach(entry => {
-      if (entry.bot_messages?.length > 0) {
-        hydrated[entry.node_id] = entry.bot_messages.length;
-      }
-    });
-    setVisibleBotMessages(hydrated);
-  }, [hasStarted, chat.length]);
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chat]);
 
-  const handleResponseClick = (id) => {
-    console.log("handleResponseClick", id);
-    setIsTyping(true); // show typing indicator
-  
-    // Scroll to bottom immediately after click
-    setTimeout(() => {
-      if (bottomRef.current) {
-        bottomRef.current.scrollIntoView({ behavior: "smooth" });
-      }
-    }, 50);
-  
-    // Simulate Mia's typing delay before dispatch
-    setTimeout(() => {
-      dispatch(submitConsentResponse({ invite_id, node_id: id }));
-    }, 800); // match the bot delay
+  useEffect(() => {
+    if (invite_id) {
+      dispatch(fetchConsentByInvite(invite_id));
+    }
+  }, [invite_id, dispatch]);
+
+  const handleButtonClick = (node_id) => {
+    dispatch(submitConsentResponse({ invite_id, node_id }));
   };
-  
 
-  // console.log(hasStarted)
+  const renderFooter = () => {
+    if (!chat || chat.length === 0 || loading || !hasStarted) return null;
+
+    const lastTurn = chat[chat.length - 1];
+    const { responses = [], render = {}, node_id, end} = lastTurn;
+    const isForm = typeof responses?.[0]?.label === "object" && "type" in responses[0].label;
+    const hasResponses = Array.isArray(responses) && responses.length > 0;
+    
+    return (
+      <footer
+        style={{
+          padding: "20px",
+          backgroundColor: "#fff",
+          borderTop: "1px solid #ddd",
+          position: "sticky",
+          bottom: 0,
+          width: "100%",
+          textAlign: "center",
+          zIndex: 1000,
+        }}
+      >
+      {!isTyping && (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          {isForm ? (
+            <ConsentFormSubmission node_id={node_id} invite_id={invite_id} form={responses[0].label} />
+          ) : (
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
+              {responses.map(({ id, label }) => (
+                <Button
+                  key={id}
+                  onClick={() => handleButtonClick(id)}
+                  type="primary"
+                  style={{ fontSize: 16, minWidth: 200, margin: 8 }}
+                >
+                  {typeof label === "string" ? label : JSON.stringify(label)}
+                </Button>
+              ))}
+            </div>
+          )}
+
+          {end && (
+            <div style={{ textAlign: "center", marginTop: 24 }}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  if (window.opener) {
+                    window.close();
+                  } else {
+                    window.location.href = "https://gregorconsortium.org/learning";
+                  }
+                }}
+                style={{ minWidth: 200 }}
+              >
+                Finish & Close
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+    </footer>
+    )
+  };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <div style={{maxHeight: "100vh", overflowY: "auto" }}>
+      {loading && <Spin size="large" style={{ marginBottom: 24 }} />}
       {/* Header */}
       <div
         style={{
@@ -197,11 +191,9 @@ const ConsentPage = () => {
           <QuestionCircleOutlined style={{ fontSize: 20, cursor: "pointer" }} />
         </Dropdown>
       </div>
-      
-      <div style={{ flexGrow: 1, padding: "40px 20px", backgroundColor: "#f9f9f9" }}>
-        {/* Start Page */}
-        {!hasStarted ? (
-          <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
+
+      {!hasStarted ? (
+        <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
             <img
               src="/images/uci_health_logo.png"
               alt="UCI Health"
@@ -230,174 +222,25 @@ const ConsentPage = () => {
               style={{ fontSize: 16, minWidth: 200, margin: 8 }}
             >Start or resume</Button>
           </div>
-        ) : (
-          <div style={{ maxWidth: 800, margin: "0 auto" }}>
-        {/* Main Content */}
-            {chat.map((entry, index) => (
-              <div key={index} style={{ marginBottom: 24 }}>
-                {entry.echo_user_response && (  
-                  <Bubble
-                    header={<strong>{consent.email}</strong>}
-                    placement="end"
-                    shape="round"
-                    avatar={{icon:<UserOutlined />}}
-                    content={
-                      <div style={{ fontFamily: "Georgia, serif", fontSize: 16 }}>
-                        {entry.echo_user_response}
-                      </div>
-                    }
-                  />
-                )}
-                {entry.bot_messages
-                  ?.slice(0, visibleBotMessages[entry.node_id] || 0)
-                  .map((msg, idx) => (
-                    <Bubble
-                      key={idx}
-                      header={<strong>Mia</strong>}
-                      placement="start"
-                      shape="round"
-                      content={
-                        <div style={{ fontFamily: "Georgia, serif", fontSize: 16 }}>
-                          <span dangerouslySetInnerHTML={{ __html: msg }} />
-                          <div ref={bottomRef} />
-                        </div>
-                      }
-                      avatar={{ icon: <img src="/images/mia_logo.png" alt="Mia" /> }}
-                    />
-                ))}
-                
-                {index === chat.length - 1 && isTyping && (
-                  <Bubble
-                    header={<strong>Mia</strong>}
-                    placement="start"
-                    shape="round"
-                    avatar={{ icon: <img src="/images/mia_logo.png" alt="Mia" /> }}
-                    content={
-                      <div style={{ fontFamily: "Georgia, serif", fontSize: 16, fontStyle: "italic" }}>
-                        Mia is typing...
-                        <div ref={bottomRef} />
-                      </div>
-                    }
-                  />
-                )}
-                
-                {/* {Image render from Bot} */}
-                {entry.render_type === "image" && (
-                  <div style={{ textAlign: "center", marginTop: 16 }}>
-                    <Image
-                      src={`/images/${entry.render_content}`}
-                      alt="chat visual"
-                      preview={{ mask: <span>Click to zoom</span> }}
-                      className={`fade-in-image ${visibleBotMessages[entry.node_id] ? "visible" : ""}`}
-                      style={{
-                        maxWidth: "100%",
-                        width: "400px",
-                        height: "auto",
-                        borderRadius: 8,
-                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
-                      }}
-                    />
-                  </div>
-                )}
-                {/* {Video Render from Bot} */}
-                {entry.render_type === "video" && (
-                  <div style={{ textAlign: "center", marginTop: 16 }}>
-                    <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", borderRadius: 8, boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
-                      <iframe
-                        src={entry.render_content}
-                        title="Consent Video"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: "100%"
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-              </div>
-            ))}
-          </div>
-        )}
-        <div ref={bottomRef} />
-      </div>
-
-     {/* Button or Form */}
-     <footer
-        style={{
-          padding: "20px",
-          backgroundColor: "#fff",
-          borderTop: "1px solid #ddd",
-          position: "sticky", // or "relative" 
-          bottom: 0,
-          width: "100%",
-          textAlign: "center",
-        }}
-      >
-     {hasStarted &&
-      // lastMessage?.bot_messages?.length === (visibleBotMessages[lastNodeId] || 0) && (
-        !isTyping && (
-          <div style={{ textAlign: "center", margin: "20px 0" }}>
-            <div
-              style={{
-                display: "inline-flex",
-                flexWrap: "wrap",
-                justifyContent: "center",
-              }}
-            >
-              {lastMessage?.user_render_type === "form" ? (
-                <ConsentFormSubmission
-                  form={lastMessage?.user_responses[0].label}
-                  invite_id={invite_id}
-                />
-              ) : (
-                lastMessage?.user_responses?.map(({ id, label }) => (
-                  <Button
-                    key={id}
-                    onClick={() => handleResponseClick(id)}
-                    type="primary"
-                    style={{ fontSize: 16, minWidth: 200, margin: 8 }}
-                  >
-                    {label}
-                  </Button>
-                ))
-              )}
-              {/* Close page button */}
-              {(lastMessage?.end_sequence) && (
-                <div style={{ textAlign: "center", marginTop: 24 }}>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      if (window.opener) {
-                        window.close(); // Works if this window was opened by script
-                      } else {
-                        window.location.href = "https://gregorconsortium.org/learning"; // Or your home page
-                      }
-                    }}
-                    style={{ minWidth: 200 }}
-                  >
-                    Finish & Close
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
+      ) : (
+        <div style={{ marginBottom: 100 }}>
+          {chat.map((turn, idx) => (
+            <ChatBubbles key={idx} turn={turn} username={email}/>
+          ))}
+          <div ref={bottomRef} />
+        </div>
       )}
-      </footer>
-      <FollowUpModal
-        visible={contactModalVisible}
-        onClose={() => setContactModalVisible(false)}
-        userInfo={{ email: consent.email }}
-      />
+
+      {consent?.email && (
+        <FollowUpModal
+          visible={contactModalVisible}
+          onClose={() => setContactModalVisible(false)}
+          userInfo={{ email: consent.email }}
+        />
+      )}
       <Modal
         title="Are you still there?"
-        visible={showTimeoutModal}
+        open={showTimeoutModal}
         closable={false}
         footer={null}
         centered
@@ -413,6 +256,9 @@ const ConsentPage = () => {
           I’m still here
         </Button>
       </Modal>
+
+      {renderFooter()}
+
     </div>
   );
 };

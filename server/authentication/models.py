@@ -60,6 +60,7 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+
 class FollowUp(models.Model):
     user_follow_up_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='user_follow_up')

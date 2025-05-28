@@ -83,11 +83,9 @@ const ManageAdministrators = () => {
     delete updatedValues.role;
   
     if (editingMember) {
-      await dispatch(updateUser({ id: editingMember.username, ...updatedValues }));
-      message.success("Staff updated.");
+      dispatch(updateUser({ id: editingMember.username, ...updatedValues }));
     } else {
-      await dispatch(addUser(updatedValues));
-      message.success("Staff added.");
+      dispatch(addUser(updatedValues));
     }
   
     setIsModalVisible(false);
@@ -202,17 +200,6 @@ const ManageAdministrators = () => {
               rules={[{ required: true, message: "Enter email" }]}
             >
               <Input type="email" />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              label="Password"
-              rules={
-                editingMember
-                  ? []
-                  : [{ required: true, message: "Enter password" }]
-              }
-            >
-              <Input.Password />
             </Form.Item>
             <Form.Item
               name="role"

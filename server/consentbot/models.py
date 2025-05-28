@@ -5,6 +5,7 @@ import uuid
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
+from authentication.models import User
 
 def default_expiry():
     return timezone.now() + timedelta(weeks=2)
@@ -19,7 +20,7 @@ class ConsentAgeGroup(models.TextChoices):
 
 class Consent(models.Model):
     user_consent_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='user_consents')
+    user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='consents')
     dependent_user = models.ForeignKey("authentication.User", on_delete=models.SET_NULL, null=True, blank=True, related_name='dependent_consents')
     consent_script = models.ForeignKey("consentbot.ConsentScript", on_delete=models.CASCADE, related_name="user_consents", null=True, blank=True)
     consent_age_group = models.CharField(max_length=20, choices=ConsentAgeGroup.choices)
@@ -77,15 +78,40 @@ class ConsentScript(models.Model):
         return max_version if max_version is not None else 0
 
 
-class ConsentTest(models.Model):
-    user_test_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='user_tests')
-    consent_script_version = models.ForeignKey(ConsentScript, on_delete=models.CASCADE, related_name='user_tests')
-    test_try_num = models.IntegerField(default=1, null=True, blank=True)
-    test_question = models.CharField(max_length=200)
-    user_answer = models.CharField(max_length=200)
-    answer_correct = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+class ConsentTestAttempt(models.Model):
+    attempt_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="test_attempts")
+    consent_script_version = models.ForeignKey(ConsentScript, on_delete=models.CASCADE)
+    test_try_num = models.IntegerField(default=1)
+    started_at = models.DateTimeField(auto_now_add=True)
+
+    def score(self):
+        """Return number of correct answers in this attempt."""
+        return self.answers.filter(answer_correct=True).count()
+
+    def total_questions(self):
+        return self.answers.count()
+
+    def percent_correct(self):
+        total = self.total_questions()
+        return (self.score() / total) * 100 if total else 0
+
+    def correct_question_ids(self):
+        return self.answers.filter(answer_correct=True).values_list("question_node_id", flat=True)
+    
+    def incorrect_question_ids(self):
+        return self.answers.filter(answer_correct=False).values_list("question_node_id", flat=True)
+
+
+
+class ConsentTestAnswer(models.Model):
+    answer_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    attempt = models.ForeignKey(ConsentTestAttempt, on_delete=models.CASCADE, related_name="answers")
+    question_node_id = models.CharField(max_length=64)
+    question_text = models.TextField()
+    user_answer = models.TextField()
+    answer_correct = models.BooleanField()
+    submitted_at = models.DateTimeField(auto_now_add=True)
 
 
 class ConsentUrl(models.Model):
