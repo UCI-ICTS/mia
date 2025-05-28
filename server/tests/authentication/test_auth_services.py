@@ -4,7 +4,8 @@
 from django.test import TestCase
 from rest_framework import serializers
 from rest_framework.test import APIClient
-from authentication.models import User, FollowUp, Feedback
+from django.contrib.auth import get_user_model
+from authentication.models import FollowUp, Feedback
 from authentication.services import (
     UserInputSerializer,
     UserOutputSerializer,
@@ -15,6 +16,8 @@ from authentication.services import (
     ChangePasswordSerializer,
     create_follow_up_with_user
 )
+
+User = get_user_model()
 
 class AuthServiceSerializerTests(TestCase):
     fixtures = ["tests/fixtures/test_data.json"]
