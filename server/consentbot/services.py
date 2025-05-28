@@ -728,9 +728,7 @@ def save_test_question(conversation_graph, current_node_id, attempt):
     question_text = parent_node.get("messages", [""])[0]
     user_answer = node.get("messages", [""])[0]
     is_correct = node.get("metadata", {}).get("test_question_answer_correct", False)
-    # import pdb; pdb.set_trace()
 
-    print(f"{is_correct}: {question_text}:, {user_answer}, ")
     ConsentTestAnswer.objects.create(
         attempt=attempt,
         question_node_id=parent_id,
