@@ -9,10 +9,11 @@ from consentbot.models import (
     ConsentUrl,
 )
 
+User = get_user_model()
+
 def get_latest_consent(user):
     return user.consents.order_by('-created_at').first()
 
-User = get_user_model()
 
 from utils.cache import (
     get_user_consent_history,

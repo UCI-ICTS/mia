@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # tests/authentication/test_auth_apis.py
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
-from authentication.models import User, Feedback, FollowUp
 from django.utils import timezone
+from authentication.models import Feedback, FollowUp
 
+User = get_user_model()
 
 class UserModelTests(TestCase):
     def test_create_user(self):

@@ -5,7 +5,9 @@ import uuid
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
-from authentication.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 def default_expiry():
     return timezone.now() + timedelta(weeks=2)
@@ -101,7 +103,6 @@ class ConsentTestAttempt(models.Model):
     
     def incorrect_question_ids(self):
         return self.answers.filter(answer_correct=False).values_list("question_node_id", flat=True)
-
 
 
 class ConsentTestAnswer(models.Model):

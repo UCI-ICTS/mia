@@ -364,7 +364,7 @@ class ConsentResponseViewSet(viewsets.ViewSet):
                 return self._handle_start(invite_id, graph, history)
 
             return self._handle_next(invite_id, node_id, graph, history)
-
+        
         except Exception as e:
             return Response({
                 "chat": [],
