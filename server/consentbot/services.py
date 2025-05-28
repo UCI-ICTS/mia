@@ -42,7 +42,7 @@ from utils.cache import (
 
 User = get_user_model()  
 # flags
-NUM_TEST_QUESTIONS_CORRECT = 10
+PERCENT_TEST_QUESTIONS_CORRECT = 100
 NUM_TEST_TRIES = 2
 
 
@@ -345,7 +345,6 @@ def process_consent_sequence(
 
         if len(attempts) == 2:
             if len(attempts[1].incorrect_question_ids()) > 0:
-                # sequence = get_next_consent_sequence(graph, "iH6N9fF")
                 node_id = "iH6N9fF"
             else:
                 correct = set(attempts[0].correct_question_ids())
@@ -693,8 +692,8 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
 
         # Final question? Evaluate
         if node_metadata.get("end_sequence") is True or node_metadata.get("end_sequence") == 'true':
-            correct = attempt.score() 
-            if correct < NUM_TEST_QUESTIONS_CORRECT:
+            test_pass = attempt.percent_correct() 
+            if test_pass < PERCENT_TEST_QUESTIONS_CORRECT:
                 if user.num_test_tries < NUM_TEST_TRIES:
                     user.num_test_tries += 1
                     user.save(update_fields=["num_test_tries"])
@@ -729,7 +728,9 @@ def save_test_question(conversation_graph, current_node_id, attempt):
     question_text = parent_node.get("messages", [""])[0]
     user_answer = node.get("messages", [""])[0]
     is_correct = node.get("metadata", {}).get("test_question_answer_correct", False)
+    # import pdb; pdb.set_trace()
 
+    print(f"{is_correct}: {question_text}:, {user_answer}, ")
     ConsentTestAnswer.objects.create(
         attempt=attempt,
         question_node_id=parent_id,
