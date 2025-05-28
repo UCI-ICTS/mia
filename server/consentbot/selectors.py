@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound, ValidationError
 from consentbot.models import (
     ConsentScript,
-    ConsentUrl,
+    ConsentSession,
 )
 
 User = get_user_model()
@@ -179,25 +179,25 @@ def get_next_consent_sequence(
     }
 
 
-def get_user_from_invite_id(invite_id: str):
+def get_user_from_session_slug(session_slug: str):
     """
     Retrieve the User instance associated with a given invite ID.
     """
-    consent_url = get_object_or_404(ConsentUrl, consent_url=invite_id)
-    return consent_url.user
+    session_slug = get_object_or_404(ConsentSession, session_slug=session_slug)
+    return session_slug.user
 
 
-def get_script_from_invite_id(invite_id: str) -> dict:
-    """Retrieve the consent script JSON from a ConsentUrl UUID."""
+def get_script_from_session_slug(session_slug: str) -> dict:
+    """Retrieve the consent script JSON from a ConsentSession UUID."""
     try:
-        script_id = ConsentUrl.objects.get(consent_url=invite_id).user.consent_script_id
+        script_id = ConsentSession.objects.get(session_slug=session_slug).user.consent_script_id
         if not script_id:
             raise ValidationError("User does not have a consent_script assigned.")
         return ConsentScript.objects.get(script_id=script_id).script
-    except ConsentUrl.DoesNotExist:
-        raise NotFound(f"Invite ID {invite_id} not found.")
+    except ConsentSession.DoesNotExist:
+        raise NotFound(f"Invite ID {session_slug} not found.")
     except ConsentScript.DoesNotExist:
-        raise NotFound(f"ConsentScript for invite ID {invite_id} not found.")
+        raise NotFound(f"ConsentScript for invite ID {session_slug} not found.")
 
 
 
@@ -251,16 +251,16 @@ def format_turn(
     }
 
 
-def build_chat_from_history(invite_id: str) -> list[dict]:
+def build_chat_from_history(session_slug: str) -> list[dict]:
     """
     Builds a list of completed chat turns for frontend consumption.
 
     Args:
-        invite_id (str): The invite UUID identifying the session.
+        session_slug (str): The invite UUID identifying the session.
 
     Returns:
         list[dict]: A list of chat turn dictionaries (each with bot/user messages).
     """
-    history = get_user_consent_history(invite_id)
+    history = get_user_consent_history(session_slug)
     return [entry for entry in history if "messages" in entry]
 

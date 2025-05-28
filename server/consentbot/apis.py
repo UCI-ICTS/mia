@@ -8,6 +8,7 @@ import shortuuid
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import get_user_model
+from django.db.utils import IntegrityError
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -24,7 +25,7 @@ from authentication.services import (
 from consentbot.models import (
     Consent,
     ConsentScript,
-    ConsentUrl
+    ConsentSession
 )
 from consentbot.services import (
     ConsentInputSerializer,
@@ -32,8 +33,8 @@ from consentbot.services import (
     ConsentScriptInputSerializer,
     ConsentScriptOutputSerializer,
     ConsentResponseInputSerializer,
-    ConsentUrlInputSerializer,
-    ConsentUrlOutputSerializer,
+    ConsentSessionInputSerializer,
+    ConsentSessionOutputSerializer,
     get_or_initialize_consent_history,
     get_or_initialize_user_consent,
     process_consent_sequence,
@@ -50,7 +51,7 @@ from consentbot.services import (
 )
 
 from consentbot.selectors import (
-    get_script_from_invite_id,
+    get_script_from_session_slug,
     get_consent_start_id,
     get_user_consent_history,
     get_user_label,
@@ -70,6 +71,72 @@ FORM_HANDLER_MAP = {
     "text_fields": handle_other_adult_contact_form,
     # "child_contact": handle_child_contact_form,
 }
+
+class ConsentViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.AllowAny]
+
+    @swagger_auto_schema(
+        operation_description="List all user consent records",
+        responses={200: ConsentOutputSerializer(many=True)},
+        tags=["User Consent"]
+    )
+    def list(self, request):
+        queryset = Consent.objects.all()
+        serializer = ConsentOutputSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        operation_description="Load or initialize a consent session using invite UUID",
+        responses={200: ConsentOutputSerializer},
+        tags=["User Consent"]
+    )
+    def retrieve(self, request, pk=None):
+        session_slug = pk
+        try:
+            consent, created = get_or_initialize_user_consent(session_slug)
+            
+            history, just_created = get_or_initialize_consent_history(session_slug)
+            response_data = ConsentOutputSerializer(consent).data
+            response_data["chat"] = history
+
+            return Response(response_data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        except ValidationError as error:
+            return Response(data={"message": f"{error}"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        operation_description="Create a new user consent record",
+        request_body=ConsentInputSerializer,
+        responses={201: ConsentOutputSerializer},
+        tags=["User Consent"]
+    )
+    def create(self, request):
+        serializer = ConsentInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = serializer.save()
+        return Response(ConsentOutputSerializer(instance).data, status=status.HTTP_201_CREATED)
+
+    @swagger_auto_schema(
+        operation_description="Update a user consent record",
+        request_body=ConsentInputSerializer,
+        responses={200: ConsentOutputSerializer},
+        tags=["User Consent"]
+    )
+    def update(self, request, pk=None):
+        instance = get_object_or_404(Consent, pk=pk)
+        serializer = ConsentInputSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated = serializer.save()
+        return Response(ConsentOutputSerializer(updated).data)
+
+    @swagger_auto_schema(
+        operation_description="Delete a user consent record",
+        tags=["User Consent"]
+    )
+    def destroy(self, request, pk=None):
+        instance = get_object_or_404(Consent, pk=pk)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ConsentScriptViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -211,100 +278,36 @@ class ConsentScriptViewSet(viewsets.ViewSet):
         })
 
 
-class ConsentViewSet(viewsets.ViewSet):
-    permission_classes = [permissions.AllowAny]
-
-    @swagger_auto_schema(
-        operation_description="List all user consent records",
-        responses={200: ConsentOutputSerializer(many=True)},
-        tags=["User Consent"]
-    )
-    def list(self, request):
-        queryset = Consent.objects.all()
-        serializer = ConsentOutputSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @swagger_auto_schema(
-        operation_description="Load or initialize a consent session using invite UUID",
-        responses={200: ConsentOutputSerializer},
-        tags=["User Consent"]
-    )
-    def retrieve(self, request, pk=None):
-        try:
-            consent, created = get_or_initialize_user_consent(pk)
-            history, just_created = get_or_initialize_consent_history(pk)
-            response_data = ConsentOutputSerializer(consent).data
-            response_data["chat"] = history
-
-            return Response(response_data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
-        except ValidationError as error:
-            return Response(data={"message": f"{error}"}, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="Create a new user consent record",
-        request_body=ConsentInputSerializer,
-        responses={201: ConsentOutputSerializer},
-        tags=["User Consent"]
-    )
-    def create(self, request):
-        serializer = ConsentInputSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        instance = serializer.save()
-        return Response(ConsentOutputSerializer(instance).data, status=status.HTTP_201_CREATED)
-
-    @swagger_auto_schema(
-        operation_description="Update a user consent record",
-        request_body=ConsentInputSerializer,
-        responses={200: ConsentOutputSerializer},
-        tags=["User Consent"]
-    )
-    def update(self, request, pk=None):
-        instance = get_object_or_404(Consent, pk=pk)
-        serializer = ConsentInputSerializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        updated = serializer.save()
-        return Response(ConsentOutputSerializer(updated).data)
-
-    @swagger_auto_schema(
-        operation_description="Delete a user consent record",
-        tags=["User Consent"]
-    )
-    def destroy(self, request, pk=None):
-        instance = get_object_or_404(Consent, pk=pk)
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class ConsentUrlViewSet(viewsets.ViewSet):
+class ConsentSessionViewSet(viewsets.ViewSet):
     lookup_field = 'username'
     permission_classes = {permissions.IsAuthenticated}
     
     @swagger_auto_schema(
         operation_description="Retrieve the latest consent URL for a user by username",
-        responses={200: ConsentUrlOutputSerializer},
+        responses={200: ConsentSessionOutputSerializer},
         tags=["Consent URLs"]
     )
     
     def invite_link_by_username(self, request, username=None):
         user = get_object_or_404(User, username=username)
-        invite = user.consent_urls.order_by('-created_at').first()
+        invite = user.consent_sessions.order_by('-created_at').first()
 
         if not invite:
             return Response({"detail": "No invite link found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ConsentUrlOutputSerializer(invite)
+        serializer = ConsentSessionOutputSerializer(invite)
         return Response(serializer.data)
 
     
     @swagger_auto_schema(
         operation_description="Create a consent URL",
-        request_body=ConsentUrlInputSerializer,
+        request_body=ConsentSessionInputSerializer,
         responses={200: UserOutputSerializer(many=True)},
         tags=["Consent URLs"]
     )
     def create(self, request):
         """Create the consent object"""
-        serializer = ConsentUrlInputSerializer(data=request.data)
+        serializer = ConsentSessionInputSerializer(data=request.data)
         if serializer.is_valid():
             try:
                 consent = serializer.save()
@@ -314,12 +317,12 @@ class ConsentUrlViewSet(viewsets.ViewSet):
                 from_email = settings.DEFAULT_FROM_EMAIL
                 user = User.objects.get(pk=consent.user_id)
                 to_email = user.email
-                consent_url = f"{settings.PUBLIC_HOSTNAME}/consent/{consent.consent_url}"
+                session_slug = f"{settings.PUBLIC_HOSTNAME}/consent/{consent.session_slug}"
                 context = {
-                    "consent_url": consent_url,
+                    "session_slug": session_slug,
                 }
 
-                text_content = f"Use this link to access the chat: {consent_url}"
+                text_content = f"Use this link to access the chat: {session_slug}"
                 html_content = render_to_string("emails/consent_invite.html", context)
 
                 msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
@@ -333,37 +336,37 @@ class ConsentUrlViewSet(viewsets.ViewSet):
                     },
                     status=status.HTTP_201_CREATED,
                 )
-                # return Response(ConsentUrlOutputSerializer(consent).data, status=status.HTTP_200_OK)
-            except:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                # return Response(ConsentSessionOutputSerializer(consent).data, status=status.HTTP_200_OK)
+            except IntegrityError as error:
+                return Response(data=str(error), status=status.HTTP_400_BAD_REQUEST)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ConsentResponseViewSet(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
 
     @swagger_auto_schema(
-        operation_description="Retrieve the next part of the consent chat based on a node_id and invite_id.",
+        operation_description="Retrieve the next part of the consent chat based on a node_id and session_slug.",
         query_serializer=ConsentResponseInputSerializer,
         tags=["Consent Response"]
     )
     def retrieve(self, request, pk=None):
         serializer = ConsentResponseInputSerializer(
-            data={"invite_id": pk, "node_id": request.query_params.get("node_id")},
+            data={"session_slug": pk, "node_id": request.query_params.get("node_id")},
             context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        invite_id = str(data["invite_id"])
+        session_slug = str(data["session_slug"])
         node_id = data["node_id"]
-        graph = get_script_from_invite_id(invite_id)
-        history = get_user_consent_history(invite_id)
+        graph = get_script_from_session_slug(session_slug)
+        history = get_user_consent_history(session_slug)
 
         try:
             if node_id == "start":
-                return self._handle_start(invite_id, graph, history)
+                return self._handle_start(session_slug, graph, history)
 
-            return self._handle_next(invite_id, node_id, graph, history)
+            return self._handle_next(session_slug, node_id, graph, history)
         
         except Exception as e:
             return Response({
@@ -372,18 +375,18 @@ class ConsentResponseViewSet(viewsets.ViewSet):
                 "error": str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
 
-    def _handle_start(self, invite_id, graph, history):
+    def _handle_start(self, session_slug, graph, history):
         start_node_id = get_consent_start_id(graph)
-        first_sequence = process_consent_sequence(start_node_id, invite_id)
+        first_sequence = process_consent_sequence(start_node_id, session_slug)
         history.append(format_turn(graph, "start", "", first_sequence))
-        set_user_consent_history(invite_id, history)
+        set_user_consent_history(session_slug, history)
         return Response({
             "chat": history,
             "next_node_id": start_node_id,
             "end_sequence": first_sequence.get("end_sequence", False),
         })
 
-    def _handle_next(self, invite_id, node_id, graph, history):
+    def _handle_next(self, session_slug, node_id, graph, history):
         node = graph.get(node_id, {})
         metadata = graph[node_id].get("metadata", {})
         workflow = metadata.get("workflow", "")
@@ -391,12 +394,12 @@ class ConsentResponseViewSet(viewsets.ViewSet):
         next_node_id = ""
         
         if workflow == "test_user_understanding":
-            next_node_id = process_test_question(graph, node_id, invite_id)
+            next_node_id = process_test_question(graph, node_id, session_slug)
         elif workflow in ["start_consent", "decline_consent"]:
-            next_node_id = process_user_consent(graph, node_id, invite_id)
+            next_node_id = process_user_consent(graph, node_id, session_slug)
         elif workflow == "follow_up":
             create_follow_up_with_user(
-                invite_id,
+                session_slug,
                 metadata.get("follow_up_reason", ""),
                 metadata.get("follow_up_info", "")
             )
@@ -404,9 +407,9 @@ class ConsentResponseViewSet(viewsets.ViewSet):
         if not next_node_id:
             next_node_id = graph[node_id].get("child_ids", [None])[0]
 
-        next_sequence = process_consent_sequence(next_node_id, invite_id)
+        next_sequence = process_consent_sequence(next_node_id, session_slug)
         history.append(format_turn(graph, node_id, echo_user_response, next_sequence))
-        set_user_consent_history(invite_id, history)
+        set_user_consent_history(session_slug, history)
 
         return Response({
             "chat": history,
@@ -436,15 +439,15 @@ class ConsentResponseViewSet(viewsets.ViewSet):
             }, status=status.HTTP_400_BAD_REQUEST)
 
     def _handle_form_submission(self, data):
-        invite_id = str(data["invite_id"])
+        session_slug = str(data["session_slug"])
         form_type = data["form_type"]
         responses = data["form_responses"] + [{"name": "node_id", "value": data["node_id"]}]
-        graph = get_script_from_invite_id(invite_id)
+        graph = get_script_from_session_slug(session_slug)
 
         handler = FORM_HANDLER_MAP.get(form_type)
         if not handler:
             raise ValueError(f"Unknown form_type: {form_type}")
-        result = handler(graph, invite_id, responses)
+        result = handler(graph, session_slug, responses)
         return Response({
             "chat": result,
             "next_node_id": result[-1].get("node_id"),
