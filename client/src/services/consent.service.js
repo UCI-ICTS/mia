@@ -4,8 +4,8 @@ import API from "./api";
 import { getCSRFToken } from "../utils/csrf";
 
 // ✅ Fetch Consent Session by Invite ID
-const fetchConsentByInvite = async (invite_id) => {
-  const response = await API.get(`consentbot/consent/${invite_id}/`, {
+const fetchConsentByInvite = async (session_slug) => {
+  const response = await API.get(`consentbot/consent/${session_slug}/`, {
     headers: {
       "X-CSRFToken": getCSRFToken(),
     },
@@ -15,9 +15,9 @@ const fetchConsentByInvite = async (invite_id) => {
 };
 
 // ✅ Submit Consent Response (button or form)
-const submitConsentResponse = async ({ invite_id, node_id, form_type, form_responses }) => {
+const submitConsentResponse = async ({ session_slug, node_id, form_type, form_responses }) => {
   const payload = {
-    invite_id,
+    session_slug,
     node_id,
   };
   if (form_type && form_responses) {
@@ -32,7 +32,7 @@ const submitConsentResponse = async ({ invite_id, node_id, form_type, form_respo
     });
     return response.data;
   } else {
-    const response = await API.get(`consentbot/consent-response/${invite_id}/?node_id=${node_id}`, {
+    const response = await API.get(`consentbot/consent-response/${session_slug}/?node_id=${node_id}`, {
         headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": getCSRFToken(),

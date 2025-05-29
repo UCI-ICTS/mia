@@ -8,29 +8,51 @@ import { Bubble } from "@ant-design/x";
 const { Text } = Typography;
 
 const ChatBubbles = ({ turn, username }) => {
-  const {messages } = turn;
-  console.log(turn.messages)
+  const {messages, speaker } = turn;
+  console.log(turn)
   return (
     <div className="bubble-container">
-    
+      {speaker === "bot" ? (
+        <div>
+          {messages.map((msg, index) => (
+            <Row key={`bot-${index}`} align="top">
+              <Bubble
+                key={index}
+                header={<strong>Mia</strong>}
+                placement="start"
+                shape="round"
+                content={
+                  <div style={{ fontFamily: "sans-serif", fontSize: 16 }}>
+                    <span dangerouslySetInnerHTML={{ __html: msg }} />
+                    {/* <div ref={bottomRef} /> */}
+                  </div>
+                }
+                avatar={{ icon: <img src="/images/mia_logo.png" alt="Mia" /> }}
+              />
+            </Row>
+          ))}
+        </div>
+      ) : (
+        <div>
+          {messages.map((msg, index) => (
+            <Row justify="end" align="top">
+              <Bubble
+                header={<strong>{username}</strong>}
+                placement="end"
+                shape="round"
+                avatar={{icon:<UserOutlined />}}
+                content={
+                  <div style={{ fontFamily: "sans-serif", fontSize: 16 }}>
+                    {msg}
+                  </div>
+                }
+              />
+            </Row>
+          ))}
+      </div>
+      )}
     {/* Text Bot messages */}
-      {messages.map((msg, index) => (
-        <Row key={`bot-${index}`} align="top">
-          <Bubble
-            key={index}
-            header={<strong>Mia</strong>}
-            placement="start"
-            shape="round"
-            content={
-              <div style={{ fontFamily: "sans-serif", fontSize: 16 }}>
-                <span dangerouslySetInnerHTML={{ __html: msg }} />
-                {/* <div ref={bottomRef} /> */}
-              </div>
-            }
-            avatar={{ icon: <img src="/images/mia_logo.png" alt="Mia" /> }}
-          />
-        </Row>
-      ))}
+      
 
     </div>
   );

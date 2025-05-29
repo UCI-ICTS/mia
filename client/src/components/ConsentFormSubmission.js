@@ -4,7 +4,7 @@ import { Form, Checkbox, Button, Space, Radio, Select, Input, Typography } from 
 import { submitConsentForm } from "../slices/consentSlice";
 
 
-const ConsentFormSubmission = ({ form, invite_id }) => {
+const ConsentFormSubmission = ({ form, session_slug }) => {
   const { Paragraph } = Typography;
   const dispatch = useDispatch();
   const [formInstance] = Form.useForm();
@@ -20,7 +20,7 @@ const ConsentFormSubmission = ({ form, invite_id }) => {
   
     dispatch(
       submitConsentForm({
-        invite_id,
+        session_slug,
         node_id: form.id_submit_node || form.node_id, // support both
         form_type: form.form_type || "generic",
         form_responses: formatted,

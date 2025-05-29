@@ -20,7 +20,7 @@ const AppRoutes = () => {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/consent/:invite_id" element={<ConsentPage />} />
+        <Route path="/consent/:session_slug" element={<ConsentPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/password-reset" element={<PasswordResetConfirm />} />
         <Route path="/password-create" element={<PasswordResetConfirm />} />

@@ -6,9 +6,9 @@ import consentService from "../services/consent.service";
 // Thunks
 export const fetchConsentByInvite = createAsyncThunk(
   "consent/fetchByInvite",
-  async (invite_id, { rejectWithValue }) => {
+  async (session_slug, { rejectWithValue }) => {
     try {
-      const data = await consentService.fetchConsentByInvite(invite_id);
+      const data = await consentService.fetchConsentByInvite(session_slug);
       return data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
