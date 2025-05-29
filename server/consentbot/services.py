@@ -1,15 +1,16 @@
 #!/usr/bin/env python
-# consentbot/serializers.py
+# consentbot/services.py
 
-import datetime
-from rest_framework import serializers
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from rest_framework import serializers
 from typing import Optional
+
 from authentication.services import FeedbackInputSerializer
 from consentbot.models import (
     Consent,
@@ -25,19 +26,20 @@ from consentbot.selectors import (
     get_script_from_session_slug,
     get_next_consent_sequence,
     get_consent_start_id,
-    get_user_label
 )
 
 from utils.cache import (
     get_user_consent_history,
     set_user_consent_history,
+    append_to_consent_history,
+    get_flag,
+    set_flag,
     get_user_workflow,
     set_user_workflow,
-    set_consenting_myself,
-    set_consent_node,
-    get_consenting_children,
-    set_consenting_children,
-    get_consent_node
+    # set_consent_node,
+    # get_consent_node,
+    # get_consenting_children,
+    # set_consenting_myself,
 ) 
 
 User = get_user_model()  
@@ -45,9 +47,26 @@ User = get_user_model()
 PERCENT_TEST_QUESTIONS_CORRECT = 100
 NUM_TEST_TRIES = 2
 
-
 class RenderBlockSerializer(serializers.Serializer):
-    type = serializers.ChoiceField(choices=["button", "form"])
+    """
+    Describes the next UI input block the frontend should render.
+
+    This structure is separate from chat history. It represents the current
+    actionable form or button set that should be presented to the user.
+
+    Example:
+        {
+            "type": "form",
+            "fields": [
+                {"name": "age", "label": "Your age", "type": "number"}
+            ]
+        }
+
+    Fields:
+        - type: Specifies the type of UI block ("form" or "button").
+        - fields: A list of field configuration dictionaries. Required for forms.
+    """
+    type = serializers.ChoiceField(choices=["form", "button"])
     fields = serializers.ListField(
         child=serializers.DictField(),
         required=False,
@@ -237,7 +256,6 @@ class ConsentSessionOutputSerializer(serializers.ModelSerializer):
         model = ConsentSession
         fields = [
             'session_slug',
-            'session_slug',
             'invite_link',
             'created_at',
             'expires_at',
@@ -250,37 +268,21 @@ class ConsentSessionOutputSerializer(serializers.ModelSerializer):
         return f"{base_url}/consent/{obj.session_slug}/"
 
 
-def clean_up_after_chat(session_slug):
-    """Set the invite URL to expire 24 hours from now."""
+def mark_session_for_expiration(session_slug):
+    """Set a session to expire 24 hours from now.
+    
+    Call when    
+        At the end of the conversation (final node)
+        After consent is submitted or declined
+        After feedback is submitted
+        Or after N minutes of inactivity (future: background job)
+    """
     try:
-        session_slug = ConsentSession.objects.get(session_slug=str(session_slug))
-        session_slug.expires_at = timezone.now() + datetime.timedelta(hours=24)
-        session_slug.save()
+        session = ConsentSession.objects.get(session_slug=session_slug)
+        session.expires_at = timezone.now() + timedelta(hours=24)
+        session.save(update_fields=["expires_at"])
     except ConsentSession.DoesNotExist:
-        # Log or raise if needed
-        pass
-
-
-def get_or_initialize_consent_history(session_slug):
-    """
-    Retrieve existing consent history for a given session_slug,
-    or initialize it with the starting node and first chat sequence.
-
-    Returns:
-        tuple: (history, just_created)
-    """
-
-    history = get_user_consent_history(session_slug)
-    if history:
-        return history, False
-
-    graph = get_script_from_session_slug(session_slug)
-    start_node = get_consent_start_id(graph)
-    sequence = process_consent_sequence(start_node, session_slug, graph=graph)
-
-    history = [format_turn(graph, start_node, echo_user_response="", next_sequence=sequence)]
-    set_user_consent_history(session_slug, history)
-    return history, True
+        pass  # TODO: Or log
 
 
 def get_or_initialize_user_consent(session_slug:str) -> bool:
@@ -290,6 +292,7 @@ def get_or_initialize_user_consent(session_slug:str) -> bool:
     Returns:
         tuple: (Consent instance, bool indicating if it was created)
     """
+
     # Get the ConsentSession instance (or 404 if invalid/expired)
     invite = get_object_or_404(ConsentSession, session_slug=session_slug)
     # Check for an existing Consent record
@@ -306,6 +309,28 @@ def get_or_initialize_user_consent(session_slug:str) -> bool:
     )
 
     return new_consent, True
+
+
+def get_or_initialize_consent_history(session_slug):
+    """
+    Retrieve existing consent history for a given session_slug,
+    or initialize it with the starting node and first chat sequence.
+
+    Returns:
+        tuple: (history, just_created)
+    """
+    history = get_user_consent_history(session_slug)
+    if history:
+        return history, False
+
+    graph = get_script_from_session_slug(session_slug)
+    start_node = get_consent_start_id(graph)
+    sequence = process_consent_sequence(start_node, session_slug, graph=graph)
+
+    import pdb; pdb.set_trace()
+    history = sequence["chat_turns"]
+    set_user_consent_history(session_slug, history)
+    return history, True
 
 
 def process_consent_sequence(
@@ -372,7 +397,26 @@ def process_consent_sequence(
             workflow.pop(0)
         set_user_workflow(session_slug, workflow)
 
-    return sequence
+    # Logic for formatting return
+    node_texts = node.get("messages", [])
+    text = node_texts[0] if node_texts else ""
+
+    bot_text = ""
+    if isinstance(node.get("messages"), list) and node["messages"]:
+        bot_text = node["messages"][0]
+    
+    chat_turn = format_turn(
+        speaker="bot",
+        node_id=node_id,
+        text=bot_text,
+        responses=sequence.get("responses")
+    )
+
+    return {
+        "chat_turns": [chat_turn],
+        "render": sequence.get("render", None)
+    }
+
 
 
 def append_chat_history(session_slug:str, chat_turn:dict):
@@ -719,6 +763,7 @@ def process_test_question(conversation_graph, current_node_id, session_slug):
 
     return ''
 
+
 def save_test_question(conversation_graph, current_node_id, attempt):
     node = conversation_graph.get(current_node_id)
     if node.get("type") != "user":
@@ -741,6 +786,7 @@ def save_test_question(conversation_graph, current_node_id, attempt):
         user_answer=user_answer,
         answer_correct=is_correct,
     )
+
 
 def get_test_results(user, consent_script_version_id):
     """Retrieve the number of correct test responses for a user."""

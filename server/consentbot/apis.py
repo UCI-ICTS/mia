@@ -86,22 +86,30 @@ class ConsentViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
-        operation_description="Load or initialize a consent session using invite UUID",
-        responses={200: ConsentOutputSerializer},
+        operation_description="Load or initialize a consent session using session slug",
+        responses={200: "Structured consent session response"},
         tags=["User Consent"]
     )
     def retrieve(self, request, pk=None):
         session_slug = pk
         try:
-            consent, created = get_or_initialize_user_consent(session_slug)
-            
-            history, just_created = get_or_initialize_consent_history(session_slug)
-            response_data = ConsentOutputSerializer(consent).data
-            response_data["chat"] = history
+            # Get session
+            session = get_object_or_404(ConsentSession, session_slug=session_slug)
 
-            return Response(response_data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+            # Get consent and chat history
+            consent, created = get_or_initialize_user_consent(session_slug)
+            history, _ = get_or_initialize_consent_history(session_slug)
+
+            # Serialize response
+            return Response({
+                "session": ConsentSessionOutputSerializer(session).data,
+                "consent": ConsentOutputSerializer(consent).data,
+                "chat": history,
+                "render": None,  # Reserved for render block if needed
+            }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
         except ValidationError as error:
-            return Response(data={"message": f"{error}"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
         operation_description="Create a new user consent record",
