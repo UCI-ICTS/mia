@@ -7,6 +7,6 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     data: dataReducer,
-    consent: consentReducer,
+    consentChat: consentReducer,
   },
 });

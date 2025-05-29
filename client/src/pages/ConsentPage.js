@@ -24,7 +24,7 @@ const ConsentPage = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [contactModalVisible, setContactModalVisible] = useState(false);
 
-  const { chat, consent, loading, error } = useSelector((state) => state.consent);
+  const { chat, consent, session, loading, error } = useSelector((state) => state.consentChat);
   const email = consent ? consent.email : "Participant"
   // Inactivity timer
   useEffect(() => {

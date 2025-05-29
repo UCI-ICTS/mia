@@ -10,7 +10,7 @@ const { Option } = Select;
 
 const FollowUpFormModal = ({ visible, onClose, userInfo = {} }) => {
   const dispatch = useDispatch();
-  const { chat = [], consent, loading, error } = useSelector((state) => state.consent);
+  const { chat = [], consent, loading, error } = useSelector((state) => state.consentChat);
   const [form] = Form.useForm();
   const lastMessage = chat[chat.length - 1]?.node_id;
   
