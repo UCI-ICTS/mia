@@ -41,10 +41,11 @@ export const submitConsentForm = createAsyncThunk(
 );
 
 const consentSlice = createSlice({
-  name: "consent",
+  name: "consentChat",
   initialState: {
     consent: null,
     chat: [],
+    session: [],
     loading: false,
     error: null,
   },
@@ -64,7 +65,8 @@ const consentSlice = createSlice({
       })
       .addCase(fetchConsentByInvite.fulfilled, (state, action) => {
         state.loading = false;
-        state.consent = action.payload;
+        state.consent = action.payload.consent;
+        state.session = action.payload.session;
         state.chat = action.payload.chat || [];
       })
       .addCase(fetchConsentByInvite.rejected, (state, action) => {
