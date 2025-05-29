@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # consentbot/selectors.py
 
+import uuid
+from datetime import datetime
+from typing import Optional
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound, ValidationError
@@ -63,6 +66,7 @@ def get_form_content(node: dict) -> dict | None:
 
 
 def get_consent_start_id(graph):
+    """Returns graph start"""
     for node_id, node in graph.items():
         if node.get("parent_ids") and node["parent_ids"][0] == "start":
             return node_id
@@ -200,54 +204,32 @@ def get_script_from_session_slug(session_slug: str) -> dict:
         raise NotFound(f"ConsentScript for invite ID {session_slug} not found.")
 
 
-
 def format_turn(
-    conversation_graph: dict,
+    *,
+    speaker: str,
     node_id: str,
-    echo_user_response: str = "",
-    next_sequence: dict | None = None
+    text: str,
+    responses: Optional[list] = None
 ) -> dict:
     """
-    Format a single chat turn in the consent conversation flow.
+    Format a single chat turn for the consent chat history.
 
     Args:
-        conversation_graph (dict): The full JSON-based consent graph.
-        node_id (str): The node the user just responded to.
-        echo_user_response (str, optional): Text representation of the user's input. Defaults to "".
-        next_sequence (dict, optional): Output from `get_next_consent_sequence()`. If not provided,
-                                        it falls back to values from `conversation_graph[node_id]`.
+        speaker (str): "user" or "bot"
+        node_id (str): The node in the consent script this turn relates to.
+        text (str): The message content (user reply or bot message).
+        responses (list, optional): If this is a bot turn, include buttons or form fields.
 
     Returns:
-        dict: A chat turn formatted for frontend display and history tracking. Contains:
-            - node_id: The node being answered
-            - echo_user_response: What the user said or selected
-            - messages: Bot messages
-            - responses: User response options (buttons or form)
-            - render: Render info (form config or button group)
-            - end: Whether this ends the sequence
+        dict: A structured chat turn with metadata for storage and rendering.
     """
-    node = conversation_graph.get(node_id, {})
-
-    # Prefer data from the graph unless rendering a special next_sequence node
-    messages = node.get("messages", [])
-    responses = node.get("responses", [])
-    render = node.get("render")
-    end = node.get("metadata", {}).get("end_sequence", False)
-    
-    if next_sequence:
-        # This is only valid when formatting a bot response *after* get_next_consent_sequence
-        messages = next_sequence.get("messages", messages)
-        responses = next_sequence.get("responses", responses)
-        render = next_sequence.get("render", render)
-        end = next_sequence.get("end", end)
-
     return {
+        "turn_id": str(uuid.uuid4()),
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "speaker": speaker,
         "node_id": node_id,
-        "echo_user_response": echo_user_response,
-        "messages": messages,
-        "responses": responses,
-        "render": render,
-        "end": end,
+        "text": text,
+        "responses": responses or [],
     }
 
 
