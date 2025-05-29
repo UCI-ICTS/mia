@@ -208,7 +208,7 @@ def format_turn(
     *,
     speaker: str,
     node_id: str,
-    text: str,
+    messages: list[str],
     responses: Optional[list] = None
 ) -> dict:
     """
@@ -228,7 +228,7 @@ def format_turn(
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "speaker": speaker,
         "node_id": node_id,
-        "text": text,
+        "messages": messages,
         "responses": responses or [],
     }
 
@@ -246,3 +246,22 @@ def build_chat_from_history(session_slug: str) -> list[dict]:
     history = get_user_consent_history(session_slug)
     return [entry for entry in history if "messages" in entry]
 
+from consentbot.models import ConsentSession
+
+def get_consent_session_or_error(session_slug: str) -> ConsentSession:
+    """
+    Retrieve a ConsentSession by slug or raise a ValueError.
+
+    Args:
+        session_slug (str): The session identifier slug.
+
+    Returns:
+        ConsentSession: The matching session object.
+
+    Raises:
+        ValueError: If no session is found.
+    """
+    try:
+        return ConsentSession.objects.get(session_slug=session_slug)
+    except ConsentSession.DoesNotExist:
+        raise ValueError(f"No session found for slug: {session_slug}")
