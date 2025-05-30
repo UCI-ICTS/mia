@@ -339,36 +339,45 @@ def process_consent_sequence(
     graph: Optional[dict] = None
 ) -> dict:
     """
-    Process the next step in the consent chat graph from a given node.
+    Advance the consent conversation by processing the next sequence of bot messages.
 
-    This retrieves the next bot message sequence and updates the cached
-    workflow state by removing nodes that have already been visited.
+    This function retrieves the next step in the consent chat graph given a starting `node_id` 
+    and session context. It handles dynamic workflows such as test retries, updates cached 
+    workflow state, and returns a formatted chat turn and optional render metadata.
+
+    Special logic is applied for "test_user_understanding" workflows to support branching logic 
+    based on prior test attempts.
 
     Args:
-        node_id (str): The node to begin traversal from.
-        session_slug (str): The session ID (usually a UUID) identifying the consent URL.
-        graph (dict, optional): Parsed conversation graph. If None, it will be loaded from the invite ID.
+        node_id (str): The graph node ID from which to continue the conversation.
+        session_slug (str): Unique identifier for the user’s consent session.
+        graph (dict, optional): Parsed conversation graph. If not provided, it will be loaded 
+            using the session_slug.
 
     Returns:
-        dict: A chat sequence dict containing:
-            - messages: Bot messages
-            - responses: User options (buttons or form)
-            - render: Render metadata (form config)
-            - end: Whether this sequence ends the conversation
-            - visited: List of node IDs traversed in this step
+        dict:
+            {
+                "chat_turns": [dict],   # A list containing one formatted chat turn (bot response)
+                "render": dict or None  # Optional render block, typically a form or button config
+            }
+
+    Raises:
+        ValueError: If the given node_id does not exist in the conversation graph.
     """
-    sequence = None
     if graph is None:
         graph = get_script_from_session_slug(session_slug)
-    node = graph.get(node_id, {})
+    node = graph.get(node_id)
+    if not node:
+        raise ValueError(f"Node {node_id} not found in script.")
 
-    # Handle second test attempt traversal
+    sequence = None
+
+    # Special handling for second test attempt
     if (
         node.get("type") == "bot"
         and node.get("metadata", {}).get("workflow") == "test_user_understanding"
-        # and node.get("metadata", {}).get("test_question") is True
     ):
-        user = ConsentSession.objects.get(session_slug=session_slug).user
+        user = ConsentSession.objects.select_related("user").get(session_slug=session_slug).user
         attempts = ConsentTestAttempt.objects.filter(
             user=user, consent_script_version=user.consent_script
         ).order_by("started_at")
@@ -384,11 +393,10 @@ def process_consent_sequence(
                     skip_correct_test_nodes=True,
                     correct_questions=correct
                 )
-    
-    # Fallback to default behavior
+
     if sequence is None:
         sequence = get_next_consent_sequence(graph, node_id)
-    
+
     # Update workflow cache
     workflow = get_user_workflow(session_slug)
     if workflow and workflow[0] and node_id in workflow[0]:
@@ -397,19 +405,29 @@ def process_consent_sequence(
             workflow.pop(0)
         set_user_workflow(session_slug, workflow)
 
-    # Logic for formatting return
     chat_turn = format_turn(
         speaker="bot",
         node_id=node_id,
         messages=node.get("messages", []),
-        responses=sequence.get("responses")
+        responses=sequence.get("responses"),
+        render=sequence.get("render"),
+        end_sequence=sequence.get("end", False)
     )
+    session = ConsentSession.objects.get(session_slug=session_slug)
+
+    session.current_node = node_id
+    session.visited_nodes.append(node_id)
+
+    # Only update if the user sent a response
+    if "responses" in chat_turn and chat_turn["responses"]:
+        session.responses[node_id] = chat_turn["responses"]
+
+    session.save(update_fields=["current_node", "visited_nodes", "responses"])
 
     return {
         "chat_turns": [chat_turn],
-        "render": sequence.get("render", None)
+        "render": chat_turn["render"],
     }
-
 
 
 def append_chat_history(session_slug:str, chat_turn:dict):
@@ -571,48 +589,70 @@ def handle_consent(graph, session_slug, responses):
     return update_consent_and_advance(session_slug, node_id, graph, "Consent submitted!")
 
 
-def handle_family_enrollment_form(conversation_graph, session_slug, responses):
+def handle_family_enrollment_form(graph, session_slug, responses):
     """
-    Processes the form where a user selects who they are enrolling (self, children, or both).
-    Updates user flags, generates dynamic workflow, and advances the chat sequence.
+    Handles a form where the user selects whom they are enrolling (self, children, or both).
+
+    This:
+    - Updates the user's enrollment flags
+    - Constructs a dynamic sub-workflow based on the checked options
+    - Returns updated chat history
     """
-    checked = responses[0]["value"]
     user = ConsentSession.objects.get(session_slug=session_slug).user
     history = get_user_consent_history(session_slug)
-    parent_node_id = history[-1]["node_id"] if history else None
 
-    if not parent_node_id or parent_node_id not in conversation_graph:
-        raise Exception("Invalid or missing parent node")
+    parent_node_id = history[-1]["node_id"] if history else None
+    if not parent_node_id or parent_node_id not in graph:
+        raise ValueError("Invalid or missing parent node in history.")
+
+    checked_items = responses[0].get("value", [])
+    if not isinstance(checked_items, list):
+        raise ValueError("Expected list of checked items from response.")
 
     try:
-        fields = history[-1]['responses'][0]['label']['fields']
-        checkbox_node_ids = {f['name']: f['id_value'] for f in fields}
-    except Exception:
-        raise Exception("Checkbox fields missing from chat history")
+        field_map = {
+            f["name"]: f["id_value"]
+            for f in history[-1]["responses"][0]["label"]["fields"]
+        }
+    except (KeyError, IndexError, TypeError):
+        raise ValueError("Checkbox field structure invalid or missing from chat history.")
 
-    workflow_ids = []
-    for item in checked:
-        node_id = checkbox_node_ids.get(item)
-        if node_id:
-            workflow_ids.append(node_id)
-            if item == "myself":
-                user.enrolling_myself = True
-            elif item == "myChildChildren":
-                user.enrolling_children = True
-        else:
-            print(f"[warning] {item} not in checkbox_node_ids")
+    workflow_node_ids = []
+    for key in checked_items:
+        node_id = field_map.get(key)
+        if not node_id:
+            continue
+        workflow_node_ids.append(node_id)
+        if key == "myself":
+            user.enrolling_myself = True
+        elif key == "myChildChildren":
+            user.enrolling_children = True
+
+    if not workflow_node_ids:
+        raise ValueError("No valid workflow node IDs resolved from checked values.")
 
     user.save()
 
-    # Create sub-workflow and get next sequence
-    start_node_id = workflow_ids[0]
-    generate_workflow(start_node_id, workflow_ids, session_slug)
-    next_sequence = process_consent_sequence(start_node_id, session_slug)
+    # Build dynamic workflow and sequence
+    start_node_id = workflow_node_ids[0]
+    generate_workflow(start_node_id, workflow_node_ids, session_slug)
+    sequence = process_consent_sequence(start_node_id, session_slug)
 
-    history.append(format_turn(conversation_graph, start_node_id, ", ".join(checked), next_sequence))
+    # Append to chat history
+    history.append(format_turn(
+        speaker="user",
+        node_id=start_node_id,
+        messages=[", ".join(checked_items)],
+        responses=sequence.get("responses"),
+        render=sequence.get("render"),
+        end_sequence=sequence.get("end_sequence", False),
+        timestamp=timezone.now().isoformat()
+    ))
+
+    history.append(sequence["chat_turns"][0])
     set_user_consent_history(session_slug, history)
+    return history
 
-    return build_chat_from_history(session_slug)
 
 
 def handle_user_feedback_form(graph, session_slug, responses):
@@ -874,7 +914,7 @@ def handle_user_step(session_slug:str, node_id:str, graph:dict):
     node = graph.get(node_id, {})
     metadata = node.get("metadata", {})
     workflow = metadata.get("workflow", "")
-    print(node)
+
     # Determine next_node_id based on workflow logic
     if workflow == "test_user_understanding":
         next_node_id = process_test_question(graph, node_id, session_slug)
@@ -925,3 +965,41 @@ def get_consent_session_or_error(session_slug: str) -> ConsentSession:
         return ConsentSession.objects.get(session_slug=session_slug)
     except ConsentSession.DoesNotExist:
         raise ValueError(f"No session found for slug: {session_slug}")
+
+
+def handle_form_submission(data):
+    """
+    Process a submitted form during the consent chat flow.
+
+    Args:
+        data (dict): Validated data from ConsentResponseInputSerializer
+
+    Returns:
+        tuple: (history list, render dict)
+    """
+    session_slug = str(data["session_slug"])
+    form_type = data["form_type"]
+    responses = data["form_responses"] + [{"name": "node_id", "value": data["node_id"]}]
+    graph = get_script_from_session_slug(session_slug)
+
+    handler = FORM_HANDLER_MAP.get(form_type)
+    if not handler:
+        raise ValueError(f"Unknown form_type: {form_type}")
+
+    history = handler(graph, session_slug, responses)
+
+    render = history[-1]['render']
+    
+    return history, render
+
+FORM_HANDLER_MAP = {
+    "family_enrollment": handle_family_enrollment_form,
+    "checkbox_form": handle_family_enrollment_form,
+    "sample_storage": handle_sample_storage,
+    "phi_use": handle_phi_use,
+    "result_return": handle_result_return,
+    "feedback": handle_user_feedback_form,
+    "consent": handle_consent,
+    "text_fields": handle_other_adult_contact_form,
+    # "child_contact": handle_child_contact_form,
+}

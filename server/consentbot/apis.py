@@ -38,13 +38,7 @@ from consentbot.services import (
     get_or_initialize_consent_history,
     get_consent_session_or_error,
     get_or_initialize_user_consent,
-    handle_family_enrollment_form,
-    handle_consent,
-    handle_phi_use,
-    handle_result_return,
-    handle_sample_storage,
-    handle_user_feedback_form,
-    handle_other_adult_contact_form,
+    handle_form_submission,
     handle_user_step
 )
 
@@ -53,23 +47,12 @@ from consentbot.selectors import (
 
 )
 from utils.cache import set_user_consent_history
-from utils.api import (
+from utils.api_helpers import (
     ConsentResponseSchema,
     consent_response_constructor
 )
 
 User = get_user_model()
-FORM_HANDLER_MAP = {
-    "family_enrollment": handle_family_enrollment_form,
-    "checkbox_form": handle_family_enrollment_form,
-    "sample_storage": handle_sample_storage,
-    "phi_use": handle_phi_use,
-    "result_return": handle_result_return,
-    "feedback": handle_user_feedback_form,
-    "consent": handle_consent,
-    "text_fields": handle_other_adult_contact_form,
-    # "child_contact": handle_child_contact_form,
-}
 
 class ConsentViewSet(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
@@ -417,34 +400,31 @@ class ConsentResponseViewSet(viewsets.ViewSet):
         tags=["Consent Response"]
     )
     def create(self, request):
-        serializer = ConsentResponseInputSerializer(data=request.data, context={"request": request})
-        serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
 
         try:
-            return self._handle_form_submission(data)
+            serializer = ConsentResponseInputSerializer(data=request.data, context={"request": request})
+            serializer.is_valid(raise_exception=True)
+            data = serializer.validated_data
+            session = get_consent_session_or_error(data["session_slug"])
+            consent, _ = get_or_initialize_user_consent(data["session_slug"])
+        
+            history, render = handle_form_submission(data)
+            return consent_response_constructor(
+                status_code=status.HTTP_200_OK,
+                status_label="ok",
+                session=ConsentSessionOutputSerializer(session).data,
+                consent=ConsentOutputSerializer(consent).data,
+                chat=history,
+                render=render
+            )
 
         except Exception as e:
-            return Response({
-                "chat": [],
-                "status": "error",
-                "error": str(e),
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-    def _handle_form_submission(self, data):
-        session_slug = str(data["session_slug"])
-        form_type = data["form_type"]
-        responses = data["form_responses"] + [{"name": "node_id", "value": data["node_id"]}]
-        graph = get_script_from_session_slug(session_slug)
-
-        handler = FORM_HANDLER_MAP.get(form_type)
-        if not handler:
-            raise ValueError(f"Unknown form_type: {form_type}")
-
-        history = handler(graph, session_slug, responses)
-        render = get_render_block_for_node(history[-1]["node_id"], graph)
-
-        return Response({
-            "chat": history,
-            "render": render
-        })
+            return consent_response_constructor(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                status_label="error",
+                session=None,
+                consent=None,
+                chat=[],
+                render=None,
+                error=str(e)
+            )
