@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
-from consentbot.models import ConsentUrl, ConsentTestAttempt
+from consentbot.models import ConsentSession, ConsentTestAttempt
 from django.contrib.auth import get_user_model
 
 
@@ -103,11 +103,11 @@ FORM_RESPONSES={
 
 count = 0
 
-def form_handler(node:dict, invite_id:str):
+def form_handler(node:dict, session_slug:str):
     form_type = node['responses'][0]['label']['form_type']
     url = f"/mia/consentbot/consent-response/"
     payload = {
-        "invite_id": str(invite_id),
+        "session_slug": str(session_slug),
         "node_id": node['responses'][0]['id'],
         "form_type": form_type,
         "form_responses": FORM_RESPONSES[form_type]
@@ -120,13 +120,13 @@ def form_handler(node:dict, invite_id:str):
     print(response.data['chat'][-1]['node_id'])
     return response.data['chat'][-1]['node_id']
 
-def retry_test_handler(node: dict, invite_id: str, count: int, scenario_key: str, retry:bool=False):
+def retry_test_handler(node: dict, session_slug: str, count: int, scenario_key: str, retry:bool=False):
     correct_nodes = TEST_SCENARIOS[scenario_key]["correct_nodes"][:]
     answer_node_id = node['responses'][0]['id']  # fallback
 
     if retry:
         # Confirm the test results
-        user = ConsentUrl.objects.get(consent_url=invite_id).user
+        user = ConsentSession.objects.get(session_slug=session_slug).user
         attempts = ConsentTestAttempt.objects.filter(
             user=user, consent_script_version=user.consent_script
         ).order_by("started_at")
@@ -136,25 +136,25 @@ def retry_test_handler(node: dict, invite_id: str, count: int, scenario_key: str
                 if answer['id'] in correct_nodes:
                     answer_node_id = answer['id']
                     break
-            retry_res = APIClient().get(f"/mia/consentbot/consent-response/{invite_id}/?node_id={answer_node_id}")
+            retry_res = APIClient().get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={answer_node_id}")
             node = retry_res.data["chat"][-1]
             # print("\n", node, "\n", "135 count: ", count, "\n")
             # print("\nRetry answer submitted:", answer_node_id, "\n")
     answer_node_id = node['responses'][0]['id']
-    final_res = APIClient().get(f"/mia/consentbot/consent-response/{invite_id}/?node_id={answer_node_id}")
+    final_res = APIClient().get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={answer_node_id}")
     answer_node_id = final_res.data['chat'][-1]['responses'][0]['id']
     return answer_node_id
 
     
 NUM_TEST_QUESTIONS = 10  # or import from your settings/constants
 
-def test_handler(node: dict, invite_id: str, count: int, scenario_key: str, retry: bool = False):
+def test_handler(node: dict, session_slug: str, count: int, scenario_key: str, retry: bool = False):
     correct_nodes = TEST_SCENARIOS[scenario_key].get("correct_nodes", [])[:]
     answer_node_id =  node['responses'][0]['id']
 
     while answer_node_id != "nFpTPVg":
         count += 1
-        res = APIClient().get(f"/mia/consentbot/consent-response/{invite_id}/?node_id={answer_node_id}")
+        res = APIClient().get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={answer_node_id}")
         count += 1
         last_turn = res.data["chat"][-1]
 
@@ -175,9 +175,9 @@ def test_handler(node: dict, invite_id: str, count: int, scenario_key: str, retr
             else:
                 answer_node_id = last_turn['responses'][0]['id']
 
-    user = ConsentUrl.objects.get(consent_url=invite_id).user
+    user = ConsentSession.objects.get(session_slug=session_slug).user
     attempt = ConsentTestAttempt.objects.get(user=user, consent_script_version=user.consent_script)
-    conf_res = APIClient().get(f"/mia/consentbot/consent-response/{invite_id}/?node_id={answer_node_id}")
+    conf_res = APIClient().get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={answer_node_id}")
 
     if attempt.percent_correct() == 100:
         return conf_res.data["chat"][-1]['responses'][0]['id']
@@ -212,9 +212,10 @@ class ConsentTestFlowTest(TestCase):
         self.assertEqual(create_response.status_code, 201)
 
         get_invite = self.client.get("/mia/consentbot/consent-url/jane/invite-link/")
-        self.invite_id = get_invite.data['consent_url']
-        self.user = ConsentUrl.objects.get(consent_url=self.invite_id).user
-        url = f"/mia/consentbot/consent/{self.invite_id}/"
+        self.session_slug = get_invite.data['session_slug']
+        import pdb; pdb.set_trace()
+        self.user = ConsentSession.objects.get(session_slug=self.session_slug).user
+        url = f"/mia/consentbot/consent/{self.session_slug}/"
         res = self.client.get(url)
         count = 0
 
@@ -235,18 +236,18 @@ class ConsentTestFlowTest(TestCase):
             if not responses:
                 break
             if responses[0]['id'] in FORM_NODES:
-                response_id = form_handler(last_turn, self.invite_id)
+                response_id = form_handler(last_turn, self.session_slug)
             
             if responses[0]['id'] == "bmorWZo":
-                response_id = test_handler(last_turn, self.invite_id, count, "needs_retry")
+                response_id = test_handler(last_turn, self.session_slug, count, "needs_retry")
                 
             if response_id == "kZ6qj4C":
-                retry_res = self.client.get(f"/mia/consentbot/consent-response/{self.invite_id}/?node_id={response_id}")
-                response_id = retry_test_handler(retry_res.data['chat'][-1], self.invite_id, count, "perfect_score", True)
+                retry_res = self.client.get(f"/mia/consentbot/consent-response/{self.session_slug}/?node_id={response_id}")
+                response_id = retry_test_handler(retry_res.data['chat'][-1], self.session_slug, count, "perfect_score", True)
             if response_id == None:
                 response_id = responses[0]["id"]
             res = self.client.get(
-                f"/mia/consentbot/consent-response/{self.invite_id}/?node_id={response_id}"
+                f"/mia/consentbot/consent-response/{self.session_slug}/?node_id={response_id}"
             )
             try:
                 self.assertEqual(res.status_code, 200)

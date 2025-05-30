@@ -9,7 +9,6 @@ const { Text } = Typography;
 
 const ChatBubbles = ({ turn, username }) => {
   const {messages, speaker } = turn;
-  console.log(turn)
   return (
     <div className="bubble-container">
       {speaker === "bot" ? (

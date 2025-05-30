@@ -2,10 +2,10 @@
 # consentbot/selectors.py
 
 import uuid
-from datetime import datetime
 from typing import Optional
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework.exceptions import NotFound, ValidationError
 from consentbot.models import (
     ConsentScript,
@@ -205,31 +205,25 @@ def get_script_from_session_slug(session_slug: str) -> dict:
 
 
 def format_turn(
-    *,
     speaker: str,
     node_id: str,
     messages: list[str],
-    responses: Optional[list] = None
+    responses: Optional[list] = None,
+    render: Optional[dict] = None,
+    end_sequence: bool = False,
+    timestamp: Optional[str] = None
 ) -> dict:
     """
-    Format a single chat turn for the consent chat history.
-
-    Args:
-        speaker (str): "user" or "bot"
-        node_id (str): The node in the consent script this turn relates to.
-        text (str): The message content (user reply or bot message).
-        responses (list, optional): If this is a bot turn, include buttons or form fields.
-
-    Returns:
-        dict: A structured chat turn with metadata for storage and rendering.
+    Standardized format for a single chat turn.
     """
     return {
-        "turn_id": str(uuid.uuid4()),
-        "timestamp": datetime.utcnow().isoformat() + "Z",
         "speaker": speaker,
         "node_id": node_id,
         "messages": messages,
         "responses": responses or [],
+        "render": render,
+        "end_sequence": end_sequence,
+        "timestamp": timestamp or timezone.now().isoformat()
     }
 
 
