@@ -2,10 +2,14 @@
 # consentbot/models.py
 
 import uuid
+import secrets
+import string
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
-from authentication.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 def default_expiry():
     return timezone.now() + timedelta(weeks=2)
@@ -36,11 +40,6 @@ class Consent(models.Model):
     child_full_name_consent = models.CharField(max_length=200, null=True, blank=True)
     consented_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-
-class ConsentCache(models.Model):
-    key = models.CharField(max_length=200, primary_key=True)
-    value = models.TextField()
 
 
 class ConsentScript(models.Model):
@@ -103,7 +102,6 @@ class ConsentTestAttempt(models.Model):
         return self.answers.filter(answer_correct=False).values_list("question_node_id", flat=True)
 
 
-
 class ConsentTestAnswer(models.Model):
     answer_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     attempt = models.ForeignKey(ConsentTestAttempt, on_delete=models.CASCADE, related_name="answers")
@@ -114,9 +112,32 @@ class ConsentTestAnswer(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
 
 
-class ConsentUrl(models.Model):
-    consent_url_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    consent_url = models.UUIDField(default=uuid.uuid4, unique=True)
+class ConsentSession(models.Model):
+    session_slug = models.SlugField(primary_key=True, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="consent_sessions")
+    script = models.ForeignKey("ConsentScript", on_delete=models.CASCADE)
+
+    # Chat flow state
+    current_node = models.CharField(max_length=100)
+    visited_nodes = models.JSONField(default=list)   # ["node1", "node2"]
+    responses = models.JSONField(default=dict)       # {"node1": {...}, "node2": {...}}
+    workflow = models.CharField(max_length=100, blank=True, null=True)
+    num_test_tries = models.PositiveIntegerField(default=0)
+
+    # Lifecycle flags
+    is_active = models.BooleanField(default=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(default=default_expiry)
-    user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='consent_urls')
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def generate_session_slug(cls, length=12):
+        alphabet = string.ascii_lowercase + string.digits
+        while True:
+            candidate = ''.join(secrets.choice(alphabet) for _ in range(length))
+            if not cls.objects.filter(session_slug=candidate).exists():
+                return candidate
+
+    def __str__(self):
+        return f"{self.session_slug} ({self.session_slug})"

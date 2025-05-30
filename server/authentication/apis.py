@@ -176,7 +176,7 @@ class UserViewSet(viewsets.ViewSet):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
             activation_url = (
-                f"{settings.PUBLIC_HOSTNAME}password-create?uid={uid}&token={token}"
+                f"{settings.PUBLIC_HOSTNAME}/password-create?uid={uid}&token={token}"
             )
 
             # Email the activation link

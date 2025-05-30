@@ -7,7 +7,7 @@ const titleMap = {
   "/dashboard": "Dashboard",
   "/password-reset": "Reset Password",
   "/password-create": "Create Password",
-  "/consent/:invite_id": "Consent Chat",
+  "/consent/:session_slug": "Consent Chat",
   // Add more routes as needed
 };
 

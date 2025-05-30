@@ -14,7 +14,7 @@ import FollowUpModal from "../components/FollowUpModal";
 const { Title, Paragraph } = Typography;
 
 const ConsentPage = () => {
-  const { invite_id } = useParams();
+  const { session_slug } = useParams();
   const dispatch = useDispatch();
   const bottomRef = useRef(null);
   const isInactive = useInActivityTimer(5*60*1000)
@@ -24,7 +24,7 @@ const ConsentPage = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [contactModalVisible, setContactModalVisible] = useState(false);
 
-  const { chat, consent, loading, error } = useSelector((state) => state.consent);
+  const { chat, consent, session, loading, error } = useSelector((state) => state.consentChat);
   const email = consent ? consent.email : "Participant"
   // Inactivity timer
   useEffect(() => {
@@ -59,13 +59,13 @@ const ConsentPage = () => {
   }, [chat]);
 
   useEffect(() => {
-    if (invite_id) {
-      dispatch(fetchConsentByInvite(invite_id));
+    if (session_slug) {
+      dispatch(fetchConsentByInvite(session_slug));
     }
-  }, [invite_id, dispatch]);
+  }, [session_slug, dispatch]);
 
   const handleButtonClick = (node_id) => {
-    dispatch(submitConsentResponse({ invite_id, node_id }));
+    dispatch(submitConsentResponse({ session_slug, node_id }));
   };
 
   const renderFooter = () => {
@@ -92,7 +92,7 @@ const ConsentPage = () => {
       {!isTyping && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
           {isForm ? (
-            <ConsentFormSubmission node_id={node_id} invite_id={invite_id} form={responses[0].label} />
+            <ConsentFormSubmission node_id={node_id} session_slug={session_slug} form={responses[0].label} />
           ) : (
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
               {responses.map(({ id, label }) => (

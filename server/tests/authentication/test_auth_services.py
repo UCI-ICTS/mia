@@ -4,7 +4,8 @@
 from django.test import TestCase
 from rest_framework import serializers
 from rest_framework.test import APIClient
-from authentication.models import User, FollowUp, Feedback
+from django.contrib.auth import get_user_model
+from authentication.models import FollowUp, Feedback
 from authentication.services import (
     UserInputSerializer,
     UserOutputSerializer,
@@ -15,6 +16,8 @@ from authentication.services import (
     ChangePasswordSerializer,
     create_follow_up_with_user
 )
+
+User = get_user_model()
 
 class AuthServiceSerializerTests(TestCase):
     fixtures = ["tests/fixtures/test_data.json"]
@@ -140,10 +143,10 @@ class AuthServiceSerializerTests(TestCase):
         self.assertIn("No user found with that email.", str(context.exception))
 
     def test_create_follow_up_with_user(self):
-        invite_id = str(self.user.consent_urls.first().consent_url)
+        session_slug = str(self.user.consent_sessions.first().session_slug)
         reason = "Help"
         more_info = "Please follow up."
-        follow_up = create_follow_up_with_user(invite_id, reason, more_info)
+        follow_up = create_follow_up_with_user(session_slug, reason, more_info)
         self.assertEqual(follow_up.user, self.user)
         self.assertEqual(follow_up.follow_up_reason, reason)
         self.assertEqual(follow_up.follow_up_info, more_info)

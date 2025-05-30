@@ -1,43 +1,46 @@
 #!/usr/bin/env python
-# consentbot/serializers.py
+# consentbot/services.py
 
-import datetime
-from rest_framework import serializers
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from rest_framework import serializers
 from typing import Optional
-from authentication.services import FeedbackInputSerializer
+
+from authentication.services import FeedbackInputSerializer, create_follow_up_with_user
 from consentbot.models import (
     Consent,
     ConsentAgeGroup,
     ConsentScript,
     ConsentTestAnswer,
     ConsentTestAttempt,
-    ConsentUrl,
+    ConsentSession,
 )
 from consentbot.selectors import (
     build_chat_from_history,
     format_turn,
-    get_script_from_invite_id,
+    get_script_from_session_slug,
     get_next_consent_sequence,
     get_consent_start_id,
-    get_user_label
+    get_user_label,
 )
 
 from utils.cache import (
     get_user_consent_history,
     set_user_consent_history,
+    append_to_consent_history,
+    get_flag,
+    set_flag,
     get_user_workflow,
     set_user_workflow,
-    set_consenting_myself,
-    set_consent_node,
-    get_consenting_children,
-    set_consenting_children,
-    get_consent_node
+    # set_consent_node,
+    # get_consent_node,
+    # get_consenting_children,
+    # set_consenting_myself,
 ) 
 
 User = get_user_model()  
@@ -45,9 +48,26 @@ User = get_user_model()
 PERCENT_TEST_QUESTIONS_CORRECT = 100
 NUM_TEST_TRIES = 2
 
-
 class RenderBlockSerializer(serializers.Serializer):
-    type = serializers.ChoiceField(choices=["button", "form"])
+    """
+    Describes the next UI input block the frontend should render.
+
+    This structure is separate from chat history. It represents the current
+    actionable form or button set that should be presented to the user.
+
+    Example:
+        {
+            "type": "form",
+            "fields": [
+                {"name": "age", "label": "Your age", "type": "number"}
+            ]
+        }
+
+    Fields:
+        - type: Specifies the type of UI block ("form" or "button").
+        - fields: A list of field configuration dictionaries. Required for forms.
+    """
+    type = serializers.ChoiceField(choices=["form", "button"])
     fields = serializers.ListField(
         child=serializers.DictField(),
         required=False,
@@ -89,12 +109,12 @@ class ConsentInputSerializer(serializers.ModelSerializer):
                 dependent_user = User.objects.get(user_id=dependent_user_id)
 
         # 🔍 Find latest consent URL for the user
-        invite = ConsentUrl.objects.filter(user=user).order_by('-created_at').first()
+        invite = ConsentSession.objects.filter(user=user).order_by('-created_at').first()
         if not invite:
             raise serializers.ValidationError("No invite URL found for this user.")
 
         # 🔍 Lookup the ConsentScript based on the invite
-        consent_script = get_script_from_invite_id(invite.consent_url)
+        consent_script = get_script_from_session_slug(invite.session_slug)
 
         return Consent.objects.create(
             user=user,
@@ -175,7 +195,7 @@ class ConsentScriptOutputSerializer(serializers.ModelSerializer):
 
 
 class ConsentResponseInputSerializer(serializers.Serializer):
-    invite_id = serializers.UUIDField(
+    session_slug = serializers.CharField(
         help_text="UUID of the invite link provided to the user."
     )
     node_id = serializers.CharField(
@@ -208,31 +228,35 @@ class ConsentResponseInputSerializer(serializers.Serializer):
         return data
 
 
-class ConsentUrlInputSerializer(serializers.ModelSerializer):
+class ConsentSessionInputSerializer(serializers.ModelSerializer):
     username = serializers.CharField(write_only=True)
 
     class Meta:
-        model = ConsentUrl
+        model = ConsentSession
         fields = ['username']
 
     def create(self, validated_data):
-
         username = validated_data.pop('username')
         user = User.objects.get(username=username)
+        script_id = user.consent_script.script_id
 
-        return ConsentUrl.objects.create(user=user, **validated_data)
+        return ConsentSession.objects.create(
+            user=user,
+            script_id=script_id,
+            session_slug=ConsentSession.generate_session_slug(),
+            **validated_data
+        )
 
 
-class ConsentUrlOutputSerializer(serializers.ModelSerializer):
+class ConsentSessionOutputSerializer(serializers.ModelSerializer):
     user_id = serializers.UUIDField(source='user.user_id', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
     invite_link = serializers.SerializerMethodField()
 
     class Meta:
-        model = ConsentUrl
+        model = ConsentSession
         fields = [
-            'consent_url_id',
-            'consent_url',
+            'session_slug',
             'invite_link',
             'created_at',
             'expires_at',
@@ -242,51 +266,36 @@ class ConsentUrlOutputSerializer(serializers.ModelSerializer):
 
     def get_invite_link(self, obj):
         base_url = getattr(settings, 'PUBLIC_HOSTNAME', 'https://genomics.icts.uci.edu')
-        return f"{base_url}/consent/{obj.consent_url}/"
+        return f"{base_url}/consent/{obj.session_slug}/"
 
 
-def clean_up_after_chat(invite_id):
-    """Set the invite URL to expire 24 hours from now."""
+def mark_session_for_expiration(session_slug):
+    """Set a session to expire 24 hours from now.
+    
+    Call when    
+        At the end of the conversation (final node)
+        After consent is submitted or declined
+        After feedback is submitted
+        Or after N minutes of inactivity (future: background job)
+    """
     try:
-        consent_url = ConsentUrl.objects.get(consent_url=str(invite_id))
-        consent_url.expires_at = timezone.now() + datetime.timedelta(hours=24)
-        consent_url.save()
-    except ConsentUrl.DoesNotExist:
-        # Log or raise if needed
-        pass
+        session = ConsentSession.objects.get(session_slug=session_slug)
+        session.expires_at = timezone.now() + timedelta(hours=24)
+        session.save(update_fields=["expires_at"])
+    except ConsentSession.DoesNotExist:
+        pass  # TODO: Or log
 
 
-def get_or_initialize_consent_history(invite_id):
+def get_or_initialize_user_consent(session_slug:str) -> bool:
     """
-    Retrieve existing consent history for a given invite_id,
-    or initialize it with the starting node and first chat sequence.
-
-    Returns:
-        tuple: (history, just_created)
-    """
-    history = get_user_consent_history(invite_id)
-    if history:
-        return history, False
-
-    graph = get_script_from_invite_id(invite_id)
-    start_node = get_consent_start_id(graph)
-    sequence = process_consent_sequence(start_node, invite_id, graph=graph)
-
-    history = [format_turn(graph, start_node, echo_user_response="", next_sequence=sequence)]
-    set_user_consent_history(invite_id, history)
-    return history, True
-
-
-def get_or_initialize_user_consent(invite_id:str) -> bool:
-    """
-    Given an invite ID (UUID), retrieve the existing Consent or initialize one.
+    Given a session_slug, retrieve the existing Consent or initialize one.
 
     Returns:
         tuple: (Consent instance, bool indicating if it was created)
     """
-    # Get the ConsentUrl instance (or 404 if invalid/expired)
-    invite = get_object_or_404(ConsentUrl, consent_url=invite_id)
 
+    # Get the ConsentSession instance (or 404 if invalid/expired)
+    invite = get_object_or_404(ConsentSession, session_slug=session_slug)
     # Check for an existing Consent record
     existing = Consent.objects.filter(user=invite.user, dependent_user=None).order_by('-created_at').first()
 
@@ -303,9 +312,30 @@ def get_or_initialize_user_consent(invite_id:str) -> bool:
     return new_consent, True
 
 
+def get_or_initialize_consent_history(session_slug):
+    """
+    Retrieve existing consent history for a given session_slug,
+    or initialize it with the starting node and first chat sequence.
+
+    Returns:
+        tuple: (history, just_created)
+    """
+    history = get_user_consent_history(session_slug)
+    if history:
+        return history, False
+
+    graph = get_script_from_session_slug(session_slug)
+    start_node = get_consent_start_id(graph)
+    sequence = process_consent_sequence(start_node, session_slug, graph=graph)
+
+    history = sequence["chat_turns"]
+    set_user_consent_history(session_slug, history)
+    return history, True
+
+
 def process_consent_sequence(
     node_id: str,
-    invite_id: str,
+    session_slug: str,
     graph: Optional[dict] = None
 ) -> dict:
     """
@@ -316,7 +346,7 @@ def process_consent_sequence(
 
     Args:
         node_id (str): The node to begin traversal from.
-        invite_id (str): The session ID (usually a UUID) identifying the consent URL.
+        session_slug (str): The session ID (usually a UUID) identifying the consent URL.
         graph (dict, optional): Parsed conversation graph. If None, it will be loaded from the invite ID.
 
     Returns:
@@ -329,7 +359,7 @@ def process_consent_sequence(
     """
     sequence = None
     if graph is None:
-        graph = get_script_from_invite_id(invite_id)
+        graph = get_script_from_session_slug(session_slug)
     node = graph.get(node_id, {})
 
     # Handle second test attempt traversal
@@ -338,7 +368,7 @@ def process_consent_sequence(
         and node.get("metadata", {}).get("workflow") == "test_user_understanding"
         # and node.get("metadata", {}).get("test_question") is True
     ):
-        user = ConsentUrl.objects.get(consent_url=invite_id).user
+        user = ConsentSession.objects.get(session_slug=session_slug).user
         attempts = ConsentTestAttempt.objects.filter(
             user=user, consent_script_version=user.consent_script
         ).order_by("started_at")
@@ -360,51 +390,92 @@ def process_consent_sequence(
         sequence = get_next_consent_sequence(graph, node_id)
     
     # Update workflow cache
-    workflow = get_user_workflow(invite_id)
+    workflow = get_user_workflow(session_slug)
     if workflow and workflow[0] and node_id in workflow[0]:
         workflow[0] = [n for n in workflow[0] if n not in sequence["visited"]]
         if not workflow[0] or sequence["end"]:
             workflow.pop(0)
-        set_user_workflow(invite_id, workflow)
+        set_user_workflow(session_slug, workflow)
 
-    return sequence
+    # Logic for formatting return
+    chat_turn = format_turn(
+        speaker="bot",
+        node_id=node_id,
+        messages=node.get("messages", []),
+        responses=sequence.get("responses")
+    )
+
+    return {
+        "chat_turns": [chat_turn],
+        "render": sequence.get("render", None)
+    }
 
 
-def append_chat_history(invite_id:str, chat_turn:dict):
+
+def append_chat_history(session_slug:str, chat_turn:dict):
     """
     Appends a chat turn to the user's consent chat history in cache.
 
     Args:
-        invite_id (str): The invite UUID identifying the session.
+        session_slug (str): The invite UUID identifying the session.
         chat_turn (dict): A formatted chat turn dictionary using `format_turn`.
     """
-    history = get_user_consent_history(invite_id)
+    history = get_user_consent_history(session_slug)
     history.append(chat_turn)
-    set_user_consent_history(invite_id, history)
+    set_user_consent_history(session_slug, history)
 
 
-def update_consent_and_advance(invite_id, node_id, graph, echo_user_response):
+def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
+    """
+    Updates consent state and advances to the next node in the graph.
+
+    Args:
+        session_slug (str): The session identifier.
+        node_id (str): The current node ID the user responded to.
+        graph (dict): The full conversation graph.
+        user_reply (str): The visible text from the user's choice/form.
+
+    Returns:
+        list: Full updated chat history.
+    """
     if node_id not in graph:
-        return [{"messages": [f"Invalid node: {node_id}"], "responses": []}]
+        return [{"messages": ["Invalid node: {node_id}"], "responses": []}]
+
+    # Determine next node
     next_node_id = graph[node_id]["child_ids"][0]
-    next_sequence = process_consent_sequence(next_node_id, invite_id)
-    history = get_user_consent_history(invite_id)
+    sequence = process_consent_sequence(next_node_id, session_slug, graph=graph)
 
-    history.append(format_turn(graph, node_id, echo_user_response, next_sequence))
-    set_user_consent_history(invite_id, history)
-    clean_up_after_chat(invite_id)
+    # Get current history
+    history = get_user_consent_history(session_slug)
 
-    return build_chat_from_history(invite_id)
+    # Add user's reply
+    history.append(format_turn(
+        speaker="user",
+        node_id=node_id,
+        messages=[user_reply]
+    ))
+
+    # Add bot's next messages
+    history.extend(sequence["chat_turns"])
+
+    # Save updated history
+    set_user_consent_history(session_slug, history)
+
+    # Optionally: update lifecycle
+    #TODO sessions to expire after X hours of inactivity or after final consent?
+    # mark_session_used_once(session_slug)
+
+    return build_chat_from_history(session_slug)
 
 
-def handle_sample_storage(graph, invite_id, responses):
+def handle_sample_storage(graph, session_slug, responses):
     """
     Processes the 'sample storage' form by updating the user's consent record,
     saving chat state, and progressing the conversation.
 
     Args:
         conversation_graph (dict): The full consent script graph.
-        invite_id (str): The invite UUID identifying the session.
+        session_slug (str): The invite UUID identifying the session.
         responses (list): List of form response dicts.
 
     Returns:
@@ -412,14 +483,14 @@ def handle_sample_storage(graph, invite_id, responses):
     """
 
     samples, node_id = responses[0]['value'], responses[1]['value']
-    consent = Consent.objects.filter(user=ConsentUrl.objects.get(consent_url=invite_id).user).latest('created_at')
+    consent = Consent.objects.filter(user=ConsentSession.objects.get(session_slug=session_slug).user).latest('created_at')
     consent.store_sample_this_study = True
     consent.store_sample_other_studies = (samples == "storeSamplesOtherStudies")
     consent.save()
-    return update_consent_and_advance(invite_id, node_id, graph, "Sample use submitted!")
+    return update_consent_and_advance(session_slug, node_id, graph, "Sample use submitted!")
 
 
-def handle_phi_use(graph, invite_id, responses):
+def handle_phi_use(graph, session_slug, responses):
     """
     Handles the form submission for PHI (Protected Health Information) usage consent.
 
@@ -428,7 +499,7 @@ def handle_phi_use(graph, invite_id, responses):
 
     Args:
         conversation_graph (dict): The parsed consent script.
-        invite_id (str): UUID of the invite link.
+        session_slug (str): UUID of the invite link.
         responses (list): List of form responses submitted by the user.
 
     Returns:
@@ -436,14 +507,14 @@ def handle_phi_use(graph, invite_id, responses):
     """
 
     samples, node_id = responses[0]['value'], responses[1]['value']
-    consent = Consent.objects.filter(user=ConsentUrl.objects.get(consent_url=invite_id).user).latest('created_at')
+    consent = Consent.objects.filter(user=ConsentSession.objects.get(session_slug=session_slug).user).latest('created_at')
     consent.store_phi_this_study = True
     consent.store_phi_other_studies = (samples == "storePhiOtherStudies")
     consent.save()
-    return update_consent_and_advance(invite_id, node_id, graph, "PHI use submitted!")
+    return update_consent_and_advance(session_slug, node_id, graph, "PHI use submitted!")
 
 
-def handle_result_return(graph, invite_id, responses):
+def handle_result_return(graph, session_slug, responses):
     """
     Handles the form submission for return of genetic results preferences.
 
@@ -452,7 +523,7 @@ def handle_result_return(graph, invite_id, responses):
 
     Args:
         conversation_graph (dict): The parsed consent script.
-        invite_id (str): UUID of the invite link.
+        session_slug (str): UUID of the invite link.
         responses (list): List of form responses submitted by the user.
 
     Returns:
@@ -461,15 +532,15 @@ def handle_result_return(graph, invite_id, responses):
 
     response_dict = {r["name"]: r["value"] for r in responses}
     node_id = response_dict["node_id"]
-    consent = Consent.objects.filter(user=ConsentUrl.objects.get(consent_url=invite_id).user).latest('created_at')
+    consent = Consent.objects.filter(user=ConsentSession.objects.get(session_slug=session_slug).user).latest('created_at')
     consent.return_primary_results = response_dict.get("rorPrimary") is True
     consent.return_actionable_secondary_results = response_dict.get("rorSecondary") is True
     consent.return_secondary_results = response_dict.get("rorSecondaryNot") is True
     consent.save()
-    return update_consent_and_advance(invite_id, node_id, graph, "Result return preferences submitted!")
+    return update_consent_and_advance(session_slug, node_id, graph, "Result return preferences submitted!")
 
 
-def handle_consent(graph, invite_id, responses):
+def handle_consent(graph, session_slug, responses):
     """
     Handles the final user consent form submission.
 
@@ -478,7 +549,7 @@ def handle_consent(graph, invite_id, responses):
 
     Args:
         conversation_graph (dict): The parsed consent script.
-        invite_id (str): UUID of the invite link.
+        session_slug (str): UUID of the invite link.
         responses (list): List of form responses submitted by the user.
 
     Returns:
@@ -487,7 +558,7 @@ def handle_consent(graph, invite_id, responses):
 
     response_dict = {r["name"]: r["value"] for r in responses}
     node_id = response_dict["node_id"]
-    user = ConsentUrl.objects.get(consent_url=invite_id).user
+    user = ConsentSession.objects.get(session_slug=session_slug).user
     consent = Consent.objects.filter(user=user).latest('created_at')
 
     if response_dict.get("consent"):
@@ -497,17 +568,17 @@ def handle_consent(graph, invite_id, responses):
         user.save()
         consent.save()
 
-    return update_consent_and_advance(invite_id, node_id, graph, "Consent submitted!")
+    return update_consent_and_advance(session_slug, node_id, graph, "Consent submitted!")
 
 
-def handle_family_enrollment_form(conversation_graph, invite_id, responses):
+def handle_family_enrollment_form(conversation_graph, session_slug, responses):
     """
     Processes the form where a user selects who they are enrolling (self, children, or both).
     Updates user flags, generates dynamic workflow, and advances the chat sequence.
     """
     checked = responses[0]["value"]
-    user = ConsentUrl.objects.get(consent_url=invite_id).user
-    history = get_user_consent_history(invite_id)
+    user = ConsentSession.objects.get(session_slug=session_slug).user
+    history = get_user_consent_history(session_slug)
     parent_node_id = history[-1]["node_id"] if history else None
 
     if not parent_node_id or parent_node_id not in conversation_graph:
@@ -535,22 +606,22 @@ def handle_family_enrollment_form(conversation_graph, invite_id, responses):
 
     # Create sub-workflow and get next sequence
     start_node_id = workflow_ids[0]
-    generate_workflow(start_node_id, workflow_ids, invite_id)
-    next_sequence = process_consent_sequence(start_node_id, invite_id)
+    generate_workflow(start_node_id, workflow_ids, session_slug)
+    next_sequence = process_consent_sequence(start_node_id, session_slug)
 
     history.append(format_turn(conversation_graph, start_node_id, ", ".join(checked), next_sequence))
-    set_user_consent_history(invite_id, history)
+    set_user_consent_history(session_slug, history)
 
-    return build_chat_from_history(invite_id)
+    return build_chat_from_history(session_slug)
 
 
-def handle_user_feedback_form(graph, invite_id, responses):
+def handle_user_feedback_form(graph, session_slug, responses):
     """
     Handles submission of a feedback form, stores the data,
     and advances the chat sequence.
 
     Args:
-        invite_id (str): The invite UUID identifying the session.
+        session_slug (str): The invite UUID identifying the session.
         responses (list): List of form response dicts.
 
     Returns:
@@ -565,7 +636,7 @@ def handle_user_feedback_form(graph, invite_id, responses):
         "suggestions": (data.get("suggestions") or "")[:2000]
     }
 
-    user = ConsentUrl.objects.get(consent_url=invite_id).user
+    user = ConsentSession.objects.get(session_slug=session_slug).user
     if data.get("anonymize") is None:
         payload["user"] = user.pk
 
@@ -573,17 +644,17 @@ def handle_user_feedback_form(graph, invite_id, responses):
     serializer.is_valid(raise_exception=True)
     serializer.save()
 
-    return update_consent_and_advance(invite_id, node_id, graph, "Feedback submitted!")
+    return update_consent_and_advance(session_slug, node_id, graph, "Feedback submitted!")
 
 
-def handle_other_adult_contact_form(conversation_graph, invite_id, responses):
+def handle_other_adult_contact_form(conversation_graph, session_slug, responses):
     """
     Processes the form submission where the user wants to refer another adult.
     This creates a new user record and progresses the chat.
 
     Args:
         conversation_graph (dict): Parsed consent script graph.
-        invite_id (str): The invite UUID.
+        session_slug (str): The invite UUID.
         responses (list): Submitted form responses.
 
     Returns:
@@ -592,8 +663,8 @@ def handle_other_adult_contact_form(conversation_graph, invite_id, responses):
     response_dict = {r.get("name"): r.get("value") for r in responses if r.get("name")}
     node_id = response_dict.get("node_id")
 
-    consent_url = get_object_or_404(ConsentUrl, consent_url=invite_id)
-    referring_user = consent_url.user
+    session_slug = get_object_or_404(ConsentSession, session_slug=session_slug)
+    referring_user = session_slug.user
 
     first_name = response_dict.get("firstname", "")
     last_name = response_dict.get("lastname", "")
@@ -614,26 +685,26 @@ def handle_other_adult_contact_form(conversation_graph, invite_id, responses):
         echo_user_response = "Let's skip this"
 
     next_node_id = conversation_graph[node_id]["child_ids"][0]
-    next_sequence = process_consent_sequence(next_node_id, invite_id)
+    next_sequence = process_consent_sequence(next_node_id, session_slug)
 
-    history = get_user_consent_history(invite_id)
+    history = get_user_consent_history(session_slug)
     history.append(format_turn(conversation_graph, node_id, echo_user_response, next_sequence))
-    set_user_consent_history(invite_id, history)
+    set_user_consent_history(session_slug, history)
 
-    return build_chat_from_history(invite_id)
+    return build_chat_from_history(session_slug)
 
 
-def generate_workflow(start_node_id, user_option_node_ids, invite_id):
-    conversation_graph = get_script_from_invite_id(invite_id)
+def generate_workflow(start_node_id, user_option_node_ids, session_slug):
+    conversation_graph = get_script_from_session_slug(session_slug)
 
     # generate a sub workflow to dynamically process user responses
-    workflow = get_user_workflow(invite_id)
+    workflow = get_user_workflow(session_slug)
 
     metadata_field = conversation_graph[start_node_id]['metadata']['workflow']
     for user_option_node_id in user_option_node_ids:
         sub_graph = traverse(conversation_graph, user_option_node_id, metadata_field)
         workflow.append(sub_graph)
-    set_user_workflow(invite_id, workflow)
+    set_user_workflow(session_slug, workflow)
     return workflow
 
 
@@ -666,7 +737,7 @@ def traverse(conversation_graph, start_id, metadata_field=None):
     return list(sub_graph_nodes)
 
 
-def process_test_question(conversation_graph, current_node_id, invite_id):
+def process_test_question(conversation_graph, current_node_id, session_slug):
     node_metadata = conversation_graph.get(current_node_id, {}).get("metadata", {})
     
     if node_metadata.get("workflow") != "test_user_understanding":
@@ -674,8 +745,8 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
 
     try:
         # Get user and script
-        consent_url = get_object_or_404(ConsentUrl, consent_url=str(invite_id))
-        user = consent_url.user
+        session_slug = get_object_or_404(ConsentSession, session_slug=str(session_slug))
+        user = session_slug.user
         script_version = getattr(user, "consent_script", None)
         if not script_version:
             return node_metadata.get("fail_node_id", "")
@@ -703,7 +774,7 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
             else:
                 return node_metadata.get("pass_node_id", "")
 
-    except ConsentUrl.DoesNotExist:
+    except ConsentSession.DoesNotExist:
         return node_metadata.get("fail_node_id", "")
     
     except Exception as e:
@@ -713,6 +784,7 @@ def process_test_question(conversation_graph, current_node_id, invite_id):
         return node_metadata.get("fail_node_id", "")
 
     return ''
+
 
 def save_test_question(conversation_graph, current_node_id, attempt):
     node = conversation_graph.get(current_node_id)
@@ -737,6 +809,7 @@ def save_test_question(conversation_graph, current_node_id, attempt):
         answer_correct=is_correct,
     )
 
+
 def get_test_results(user, consent_script_version_id):
     """Retrieve the number of correct test responses for a user."""
     return (
@@ -751,15 +824,15 @@ def get_test_results(user, consent_script_version_id):
     )
 
 
-def process_user_consent(conversation_graph, current_node_id, invite_id):
+def process_user_consent(conversation_graph, current_node_id, session_slug):
     node = conversation_graph[current_node_id]["metadata"]
 
     if node["workflow"] in ["start_consent", "end_consent"]:
-        consent_url_obj = ConsentUrl.objects.filter(consent_url=str(invite_id)).first()
-        if not consent_url_obj:
+        session_slug_obj = ConsentSession.objects.filter(session_slug=str(session_slug)).first()
+        if not session_slug_obj:
             return ''
 
-        user = consent_url_obj.user
+        user = session_slug_obj.user
 
         # Check if user is enrolling themselves and hasn't completed consent
         if user.enrolling_myself and not user.consent_complete:
@@ -770,28 +843,85 @@ def process_user_consent(conversation_graph, current_node_id, invite_id):
                 consent_age_group=adult,
             )
 
-            set_consenting_myself(invite_id, True)
-            set_consent_node(invite_id, current_node_id)
+            set_consenting_myself(session_slug, True)
+            set_consent_node(session_slug, current_node_id)
 
             return node.get("enrolling_myself_node_id")
 
         # Check if enrolling children
         elif user.enrolling_children:
-            set_consenting_myself(invite_id, False)
+            set_consenting_myself(session_slug, False)
 
-            if get_consenting_children(invite_id) is None:
-                set_consenting_children(invite_id, True)
-                consent_node_id = get_consent_node(invite_id)
+            if get_consenting_children(session_slug) is None:
+                set_consenting_children(session_slug, True)
+                consent_node_id = get_consent_node(session_slug)
                 node = conversation_graph[consent_node_id]["metadata"]
                 return node.get("enrolling_children_node_id")
 
     elif node["workflow"] == "decline_consent":
-        consent_url_obj = ConsentUrl.objects.filter(consent_url=str(invite_id)).first()
-        if not consent_url_obj:
+        session_slug_obj = ConsentSession.objects.filter(session_slug=str(session_slug)).first()
+        if not session_slug_obj:
             return ''
 
-        user = consent_url_obj.user
+        user = session_slug_obj.user
         user.declined_consent = True
         user.save()
 
     return ''
+
+
+def handle_user_step(session_slug:str, node_id:str, graph:dict):
+    node = graph.get(node_id, {})
+    metadata = node.get("metadata", {})
+    workflow = metadata.get("workflow", "")
+    print(node)
+    # Determine next_node_id based on workflow logic
+    if workflow == "test_user_understanding":
+        next_node_id = process_test_question(graph, node_id, session_slug)
+    elif workflow in ["start_consent", "decline_consent"]:
+        next_node_id = process_user_consent(graph, node_id, session_slug)
+    elif workflow == "follow_up":
+        create_follow_up_with_user(
+            session_slug,
+            metadata.get("follow_up_reason", ""),
+            metadata.get("follow_up_info", "")
+        )
+        next_node_id = graph[node_id].get("child_ids", [None])[0]
+    else:
+        next_node_id = graph[node_id].get("child_ids", [None])[0]
+
+    # Compose user turn + next bot turn
+    history = get_user_consent_history(session_slug)
+
+    user_label = get_user_label(node) if node.get("type") == "user" else ""
+    user_turn = format_turn(
+        speaker="user",
+        node_id=node_id,
+        messages=[user_label]
+    )
+    history.append(user_turn)
+
+    sequence = process_consent_sequence(next_node_id, session_slug, graph=graph)
+    history.extend(sequence["chat_turns"])
+    set_user_consent_history(session_slug, history)
+
+    return history, sequence["render"]
+
+
+def get_consent_session_or_error(session_slug: str) -> ConsentSession:
+    """
+    Retrieve a ConsentSession by slug or raise a ValueError.
+    Args:
+        session_slug (str): The session identifier slug.
+
+    Returns:
+        ConsentSession: The matching session object.
+
+    Raises:
+        ValueError: If no session is found.
+    """
+    #TODO extend it to check is_active, expires_at
+    try:
+        return ConsentSession.objects.get(session_slug=session_slug)
+    except ConsentSession.DoesNotExist:
+        raise ValueError(f"No session found for slug: {session_slug}")

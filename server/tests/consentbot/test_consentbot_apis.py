@@ -5,16 +5,16 @@ import uuid
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
-from consentbot.models import ConsentUrl, ConsentScript, Consent
-from authentication.models import User
+from consentbot.models import ConsentSession, ConsentScript, Consent
+from django.contrib.auth import get_user_model
 import json
 
-class ConsentUrlViewSetTests(TestCase):
+class ConsentSessionViewSetTests(TestCase):
     fixtures = ["tests/fixtures/test_data.json"]
 
     def setUp(self):
         self.client = APIClient()
-        self.invite = ConsentUrl.objects.first()
+        self.invite = ConsentSession.objects.first()
         self.user = self.invite.user
         self.client.force_authenticate(user=self.user)
 
@@ -34,10 +34,10 @@ class ConsentResponseViewSetTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.invite = ConsentUrl.objects.first()
+        self.invite = ConsentSession.objects.first()
 
     def test_valid_get(self):
-        url = f"/mia/consentbot/consent-response/{self.invite.consent_url}/?node_id=start"
+        url = f"/mia/consentbot/consent-response/{self.invite.session_slug}/?node_id=start"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("chat", response.data)
@@ -95,7 +95,7 @@ class ConsentViewSetTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.invite = ConsentUrl.objects.first()
+        self.invite = ConsentSession.objects.first()
         self.user = self.invite.user
         self.user.consent_script = ConsentScript.objects.first()
         self.user.save()

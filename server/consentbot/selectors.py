@@ -1,18 +1,22 @@
 #!/usr/bin/env python
 # consentbot/selectors.py
 
+import uuid
+from datetime import datetime
+from typing import Optional
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound, ValidationError
 from consentbot.models import (
     ConsentScript,
-    ConsentUrl,
+    ConsentSession,
 )
+
+User = get_user_model()
 
 def get_latest_consent(user):
     return user.consents.order_by('-created_at').first()
 
-User = get_user_model()
 
 from utils.cache import (
     get_user_consent_history,
@@ -62,6 +66,7 @@ def get_form_content(node: dict) -> dict | None:
 
 
 def get_consent_start_id(graph):
+    """Returns graph start"""
     for node_id, node in graph.items():
         if node.get("parent_ids") and node["parent_ids"][0] == "start":
             return node_id
@@ -178,88 +183,85 @@ def get_next_consent_sequence(
     }
 
 
-def get_user_from_invite_id(invite_id: str):
+def get_user_from_session_slug(session_slug: str):
     """
     Retrieve the User instance associated with a given invite ID.
     """
-    consent_url = get_object_or_404(ConsentUrl, consent_url=invite_id)
-    return consent_url.user
+    session_slug = get_object_or_404(ConsentSession, session_slug=session_slug)
+    return session_slug.user
 
 
-def get_script_from_invite_id(invite_id: str) -> dict:
-    """Retrieve the consent script JSON from a ConsentUrl UUID."""
+def get_script_from_session_slug(session_slug: str) -> dict:
+    """Retrieve the consent script JSON from a ConsentSession UUID."""
     try:
-        script_id = ConsentUrl.objects.get(consent_url=invite_id).user.consent_script_id
+        script_id = ConsentSession.objects.get(session_slug=session_slug).user.consent_script_id
         if not script_id:
             raise ValidationError("User does not have a consent_script assigned.")
         return ConsentScript.objects.get(script_id=script_id).script
-    except ConsentUrl.DoesNotExist:
-        raise NotFound(f"Invite ID {invite_id} not found.")
+    except ConsentSession.DoesNotExist:
+        raise NotFound(f"Invite ID {session_slug} not found.")
     except ConsentScript.DoesNotExist:
-        raise NotFound(f"ConsentScript for invite ID {invite_id} not found.")
-
+        raise NotFound(f"ConsentScript for invite ID {session_slug} not found.")
 
 
 def format_turn(
-    conversation_graph: dict,
+    *,
+    speaker: str,
     node_id: str,
-    echo_user_response: str = "",
-    next_sequence: dict | None = None
+    messages: list[str],
+    responses: Optional[list] = None
 ) -> dict:
     """
-    Format a single chat turn in the consent conversation flow.
+    Format a single chat turn for the consent chat history.
 
     Args:
-        conversation_graph (dict): The full JSON-based consent graph.
-        node_id (str): The node the user just responded to.
-        echo_user_response (str, optional): Text representation of the user's input. Defaults to "".
-        next_sequence (dict, optional): Output from `get_next_consent_sequence()`. If not provided,
-                                        it falls back to values from `conversation_graph[node_id]`.
+        speaker (str): "user" or "bot"
+        node_id (str): The node in the consent script this turn relates to.
+        text (str): The message content (user reply or bot message).
+        responses (list, optional): If this is a bot turn, include buttons or form fields.
 
     Returns:
-        dict: A chat turn formatted for frontend display and history tracking. Contains:
-            - node_id: The node being answered
-            - echo_user_response: What the user said or selected
-            - messages: Bot messages
-            - responses: User response options (buttons or form)
-            - render: Render info (form config or button group)
-            - end: Whether this ends the sequence
+        dict: A structured chat turn with metadata for storage and rendering.
     """
-    node = conversation_graph.get(node_id, {})
-
-    # Prefer data from the graph unless rendering a special next_sequence node
-    messages = node.get("messages", [])
-    responses = node.get("responses", [])
-    render = node.get("render")
-    end = node.get("metadata", {}).get("end_sequence", False)
-    
-    if next_sequence:
-        # This is only valid when formatting a bot response *after* get_next_consent_sequence
-        messages = next_sequence.get("messages", messages)
-        responses = next_sequence.get("responses", responses)
-        render = next_sequence.get("render", render)
-        end = next_sequence.get("end", end)
-
     return {
+        "turn_id": str(uuid.uuid4()),
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "speaker": speaker,
         "node_id": node_id,
-        "echo_user_response": echo_user_response,
         "messages": messages,
-        "responses": responses,
-        "render": render,
-        "end": end,
+        "responses": responses or [],
     }
 
 
-def build_chat_from_history(invite_id: str) -> list[dict]:
+def build_chat_from_history(session_slug: str) -> list[dict]:
     """
     Builds a list of completed chat turns for frontend consumption.
 
     Args:
-        invite_id (str): The invite UUID identifying the session.
+        session_slug (str): The invite UUID identifying the session.
 
     Returns:
         list[dict]: A list of chat turn dictionaries (each with bot/user messages).
     """
-    history = get_user_consent_history(invite_id)
+    history = get_user_consent_history(session_slug)
     return [entry for entry in history if "messages" in entry]
 
+from consentbot.models import ConsentSession
+
+def get_consent_session_or_error(session_slug: str) -> ConsentSession:
+    """
+    Retrieve a ConsentSession by slug or raise a ValueError.
+
+    Args:
+        session_slug (str): The session identifier slug.
+
+    Returns:
+        ConsentSession: The matching session object.
+
+    Raises:
+        ValueError: If no session is found.
+    """
+    try:
+        return ConsentSession.objects.get(session_slug=session_slug)
+    except ConsentSession.DoesNotExist:
+        raise ValueError(f"No session found for slug: {session_slug}")

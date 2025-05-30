@@ -2,7 +2,7 @@
 # tests/consentbot/test_consentbot_selectors.py
 
 from django.test import TestCase
-from consentbot.models import ConsentUrl, ConsentScript, Consent
+from consentbot.models import ConsentSession, ConsentScript, Consent
 from consentbot.selectors import (
     get_latest_consent,
     get_bot_messages,
@@ -10,8 +10,8 @@ from consentbot.selectors import (
     get_form_content,
     get_consent_start_id,
     get_next_consent_sequence,
-    get_user_from_invite_id,
-    get_script_from_invite_id,
+    get_user_from_session_slug,
+    get_script_from_session_slug,
     format_turn,
     build_chat_from_history,
 )
@@ -23,7 +23,7 @@ class SelectorFunctionTests(TestCase):
     fixtures = ["tests/fixtures/test_data.json"]
 
     def setUp(self):
-        self.invite = ConsentUrl.objects.first()
+        self.invite = ConsentSession.objects.first()
         self.user = self.invite.user
         self.script = self.user.consent_script
         self.graph = self.script.script
@@ -33,12 +33,12 @@ class SelectorFunctionTests(TestCase):
         consent = get_latest_consent(self.user)
         self.assertIsInstance(consent, Consent)
 
-    def test_get_user_from_invite_id(self):
-        user = get_user_from_invite_id(str(self.invite.consent_url))
+    def test_get_user_from_session_slug(self):
+        user = get_user_from_session_slug(str(self.invite.session_slug))
         self.assertEqual(user.pk, self.user.pk)
 
-    def test_get_script_from_invite_id(self):
-        graph = get_script_from_invite_id(str(self.invite.consent_url))
+    def test_get_script_from_session_slug(self):
+        graph = get_script_from_session_slug(str(self.invite.session_slug))
         self.assertIsInstance(graph, dict)
         self.assertIn("start", graph)
 
@@ -73,6 +73,6 @@ class SelectorFunctionTests(TestCase):
 
     def test_build_chat_from_history(self):
         sample = [{"node_id": "start", "messages": ["Hi!"]}]
-        set_user_consent_history(str(self.invite.consent_url), sample)
-        history = build_chat_from_history(str(self.invite.consent_url))
+        set_user_consent_history(str(self.invite.session_slug), sample)
+        history = build_chat_from_history(str(self.invite.session_slug))
         self.assertEqual(history, sample)
