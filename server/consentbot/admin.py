@@ -4,18 +4,20 @@ from django_json_widget.widgets import JSONEditorWidget
 from django import forms
 from consentbot.models import (
     ConsentScript,
+    ConsentChatTurn,
     ConsentSession,
     Consent,
     ConsentTestAnswer,
     ConsentTestAttempt
 ) 
 
+# JSONEditorWidget() is a rich JSON editor
 class ConsentScriptAdminForm(forms.ModelForm):
     class Meta:
         model = ConsentScript
         fields = "__all__"
         widgets = {
-            "script": JSONEditorWidget(),  # 👈 This is the magic
+            "script": JSONEditorWidget(), 
         }
 
 @admin.register(ConsentScript)
@@ -40,3 +42,9 @@ class ConsentTestAnswerAdmin(admin.ModelAdmin):
 @admin.register(ConsentTestAttempt)
 class ConsentTestAttemptAdmin(admin.ModelAdmin):
     list_display = ["attempt_id", "score"]
+
+@admin.register(ConsentChatTurn)
+class ConsentChatTurnAdmin(admin.ModelAdmin):
+    list_display = ("user", "session", "node_id", "timestamp")
+    list_filter = ("user",)
+    search_fields = ("node_id", "user__email", "session__session_slug")

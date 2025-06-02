@@ -46,7 +46,7 @@ from consentbot.selectors import (
     get_script_from_session_slug,
 
 )
-from utils.cache import set_user_consent_history
+
 from utils.api_helpers import (
     ConsentResponseSchema,
     consent_response_constructor
@@ -370,7 +370,8 @@ class ConsentResponseViewSet(viewsets.ViewSet):
 
             # Load graph + consent
             graph = get_script_from_session_slug(session_slug)
-            chat, render = handle_user_step(session_slug, node_id, graph)
+            chat= handle_user_step(session_slug, node_id, graph)
+
             consent, created = get_or_initialize_user_consent(session_slug)
 
             return consent_response_constructor(
@@ -379,7 +380,7 @@ class ConsentResponseViewSet(viewsets.ViewSet):
                 session=ConsentSessionOutputSerializer(session).data,
                 consent=ConsentOutputSerializer(consent).data,
                 chat=chat,
-                render=render
+                render=chat[-1]['render']
             )
 
         except Exception as error:
@@ -400,14 +401,13 @@ class ConsentResponseViewSet(viewsets.ViewSet):
         tags=["Consent Response"]
     )
     def create(self, request):
-
         try:
             serializer = ConsentResponseInputSerializer(data=request.data, context={"request": request})
             serializer.is_valid(raise_exception=True)
             data = serializer.validated_data
             session = get_consent_session_or_error(data["session_slug"])
             consent, _ = get_or_initialize_user_consent(data["session_slug"])
-        
+
             history, render = handle_form_submission(data)
             return consent_response_constructor(
                 status_code=status.HTTP_200_OK,

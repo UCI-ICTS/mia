@@ -141,3 +141,17 @@ class ConsentSession(models.Model):
 
     def __str__(self):
         return f"{self.session_slug} ({self.session_slug})"
+    
+class ConsentChatTurn(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    session = models.ForeignKey("ConsentSession", on_delete=models.CASCADE, related_name="chat_turns")
+    node_id = models.CharField(max_length=32)
+    node = models.JSONField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ["timestamp"]
+
+    def __str__(self):
+        return f"{self.user} @ {self.node_id} ({self.timestamp.isoformat()})"
+    

@@ -19,8 +19,7 @@ def get_latest_consent(user):
 
 
 from utils.cache import (
-    get_user_consent_history,
-    set_user_consent_history
+    get_user_consent_history
 )
 
 def get_bot_messages(node):
@@ -205,8 +204,9 @@ def get_script_from_session_slug(session_slug: str) -> dict:
 
 
 def format_turn(
-    speaker: str,
+    graph: dict,
     node_id: str,
+    speaker: str,
     messages: list[str],
     responses: Optional[list] = None,
     render: Optional[dict] = None,
@@ -214,8 +214,23 @@ def format_turn(
     timestamp: Optional[str] = None
 ) -> dict:
     """
-    Standardized format for a single chat turn.
+    Format a single chat turn to standard structure, including node metadata.
+
+    Args:
+        graph (dict): Full conversation graph (for accessing metadata).
+        node_id (str): ID of the current node.
+        speaker (str): 'bot' or 'user'.
+        messages (list): Chat message(s) from speaker.
+        responses (list, optional): Response options or form buttons.
+        render (dict, optional): Render metadata block (form/button).
+        end_sequence (bool): Whether this is the end of a sequence.
+        timestamp (str, optional): ISO-formatted timestamp. Defaults to now.
+
+    Returns:
+        dict: Structured chat turn.
     """
+    node_metadata = graph.get(node_id, {}).get("metadata", {})
+
     return {
         "speaker": speaker,
         "node_id": node_id,
@@ -223,7 +238,8 @@ def format_turn(
         "responses": responses or [],
         "render": render,
         "end_sequence": end_sequence,
-        "timestamp": timestamp or timezone.now().isoformat()
+        "timestamp": timestamp or timezone.now().isoformat(),
+        "metadata": node_metadata
     }
 
 
