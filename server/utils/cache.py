@@ -1,48 +1,64 @@
 #!/usr/bin/env python
 # utils/cache.py
 
-from django.core.cache import cache
 from typing import Any, Optional
+from django.utils import timezone
+from django.core.cache import cache
+from consentbot.models import ConsentChatTurn, ConsentSession
 
 # -------------------------
 # CHAT HISTORY
 
-def get_user_consent_history(session_url: str) -> list[dict]:
-    """Retrieve the full chat history for a given session."""
-    return cache.get(f"history:{session_url}", [])
+
+def get_user_consent_history(session_slug: str) -> list[dict]:
+    session = ConsentSession.objects.get(session_slug=session_slug)
+    return [turn.node for turn in session.chat_turns.all()]
 
 
-def set_user_consent_history(session_url: str, history: list[dict]) -> None:
-    """Store the full chat history for a given session."""
-    cache.set(f"history:{session_url}", history, timeout=None)
+def set_user_consent_history(session_slug: str, history: list[dict]) -> None:
+    session = ConsentSession.objects.get(session_slug=session_slug)
+    session.chat_turns.all().delete()
+    for turn in history:
+        ConsentChatTurn.objects.create(
+            session=session,
+            user=session.user,
+            node_id=turn["node_id"],
+            node=turn,
+            timestamp=turn.get("timestamp", timezone.now())
+        )
 
 
-def append_to_consent_history(session_url: str, turn: dict) -> None:
-    """Append a single turn to the chat history."""
-    history = get_user_consent_history(session_url)
-    history.append(turn)
-    set_user_consent_history(session_url, history)
+def append_to_consent_history(session_slug: str, turn: dict) -> None:
+    session = ConsentSession.objects.get(session_slug=session_slug)
+    ConsentChatTurn.objects.create(
+        session=session,
+        user=session.user,
+        node_id=turn["node_id"],
+        node=turn,
+        timestamp=turn.get("timestamp", timezone.now())
+    )
+
 
 # -------------------------
 # STATE FLAGS / METADATA
 
-def set_flag(session_url: str, key: str, value: Any) -> None:
+def set_flag(session_slug: str, key: str, value: Any) -> None:
     """Set a temporary flag in the session cache."""
-    state = cache.get(f"state:{session_url}", {})
+    state = cache.get(f"state:{session_slug}", {})
     state[key] = value
-    cache.set(f"state:{session_url}", state, timeout=None)
+    cache.set(f"state:{session_slug}", state, timeout=None)
 
 
-def get_flag(session_url: str, key: str) -> Optional[Any]:
+def get_flag(session_slug: str, key: str) -> Optional[Any]:
     """Get a specific flag from the session cache."""
-    state = cache.get(f"state:{session_url}", {})
+    state = cache.get(f"state:{session_slug}", {})
     return state.get(key)
 
 
-def clear_session_cache(session_url: str) -> None:
+def clear_session_cache(session_slug: str) -> None:
     """Clear all cached history and state for a session."""
-    cache.delete(f"history:{session_url}")
-    cache.delete(f"state:{session_url}")
+    cache.delete(f"history:{session_slug}")
+    cache.delete(f"state:{session_slug}")
 
 # -------------------------
 # WORKFLOW GRAPH STATE
