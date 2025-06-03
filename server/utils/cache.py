@@ -59,21 +59,3 @@ def clear_session_cache(session_slug: str) -> None:
     """Clear all cached history and state for a session."""
     cache.delete(f"history:{session_slug}")
     cache.delete(f"state:{session_slug}")
-
-# -------------------------
-# WORKFLOW GRAPH STATE
-
-def get_user_workflow(session_slug: str) -> list[list[str]]:
-    """
-    Retrieve the user's current workflow graph.
-    Each sublist represents a sub-workflow (e.g., enrolling self, enrolling children).
-    """
-    return cache.get(f"workflow:{session_slug}", [])
-
-
-def set_user_workflow(session_slug: str, workflow: list[list[str]]) -> None:
-    """
-    Store the user's current workflow graph.
-    Each sublist represents a sub-workflow (sequence of node IDs).
-    """
-    cache.set(f"workflow:{session_slug}", workflow, timeout=None)

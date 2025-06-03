@@ -9,7 +9,7 @@ from consentbot.selectors import (
     get_user_label,
     get_form_content,
     get_consent_start_id,
-    get_next_consent_sequence,
+    traverse_consent_graph,
     get_user_from_session_slug,
     get_script_from_session_slug,
     format_turn,
@@ -42,8 +42,8 @@ class SelectorFunctionTests(TestCase):
         self.assertIsInstance(graph, dict)
         self.assertIn("start", graph)
 
-    def test_get_next_consent_sequence_returns_messages(self):
-        sequence = get_next_consent_sequence(self.graph, "start")
+    def test_traverse_consent_graph_returns_messages(self):
+        sequence = traverse_consent_graph(self.graph, "start")
         self.assertIn("messages", sequence)
         self.assertIn("visited", sequence)
 
@@ -66,7 +66,7 @@ class SelectorFunctionTests(TestCase):
         self.assertIsInstance(start, str)
 
     def test_format_turn_output(self):
-        seq = get_next_consent_sequence(self.graph, "start")
+        seq = traverse_consent_graph(self.graph, "start")
         turn = format_turn(self.graph, "start", echo_user_response="Yes", next_sequence=seq)
         self.assertIn("messages", turn)
         self.assertIn("responses", turn)

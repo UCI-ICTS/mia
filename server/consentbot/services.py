@@ -24,7 +24,7 @@ from consentbot.selectors import (
     build_chat_from_history,
     format_turn,
     get_script_from_session_slug,
-    get_next_consent_sequence,
+    traverse_consent_graph,
     get_consent_start_id,
     get_user_label,
 )
@@ -32,8 +32,6 @@ from consentbot.selectors import (
 from utils.cache import (
     get_user_consent_history,
     set_user_consent_history,
-    get_user_workflow,
-    set_user_workflow,
     append_to_consent_history
 ) 
 
@@ -306,67 +304,30 @@ def get_or_initialize_user_consent(session_slug:str) -> bool:
     return new_consent, True
 
 
-def get_or_initialize_consent_history(session_slug):
+def get_or_initialize_consent_history(invite_id):
     """
-    Retrieve existing consent history for a given session_slug,
+    Retrieve existing consent history for a given invite_id,
     or initialize it with the starting node and first chat sequence.
 
     Returns:
         tuple: (history, just_created)
     """
-    history = get_user_consent_history(session_slug)
+    history = get_user_consent_history(invite_id)
     if history:
+        print("GOT history from DB")
         return history, False
 
-    graph = get_script_from_session_slug(session_slug)
+    graph = get_script_from_session_slug(invite_id)
     start_node = get_consent_start_id(graph)
-    next_sequence = process_consent_sequence(start_node, session_slug, graph=graph)
-    history = [next_sequence]
-    set_user_consent_history(session_slug, history)
+    sequence = traverse_consent_graph(graph, start_node)
+
+    # Use full chat_turns list (already formatted)
+    history = sequence["chat_turns"]
+    # set_user_consent_history(invite_id, history)
     return history, True
 
 
-def process_consent_sequence(
-    node_id: str,
-    session_slug: str,
-    graph: Optional[dict] = None
-) -> dict:
-    """
-    Return the next consent sequence starting from the given node_id.
 
-    Args:
-        node_id (str): The starting node ID.
-        session_slug (str): Consent session slug.
-        graph (dict, optional): Preloaded graph; otherwise, it will be fetched.
-
-    Returns:
-        dict:
-            {
-                "chat_turns": [dict],
-                "render": dict or None
-            }
-    """
-    if graph is None:
-        graph = get_script_from_session_slug(session_slug)
-
-    if node_id not in graph:
-        raise ValueError(f"Node {node_id} not found in script.")
-
-    sequence = get_next_consent_sequence(graph, node_id)
-
-    chat_turn = format_turn(
-        graph=graph,
-        speaker="bot",
-        node_id=node_id,
-        messages=graph[node_id].get("messages", []),
-        responses=sequence.get("responses"),
-        render=sequence.get("render"),
-        end_sequence=sequence.get("end", False)
-    )
-    
-    append_to_consent_history(session_slug, chat_turn)
-
-    return chat_turn
 
 def append_chat_history(session_slug:str, chat_turn:dict):
     """
@@ -398,7 +359,7 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
         return [{"messages": ["Invalid node: {node_id}"], "responses": []}]
 
     next_node_id = graph[node_id]["child_ids"][0]
-    bot_turn = process_consent_sequence(next_node_id, session_slug, graph=graph)
+    bot_turn = get_next_chat_block(next_node_id, session_slug, graph=graph)
 
     user_turn = format_turn(
         graph=graph,
@@ -518,23 +479,24 @@ def handle_consent(graph, session_slug, responses):
 
 def handle_family_enrollment_form(graph, session_slug, responses):
     """
-    Handles a form where the user selects whom they are enrolling (self, children, or both).
+    Handles the family enrollment form with checkbox inputs.
+    Updates user flags and walks all selected enrollment paths.
 
-    This:
-    - Updates the user's enrollment flags
-    - Constructs a dynamic sub-workflow based on the checked options
-    - Returns updated chat history
+    Args:
+        graph (dict): The chat graph
+        session_slug (str): User's session slug
+        responses (list): List of submitted checkbox selections
+
+    Returns:
+        list: Updated chat history
     """
-  
-  ## HERE! ##
-  
     user = ConsentSession.objects.get(session_slug=session_slug).user
     history = get_user_consent_history(session_slug)
-    # import pdb; pdb.set_trace()
     parent_node_id = history[-1]["node_id"] if history else None
     if not parent_node_id or parent_node_id not in graph:
         raise ValueError("Invalid or missing parent node in history.")
 
+    import pdb; pdb.set_trace()
     checked_items = responses[0].get("value", [])
     if not isinstance(checked_items, list):
         raise ValueError("Expected list of checked items from response.")
@@ -547,44 +509,32 @@ def handle_family_enrollment_form(graph, session_slug, responses):
     except (KeyError, IndexError, TypeError):
         raise ValueError("Checkbox field structure invalid or missing from chat history.")
 
-    workflow_node_ids = []
-    for key in checked_items:
-        node_id = field_map.get(key)
-        if not node_id:
+    seen = set()
+    for item in checked_items:
+        node_id = field_map.get(item)
+        if not node_id or node_id in seen:
             continue
-        workflow_node_ids.append(node_id)
-        if key == "myself":
+        seen.add(node_id)
+
+        if item == "myself":
             user.enrolling_myself = True
-        elif key == "myChildChildren":
+        elif item == "myChildChildren":
             user.enrolling_children = True
 
-    if not workflow_node_ids:
-        raise ValueError("No valid workflow node IDs resolved from checked values.")
+        user_turn = format_turn(
+            graph=graph,
+            speaker="user",
+            node_id=node_id,
+            messages=[item],
+            timestamp=timezone.now().isoformat()
+        )
+        append_to_consent_history(session_slug, user_turn)
+
+        bot_turn = get_next_chat_block(node_id, session_slug, graph=graph)
+        append_to_consent_history(session_slug, bot_turn)
 
     user.save()
-
-    # Build dynamic workflow and sequence
-    start_node_id = workflow_node_ids[0]
-    generate_workflow(start_node_id, workflow_node_ids, session_slug)
-    next_sequence = process_consent_sequence(start_node_id, session_slug)
-
-    # Append to chat history
-    user_turn = format_turn(
-        graph=graph,
-        speaker="user",
-        node_id=start_node_id,
-        messages=[", ".join(checked_items)],
-        responses=next_sequence.get("responses"),
-        render=next_sequence.get("render"),
-        end_sequence=next_sequence.get("end_sequence", False),
-        timestamp=timezone.now().isoformat()
-    )
-
-    append_to_consent_history(session_slug, user_turn)
-    append_to_consent_history(session_slug, next_sequence["chat_turns"][0])
-
-    return history
-
+    return get_user_consent_history(session_slug)
 
 
 def handle_user_feedback_form(graph, session_slug, responses):
@@ -657,7 +607,7 @@ def handle_other_adult_contact_form(conversation_graph, session_slug, responses)
         echo_user_response = "Let's skip this"
 
     next_node_id = conversation_graph[node_id]["child_ids"][0]
-    next_sequence = process_consent_sequence(next_node_id, session_slug)
+    next_sequence = get_next_chat_block(next_node_id, session_slug)
 
     history = next_sequence["chat_turns"]
     # TODO Fix this
@@ -666,20 +616,6 @@ def handle_other_adult_contact_form(conversation_graph, session_slug, responses)
     set_user_consent_history(session_slug, history)
 
     return build_chat_from_history(session_slug)
-
-
-def generate_workflow(start_node_id, user_option_node_ids, session_slug):
-    conversation_graph = get_script_from_session_slug(session_slug)
-
-    # generate a sub workflow to dynamically process user responses
-    workflow = get_user_workflow(session_slug)
-
-    metadata_field = conversation_graph[start_node_id]['metadata']['workflow']
-    for user_option_node_id in user_option_node_ids:
-        sub_graph = traverse(conversation_graph, user_option_node_id, metadata_field)
-        workflow.append(sub_graph)
-    set_user_workflow(session_slug, workflow)
-    return workflow
 
 
 def traverse(conversation_graph, start_id, metadata_field=None):
@@ -716,11 +652,10 @@ def process_test_question(conversation_graph, current_node_id, session_slug):
     
     if node_metadata.get("workflow") != "test_user_understanding":
         return ''
-
     try:
         # Get user and script
-        session_slug = get_object_or_404(ConsentSession, session_slug=str(session_slug))
-        user = session_slug.user
+        session = get_object_or_404(ConsentSession, session_slug=str(session_slug))
+        user = session.user
         script_version = getattr(user, "consent_script", None)
         if not script_version:
             return node_metadata.get("fail_node_id", "")
@@ -814,6 +749,7 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
     Returns:
         list[dict]: Updated full chat history
     """
+    next_node_id = None
     node = graph.get(node_id, {})
     metadata = node.get("metadata", {})
     workflow = metadata.get("workflow", "")
@@ -829,10 +765,8 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
             metadata.get("follow_up_reason", ""),
             metadata.get("follow_up_info", "")
         )
+    if not next_node_id:
         next_node_id = graph[node_id].get("child_ids", [None])[0]
-    else:
-        next_node_id = graph[node_id].get("child_ids", [None])[0]
-
     # Format and store user turn
     user_label = get_user_label(node) if node.get("type") == "user" else ""
     user_turn = format_turn(
@@ -843,55 +777,52 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
     )
     append_to_consent_history(session_slug, user_turn)
 
-    # Process and store bot turn
-    bot_turn = process_consent_sequence(next_node_id, session_slug, graph=graph)
-    append_to_consent_history(session_slug, bot_turn)
+    bot_turns = get_next_chat_block(next_node_id, session_slug, graph=graph)
+    for turn in bot_turns["chat_turns"]:
+        append_to_consent_history(session_slug, turn)
 
     # Update session metadata
     session = ConsentSession.objects.get(session_slug=session_slug)
-    session.current_node = next_node_id
-    if next_node_id not in session.visited_nodes:
-        session.visited_nodes.append(next_node_id)
+    session.current_node = bot_turns["chat_turns"][-1]["node_id"] if bot_turns else next_node_id
+    if session.current_node not in session.visited_nodes:
+        session.visited_nodes.append(session.current_node)
     session.responses[node_id] = user_label
     session.save(update_fields=["current_node", "visited_nodes", "responses"])
 
+    # 🔁 Return user + bot turn history
     return get_user_consent_history(session_slug)
 
 
-def process_consent_sequence(
+
+def get_next_chat_block(
     node_id: str,
     session_slug: str,
     graph: Optional[dict] = None
 ) -> dict:
     """
-    Given a node_id, traverse the graph to generate the next bot chat turn.
-    Does not modify session or database state — just returns the formatted turn.
+    Given a node_id, retrieve the next bot message sequence and user response options,
+    traversing the graph until a user prompt or end node is reached.
 
     Args:
-        node_id (str): Starting node ID to traverse from
-        session_slug (str): Session slug identifying the user session
-        graph (dict, optional): Preloaded graph object. Will be loaded from session if None.
+        node_id (str): The starting node ID in the graph
+        session_slug (str): Unique identifier for the user's session
+        graph (dict, optional): The preloaded graph (optional; loads from session if not provided)
 
     Returns:
-        dict: A formatted bot chat turn dictionary
+        dict: A structured response containing:
+            - "chat_turns": List of bot message turns
+            - "responses": List of user response options
+            - "render": Optional render config
+            - "end": Whether this is an end sequence
+            - "visited": Node IDs traversed in this sequence
     """
     if graph is None:
         graph = get_script_from_session_slug(session_slug)
-
     if node_id not in graph:
         raise ValueError(f"Node {node_id} not found in graph.")
 
-    sequence = get_next_consent_sequence(graph, node_id)
+    return traverse_consent_graph(graph, node_id)
 
-    return format_turn(
-        graph=graph,
-        speaker="bot",
-        node_id=node_id,
-        messages=graph[node_id].get("messages", []),
-        responses=sequence.get("responses"),
-        render=sequence.get("render"),
-        end_sequence=sequence.get("end", False)
-    )
 
 def get_consent_session_or_error(session_slug: str) -> ConsentSession:
     """
@@ -927,7 +858,7 @@ def handle_form_submission(data):
     form_type = data["form_type"]
     responses = data["form_responses"] + [{"name": "node_id", "value": data["node_id"]}]
     graph = get_script_from_session_slug(session_slug)
-
+    print(form_type)
     handler = FORM_HANDLER_MAP.get(form_type)
     if not handler:
         raise ValueError(f"Unknown form_type: {form_type}")
