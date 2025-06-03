@@ -87,31 +87,22 @@ def infer_test_question_id(graph: dict, node_id: str) -> str | None:
     return None
 
 
-def get_next_consent_sequence(
-    conversation_graph: dict,
-    node_id: str,
-    skip_correct_test_nodes: bool = False,
-    correct_questions: set[str] = None
-) -> dict:
+def traverse_consent_graph(conversation_graph, node_id):
     """
-    Traverses the conversation graph starting from `node_id` and collects:
-    - Bot messages
-    - User response options (if any)
-    - Render info (form/button)
-    - Whether the sequence ends
-    - All node_ids visited during traversal
+    Traverses the graph starting at a bot node, collecting bot turns and user response options.
+    Stops when a user node is reached or a decision point is found (e.g., fork in the graph).
 
     Returns:
         dict: {
-            "messages": list[str],
-            "responses": list[{"id": str, "label": str}],
-            "render": dict | None,
-            "end": bool,
-            "visited": list[str]
+            "chat_turns": [bot_turns...],
+            "responses": [user response options],
+            "render": render metadata (e.g., buttons, form),
+            "end": bool (whether sequence is finished),
+            "visited": [node_ids traversed]
         }
     """
     visited = []
-    messages = []
+    chat_turns = []
     responses = []
     current_id = node_id
     end = False
@@ -120,21 +111,21 @@ def get_next_consent_sequence(
     while True:
         node = conversation_graph.get(current_id, {})
         visited.append(current_id)
-        if current_id == "VUipQHn":
-            skip_correct_test_nodes = None
-        
-        # Check for skip if second test and node already answered correctly
-        if skip_correct_test_nodes:
-            test_node_id = infer_test_question_id(conversation_graph, current_id)
-            if test_node_id in (correct_questions or set()):
-                children = node.get("child_ids", [])
-                if children:
-                    current_id = children[0]
-                    continue
-                break
+        node_type = node.get("type")
 
-        if node.get("type") == "bot":
-            messages.extend(node.get("messages", []))
+        if node_type == "bot":
+            # Append formatted bot turn
+            turn = format_turn(
+                graph=conversation_graph,
+                speaker="bot",
+                node_id=current_id,
+                messages=node.get("messages", []),
+                render=node.get("render"),
+                end_sequence=node.get("metadata", {}).get("end_sequence", False)
+            )
+            chat_turns.append(turn)
+
+            # End of sequence?
             if str(node.get("metadata", {}).get("end_sequence", "false")).lower() == "true":
                 end = True
 
@@ -142,44 +133,50 @@ def get_next_consent_sequence(
             if not children:
                 break
 
-            all_users = all(conversation_graph.get(cid, {}).get("type") == "user" for cid in children)
-            if all_users:
+            # If next step is a user response block
+            if all(conversation_graph.get(cid, {}).get("type") == "user" for cid in children):
                 for cid in children:
-                    if not skip_correct_test_nodes or (
-                        infer_test_question_id(conversation_graph, cid) not in correct_questions
-                    ):
-                        responses.append({
-                            "id": cid,
-                            "label": get_user_label(conversation_graph[cid])
-                        })
-                        visited.append(cid)
+                    user_node = conversation_graph.get(cid, {})
+                    responses.append({
+                        "id": cid,
+                        "label": get_user_label(user_node),
+                        "metadata": user_node.get("metadata", {})
+                    })
+                    visited.append(cid)
+                render = node.get("render", {"type": "button"})
                 break
-            elif len(children) == 1:
+
+            # Continue down a linear path
+            if len(children) == 1:
                 current_id = children[0]
                 continue
-            break
 
-        elif node.get("type") == "user":
+            break  # Fork in the graph
+
+        elif node_type == "user":
             responses.append({
                 "id": current_id,
-                "label": get_user_label(node)
+                "label": get_user_label(node),
+                "metadata": node.get("metadata", {})
             })
-            children = node.get("child_ids", [])
-            if children:
-                current_id = children[0]
-                continue
             break
 
         else:
             break
 
+    # Attach responses to the final bot turn
+    if chat_turns:
+        chat_turns[-1]["responses"] = responses
+        chat_turns[-1]["render"] = render or {"type": "button"}
+
     return {
-        "messages": messages,
+        "chat_turns": chat_turns,
         "responses": responses,
-        "render": node.get("render", None),
+        "render": render,
         "end": end,
-        "visited": visited,
+        "visited": visited
     }
+
 
 
 def get_user_from_session_slug(session_slug: str):
