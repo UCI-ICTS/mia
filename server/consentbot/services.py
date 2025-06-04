@@ -359,7 +359,7 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
         return [{"messages": ["Invalid node: {node_id}"], "responses": []}]
 
     next_node_id = graph[node_id]["child_ids"][0]
-    bot_turn = get_next_chat_block(next_node_id, session_slug, graph=graph)
+    bot_block = get_next_chat_block(next_node_id, session_slug, graph=graph)
 
     user_turn = format_turn(
         graph=graph,
@@ -369,7 +369,9 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
     )
 
     append_to_consent_history(session_slug, user_turn)
-    append_to_consent_history(session_slug, bot_turn)
+
+    for turn in bot_block["chat_turns"]:
+        append_to_consent_history(session_slug, turn)
 
     return build_chat_from_history(session_slug)
 
