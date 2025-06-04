@@ -9,3 +9,8 @@ server/env
 **.pyc
 server/static
 server/.secrets
+docs/cache.txt
+docs/overhaul_notes
+server/family.json
+server/startTest.json
+**/migrations/*.py
