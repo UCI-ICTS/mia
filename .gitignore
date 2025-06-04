@@ -7,10 +7,10 @@ client/.env
 server/env
 **.DS_Store*
 **.pyc
+**/migrations/*.py
 server/static
 server/.secrets
 docs/cache.txt
 docs/overhaul_notes
 server/family.json
 server/startTest.json
-**/migrations/*.py
