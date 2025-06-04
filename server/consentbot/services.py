@@ -496,7 +496,6 @@ def handle_family_enrollment_form(graph, session_slug, responses):
     if not parent_node_id or parent_node_id not in graph:
         raise ValueError("Invalid or missing parent node in history.")
 
-    import pdb; pdb.set_trace()
     checked_items = responses[0].get("value", [])
     if not isinstance(checked_items, list):
         raise ValueError("Expected list of checked items from response.")
@@ -530,8 +529,10 @@ def handle_family_enrollment_form(graph, session_slug, responses):
         )
         append_to_consent_history(session_slug, user_turn)
 
-        bot_turn = get_next_chat_block(node_id, session_slug, graph=graph)
-        append_to_consent_history(session_slug, bot_turn)
+        bot_block = get_next_chat_block(node_id, session_slug, graph=graph)
+
+        for turn in bot_block["chat_turns"]:
+            append_to_consent_history(session_slug, turn)
 
     user.save()
     return get_user_consent_history(session_slug)
