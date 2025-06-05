@@ -116,6 +116,13 @@ class ConsentSession(models.Model):
     session_slug = models.SlugField(primary_key=True, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="consent_sessions")
     script = models.ForeignKey("ConsentScript", on_delete=models.CASCADE)
+    consent = models.ForeignKey(
+        "Consent",
+        on_delete=models.CASCADE,
+        related_name="sessions",
+        null=True,
+        blank=True
+    )
 
     # Chat flow state
     current_node = models.CharField(max_length=100)

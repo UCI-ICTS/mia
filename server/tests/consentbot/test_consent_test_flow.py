@@ -1,7 +1,11 @@
-from django.test import TestCase
-from rest_framework.test import APIClient
+
 from django.contrib.auth import get_user_model
-from consentbot.models import ConsentSession, ConsentTestAttempt
+from django.core.management import call_command
+from django.test import TestCase
+from io import StringIO
+from rest_framework.test import APIClient
+from consentbot.models import Consent, ConsentSession, ConsentTestAttempt
+
 
 User = get_user_model()
 
@@ -49,7 +53,7 @@ FORM_RESPONSES={
     "checkbox_form":[
         {
             "name": "checkbox_form", 
-            "value": ["myself", "childOtherParent"]
+            "value": ["myself", "myChildChildren", "childOtherParent", "adultFamilyMember"]
         }
     ],
     "sample_storage": [
@@ -108,17 +112,24 @@ class ConsentTestFlowTest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
+        self.WALK = False
         self.user = User.objects.get(username="wheel")
-        self.user.set_password("example-password")
+        self.user.set_password("wheel")
         self.user.save()
         auth_response = self.client.post("/mia/auth/login/", {
             "email": self.user.email,
-            "password": "example-password"
+            "password": "wheel"
         }, format="json")
         self.token = auth_response.data["access"]
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
-        self.test_scenario = "needs_retry"
+        self.test_scenario = "perfect_score"
         self.correct_nodes = TEST_SCENARIOS[self.test_scenario]["correct_nodes"][:]
+
+    def dump_test_data(self, file_name:str="test_results.json")-> None:
+        out = StringIO()
+        call_command('dumpdata', '--exclude', 'contenttypes', '--indent', '2', stdout=out)
+        with open(file_name, 'w') as f:
+            f.write(out.getvalue())
 
     def handle_form_submission(self, node, session_slug):
         response = node["responses"][0]
@@ -131,6 +142,7 @@ class ConsentTestFlowTest(TestCase):
             "form_responses": FORM_RESPONSES.get(form_type, [])
         }
         form_response = self.client.post("/mia/consentbot/consent-response/", payload, format="json")
+
         try: 
             self.assertEqual(form_response.status_code, 200)
         except:
@@ -139,20 +151,22 @@ class ConsentTestFlowTest(TestCase):
         return form_response
 
     def handle_test_question(self, node, session_slug):
+        """
+        Submit the correct answer if available; otherwise fall back to a known incorrect option.
+        """
         for response_option in node.get("responses", []):
             node_id = response_option["id"]
             if node_id in self.correct_nodes:
-                print(node)
-                self.correct_nodes.remove(node_id)
-                # import pdb; pdb.set_trace()
-                api  = self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={node_id}")
+                return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={node_id}")
 
-        fallback_id = node.get("responses", [])[0]["id"]
-        api_response = self.client.get(
-            f"/mia/consentbot/consent-response/{session_slug}/?node_id={fallback_id}"
-        )
-        return api_response
+        # Fallback: submit the first known incorrect answer
+        for response_option in node.get("responses", []):
+            node_id = response_option["id"]
+            if node_id in INCORRECT_NODES:
+                return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={node_id}")
 
+        # If no match found at all, raise for clarity
+        raise ValueError(f"No matching correct or incorrect response found for node {node['node_id']}")
 
 
     def advance_chat(self, node, session_slug):
@@ -172,7 +186,11 @@ class ConsentTestFlowTest(TestCase):
         if isinstance(label, dict) and "form_type" in label:
             return self.handle_form_submission(node, session_slug)
 
-        if workflow == "test_user_understanding":
+        if workflow == "test_user_understanding" and end_sequence is not True:
+            # if len(node['responses']) < 2:
+            #     import pdb; pdb.set_trace()
+            # if "<b>Question 10" in node['messages'][0]:
+            #     self.WALK = True
             return self.handle_test_question(node, session_slug)
 
         # Default to GET
@@ -197,13 +215,23 @@ class ConsentTestFlowTest(TestCase):
             last_turn = res.data["chat"][-1]
             if not last_turn.get("responses"):
                 break
-            res = self.advance_chat(last_turn, session_slug)
+            
+            if self.WALK: 
+                import pdb; pdb.set_trace()
+            else:
+                res = self.advance_chat(last_turn, session_slug)
+            # res = self.advance_chat(last_turn, session_slug)
+            
             if count > 90:
-                print(count)
+                print(count, res)
             try: 
                 self.assertEqual(res.status_code, 200)
             except:
+                print(res.data)
                 import pdb; pdb.set_trace()
 
         attempts = session_user.test_attempts.all()
         self.assertTrue(attempts.exists())
+        
+        import pdb; pdb.set_trace()
+

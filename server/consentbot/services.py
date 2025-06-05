@@ -278,30 +278,36 @@ def mark_session_for_expiration(session_slug):
         pass  # TODO: Or log
 
 
-def get_or_initialize_user_consent(session_slug:str) -> bool:
+def get_or_initialize_user_consent(session_slug: str) -> tuple[Consent, bool]:
     """
     Given a session_slug, retrieve the existing Consent or initialize one.
 
     Returns:
         tuple: (Consent instance, bool indicating if it was created)
     """
+    session = get_object_or_404(ConsentSession, session_slug=session_slug)
 
-    # Get the ConsentSession instance (or 404 if invalid/expired)
-    invite = get_object_or_404(ConsentSession, session_slug=session_slug)
-    # Check for an existing Consent record
-    existing = Consent.objects.filter(user=invite.user, dependent_user=None).order_by('-created_at').first()
+    # Try to use the session.consent directly if already linked
+    if session.consent:
+        return session.consent, False
 
-    if existing:
-        return existing, False
+    # Fallback to latest consent object
+    consent = Consent.objects.filter(user=session.user, dependent_user=None).order_by('-created_at').first()
+    if consent:
+        session.consent = consent
+        session.save(update_fields=["consent"])
+        return consent, False
 
-    # Otherwise, create a new Consent (with placeholder values)
+    # Otherwise, create and link a new Consent
     new_consent = Consent.objects.create(
-        user=invite.user,
-        consent_script = invite.user.consent_script,
-        consent_age_group=ConsentAgeGroup.EIGHTEEN_AND_OVER  # Default; you can change this logic
+        user=session.user,
+        consent_script=session.script,
+        consent_age_group=ConsentAgeGroup.EIGHTEEN_AND_OVER
     )
-
+    session.consent = new_consent
+    session.save(update_fields=["consent"])
     return new_consent, True
+
 
 
 def get_or_initialize_consent_history(invite_id):
@@ -762,6 +768,7 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
         next_node_id = process_test_question(graph, node_id, session_slug)
     elif workflow in ["start_consent", "decline_consent"]:
         next_node_id = process_user_consent(graph, node_id, session_slug)
+        import pdb; pdb.set_trace()
     elif workflow == "follow_up":
         create_follow_up_with_user(
             session_slug,
@@ -792,9 +799,52 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
     session.responses[node_id] = user_label
     session.save(update_fields=["current_node", "visited_nodes", "responses"])
 
-    # 🔁 Return user + bot turn history
+    # Return user + bot turn history
     return get_user_consent_history(session_slug)
 
+def process_user_consent(graph: dict, node_id: str, session_slug: str) -> Optional[str]:
+    """
+    Process a user consent step, including branching for adult vs child workflows or declined consent.
+
+    Args:
+        graph (dict): The full consent conversation graph.
+        node_id (str): The ID of the user-submitted node.
+        session_slug (str): The current consent session identifier.
+
+    Returns:
+        Optional[str]: The next node ID to traverse, if any.
+    """
+    metadata = graph.get(node_id, {}).get("metadata", {})
+    workflow = metadata.get("workflow", "")
+    session = ConsentSession.objects.select_related("user").get(session_slug=session_slug)
+    user = session.user
+    consent = session.consent
+    if not consent:
+        raise ValueError("Consent object is missing for user.")
+
+    if workflow in ["start_consent", "end_consent"]:
+
+        # Self-consent path
+        if user.enrolling_myself and not user.consent_complete:
+            consent.consent_age_group = ConsentAgeGroup.EIGHTEEN_AND_OVER
+            consent.save(update_fields=["consent_age_group"])
+            user.consent_complete = True
+            user.save(update_fields=["consent_complete"])
+
+            # Follow the next node defined for self-enrollment
+            return metadata.get("enrolling_myself_node_id")
+
+        # Child consent path
+        elif user.enrolling_children:
+            # Consent for children is handled in a later part of the graph
+            return metadata.get("enrolling_children_node_id")
+
+    elif workflow == "decline_consent":
+        user.declined_consent = True
+        user.save(update_fields=["declined_consent"])
+
+    # No next step defined — return empty string to indicate end of path
+    return ""
 
 
 def get_next_chat_block(
@@ -861,7 +911,7 @@ def handle_form_submission(data):
     form_type = data["form_type"]
     responses = data["form_responses"] + [{"name": "node_id", "value": data["node_id"]}]
     graph = get_script_from_session_slug(session_slug)
-    print(form_type)
+
     handler = FORM_HANDLER_MAP.get(form_type)
     if not handler:
         raise ValueError(f"Unknown form_type: {form_type}")
