@@ -103,8 +103,14 @@ FORM_RESPONSES={
             "value": "checked"
         }
     ],
-    "text_fields": {},
-    "child_contact": {},
+    "text_fields": [
+        {"name": "firstname", "value": "Alex"},
+        {"name": "lastname", "value": "Johnson"},
+        {"name": "phone", "value": "555-123-4567"},
+        {"name": "email", "value": "alex.johnson@example.com"},
+        {"name": "node_id", "value": "gWJxSfh"}
+    ],
+    "child_contact": [],
 }
 
 
@@ -144,14 +150,22 @@ class ConsentTestFlowTest(TestCase):
             "form_responses": FORM_RESPONSES.get(form_type, [])
         }
         form_response = self.client.post("/mia/consentbot/consent-response/", payload, format="json")
-        if len(form_response.data['chat'][-1]['responses']) == 0 and form_type != "feedback":
+        try:
+            if len(form_response.data['chat'][-1]['responses']) == 0 and form_type != "feedback":
+                import pdb; pdb.set_trace()
+        except:
             import pdb; pdb.set_trace()
 
         try: 
             self.assertEqual(form_response.status_code, 200)
         except:
             import pdb; pdb.set_trace()
-
+        if form_type == 'checkbox_form':
+            next_turn = form_response.data['chat'][-1]
+            # import pdb; pdb.set_trace()
+            response = self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id=8dehgq7")
+            self.handle_form_submission(response.data['chat'][-1], session_slug)
+            
         return form_response
 
     def handle_test_question(self, node, session_slug):
@@ -197,7 +211,6 @@ class ConsentTestFlowTest(TestCase):
             return self.handle_form_submission(node, session_slug)
 
         if workflow == "test_user_understanding":
-            
             if end_sequence and self.test_scenario == "needs_retry":
                 # import pdb; pdb.set_trace()
                 self.test_scenario = "perfect_score"
@@ -256,7 +269,10 @@ class ConsentTestFlowTest(TestCase):
         self.assertTrue(attempts.exists())
         
         consent = session.consent
-        
+
+        # ✅ Other Adult created        
+        self.assertTrue(User.objects.filter(username="alex.johnson").exists())
+
         # ✅ Consent completion
         self.assertIsNotNone(consent.consented_at)
         self.assertEqual(consent.user_full_name_consent, "Jane Doe")

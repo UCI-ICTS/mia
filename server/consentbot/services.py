@@ -8,10 +8,16 @@ from django.core.cache import cache
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from rest_framework import serializers
 from typing import Optional
 
-from authentication.services import FeedbackInputSerializer, create_follow_up_with_user
+from authentication.services import (
+    FeedbackInputSerializer,
+    create_follow_up_with_user,
+    UserInputSerializer,
+    UserOutputSerializer
+)
 from consentbot.models import (
     Consent,
     ConsentAgeGroup,
@@ -525,40 +531,58 @@ def handle_other_adult_contact_form(conversation_graph, session_slug, responses)
     Returns:
         list[dict]: Updated chat history for frontend.
     """
+
     response_dict = {r.get("name"): r.get("value") for r in responses if r.get("name")}
     node_id = response_dict.get("node_id")
 
-    session_slug = get_object_or_404(ConsentSession, session_slug=session_slug)
-    referring_user = session_slug.user
-
-    first_name = response_dict.get("firstname", "")
-    last_name = response_dict.get("lastname", "")
-    phone = response_dict.get("phone", "")
+    session = get_object_or_404(ConsentSession, session_slug=session_slug)
     email = response_dict.get("email", "")
 
     if email:  # Only create a referred user if an email was submitted
-        new_user = User.objects.create(
-            first_name=first_name,
-            last_name=last_name,
-            phone=phone,
-            email=email,
-            referred_by=referring_user,
-            consent_script=referring_user.consent_script  # Inherit the current user's script
+        serializer = UserInputSerializer(data=response_dict)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data["email"]
+
+        # Set temp password and mark user inactive
+        temp_password = get_random_string(
+            length=10,
+            allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
         )
+        validated_data = {
+            **serializer.validated_data,
+            "referred_by": session.user,
+            "first_name": response_dict.get("firstname", ""),
+            "last_name": response_dict.get("lastname", ""),
+            "phone": response_dict.get("phone", ""),
+            "password": temp_password,
+            "is_active": False,
+        }
+        
+        user = UserInputSerializer().create(validated_data)
+
         echo_user_response = "Submitted!"
+
     else:
         echo_user_response = "Let's skip this"
+    
+    new_user_data = UserOutputSerializer(user).data
+    user_turn = format_turn(
+        graph=conversation_graph,
+        speaker="user",
+        node_id=node_id,
+        messages=[f"{new_user_data['first_name']} {new_user_data['last_name']}. Email: {new_user_data['email']} Phone: {new_user_data['phone']}"],
+        timestamp=timezone.now().isoformat()
+    )
 
-    next_node_id = conversation_graph[node_id]["child_ids"][0]
-    next_sequence = get_next_chat_block(next_node_id, session_slug)
+    append_to_consent_history(session_slug, user_turn)
 
-    history = next_sequence["chat_turns"]
-    # TODO Fix this
-    import pdb; pdb.set_trace()
-    history.append(format_turn(conversation_graph, node_id, echo_user_response, next_sequence))
-    set_user_consent_history(session_slug, history)
+    submit_node_id = conversation_graph[node_id]["child_ids"][0]
+    bot_block = get_next_chat_block(submit_node_id, session_slug, graph=conversation_graph)
 
-    return build_chat_from_history(session_slug)
+    for turn in bot_block["chat_turns"]:
+        append_to_consent_history(session_slug, turn)    
+
+    return get_user_consent_history(session_slug)
 
 
 def traverse(conversation_graph, start_id, metadata_field=None):
