@@ -5,6 +5,7 @@ from django.test import TestCase
 from io import StringIO
 from rest_framework.test import APIClient
 from consentbot.models import Consent, ConsentSession, ConsentTestAttempt
+from authentication.models import Feedback
 
 
 User = get_user_model()
@@ -122,7 +123,8 @@ class ConsentTestFlowTest(TestCase):
         }, format="json")
         self.token = auth_response.data["access"]
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
-        self.test_scenario = "perfect_score"
+        self.test_scenario = "needs_retry"
+        # self.test_scenario = "perfect_score"
         self.correct_nodes = TEST_SCENARIOS[self.test_scenario]["correct_nodes"][:]
 
     def dump_test_data(self, file_name:str="test_results.json")-> None:
@@ -142,6 +144,8 @@ class ConsentTestFlowTest(TestCase):
             "form_responses": FORM_RESPONSES.get(form_type, [])
         }
         form_response = self.client.post("/mia/consentbot/consent-response/", payload, format="json")
+        if len(form_response.data['chat'][-1]['responses']) == 0 and form_type != "feedback":
+            import pdb; pdb.set_trace()
 
         try: 
             self.assertEqual(form_response.status_code, 200)
@@ -154,6 +158,11 @@ class ConsentTestFlowTest(TestCase):
         """
         Submit the correct answer if available; otherwise fall back to a known incorrect option.
         """
+        print(node['metadata']['end_sequence'])
+        if len(node["responses"]) == 1:
+            node_id = node["responses"][0]['id']
+            return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={node_id}")
+        
         for response_option in node.get("responses", []):
             node_id = response_option["id"]
             if node_id in self.correct_nodes:
@@ -166,6 +175,7 @@ class ConsentTestFlowTest(TestCase):
                 return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={node_id}")
 
         # If no match found at all, raise for clarity
+        import pdb; pdb.set_trace()
         raise ValueError(f"No matching correct or incorrect response found for node {node['node_id']}")
 
 
@@ -186,17 +196,21 @@ class ConsentTestFlowTest(TestCase):
         if isinstance(label, dict) and "form_type" in label:
             return self.handle_form_submission(node, session_slug)
 
-        if workflow == "test_user_understanding" and end_sequence is not True:
-            # if len(node['responses']) < 2:
-            #     import pdb; pdb.set_trace()
-            # if "<b>Question 10" in node['messages'][0]:
-            #     self.WALK = True
+        if workflow == "test_user_understanding":
+            
+            if end_sequence and self.test_scenario == "needs_retry":
+                # import pdb; pdb.set_trace()
+                self.test_scenario = "perfect_score"
+                self.correct_nodes = TEST_SCENARIOS[self.test_scenario]["correct_nodes"][:]
+                retry_choice = self.handle_test_question(node, session_slug).data['chat'][-1]['responses']
+                for response_option in retry_choice:
+                    if response_option['metadata']['workflow'] == "test_user_understanding":
+                        return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={response_option['id']}")
             return self.handle_test_question(node, session_slug)
 
         # Default to GET
-        return self.client.get(
-            f"/mia/consentbot/consent-response/{session_slug}/?node_id={response['id']}"
-        )
+        return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={response['id']}")
+
 
     def test_consent_test_flow(self):
         create_response = self.client.post("/mia/consentbot/consent-url/", {
@@ -206,32 +220,61 @@ class ConsentTestFlowTest(TestCase):
 
         get_invite = self.client.get("/mia/consentbot/consent-url/jane/invite-link/")
         session_slug = get_invite.data['session_slug']
-        session_user = ConsentSession.objects.get(session_slug=session_slug).user
 
         res = self.client.get(f"/mia/consentbot/consent/{session_slug}/")
+
         count = 0
         for _ in range(150):
             count += 1
-            last_turn = res.data["chat"][-1]
+            try: 
+                last_turn = res.data["chat"][-1]
+            except:
+                import pdb; pdb.set_trace()
             if not last_turn.get("responses"):
                 break
-            
-            if self.WALK: 
-                import pdb; pdb.set_trace()
             else:
                 res = self.advance_chat(last_turn, session_slug)
-            # res = self.advance_chat(last_turn, session_slug)
             
             if count > 90:
-                print(count, res)
+                print(
+                    count, "\n\tParticipant: ",
+                    [message for message in res.data['chat'][-2]['messages']],
+                    "\n\tMIA: ",
+                    [message for message in res.data['chat'][-1]['messages']]
+                )
+                # if count == 107:
+                #     import pdb;pdb.set_trace()
             try: 
                 self.assertEqual(res.status_code, 200)
             except:
                 print(res.data)
                 import pdb; pdb.set_trace()
+        session = ConsentSession.objects.get(session_slug=session_slug)
+        session_user = session.user
 
         attempts = session_user.test_attempts.all()
         self.assertTrue(attempts.exists())
         
-        import pdb; pdb.set_trace()
+        consent = session.consent
+        
+        # ✅ Consent completion
+        self.assertIsNotNone(consent.consented_at)
+        self.assertEqual(consent.user_full_name_consent, "Jane Doe")
+
+        # ✅ Result return preferences
+        self.assertTrue(consent.return_primary_results)
+        self.assertTrue(consent.return_actionable_secondary_results)
+        self.assertTrue(consent.return_secondary_results)
+
+        # ✅ Sample storage preferences
+        self.assertTrue(consent.store_sample_this_study)
+        self.assertTrue(consent.store_sample_other_studies)
+
+        # ✅ PHI use preferences
+        self.assertTrue(consent.store_phi_this_study)
+        self.assertTrue(consent.store_phi_other_studies)
+
+        # ✅ User flag
+        session_user.refresh_from_db()
+        self.assertTrue(session_user.consent_complete)
 

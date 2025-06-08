@@ -27,6 +27,7 @@ from consentbot.selectors import (
     traverse_consent_graph,
     get_consent_start_id,
     get_user_label,
+    get_next_retry_question_node,
 )
 
 from utils.cache import (
@@ -37,7 +38,7 @@ from utils.cache import (
 
 User = get_user_model()  
 # flags
-PERCENT_TEST_QUESTIONS_CORRECT = 100
+TEST_QUESTIONS_CORRECT = 10
 NUM_TEST_TRIES = 2
 
 class RenderBlockSerializer(serializers.Serializer):
@@ -292,7 +293,11 @@ def get_or_initialize_user_consent(session_slug: str) -> tuple[Consent, bool]:
         return session.consent, False
 
     # Fallback to latest consent object
-    consent = Consent.objects.filter(user=session.user, dependent_user=None).order_by('-created_at').first()
+    consent = Consent.objects.filter(
+        user=session.user,
+        dependent_user=None
+    ).order_by('-created_at').first()
+    
     if consent:
         session.consent = consent
         session.save(update_fields=["consent"])
@@ -306,8 +311,8 @@ def get_or_initialize_user_consent(session_slug: str) -> tuple[Consent, bool]:
     )
     session.consent = new_consent
     session.save(update_fields=["consent"])
-    return new_consent, True
 
+    return new_consent, True
 
 
 def get_or_initialize_consent_history(invite_id):
@@ -320,7 +325,6 @@ def get_or_initialize_consent_history(invite_id):
     """
     history = get_user_consent_history(invite_id)
     if history:
-        print("GOT history from DB")
         return history, False
 
     graph = get_script_from_session_slug(invite_id)
@@ -329,23 +333,8 @@ def get_or_initialize_consent_history(invite_id):
 
     # Use full chat_turns list (already formatted)
     history = sequence["chat_turns"]
-    # set_user_consent_history(invite_id, history)
+    set_user_consent_history(invite_id, history)
     return history, True
-
-
-
-
-def append_chat_history(session_slug:str, chat_turn:dict):
-    """
-    Appends a chat turn to the user's consent chat history in cache.
-
-    Args:
-        session_slug (str): The invite UUID identifying the session.
-        chat_turn (dict): A formatted chat turn dictionary using `format_turn`.
-    """
-    history = get_user_consent_history(session_slug)
-    history.append(chat_turn)
-    set_user_consent_history(session_slug, history)
 
 
 def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
@@ -365,7 +354,6 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
         return [{"messages": ["Invalid node: {node_id}"], "responses": []}]
 
     next_node_id = graph[node_id]["child_ids"][0]
-    bot_block = get_next_chat_block(next_node_id, session_slug, graph=graph)
 
     user_turn = format_turn(
         graph=graph,
@@ -375,7 +363,8 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
     )
 
     append_to_consent_history(session_slug, user_turn)
-
+    
+    bot_block = get_next_chat_block(next_node_id, session_slug, graph=graph)
     for turn in bot_block["chat_turns"]:
         append_to_consent_history(session_slug, turn)
 
@@ -383,93 +372,38 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
 
 
 def handle_sample_storage(graph, session_slug, responses):
-    """
-    Processes the 'sample storage' form by updating the user's consent record,
-    saving chat state, and progressing the conversation.
-
-    Args:
-        conversation_graph (dict): The full consent script graph.
-        session_slug (str): The invite UUID identifying the session.
-        responses (list): List of form response dicts.
-
-    Returns:
-        list[dict]: Updated chat history for the frontend.
-    """
-
-    samples, node_id = responses[0]['value'], responses[1]['value']
+    data = {r["name"]: r["value"] for r in responses}
     consent = Consent.objects.filter(user=ConsentSession.objects.get(session_slug=session_slug).user).latest('created_at')
     consent.store_sample_this_study = True
-    consent.store_sample_other_studies = (samples == "storeSamplesOtherStudies")
+    consent.store_sample_other_studies = (data.get("storeSamplesOtherStudies") == "yes")
     consent.save()
-    return update_consent_and_advance(session_slug, node_id, graph, "Sample use submitted!")
+
+    return update_consent_and_advance(session_slug, data["node_id"], graph, "Sample use submitted!")
 
 
 def handle_phi_use(graph, session_slug, responses):
-    """
-    Handles the form submission for PHI (Protected Health Information) usage consent.
-
-    Updates the user's `Consent` object to reflect their PHI usage choices and 
-    appends the next sequence of the chat to the user history.
-
-    Args:
-        conversation_graph (dict): The parsed consent script.
-        session_slug (str): UUID of the invite link.
-        responses (list): List of form responses submitted by the user.
-
-    Returns:
-        list: Updated chat history to be sent back to the frontend.
-    """
-
-    samples, node_id = responses[0]['value'], responses[1]['value']
+    data = {r["name"]: r["value"] for r in responses}
     consent = Consent.objects.filter(user=ConsentSession.objects.get(session_slug=session_slug).user).latest('created_at')
     consent.store_phi_this_study = True
-    consent.store_phi_other_studies = (samples == "storePhiOtherStudies")
+    consent.store_phi_other_studies = (data.get("storePhiOtherStudies") == "yes")
     consent.save()
-    return update_consent_and_advance(session_slug, node_id, graph, "PHI use submitted!")
+
+    return update_consent_and_advance(session_slug, data["node_id"], graph, "PHI use submitted!")
 
 
 def handle_result_return(graph, session_slug, responses):
-    """
-    Handles the form submission for return of genetic results preferences.
-
-    Updates the user's `Consent` object with their selected options and appends
-    the next chat turn to the user history.
-
-    Args:
-        conversation_graph (dict): The parsed consent script.
-        session_slug (str): UUID of the invite link.
-        responses (list): List of form responses submitted by the user.
-
-    Returns:
-        list: Updated chat history to be sent back to the frontend.
-    """
-
     response_dict = {r["name"]: r["value"] for r in responses}
     node_id = response_dict["node_id"]
     consent = Consent.objects.filter(user=ConsentSession.objects.get(session_slug=session_slug).user).latest('created_at')
-    consent.return_primary_results = response_dict.get("rorPrimary") is True
-    consent.return_actionable_secondary_results = response_dict.get("rorSecondary") is True
-    consent.return_secondary_results = response_dict.get("rorSecondaryNot") is True
+    consent.return_primary_results = (response_dict.get("rorPrimary") == "yes")
+    consent.return_actionable_secondary_results = (response_dict.get("rorSecondary") == "yes")
+    consent.return_secondary_results = (response_dict.get("rorSecondaryNot") == "yes")
     consent.save()
+
     return update_consent_and_advance(session_slug, node_id, graph, "Result return preferences submitted!")
 
 
 def handle_consent(graph, session_slug, responses):
-    """
-    Handles the final user consent form submission.
-
-    Stores the user's name, timestamps the consent, and marks the consent
-    as complete. Also updates chat history with the next sequence.
-
-    Args:
-        conversation_graph (dict): The parsed consent script.
-        session_slug (str): UUID of the invite link.
-        responses (list): List of form responses submitted by the user.
-
-    Returns:
-        list: Updated chat history to be sent back to the frontend.
-    """
-
     response_dict = {r["name"]: r["value"] for r in responses}
     node_id = response_dict["node_id"]
     user = ConsentSession.objects.get(session_slug=session_slug).user
@@ -673,24 +607,23 @@ def process_test_question(conversation_graph, current_node_id, session_slug):
         attempt, _ = ConsentTestAttempt.objects.get_or_create(
             user=user,
             consent_script_version=script_version,
-            test_try_num=user.num_test_tries
         )
 
         # Save this question/response to the attempt
-        save_test_question(conversation_graph, current_node_id, attempt)
-
+        is_correct = save_test_question(conversation_graph, current_node_id, attempt)
+        eval_id = get_next_retry_question_node(attempt)
+        
+        # Wrong answer on retry? Evaluate
+        if is_correct is False and user.num_test_tries == 2:
+            return evaluate_attempt(user, attempt, conversation_graph)
+        
+        # Retry complete? Evaluate
+        if user.num_test_tries == 2 and eval_id is None:
+            return evaluate_attempt(user, attempt, conversation_graph)
+        
         # Final question? Evaluate
-        if node_metadata.get("end_sequence") is True or node_metadata.get("end_sequence") == 'true':
-            test_pass = attempt.percent_correct() 
-            if test_pass < PERCENT_TEST_QUESTIONS_CORRECT:
-                if user.num_test_tries < NUM_TEST_TRIES:
-                    user.num_test_tries += 1
-                    user.save(update_fields=["num_test_tries"])
-                    return node_metadata.get("retry_node_id", "")
-                else:
-                    return node_metadata.get("fail_node_id", "")
-            else:
-                return node_metadata.get("pass_node_id", "")
+        if node_metadata.get("end_sequence") is True:
+            return evaluate_attempt(user, attempt, conversation_graph)
 
     except ConsentSession.DoesNotExist:
         return node_metadata.get("fail_node_id", "")
@@ -702,6 +635,50 @@ def process_test_question(conversation_graph, current_node_id, session_slug):
         return node_metadata.get("fail_node_id", "")
 
     return ''
+
+
+def evaluate_attempt(user, attempt, conversation_graph):
+    """
+    Evaluates a user's test attempt and determines the next node in the consent chat.
+
+    This function:
+    - Scans the entire graph for nodes with the `test_user_understanding` workflow.
+    - Collects `pass_node_id`, `retry_node_id`, and `fail_node_id` from metadata.
+    - Evaluates the test score and returns the appropriate next node ID.
+
+    Args:
+        user (User): The user taking the test.
+        attempt (ConsentTestAttempt): The attempt object containing answers.
+        conversation_graph (dict): Full graph structure of the consent script.
+
+    Returns:
+        str: Node ID for the next step in the consent flow.
+    """
+    pass_nodes = []
+    retry_nodes = []
+    fail_nodes = []
+
+    for node in conversation_graph.values():
+        metadata = node.get("metadata", {})
+        if metadata.get("workflow") == "test_user_understanding":
+            if "pass_node_id" in metadata:
+                pass_nodes.append(metadata["pass_node_id"])
+            if "retry_node_id" in metadata:
+                retry_nodes.append(metadata["retry_node_id"])
+            if "fail_node_id" in metadata:
+                fail_nodes.append(metadata["fail_node_id"])
+
+    test_result = len(attempt.correct_question_ids())
+
+    if test_result < TEST_QUESTIONS_CORRECT:
+        if user.num_test_tries < NUM_TEST_TRIES:
+            user.num_test_tries += 1
+            user.save(update_fields=["num_test_tries"])
+            return retry_nodes[0] if retry_nodes else ""
+        else:
+            return fail_nodes[0] if fail_nodes else ""
+    else:
+        return pass_nodes[0] if pass_nodes else ""
 
 
 def save_test_question(conversation_graph, current_node_id, attempt):
@@ -726,7 +703,7 @@ def save_test_question(conversation_graph, current_node_id, attempt):
         user_answer=user_answer,
         answer_correct=is_correct,
     )
-
+    return is_correct
 
 def get_test_results(user, consent_script_version_id):
     """Retrieve the number of correct test responses for a user."""
@@ -762,13 +739,13 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
     node = graph.get(node_id, {})
     metadata = node.get("metadata", {})
     workflow = metadata.get("workflow", "")
+    session = ConsentSession.objects.get(session_slug=session_slug)
 
     # Determine next node in the graph
     if workflow == "test_user_understanding":
         next_node_id = process_test_question(graph, node_id, session_slug)
     elif workflow in ["start_consent", "decline_consent"]:
         next_node_id = process_user_consent(graph, node_id, session_slug)
-        import pdb; pdb.set_trace()
     elif workflow == "follow_up":
         create_follow_up_with_user(
             session_slug,
@@ -786,20 +763,21 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
         messages=[user_label]
     )
     append_to_consent_history(session_slug, user_turn)
-
+    
+    
+    # Return user + bot turn history
     bot_turns = get_next_chat_block(next_node_id, session_slug, graph=graph)
+
     for turn in bot_turns["chat_turns"]:
         append_to_consent_history(session_slug, turn)
 
     # Update session metadata
-    session = ConsentSession.objects.get(session_slug=session_slug)
     session.current_node = bot_turns["chat_turns"][-1]["node_id"] if bot_turns else next_node_id
     if session.current_node not in session.visited_nodes:
         session.visited_nodes.append(session.current_node)
     session.responses[node_id] = user_label
     session.save(update_fields=["current_node", "visited_nodes", "responses"])
-
-    # Return user + bot turn history
+    
     return get_user_consent_history(session_slug)
 
 def process_user_consent(graph: dict, node_id: str, session_slug: str) -> Optional[str]:
@@ -874,7 +852,7 @@ def get_next_chat_block(
     if node_id not in graph:
         raise ValueError(f"Node {node_id} not found in graph.")
 
-    return traverse_consent_graph(graph, node_id)
+    return traverse_consent_graph(graph, node_id, session_slug)
 
 
 def get_consent_session_or_error(session_slug: str) -> ConsentSession:

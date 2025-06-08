@@ -10,17 +10,17 @@ from rest_framework.exceptions import NotFound, ValidationError
 from consentbot.models import (
     ConsentScript,
     ConsentSession,
+    ConsentTestAttempt,
 )
 
+from utils.cache import (
+    get_user_consent_history
+)
 User = get_user_model()
 
 def get_latest_consent(user):
     return user.consents.order_by('-created_at').first()
 
-
-from utils.cache import (
-    get_user_consent_history
-)
 
 def get_bot_messages(node):
     return node.get("messages", []) if node.get("type") == "bot" else []
@@ -87,7 +87,28 @@ def infer_test_question_id(graph: dict, node_id: str) -> str | None:
     return None
 
 
-def traverse_consent_graph(conversation_graph, node_id):
+def get_next_retry_question_node(attempt) -> str | None:
+    """
+    Given a ConsentTestAttempt, return the next question node the user should retry,
+    skipping questions they've already answered correctly.
+
+    Args:
+        attempt (ConsentTestAttempt): The current attempt.
+
+    Returns:
+        str | None: The next question node ID to retry, or None if done.
+    """
+    correct = set(attempt.answers.filter(answer_correct=True).values_list("question_node_id", flat=True))
+    incorrect = attempt.answers.filter(answer_correct=False).values_list("question_node_id", flat=True)
+
+    for qid in incorrect:
+        if qid not in correct:
+            return qid  # Retry this question
+
+    return None  # All incorrect questions have been corrected
+
+
+def traverse_consent_graph(conversation_graph:dict, node_id:str, session_slug:str=None)-> dict:
     """
     Traverses the graph starting at a bot node, collecting bot turns and user response options.
     Stops when a user node is reached or a decision point is found (e.g., fork in the graph).
@@ -107,13 +128,40 @@ def traverse_consent_graph(conversation_graph, node_id):
     current_id = node_id
     end = False
     render = None
-
+    try:
+        session = ConsentSession.objects.get(session_slug=session_slug)
+        tries = session.user.num_test_tries
+    except: 
+        session = None
+        tries = None
+        
     while True:
         node = conversation_graph.get(current_id, {})
         visited.append(current_id)
         node_type = node.get("type")
 
         if node_type == "bot":
+            if tries == 2 and node['metadata']['workflow'] == "test_user_understanding":
+                attempt = ConsentTestAttempt.objects.filter(
+                    user=session.user,
+                    consent_script_version=session.script
+                ).first()
+                correct_ids = attempt.answers.filter(answer_correct=True).values_list("question_node_id", flat=True)
+                if  current_id not in correct_ids:
+                    turn = format_turn(
+                        graph=conversation_graph,
+                        speaker="bot",
+                        node_id=current_id,
+                        messages=node.get("messages", []),
+                        render=node.get("render"),
+                        end_sequence=node.get("metadata", {}).get("end_sequence", False)
+                    )
+
+                    chat_turns.append(turn)
+                
+                current_id = get_next_retry_question_node(attempt)
+                node = conversation_graph.get(current_id, {})
+
             # Append formatted bot turn
             turn = format_turn(
                 graph=conversation_graph,
@@ -123,6 +171,7 @@ def traverse_consent_graph(conversation_graph, node_id):
                 render=node.get("render"),
                 end_sequence=node.get("metadata", {}).get("end_sequence", False)
             )
+
             chat_turns.append(turn)
 
             # End of sequence?
@@ -135,6 +184,7 @@ def traverse_consent_graph(conversation_graph, node_id):
 
             # If next step is a user response block
             if all(conversation_graph.get(cid, {}).get("type") == "user" for cid in children):
+                # import pdb; pdb.set_trace()
                 for cid in children:
                     user_node = conversation_graph.get(cid, {})
                     responses.append({
@@ -168,6 +218,16 @@ def traverse_consent_graph(conversation_graph, node_id):
     if chat_turns:
         chat_turns[-1]["responses"] = responses
         chat_turns[-1]["render"] = render or {"type": "button"}
+
+    # # Targeted fix: remove prior question if retry just restarted
+    if (
+        len(chat_turns) >= 2 and
+        chat_turns[-1]["metadata"].get("test_question") is True and
+        chat_turns[-2]["metadata"].get("test_question") is True and
+        chat_turns[-1]["node_id"] != chat_turns[-2]["node_id"]
+    ):
+        # Only applies if they are different questions in the same test workflow
+        chat_turns.pop(-2)
 
     return {
         "chat_turns": chat_turns,
@@ -253,7 +313,7 @@ def build_chat_from_history(session_slug: str) -> list[dict]:
     history = get_user_consent_history(session_slug)
     return [entry for entry in history if "messages" in entry]
 
-from consentbot.models import ConsentSession
+
 
 def get_consent_session_or_error(session_slug: str) -> ConsentSession:
     """
