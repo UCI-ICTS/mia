@@ -8003,7 +8003,7 @@
       ],
       "metadata": {
           "workflow": "test_user_understanding",
-          "end_sequence": true,
+          "end_sequence": false,
           "test_question": true
       },
       "child_ids": [
