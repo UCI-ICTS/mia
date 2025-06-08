@@ -21,24 +21,28 @@ class UserInputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email',
-                  'first_name',
-                  'last_name',
-                  'phone',
-                  'password',
-                  'is_staff',
-                  'is_superuser',
-                  'script_id'
+        fields = [
+            'email',
+            'first_name',
+            'last_name',
+            'phone',
+            'password',
+            'is_staff',
+            'is_superuser',
+            'script_id',
+            'referred_by'  # ✅ Include this so it’s not dropped from validated_data
         ]
         extra_kwargs = {
             'password': {'write_only': True, 'required': False},
             'is_staff': {'required': False},
             'is_superuser': {'required': False},
+            'referred_by': {'required': False}  # ✅ Let it pass through cleanly
         }
 
     def create(self, validated_data):
         request = self.context.get("request")
-        referring_user = request.user if request and request.user.is_authenticated else None
+        if not validated_data.get("referred_by") and request and request.user.is_authenticated:
+            validated_data["referred_by"] = request.user
 
         script_id = validated_data.pop("script_id", None)
         consent_script = None
@@ -57,8 +61,7 @@ class UserInputSerializer(serializers.ModelSerializer):
             is_staff=is_staff,
             is_superuser=is_superuser,
             consent_script=consent_script,
-            referred_by=referring_user,
-            **validated_data
+            **validated_data  # referred_by included here
         )
 
         if password:
@@ -68,7 +71,7 @@ class UserInputSerializer(serializers.ModelSerializer):
 
         user.save()
         return user
-    
+   
 
 class UserOutputSerializer(serializers.ModelSerializer):
     """
