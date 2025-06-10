@@ -548,6 +548,7 @@ def handle_other_adult_contact_form(conversation_graph, session_slug, responses)
             length=10,
             allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
         )
+
         validated_data = {
             **serializer.validated_data,
             "referred_by": session.user,
@@ -555,6 +556,7 @@ def handle_other_adult_contact_form(conversation_graph, session_slug, responses)
             "last_name": response_dict.get("lastname", ""),
             "phone": response_dict.get("phone", ""),
             "password": temp_password,
+            "script_id": session.user.consent_script_id,
             "is_active": False,
         }
         
