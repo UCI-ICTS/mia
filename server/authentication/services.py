@@ -30,13 +30,13 @@ class UserInputSerializer(serializers.ModelSerializer):
             'is_staff',
             'is_superuser',
             'script_id',
-            'referred_by'  # ✅ Include this so it’s not dropped from validated_data
+            'referred_by'  # Include this so it’s not dropped from validated_data
         ]
         extra_kwargs = {
             'password': {'write_only': True, 'required': False},
             'is_staff': {'required': False},
             'is_superuser': {'required': False},
-            'referred_by': {'required': False}  # ✅ Let it pass through cleanly
+            'referred_by': {'required': False}  # Let it pass through cleanly
         }
 
     def create(self, validated_data):
@@ -45,6 +45,7 @@ class UserInputSerializer(serializers.ModelSerializer):
             validated_data["referred_by"] = request.user
 
         script_id = validated_data.pop("script_id", None)
+
         consent_script = None
         if script_id:
             consent_script = ConsentScript.objects.filter(script_id=script_id).first()

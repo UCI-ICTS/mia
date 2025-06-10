@@ -16,6 +16,7 @@ from consentbot.models import (
 from utils.cache import (
     get_user_consent_history
 )
+
 User = get_user_model()
 
 def get_latest_consent(user):
@@ -236,7 +237,6 @@ def traverse_consent_graph(conversation_graph:dict, node_id:str, session_slug:st
         "end": end,
         "visited": visited
     }
-
 
 
 def get_user_from_session_slug(session_slug: str):
