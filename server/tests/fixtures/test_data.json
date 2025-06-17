@@ -1701,24 +1701,25 @@
                 },
                 "AimWGCA": {
                     "type": "user",
+                    "messages": [],
+                    "parent_ids": [
+                        "knbtYck"
+                    ],
+                    "child_ids": [
+                        "5n6QHJ7"
+                    ],
+                    "attachment": null,
+                    "metadata": {
+                        "workflow": "end_consent",
+                        "end_sequence": false,
+                        "enrolling_myself_node_id": "QKNbLGv",
+                        "enrolling_children_node_id": "nbkJ3g7"
+                    },
                     "render": {
                         "type": "form",
-                        "fields": [
-                            {
-                                "name": "fullname",
-                                "type": "input",
-                                "label": "Full name",
-                                "input_type": "text"
-                            },
-                            {
-                                "name": "consent",
-                                "type": "checkbox",
-                                "label": "I consent"
-                            }
-                        ],
                         "form_id": "consent-form",
-                        "node_id": "AimWGCA",
                         "form_type": "consent",
+                        "node_id": "AimWGCA",
                         "description": [
                             "I am the study participant or I am authorized to act on behalf of the participant.",
                             "I have read this consent form or had it read to me.",
@@ -1729,20 +1730,21 @@
                             "I have been given the chance to ask questions about the study, and my questions have been answered. If I have questions later, I can ask one of the people listed in this form.",
                             "I agree to take part in this research study.",
                             "I will receive a signed copy of this Informed Consent/Parental Permission form to keep."
+                        ],
+                        "fields": [
+                            {
+                                "type": "input",
+                                "label": "Full name",
+                                "name": "fullname",
+                                "input_type": "text"
+                            },
+                            {
+                                "type": "checkbox",
+                                "label": "I consent",
+                                "name": "consent"
+                            }
                         ]
-                    },
-                    "messages": [],
-                    "metadata": {
-                        "workflow": "end_consent",
-                        "end_sequence": false
-                    },
-                    "child_ids": [
-                        "5n6QHJ7"
-                    ],
-                    "attachment": null,
-                    "parent_ids": [
-                        "knbtYck"
-                    ]
+                    }
                 },
                 "AoYLgFK": {
                     "type": "bot",
@@ -4908,13 +4910,31 @@
                 },
                 "SFiuhW9": {
                     "type": "user",
+                    "messages": [],
+                    "parent_ids": [
+                        "afCcd5B"
+                    ],
+                    "child_ids": [
+                        "Ycq8NGN"
+                    ],
+                    "attachment": null,
+                    "metadata": {
+                        "workflow": "child_consent",
+                        "end_sequence": false
+                    },
                     "render": {
                         "type": "form",
+                        "form_id": "sample-storage-use-form",
+                        "form_type": "sample_storage",
+                        "description": [
+                            "Can we store your child’s samples for purposes of this research study? (Required for participation in the study)",
+                            "Can we store your child’s samples in UCI’s biobank for purposes of unrelated research?"
+                        ],
                         "fields": [
                             {
-                                "name": "storeSamplesThisStudy",
                                 "type": "radio",
-                                "label": "Can we store this person’s samples for purposes of this research study? (Required for participation in the study)",
+                                "name": "storeSamplesThisStudy",
+                                "label": "Study Sample Storage",
                                 "options": [
                                     {
                                         "label": "Yes",
@@ -4923,9 +4943,9 @@
                                 ]
                             },
                             {
-                                "name": "storeSamplesOtherStudies",
                                 "type": "radio",
-                                "label": "Can we store this person’s samples in UCI’s biobank for purposes of unrelated research?",
+                                "name": "storeSamplesOtherStudies",
+                                "label": "Other Studies Sample Storage",
                                 "options": [
                                     {
                                         "label": "Yes",
@@ -4938,22 +4958,8 @@
                                 ]
                             }
                         ],
-                        "form_id": "sample-storage-use-form",
-                        "node_id": "SFiuhW9",
-                        "form_type": "sample_storage_other"
-                    },
-                    "messages": [],
-                    "metadata": {
-                        "workflow": "child_consent",
-                        "end_sequence": false
-                    },
-                    "child_ids": [
-                        "Ycq8NGN"
-                    ],
-                    "attachment": null,
-                    "parent_ids": [
-                        "afCcd5B"
-                    ]
+                        "node_id": "SFiuhW9"
+                    }
                 },
                 "SLcyBjQ": {
                     "type": "user",
@@ -6450,12 +6456,30 @@
                 },
                 "YkoAEVe": {
                     "type": "user",
+                    "messages": [],
+                    "parent_ids": [
+                        "nbkJ3g7"
+                    ],
+                    "child_ids": [
+                        "eDqsGdn",
+                        "VbbeudE"
+                    ],
+                    "attachment": null,
+                    "metadata": {
+                        "workflow": "",
+                        "end_sequence": false,
+                        "enrolling_less_than_four": "eDqsGdn",
+                        "enrolling_four_or_more": "VbbeudE"
+                    },
                     "render": {
                         "type": "form",
+                        "form_id": "num-children-enroll-form",
+                        "form_type": "num_children_enroll",
+                        "node_id": "YkoAEVe",
                         "fields": [
                             {
-                                "name": "numChildrenEnroll",
                                 "type": "radio",
+                                "name": "numChildrenEnroll",
                                 "label": "How many children are you enrolling?",
                                 "options": [
                                     {
@@ -6476,30 +6500,8 @@
                                     }
                                 ]
                             }
-                        ],
-                        "form_id": "num-children-enroll-form",
-                        "node_id": "YkoAEVe",
-                        "form_type": "num_children_enroll",
-                        "routing_metadata": {
-                            "1": "eDqsGdn",
-                            "2": "eDqsGdn",
-                            "3": "eDqsGdn",
-                            "4": "VbbeudE"
-                        }
-                    },
-                    "messages": [],
-                    "metadata": {
-                        "workflow": "",
-                        "end_sequence": false
-                    },
-                    "child_ids": [
-                        "eDqsGdn",
-                        "VbbeudE"
-                    ],
-                    "attachment": null,
-                    "parent_ids": [
-                        "nbkJ3g7"
-                    ]
+                        ]
+                    }
                 },
                 "YmLFWDr": {
                     "type": "user",
@@ -9255,47 +9257,48 @@
                 },
                 "nAaeApX": {
                     "type": "user",
-                    "render": {
-                        "type": "form",
-                        "fields": [
-                            {
-                                "name": "childname",
-                                "type": "input",
-                                "label": "Child’s full name",
-                                "required": true,
-                                "input_type": "text"
-                            },
-                            {
-                                "name": "fullname",
-                                "type": "input",
-                                "label": "Full name of consenting individual (parent/legal guardian)",
-                                "required": true,
-                                "input_type": "text"
-                            },
-                            {
-                                "name": "consent",
-                                "type": "checkbox",
-                                "label": "I consent"
-                            }
-                        ],
-                        "form_id": "consent-form",
-                        "node_id": "nAaeApX",
-                        "form_type": "child_parent_consent",
-                        "description": "I am the study participant or I am authorized to act on behalf of the participant.\nI have read this consent form or had it read to me.\nI have been invited to take part in a research study. I was told why the research is being done and how long my participation in the study is expected to last. I was told about what will happen in the study and if there are any procedures or drugs that are experimental.\nI was told that taking part in this research is voluntary. I also was told that I can decide not to take part or stop being in it at any time without any penalty to me or any change to the quality of care I receive at UCI.\nI was told about the risks and possible discomforts of taking part in this research study. I was also informed if there are any possible benefits to me if I am in this study.\nI have been given the chance to ask questions about the study, and my questions have been answered. If I have questions later, I can ask one of the people listed in this form.\nI agree to take part in this research study.\nI will receive a signed copy of this Informed Consent/Parental Permission form to keep."
-                    },
                     "messages": [],
-                    "metadata": {
-                        "workflow": "child_consent",
-                        "end_sequence": true
-                    },
+                    "parent_ids": [
+                        "ggfpZho"
+                    ],
                     "child_ids": [
                         "Mzke78A",
                         "Mzh9KYH"
                     ],
                     "attachment": null,
-                    "parent_ids": [
-                        "ggfpZho"
-                    ]
+                    "metadata": {
+                        "workflow": "child_consent",
+                        "enroll_another_child": "33yRxHn",
+                        "end_sequence": true
+                    },
+                    "render": {
+                        "type": "form",
+                        "form_id": "consent-form",
+                        "form_type": "child_parent_consent",
+                        "node_id": "nAaeApX",
+                        "description": "I am the study participant or I am authorized to act on behalf of the participant.\nI have read this consent form or had it read to me.\nI have been invited to take part in a research study. I was told why the research is being done and how long my participation in the study is expected to last. I was told about what will happen in the study and if there are any procedures or drugs that are experimental.\nI was told that taking part in this research is voluntary. I also was told that I can decide not to take part or stop being in it at any time without any penalty to me or any change to the quality of care I receive at UCI.\nI was told about the risks and possible discomforts of taking part in this research study. I was also informed if there are any possible benefits to me if I am in this study.\nI have been given the chance to ask questions about the study, and my questions have been answered. If I have questions later, I can ask one of the people listed in this form.\nI agree to take part in this research study.\nI will receive a signed copy of this Informed Consent/Parental Permission form to keep.",
+                        "fields": [
+                            {
+                                "type": "input",
+                                "input_type": "text",
+                                "label": "Child\u2019s full name",
+                                "name": "childname",
+                                "required": true
+                            },
+                            {
+                                "type": "input",
+                                "input_type": "text",
+                                "label": "Full name of consenting individual (parent/legal guardian)",
+                                "name": "fullname",
+                                "required": true
+                            },
+                            {
+                                "type": "checkbox",
+                                "label": "I consent",
+                                "name": "consent"
+                            }
+                        ]
+                    }
                 },
                 "nB4pVm8": {
                     "type": "bot",

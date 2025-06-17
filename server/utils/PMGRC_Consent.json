@@ -7994,25 +7994,25 @@
     }
   },
   "kZ6qj4C": {
-      "type": "user",
-      "render": {
-          "type": "button"
-      },
-      "messages": [
-          "Retry the questions."
-      ],
-      "metadata": {
-          "workflow": "test_user_understanding",
-          "end_sequence": false,
-          "test_question": true
-      },
-      "child_ids": [
-          "VWzWNAK"
-      ],
-      "attachment": null,
-      "parent_ids": [
-          "G3EXSPz"
-      ]
+    "type": "user",
+    "render": {
+      "type": "button"
+    },
+    "messages": [
+      "Retry the questions."
+    ],
+    "metadata": {
+      "workflow": "test_user_understanding",
+      "end_sequence": false,
+      "test_question": true
+    },
+    "child_ids": [
+      "VWzWNAK"
+    ],
+    "attachment": null,
+    "parent_ids": [
+      "G3EXSPz"
+    ]
   },
   "iH6N9fF": {
     "type": "bot",
@@ -8092,9 +8092,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "start_consent",
-      "end_sequence": false,
-      "enrolling_myself_node_id": "QKNbLGv",
-      "enrolling_children_node_id": "nbkJ3g7"
+      "end_sequence": false
     },
     "render": {
       "type": "button"
@@ -8601,7 +8599,9 @@
     "attachment": null,
     "metadata": {
       "workflow": "end_consent",
-      "end_sequence": false
+      "end_sequence": false,
+      "enrolling_myself_node_id": "QKNbLGv",
+      "enrolling_children_node_id": "nbkJ3g7"
     },
     "render": {
       "type": "form",
@@ -8688,7 +8688,9 @@
     "attachment": null,
     "metadata": {
       "workflow": "",
-      "end_sequence": false
+      "end_sequence": false,
+      "enrolling_less_than_four": "eDqsGdn",
+      "enrolling_four_or_more": "VbbeudE"
     },
     "render": {
       "type": "form",
@@ -8719,13 +8721,7 @@
             }
           ]
         }
-      ],
-      "routing_metadata": {
-        "1": "eDqsGdn",
-        "2": "eDqsGdn",
-        "3": "eDqsGdn",
-        "4": "VbbeudE"
-      }
+      ]
     }
   },
   "eDqsGdn": {
@@ -8924,13 +8920,16 @@
     "render": {
       "type": "form",
       "form_id": "sample-storage-use-form",
-      "form_type": "sample_storage_other",
-      "node_id": "SFiuhW9",
+      "form_type": "sample_storage",
+      "description": [
+        "Can we store your child’s samples for purposes of this research study? (Required for participation in the study)",
+        "Can we store your child’s samples in UCI’s biobank for purposes of unrelated research?"
+      ],
       "fields": [
         {
           "type": "radio",
           "name": "storeSamplesThisStudy",
-          "label": "Can we store this person\u2019s samples for purposes of this research study? (Required for participation in the study)",
+          "label": "Study Sample Storage",
           "options": [
             {
               "label": "Yes",
@@ -8941,7 +8940,7 @@
         {
           "type": "radio",
           "name": "storeSamplesOtherStudies",
-          "label": "Can we store this person\u2019s samples in UCI\u2019s biobank for purposes of unrelated research?",
+          "label": "Other Studies Sample Storage",
           "options": [
             {
               "label": "Yes",
@@ -8953,7 +8952,8 @@
             }
           ]
         }
-      ]
+      ],
+      "node_id": "SFiuhW9"
     }
   },
   "Ycq8NGN": {
@@ -9341,6 +9341,7 @@
     "attachment": null,
     "metadata": {
       "workflow": "child_consent",
+      "enroll_another_child": "33yRxHn",
       "end_sequence": true
     },
     "render": {

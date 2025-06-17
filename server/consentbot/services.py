@@ -76,13 +76,13 @@ class RenderBlockSerializer(serializers.Serializer):
 
 class ConsentInputSerializer(serializers.ModelSerializer):
     user_id = serializers.UUIDField(write_only=True)
-    dependent_user_id = serializers.UUIDField(required=False, allow_null=True, write_only=True)
+    guardian_id = serializers.UUIDField(required=False, allow_null=True, write_only=True)
 
     class Meta:
         model = Consent
         fields = [
             'user_id',
-            'dependent_user_id',
+            'guardian_id',
             'consent_age_group',
             'consent_script',
             'store_sample_this_study',
@@ -100,34 +100,24 @@ class ConsentInputSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.get(user_id=validated_data.pop('user_id'))
-        dependent_user = None
+        guardian_id = validated_data.pop('guardian_id', None)
 
-        if 'dependent_user_id' in validated_data:
-            dependent_user_id = validated_data.pop('dependent_user_id')
-            if dependent_user_id:
-                dependent_user = User.objects.get(user_id=dependent_user_id)
+        if not validated_data.get("consent_script"):
+            invite = ConsentSession.objects.filter(user=user).order_by('-created_at').first()
+            if not invite:
+                raise serializers.ValidationError("No invite URL found for this user.")
+            validated_data["consent_script"] = get_script_from_session_slug(invite.session_slug)
 
-        # 🔍 Find latest consent URL for the user
-        invite = ConsentSession.objects.filter(user=user).order_by('-created_at').first()
-        if not invite:
-            raise serializers.ValidationError("No invite URL found for this user.")
+        guardian = User.objects.get(user_id=guardian_id) if guardian_id else None
 
-        # 🔍 Lookup the ConsentScript based on the invite
-        consent_script = get_script_from_session_slug(invite.session_slug)
-
-        return Consent.objects.create(
-            user=user,
-            dependent_user=dependent_user,
-            consent_script=consent_script,
-            **validated_data
-        )
+        return Consent.objects.create(user=user, guardian=guardian, **validated_data)
 
 
 class ConsentOutputSerializer(serializers.ModelSerializer):
     user_id = serializers.UUIDField(source='user.user_id', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
-    dependent_user_id = serializers.UUIDField(source='dependent_user.user_id', read_only=True)
-    dependent_email = serializers.EmailField(source='dependent_user.email', read_only=True)
+    guardian_id = serializers.UUIDField(source='guardian.user_id', read_only=True)
+    guardian_email = serializers.EmailField(source='guardian.email', read_only=True)
 
     class Meta:
         model = Consent
@@ -135,8 +125,8 @@ class ConsentOutputSerializer(serializers.ModelSerializer):
             'user_consent_id',
             'user_id',
             'email',
-            'dependent_user_id',
-            'dependent_email',
+            'guardian_id',
+            'guardian_email',
             'consent_age_group',
             'store_sample_this_study',
             'store_sample_other_studies',
@@ -301,7 +291,7 @@ def get_or_initialize_user_consent(session_slug: str) -> tuple[Consent, bool]:
     # Fallback to latest consent object
     consent = Consent.objects.filter(
         user=session.user,
-        dependent_user=None
+        guardian=None
     ).order_by('-created_at').first()
     
     if consent:
@@ -343,7 +333,7 @@ def get_or_initialize_consent_history(invite_id):
     return history, True
 
 
-def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
+def update_consent_and_advance(session_slug, node_id, graph, user_reply: str, next_node_id:str=None):
     """
     Updates consent state and advances to the next node in the graph.
 
@@ -359,7 +349,8 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
     if node_id not in graph:
         return [{"messages": ["Invalid node: {node_id}"], "responses": []}]
 
-    next_node_id = graph[node_id]["child_ids"][0]
+    if next_node_id is None:
+        next_node_id = graph[node_id]["child_ids"][0]
 
     user_turn = format_turn(
         graph=graph,
@@ -369,7 +360,7 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
     )
 
     append_to_consent_history(session_slug, user_turn)
-    
+
     bot_block = get_next_chat_block(next_node_id, session_slug, graph=graph)
     for turn in bot_block["chat_turns"]:
         append_to_consent_history(session_slug, turn)
@@ -379,6 +370,8 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str):
 
 def handle_sample_storage(graph, session_slug, responses):
     data = {r["name"]: r["value"] for r in responses}
+    node = graph.get(data['node_id'])
+    # import pdb; pdb.set_trace()
     consent = Consent.objects.filter(user=ConsentSession.objects.get(session_slug=session_slug).user).latest('created_at')
     consent.store_sample_this_study = True
     consent.store_sample_other_studies = (data.get("storeSamplesOtherStudies") == "yes")
@@ -410,19 +403,76 @@ def handle_result_return(graph, session_slug, responses):
 
 
 def handle_consent(graph, session_slug, responses):
-    response_dict = {r["name"]: r["value"] for r in responses}
-    node_id = response_dict["node_id"]
-    user = ConsentSession.objects.get(session_slug=session_slug).user
-    consent = Consent.objects.filter(user=user).latest('created_at')
+    """
+    Handle a consent signature form submission for either a self-consenting user or
+    a guardian consenting on behalf of a dependent.
 
-    if response_dict.get("consent"):
+    This function:
+    - Finalizes a self-consent if the user is enrolling themselves.
+    - Finalizes a child/dependent consent if the guardian is acting on behalf of a dependent.
+    - Redirects to the next child enrollment node if more dependents need consent.
+    - Advances the chat flow accordingly.
+
+    Parameters:
+        graph (dict): The loaded consent graph.
+        session_slug (str): The session identifier.
+        responses (list[dict]): Submitted form data.
+
+    Returns:
+        dict: The next chat block, formatted by `update_consent_and_advance`.
+    """
+    response_dict = {r["name"]: r["value"] for r in responses if r.get("name")}
+    node_id = response_dict.get("node_id")
+    node = graph.get(node_id, {})
+    workflow = node.get("metadata", {}).get("workflow")
+    session = get_object_or_404(ConsentSession, session_slug=session_slug)
+    user = session.user
+    consent = session.consent
+
+    if workflow == "decline_consent":
+        import pdb; pdb.set_trace()  # still in debug mode
+
+    user_reply = "CONSENT ERROR!!! *****"
+
+    # === SELF-CONSENT HANDLING ===
+    if user.enrolling_myself and not user.consent_complete:
+        consent.consent_statements = node.get("render", {}).get("description", "")
         consent.user_full_name_consent = response_dict.get("fullname", "")
         consent.consented_at = timezone.now()
         user.consent_complete = True
         user.save()
         consent.save()
 
-    return update_consent_and_advance(session_slug, node_id, graph, "Consent submitted!")
+        user_reply = f"I, {user.first_name} {user.last_name}, consent for myself"
+
+    # === DEPENDENT CONSENT HANDLING ===
+    if user.enrolling_children:
+        dependent_consents = Consent.objects.filter(guardian=user)
+
+        if consent.user == user:
+            # We are still at the guardian's own signature step; redirect to child consent form
+            next_node_id = node.get("metadata", {}).get("enrolling_children_node_id")
+            return update_consent_and_advance(session_slug, node_id, graph, user_reply, next_node_id)
+        else:
+            # Finalize this child/dependent consent
+            consent.user_full_name_consent = response_dict.get("fullname", "")
+            consent.consent_statements = node.get("render", {}).get("description", "")
+            consent.consented_at = timezone.now()
+            consent.user.consent_complete = True
+            consent.user.save()
+            consent.save()
+
+            user_reply = (
+                f"I, {user.first_name} {user.last_name}, consent for my dependent "
+                f"{consent.user_full_name_consent}"
+            )
+
+            if user.num_children_enrolling > len(dependent_consents):
+                next_node_id = node.get("metadata", {}).get("enroll_another_child")
+                return update_consent_and_advance(session_slug, node_id, graph, user_reply, next_node_id)
+
+    # Default: proceed to next node normally
+    return update_consent_and_advance(session_slug, node_id, graph, user_reply)
 
 
 def handle_family_enrollment_form(graph, session_slug, responses):
@@ -438,6 +488,7 @@ def handle_family_enrollment_form(graph, session_slug, responses):
     Returns:
         list: Updated chat history
     """
+
     user = ConsentSession.objects.get(session_slug=session_slug).user
     history = get_user_consent_history(session_slug)
     parent_node_id = history[-1]["node_id"] if history else None
@@ -481,8 +532,8 @@ def handle_family_enrollment_form(graph, session_slug, responses):
 
         for turn in bot_block["chat_turns"]:
             append_to_consent_history(session_slug, turn)
-
     user.save()
+
     return get_user_consent_history(session_slug)
 
 
@@ -561,18 +612,18 @@ def handle_other_adult_contact_form(conversation_graph, session_slug, responses)
         }
         
         user = UserInputSerializer().create(validated_data)
+        new_user_data = UserOutputSerializer(user).data
 
-        echo_user_response = "Submitted!"
+        messages=[f"{new_user_data['first_name']} {new_user_data['last_name']}. Email: {new_user_data['email']} Phone: {new_user_data['phone']}"],
 
     else:
-        echo_user_response = "Let's skip this"
+        messages = ["Let's skip this"]
     
-    new_user_data = UserOutputSerializer(user).data
     user_turn = format_turn(
         graph=conversation_graph,
         speaker="user",
         node_id=node_id,
-        messages=[f"{new_user_data['first_name']} {new_user_data['last_name']}. Email: {new_user_data['email']} Phone: {new_user_data['phone']}"],
+        messages=messages,
         timestamp=timezone.now().isoformat()
     )
 
@@ -731,6 +782,7 @@ def save_test_question(conversation_graph, current_node_id, attempt):
     )
     return is_correct
 
+
 def get_test_results(user, consent_script_version_id):
     """Retrieve the number of correct test responses for a user."""
     return (
@@ -743,6 +795,87 @@ def get_test_results(user, consent_script_version_id):
         .aggregate(correct_count=Count("answer_correct"))["correct_count"]
         or 0
     )
+
+
+def handle_child_enroll_form(graph, session_slug, responses):
+    """
+    """
+    next_node_id = None
+
+    data = {r["name"]: r["value"] for r in responses}
+    node_id = data["node_id"]
+    node = graph.get(node_id, {})
+    user_reply = f"I am enrolling {data['numChildrenEnroll']} children."
+    
+    if int(data['numChildrenEnroll']) > 3:
+        next_node_id = node.get("metadata").get("enrolling_four_or_more")
+    
+    session = ConsentSession.objects.get(session_slug=session_slug)
+    user = session.user
+    user.num_children_enrolling = data['numChildrenEnroll']
+    user.save()
+    
+    return update_consent_and_advance(session_slug, node_id, graph, user_reply, next_node_id)
+
+
+def handle_child_contact_form(graph, session_slug, responses):
+    """
+    Handle submission of a child's contact form.
+
+    - Creates a new User object for the child.
+    - Links the submitting user as the child's guardian in the Consent record.
+    - Assigns the same consent script used by the guardian.
+    - Stores the consent age group based on form response.
+    - Advances the chat sequence.
+    """
+    session = get_object_or_404(ConsentSession, session_slug=session_slug)
+    guardian = session.user
+
+    response_dict = {r.get("name"): r.get("value") for r in responses if r.get("name")}
+    node_id = response_dict.get("node_id")
+    age_group = response_dict.get("age_group")
+
+    if not age_group:
+        raise ValueError("Age group is required for child consent.")
+
+    # Generate synthetic email to ensure uniqueness if needed
+    child_name = f"{response_dict.get('firstname', '')}-{response_dict.get('lastname', '')}"
+    child_email = child_name + response_dict.get("email", "")
+
+    # Create child user
+    temp_password = get_random_string(length=10)
+    child_data = {
+        "email": child_email,
+        "first_name": response_dict.get("firstname", ""),
+        "last_name": response_dict.get("lastname", ""),
+        "phone": response_dict.get("phone", ""),
+        "password": temp_password,
+        "script_id": str(guardian.consent_script.script_id) if guardian.consent_script else None,
+        "referred_by": str(guardian.user_id),
+    }
+
+    child_serializer = UserInputSerializer(data=child_data)
+    child_serializer.is_valid(raise_exception=True)
+    child_user = child_serializer.save(is_active=False)
+
+    # Create consent record where the child is the user, and guardian is linked
+    consent_data = {
+        "user_id": child_user.pk,
+        "guardian_id": guardian.pk,
+        "consent_script": guardian.consent_script.pk if guardian.consent_script else None,
+        "consent_age_group": age_group,
+    }
+    consent_serializer = ConsentInputSerializer(data=consent_data)
+    consent_serializer.is_valid(raise_exception=True)
+    consent_serializer.save()
+
+    # Reasign the session consent be the child consent
+    child_consent = consent_serializer.instance
+    session.consent = child_consent
+    session.save(update_fields=["consent"])
+
+    user_reply = f"Information submitted for {child_name}, age: {age_group}"
+    return update_consent_and_advance(session_slug, node_id, graph, user_reply)
 
 
 def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]:
@@ -770,7 +903,7 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
     # Determine next node in the graph
     if workflow == "test_user_understanding":
         next_node_id = process_test_question(graph, node_id, session_slug)
-    elif workflow in ["start_consent", "decline_consent"]:
+    elif workflow == "decline_consent":
         next_node_id = process_user_consent(graph, node_id, session_slug)
     elif workflow == "follow_up":
         create_follow_up_with_user(
@@ -780,6 +913,7 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
         )
     if not next_node_id:
         next_node_id = graph[node_id].get("child_ids", [None])[0]
+
     # Format and store user turn
     user_label = get_user_label(node) if node.get("type") == "user" else ""
     user_turn = format_turn(
@@ -806,6 +940,7 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
     
     return get_user_consent_history(session_slug)
 
+
 def process_user_consent(graph: dict, node_id: str, session_slug: str) -> Optional[str]:
     """
     Process a user consent step, including branching for adult vs child workflows or declined consent.
@@ -827,7 +962,7 @@ def process_user_consent(graph: dict, node_id: str, session_slug: str) -> Option
         raise ValueError("Consent object is missing for user.")
 
     if workflow in ["start_consent", "end_consent"]:
-
+        
         # Self-consent path
         if user.enrolling_myself and not user.consent_complete:
             consent.consent_age_group = ConsentAgeGroup.EIGHTEEN_AND_OVER
@@ -839,11 +974,11 @@ def process_user_consent(graph: dict, node_id: str, session_slug: str) -> Option
             return metadata.get("enrolling_myself_node_id")
 
         # Child consent path
-        elif user.enrolling_children:
-            # Consent for children is handled in a later part of the graph
+        if user.enrolling_children:
+            # Consent for children is handled 
             return metadata.get("enrolling_children_node_id")
 
-    elif workflow == "decline_consent":
+    if workflow == "decline_consent":
         user.declined_consent = True
         user.save(update_fields=["declined_consent"])
 
@@ -918,6 +1053,7 @@ def handle_form_submission(data):
 
     handler = FORM_HANDLER_MAP.get(form_type)
     if not handler:
+        import pdb; pdb.set_trace()
         raise ValueError(f"Unknown form_type: {form_type}")
 
     history = handler(graph, session_slug, responses)
@@ -925,6 +1061,7 @@ def handle_form_submission(data):
     render = history[-1]['render']
     
     return history, render
+
 
 FORM_HANDLER_MAP = {
     "family_enrollment": handle_family_enrollment_form,
@@ -934,6 +1071,8 @@ FORM_HANDLER_MAP = {
     "result_return": handle_result_return,
     "feedback": handle_user_feedback_form,
     "consent": handle_consent,
+    "child_parent_consent": handle_consent,
     "text_fields": handle_other_adult_contact_form,
-    # "child_contact": handle_child_contact_form,
+    "num_children_enroll": handle_child_enroll_form,
+    "child_contact": handle_child_contact_form,
 }
