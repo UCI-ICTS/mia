@@ -1,0 +1,919 @@
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Consent Form</title>
+	{% load static %}
+	<style>
+		@page {
+			margin: 1in;
+
+			@top-left {
+				content: "Confidential";
+				font-size: 12pt;
+				font-style: italic;
+			}
+
+			@top-right {
+				content: "UCI GREGoR Consent";
+				font-size: 10pt;
+				font-style: italic;
+			}
+
+			@bottom-left {
+				content: "Participant: {{ first_name }} {{ last_name }}";
+				font-size: 9pt;
+			}
+
+			@bottom-center {
+				content: "{{ datetime_now }}";
+				font-size: 9pt;
+			}
+
+			@bottom-right {
+				content: "Page " counter(page) " of " counter(pages);
+				font-size: 9pt;
+			}
+		}
+
+		body {
+			font-family: 'Arial', sans-serif;
+			font-size: 10pt;
+			line-height: 1.5;
+			margin: 0.25 in;
+		}
+
+		h1 {
+			font-size: 20pt;
+			margin-bottom: 0.25in;
+		}
+
+		h2 {
+			font-size: 12pt;
+			margin-top: 1em;
+			margin-bottom: 0.25em;
+		}
+
+		p {
+			margin: 0 0 0.5em 0;
+		}
+
+		.two-column {
+			display: flex;
+			gap: 2em;
+			margin-top: 1em;
+			margin-bottom: 1em;
+		}
+
+		.column {
+			flex: 1;
+		}
+
+		.checkbox {
+			display: inline-block;
+			width: 1em;
+			height: 1em;
+			border: 1px solid #000;
+			margin-right: 0.3em;
+		}
+
+		.checked {
+			background: black;
+			color: white;
+			text-align: center;
+			font-weight: bold;
+		}
+
+		.statement {
+			margin-left: 1em;
+			font-style: italic;
+		}
+
+		.signature-line {
+			border-bottom: 1px solid black;
+			display: inline-block;
+			width: 300px;
+			margin-left: 1em;
+		}
+	</style>
+</head>
+
+<body lang="EN-US">
+	<div>
+		<h1>Consent Form</h1>
+		<hr />
+		<p>Record ID: {{record_id}}</p>
+		<p>Study ID: {{study_id}}</p>
+		<hr />
+		<p>Consent form for UCI-GREGoR: {{pmgrc_id}}</p>
+		<hr />
+		<p>First Name: {{first_name}}</p>
+		<p>Last name: {{last_name}}</p>
+		<p>Date of Birth: {{date_of_birth}}</p>
+
+	</div>
+
+	<p style="page-break-before: always;"></p>
+
+	<div>
+		<p><strong>UNIVERSITY OF CALIFORNIA, IRVINE</strong></p>
+		<p><strong>CONSENT TO ACT AS A HUMAN RESEARCH SUBJECT</strong></p>
+		<p>Pediatric Mendelian Genomics Research Center</p>
+	</div>
+	<div class="two-column">
+
+		<div class="column">
+			<p><strong>STUDY LOCATION(S):</strong></p>
+			<p>University of California, Irvine (UCI)</p>
+			<p>Department of Pediatrics</p>
+			<p>1003 Health Sciences Road</p>
+			<p>Suite 308</p>
+			<p>Irvine, CA 92617</p>
+			<p>(949) 824-4090</p>
+		</div>
+
+		<div class="column">
+			<p><strong>Lead Researcher:</strong></p>
+			<p>Eric Vilain, MD PhD</p>
+			<p>Department of Pediatrics</p>
+			<p>(949) 824-4090</p>
+		</div>
+	</div>
+
+	<div>
+
+		<p>Throughout this document, "You" always refers to
+			the person (you or your child) who takes part in the study. </p>
+
+		<h2>SUMMARY OF KEY INFORMATION:</h2>
+		<p>The information provided in this box includes a brief yet
+			complete summary of key information about the research, presented first as
+			required by the federal regulations. Some sections that require additional
+			information may be repeated later in this document.</p>
+		<h2>Participation is Voluntary</h2>
+		<p>We are inviting you to be part of a research study at the
+			University of California, Irvine (UCI). Taking part in this study is your
+			choice. You can choose to take part or you can choose not to take part in this
+			study. You also can change your mind about participating at any time. Whatever
+			choice you make, you will not lose access to your medical care or give up any
+			legal rights or benefits. To help you decide if you would like to participate,
+			we want you to know why we are doing the study, what you will be expected to
+			do, and the possible risks and benefits of being in the study. This form has
+			information to help you make your choice about whether or not to participate.</p>
+		<h2>Study Purpose</h2>
+		<p>The purpose of this research study is to better understand
+			how differences in genetic material affect human health.</p>
+		<h2>Study Procedures</h2>
+		<p>When you enroll in this study, you will be asked to provide
+			detailed medical history and family health history information. If you had
+			previous genetic testing, you will be asked to provide the data from this
+			testing by asking for this data from the performing lab or allowing a member of
+			our study team to request this data for you. You may be asked to provide a
+			genetic sample. This may include blood or saliva. The study team will use
+			multiple different approaches to find genetic changes which may cause human
+			disease and other traits and better understand genetic changes with unclear
+			meaning. Study staff will contact you and your doctor if they identify
+			something that might explain your medical history.</p>
+		<h2>Expected Duration</h2>
+		<p>Participation will last approximately 1.5 hours and will
+			include 1 visit on campus for a blood draw or saliva collection at home.</p>
+
+		<h2>Risks of Participation</h2>
+		<p>It is possible that the extensive genetic analysis may
+			identify unexpected genetic results that have the potential to pose a present
+			or future risk to your health. This may cause anxiety. Another risk is loss of
+			confidentiality of your study information. Your samples will be assigned a
+			study ID number to help minimize this risk. If a blood sample is obtained, this
+			may cause risks including discomfort and/or bruising; infection, excess
+			bleeding, clotting, or fainting. There may be minimal discomfort in obtaining a
+			saliva sample due to pressure in the mouth from the swab.</p>
+		<h2>Benefits to Participants</h2>
+		<p>You may not receive any benefit from participating in this
+			study. One possible benefit is receiving a genetic diagnosis</p>
+
+		<h2>Benefits to Others or Society</h2>
+		<p>Your information may help increase our knowledge of genetic
+			syndromes and eventually lead to more effective diagnoses, management and
+			treatment.</p>
+
+		<h2>Alternative Procedures or Treatments</h2>
+		<p>The usual approach for patients who are not in a study is to
+			get advice from their doctor. This advice may include other options for genetic
+			testing.</p>
+
+		<p>If you are interested in learning more about this study,
+			please continue reading below. The rest of this form gives you more important
+			information you need to know about the study before you decide if you want to
+			participate. The study doctor or a member of the research team will talk to you
+			about the study and answer all of your questions. We encourage you to discuss
+			this study with your family and anyone else you trust before making your
+			decision. It's important that you have as much information as you need and that
+			all your questions are answered.</p>
+		<h2>WHY IS THIS RESEARCH STUDY BEING DONE?</h2>
+		<p>Your participation in this research is voluntary.</p>
+
+		<p>There will be no penalty or loss of benefits to which you are
+			otherwise entitled if you decide not to be in the study or withdraw from the
+			study later. This means that:</p>
+
+		<p>You do not have to join the study. You may change your mind
+			and stop being in the study at any time. We will tell you if we make any
+			important changes to the study or if there are any important new findings so
+			that you can decide if you still want to be in the study. If you are an
+			employee or a medical or graduate student in training at UCI, your decision to
+			participate or not participate will not affect your employment or academic
+			standing.</p>
+
+		<p>You are being asked to be in the study because you or your
+			family member have a known or suspected genetic trait. Genetic traits are
+			features or diseases due to variants in genetic material. Genetic material has
+			the instructions in the body on how to grow and develop. There are many genetic
+			traits that do not have a known cause. Some people have genetic testing to try
+			and explain why they have a disease. Some genetic tests do not find an answer.
+			Some genetic tests report an uncertain result. We want to see if newer genetic
+			testing tools can find an answer for people who do not find an answer on
+			standard genetic tests. </p>
+		<p>We also want to identify new genes that cause human disease.</p>
+
+		<p>We want to also find a better way to determine if an
+			uncertain genetic result causes a disease.</p>
+
+		<p>Dr. Eric Vilain is the person responsible for this research
+			study at UCI. He is called the Principal Investigator.</p>
+
+		<p>The study team may work with other companies that provide
+			clinical genetic testing for research or commercially. The National Human
+			Genome Research Institute, part of the National Institutes of Health, is paying
+			for this research to be done.</p>
+		<h2> </h2>
+		<h2>REQUEST FOR STORAGE AND SHARING OF RESEARCH DATA FOR FUTURE RESEARCH</h2>
+		<p>Genomic studies, including genome-wide association studies
+			(GWAS), examine genetic differences in the entire human genome (the complete
+			set of human genes) and the association between these genetic differences and
+			health conditions.</p>
+
+		<p>As part of this study, we will collect information about your
+			health and your individual genes. This information may be stored scientific
+			data repositories at UCI, at another UC campus, or be sent to a National
+			Institutes of Health (NIH)-designated data repository that includes all kinds
+			of genomic data from studies funded by the NIH. The information may also be
+			maintained by private companies and other institutions.</p>
+
+		<p>The aim of collecting this information may be to look for
+			genetic connections that:</p>
+		<ul>
+			<li>
+				may increase the likelihood of getting a certain disease (such as asthma, diabetes, heart
+				disease, cancer or mental illness) or a condition (such as high blood pressure
+				or obesity); may affect the progress of a certain disease or condition; or</p>
+			</li>
+			<li>
+				may affect treatments (medicines, etc.) that work for certain diseases in some people, but
+				not in others.</p>
+			</li>
+		</ul>
+		<p>Your individual genomic data and health information will be
+			put in a controlled-access data repository. This means that only researchers
+			who apply for and get permission to use the information for a specific research
+			project will be able to access the information. Your genomic data and health
+			information will not be labeled with your name or other information that could
+			be used to identify you. Researchers approved to access information in the
+			repository must agree not to attempt to identify you.</p>
+
+		<h2>HOW MANY PEOPLE WILL TAKE PART IN THIS STUDY?</h2>
+		<p>This study will involve up to 4,200 people. This will include
+			patients with known or suspected genetic traits and their relatives, such as
+			parents and siblings. We expect half of the participants to be patients and
+			family members recruited at UCI. We expect half of the participants to be
+			patients and family members to be referred from outside of UCI.</p>
+
+		<h2>AM I ELIGIBLE TO PARTICIPATE IN THIS STUDY?</h2>
+		<p>Please note this may not be a complete list of eligibility
+			criteria. We have included a few examples of study criteria to help you better
+			understand how your eligibility in the study will be determined; your study
+			team will go through the study eligibility criteria with you to verify if you
+			qualify for participation in this study.</p>
+		<h2>Inclusion Requirements:</h2>
+		<ul>
+			<li>You can participate in this study if you are someone with an undiagnosed genetic condition.</li>
+		</ul>
+
+		<h2>Exclusion Requirements:</h2>
+		<ul>
+			<li>You cannot participate in this study if you already have a genetic diagnosis.</li>
+		</ul>
+
+		<h2>HOW LONG WILL THE STUDY GO ON?</h2>
+		<p>This study includes 1 vist on campus for a blood draw or
+			saliva collection at home and will take apporximently 1.5 hours to complete.</p>
+
+		<h2>WHAT PROCEDURES ARE INVOLVED WITH THIS STUDY?</h2>
+		<p>If you decide to participate in the research, you will be
+			asked to provide clinical information and samples for genetic testing. A
+			summary of the study procedures is included below:</p>
+
+		<p>You will be assigned a unique study ID number. We will
+			request you provide the study team with detailed medical and family history
+			information. When available, study staff will review your medical records at
+			UCI. Study staff may request you provide copies of additional medical records.
+			Study staff will request you provide genetic data from previous genetic
+			testing. The study team will use research computer tools to reanalyze this
+			data. Study staff may request you provide a blood sample (up to 2 teaspoons or
+			10 mL) to collect DNA and RNA and protein. DNA is what stores genetic material
+			in the body. RNA is made using the instruction in DNA. Protein is made using
+			instructions in RNA. Study staff may request a cheek swab or a saliva sample to
+			collect genetic material. Blood draws and cheek swabs will be collected in one
+			of following ways:</p>
+
+		<p>You may schedule a collection at the UCI research unit. If
+			you are having clinical blood collection for another reason, an extra sample
+			may be collected for this study. Study team may be able to arrange for someone
+			to come to your home to collect a blood sample if needed. This sample
+			collection may be obtained through one of University of California, Irvine's
+			national phlebotomy contacts. If you provide a buccal sample, these will be
+			collected either on site or with a kit provided to you with instructions for
+			collection at home and mailing back. There are no other required interactions
+			with the study. A team of study investigators will review your case history and
+			genetic results. This team will determine what research tests will be performed
+			on your samples and data. Your sample may be used for a variety of genetic
+			testing including, but not limited to, Whole Genome Sequencing, Optical
+			Mapping, and RNA sequencing. These are different ways of looking at your
+			genetic material. Certain genetic variants may be used in specific studies to
+			test if the variant is likely to cause a genetic trait. If the study team
+			requires additional information to better understand a variant found in your
+			testing, the team may contact you to request additional information about your
+			medical history and/or an additional blood or saliva sample. After enrollment,
+			you may decline to provide any additional information or samples and still
+			participate in the study. If the study team identifies a genetic change that is
+			believed to be medically important, the team will contact you and your doctor
+			to discuss the research result. This may include genetic variants known to
+			cause disease or genetic variants that cannot clearly be classified as
+			"disease-causing" or "benign". A genetic counselor or
+			clinical geneticist on the study team will be able to discuss these results
+			with you. Research results will need to be confirmed in a clinical lab. </p>
+
+		<h2>RETURN OF RESULTS</h2>
+		<p>You will not be provided the clinical information collected
+			for this research study. Complete genetic data will not be provided to you. You
+			will be notified of genetic variants that the study team believe are medically
+			important. A genetic counselor or clinical geneticist on the study team will be
+			available to discuss these results with you. No clinical report will be
+			generated from the study. If you need a clinical report for your medical care,
+			separate clinical testing to confirm research findings will not be paid for by
+			the study. You or your insurance will need to pay for that testing.</p>
+
+		<h2>WHAT ARE THE POSSIBLE SIDE EFFECTS OR RISKS RELATED TO THE STUDY?</h2>
+
+		<p>Risks and side effects related to the blood draw include
+			those which are:</p>
+		<ul>
+			<li>
+				Blood draw: Removing blood by a needle may cause temporary pain, bruising, bleeding, swelling,
+				dizziness, and on rare instances fainting or infection.</p>
+			</li>
+			<li>
+				Whole Genome Sequencing (WGS): WGS generates an extremely large amount of information about
+				people, including factors that will contribute to their future medical
+				conditions. It can provide insight into the health of individuals and their
+				biological family. It is possible that WGS data gathered for one purpose could
+				reveal important information, perhaps unanticipated and unplanned for, years
+				later.</p>
+			</li>
+			<li>
+				It is possible that the extensive genetic analysis may identify unexpected genetic results
+				that have the potential to pose a present or future risk to your health. This
+				may cause anxiety. Another risk is loss of confidentiality of your study
+				information. Your samples will be assigned a study ID number to help minimize
+				this risk. If a blood sample is obtained, this may cause risks including
+				discomfort and/or bruising; infection, excess bleeding, clotting, or fainting.
+				There may be minimal discomfort in obtaining a saliva sample due to pressure in
+				the mouth from the swab.</p>
+			</li>
+			<li>
+				There may be
+				risks to your privacy and the privacy of your relatives from storing your
+				information in the repository. Although the data repository have robust
+				procedures in place to protect the confidentiality of the stored information,
+				we do not know how likely it is that your identity could become re-connected
+				with your genetic and health information.</p>
+			</li>
+			<li>
+				We will do everything we can to protect your information but
+				we cannot absolutely guarantee your privacy or predict how genetic information
+				will be used in the future. People may develop ways in the future that would
+				allow someone to link your genetic or medical information back to you. For
+				example, someone could compare information in a data repository with
+				information from you (or a family member) in another database and be able to
+				identify you (or a relative). It is also possible that there could be violations
+				to the security of the computer systems used to share the codes linking your
+				genetic and medical information to you. There may be other privacy risks that
+				we have not foreseen.</p>
+			</li>
+			<li>
+				If your genetic information were re-identified, personal
+				information about you, your health, and your risk of disease could become known
+				to others which could potentially have a negative impact or unintended
+				consequences for you and/or your family. A federal law called the Genetic
+				Information Nondiscrimination Act (GINA) will help protect you from genetic
+				discrimination in health insurance and employment. GINA does not protect you
+				against discrimination by companies that sell life insurance, disability insurance,
+				or long-term care insurance. It also does not prohibit discrimination on the
+				basis of already known genetic disease. For more information about GINA go to
+				http://www.genome.gov/10002077.</p>
+			</li>
+		</ul>
+		<h2>ARE THERE BENEFITS TO PARTICIPATING IN THE STUDY?</h2>
+		<p>There is no direct benefit to you from placing your genetic
+			information in the repository. Allowing researchers to study your genetic
+			information may lead to a better understanding of how genes affect health. This
+			may help other people in the future.</p>
+
+		<h2>WILL I BE PAID FOR TAKING PART IN THIS STUDY?</h2>
+		<h2>Compensation</h2>
+		<p>You will not be compensated for your participation in this
+			research study.</p>
+		<h2>Reimbursement</h2>
+		<p>You will not receive reimbursement for any out of pocket
+			expenses, such as parking or transportation fees.</p>
+
+		<p>Your information and samples (both identifiable and
+			de-identified) may be used to help researchers create products or to deliver
+			services, including some that may be sold and/or make money for others. If this
+			happens, there are no plans to tell you or to pay you or your family.</p>
+
+		<h2>WHAT ARE THE COSTS OF TAKING PART IN THIS STUDY?</h2>
+		<p>There are no costs to you or to your insurance company for
+			taking part in this study. The study will pay for all research genetic testing
+			and collection of samples for the study. If a genetic variant is identified
+			that is clinically important, you or your insurance will have to pay for
+			clinical testing to confirm the variant is present. You or your insurance
+			company will have to pay for the costs of any routine or standard medical care
+			that is not part of the study. This includes standard of care testing that is
+			performed based on genetic diagnoses or variants identified by this study. This
+			may include, but is not limited to, visits to the clinic, having to stay in the
+			hospital, laboratory tests, x-rays, or other tests. If your insurance company
+			does not pay for the routine or standard care, you will be responsible for
+			paying for it.</p>
+
+		<h2>WHAT HAPPENS IF I AM INJURED BECAUSE I TOOK PART IN THIS STUDY?</h2>
+		<p>It is important that you promptly tell the researchers if you
+			believe that you have been injured because of taking part in this study. You
+			can tell the researcher in person or call them at the number listed at the top
+			of this form.</p>
+		<p>If you are injured as a result of being in this study, UCI
+			will provide necessary medical treatment. The costs of the treatment may be
+			covered by the University of California, or billed to you or your insurer just
+			like other medical costs, depending on a number of factors.</p>
+		<p>The University and the study sponsor do not normally provide
+			any other form of compensation for injury. For more information about this, you
+			may call UCI Human Research Protections (949) 824-8170 or by e-mail at
+			IRB@research.uci.edu</p>
+
+		<h2>WHAT HAPPENS IF I WANT TO STOP TAKING PART IN THIS STUDY?</h2>
+		<p>You are free to withdraw from this study at any time. If you
+			decide to withdraw from this study, you should notify the research team
+			immediately. The research team may also end your participation in this study if
+			you do not follow instructions, miss scheduled visits, the study sponsor
+			decides to stop the study or your safety and welfare are at risk.</p>
+
+		<p>If you experience any of the side effects listed above, if
+			your health worsens, or if you are injured during the research, you may need to
+			be withdrawn from the study, even if you would like to continue. The research
+			team will make this decision and let you know if it is not possible for you to
+			continue. The decision may be made to protect your safety and welfare, or
+			because the research plan does not allow people who develop certain conditions
+			to continue to participate.</p>
+
+		<p>If you elect to withdraw or are withdrawn from this research
+			study, you may choose to terminate the continued use or disclosure of your
+			protected health information (PHI) for research purposes. The request to end
+			the use or disclosure of your PHI should be made in writing.</p>
+
+		<p>You are free to withdraw your consent to use your
+			identifiable private information and biospecimen for future research at any
+			time however there are some limitations. If you withdraw your consent, the
+			researchers will not use your information or biospecimens in future research
+			studies. However, any of your information or biospecimens already being used in
+			a research study that began before your request to withdraw will continue to be
+			used for that specific study. Also if information and biospecimens have already
+			been provided to another researcher, institution, or company, it may not be
+			possible to limit their continued and new uses.</p>
+
+		<p>You are free to withdraw from this study at any time. If you
+			decide to withdraw from this study, you should notify the research team
+			immediately. Please note that any information already distributed for research
+			cannot be retrieved.</p>
+
+		<h2>HOW WILL INFORMATION ABOUT ME AND MY PARTICIPATION BE KEPT?</h2>
+		<h2>Participant Identifiable Data</h2>
+		<p>Identifiable information collected about you will be removed
+			and replaced with a code. A list linking the code and your identifiable
+			information will be kept separate from the research data.</p>
+		<h2>Data Storage</h2>
+		<p>Research data will be stored electronically on a secure
+			network in an encrypted file with password protection. </p>
+		<h2>Data Retention</h2>
+		<p>The researchers intend to store your research data and/or
+			biospecimens in a repository indefinitely. The researchers may continue to use
+			and share your information and information obtained from analyses of your
+			biospecimens indefinitely. Also the use and sharing of your identifiable
+			biospecimens will continue until the specimens are gone.</p>
+
+		<h2>WHO WILL HAVE ACCESS TO MY STUDY DATA?</h2>
+		<p>The research team, authorized UCI personnel, and regulatory
+			entities such as the Food and Drug Administration (FDA) and the Office of Human
+			Research Protections (OHRP), may have access to your study records to protect
+			your safety and welfare.</p>
+		<p>While the research team will make every effort to keep your
+			personal information confidential, it is possible that an unauthorized person
+			might see it. We cannot guarantee total privacy.</p>
+
+		<h2>Future Research Use</h2>
+		<p>Researchers will use your specimens and information to
+			conduct this study. Once the study is done using your specimens and
+			information, we may share them with other researchers so they can use them for
+			other studies in the future. We will not share your name or any other private
+			identifiable information that would let the researchers know who you are. We
+			will not ask you for additional permission to share this de-identified
+			information.</p>
+
+		<h2>Certificate of Confidentiality</h2>
+		<p>To help us protect your privacy, we have obtained a
+			Certificate of Confidentiality from the National Institutes of Health (NIH) ).
+			With this Certificate, researchers cannot be forced to disclose information
+			that may identify you in any federal, state, or local civil, criminal,
+			administrative, legislative, or other proceedings or be used as evidence, for
+			example, if there is a court subpoena, unless you have consented for this use.
+			Information, documents, or biospecimens protected by this Certificate cannot be
+			disclosed to anyone else who is not connected with the research except, if
+			there is a federal, state, or local law that requires disclosure (such as to
+			report child abuse or communicable diseases but not for federal, state, or
+			local civil, criminal, administrative, legislative, or other proceedings, see
+			below); if you have consented to the disclosure, including for your medical
+			treatment; or if it is used for other scientific research, as allowed by
+			federal regulations protecting research subjects.</p>
+
+		<p>The Certificate cannot be used to refuse a request for
+			information from personnel of the United States federal or state government
+			agency sponsoring the project that is needed for auditing or program evaluation
+			by the NIH which is funding this project or for information that must be
+			disclosed in order to meet the requirements of the federal Food and Drug
+			Administration (FDA). You should understand that a Certificate of
+			Confidentiality does not prevent you from voluntarily releasing information
+			about yourself or your involvement in this research. If you want your research
+			information released to an insurer, medical care provider, or any other person
+			not connected with the research, you must provide consent to allow the
+			researchers to release it.</p>
+
+		<h2>ARE THERE OTHER ISSUES TO CONSIDER IN DECIDING WHETHER TO PARTICIPATE IN THIS STUDY? </h2>
+		<h2>Use of Biospecimens</h2>
+		<p>Biospecimens (such as blood, tissue, or saliva) collected
+			from you for this study and/or information obtained from your biospecimens may
+			be used in this research or other research, and shared with other
+			organizations. You will not share in any commercial value or profit derived
+			from the use of your biospecimens and/or information obtained from them.</p>
+		<h2>Genetics</h2>
+		<p>In the event of an unexpected breach of confidentiality, a
+			federal law called the Genetic Information Non-Discrimination Act (GINA) will
+			help protect you from health insurance or employment discrimination based on
+			genetic information obtained about you. In California, state law (CalGINA)
+			requires that employers with 5 or more employees may not use your genetic
+			information, obtained from this research when making a decision to hire,
+			promote, or fire you or when setting the terms of your employment.</p>
+
+		<p>GINA does not prohibit discrimination on the basis of an
+			already manifest genetic disease or disorder. This means if you have a
+			diagnosis and/or are being treated for a genetic condition, a health insurer
+			may use the information to determine eligibility or rates. Also, GINA does not
+			protect you against genetic discrimination by companies that sell life
+			insurance, disability insurance, or long-term care insurance.</p>
+
+		<p>If you would like more information about the federal GINA law
+			go to: http://www.genome.gov/Pages/PolicyEthics/GeneticDiscrimination/GINAInfoDoc.pdf
+			or CalGINA:
+			http://www.leginfo.ca.gov/pub/11-12/bill/sen/sb_0551-0600/sb_559_bill_20110906_chaptered.pdf</p>
+		<h2>Investigator Financial Conflict of Interest</h2>
+		<p>No one on the study team has a disclosable financial interest
+			related to this research project. </p>
+		<h2>WHO CAN ANSWER MY QUESTIONS ABOUT THE STUDY?</h2>
+		<p>If you have any comments, concerns, or questions regarding
+			the conduct of this research, please contact the research team listed at the
+			top of this form.</p>
+
+		<p>If you wish to ask questions about the study or your rights
+			as a research participant to someone other than the researchers or if you wish
+			to voice any suggestions, problems or concerns you may have about the study,
+			please contact the UCI Institutional Review Board by phone at (949) 824-8170,
+			by e-mail at IRB@research.uci.edu or at University of California, Irvine,
+			Office of Research, Irvine, CA 92697-7600.</p>
+		<h2>What is an IRB? </h2>
+		<p>An Institutional Review Board (IRB) is a committee made up of
+			scientists and non-scientists. The IRB's role is to protect the rights and
+			welfare of human subjects involved in research. The IRB also assures that the
+			research complies with applicable regulations, laws, and institutional
+			policies.</p>
+		<h2>HOW DO I AGREE TO PARTICIPATE IN THIS STUDY?</h2>
+		<p>You should not sign and date this consent form until all of
+			your questions about this study have been answered by a member of the research
+			team listed at the top of this form. You will be given a copy of this signed
+			and dated consent form, and the attached "Experimental Subject's Bill of
+			Rights" to keep. Participation in this study is voluntary. You may refuse
+			to answer any question or discontinue your involvement at any time without
+			penalty or loss of benefits to which you might otherwise be entitled. Your
+			decision will not affect your future relationship with UCI or your quality of
+			care at the UCI Medical Center.</p>
+		<p>If, during the course of this study, significant new
+			information becomes available that may relate to your willingness to continue
+			to participate, this information will be provided to you by the research team
+			listed at the top of the form.</p>
+		<hr />
+		<h2>Banking of Tissue Specimens:</h2>
+		<p>We would like to store tissue specimens collected from you in
+			this study in a tissue bank for future research as identified below. The
+			specimens consist of your genetic material including DNA, RNA, or protein, or
+			cells. The tissue bank is maintained by the study team at UCI.</p>
+
+		<p>You may change your mind at a later time and request that
+			your sample be destroyed. If you change your mind and want to request that your
+			sample be destroyed, you may do this by contacting our study team in writing.</p>
+	</div>
+
+	<div class="two-column">
+		<div class="column">
+			Please indicate if you approve of your tissue being stored in
+			the tissue bank for future analysis unrelated to this study.
+		</div>
+		<div class="column">
+			<p>
+				{% if store_sample_other_studies %}☑{% else %}☐{% endif %}            Yes
+			</p>
+			<p>
+				{% if not store_sample_other_studies %}☑{% else %}☐{% endif %}            No
+			</p>
+		</div>
+	</div>
+
+
+	<div>
+		<hr />
+		<h2>Storage of PHI in a Database</h2>
+		<p>We store personal health information collected from you in
+			this study's database. This is required to notify you about potentially
+			clinically relevant results or to collect additional information. The database
+			is maintained by the study team at UCI.</p>
+		<p>This information will not be released to anyone outside of
+			our study team without your express written permission except as noted earlier.
+			However, in the future this data may be used to identify other study
+			opportunities you might be eligible for.</p>
+
+	</div>
+
+
+	<div class="two-column">
+		<div class="column">
+			<p>
+				Can we have your permission to contact you if we become aware
+				of additional study opportunities?
+			</p>
+		</div>
+		<div class="column">
+			<p>
+				{% if store_phi_other_studies %}☑{% else %}☐{% endif %}            Yes
+			</p>
+			<p>
+				{% if not store_phi_other_studies %}☑{% else %}☐{% endif %}            No
+			</p>
+		</div>
+	</div>
+
+
+	<div>
+		<hr />
+		<h2>Primary Findings</h2>
+		<p>This study will attempt to find genetic changes that are
+			related to your medical history. If we find a genetic change that we believe is
+			related to disease, we plan to tell you about it. Research genetic findings
+			will need to be confirmed in a clinical lab before they can be returned to your
+			medical record. For some of these genetic changes we may not be able to say it
+			definitely is "disease causing" or benign. If you do not want us to
+			communicate any genetic results to you, you have the option below.</p>
+	</div>
+
+
+	<div class="two-column">
+		<div class="column">
+			<p>I want to be told about genetic results potentially relevant
+				to my medical history. </p>
+		</div>
+		<div class="column">
+			<p>
+				{% if return_primary_results %}☑{% else %}☐{% endif %}            Yes
+			</p>
+			<p>
+				{% if not return_primary_results %}☑{% else %}☐{% endif %}            No
+			</p>
+		</div>
+	</div>
+
+	<div>
+		<hr />
+		<h2>Secondary Findings</h2>
+		<p>Sometimes genetic testing finds medically important variants
+			that are not related to the reason for the testing. These are called secondary
+			findings. These may relate to disease risks you may not know about. This
+			includes things like risk for cancer and risk for heart disease. In some cases,
+			secondary findings might change your doctor's treatment plan. These are called
+			medically actionable findings. This may include increased screening tests or
+			specific medicines.</p>
+
+		<p>We do not specifically look for secondary findings in this
+			study, but may find these during the course of our analysis.</p>
+	</div>
+
+	<div class="two-column">
+		<div class="column">
+			<p>Would you like to receive secondary findings if we find any
+				(we do not specifically look for these)? </p>
+		</div>
+		<div class="column">
+		<p>
+			{% if return_actionable_secondary_results and not return_secondary_results %}
+			☑
+			{% else %}
+			☐
+			{% endif %}
+			Yes – but only medically actionable ones
+		</p>
+
+		<p>
+			{% if return_actionable_secondary_results and return_secondary_results %}
+			☑
+			{% else %}
+			☐
+			{% endif %}
+			Yes – including findings that may not be actionable at this time
+		</p>
+
+		<p>
+			{% if not return_actionable_secondary_results and not return_secondary_results %}
+			☑
+			{% else %}
+			☐
+			{% endif %}
+			No
+		</p>
+		</div>
+
+	</div>
+
+
+	<div>
+		<hr />
+		<p> </p>
+		<p>UNIVERSITY OF CALIFORNIA, IRVINE </p>
+		<p>Experimental Subject's Bill of Rights:</p>
+		<p>The rights listed below are the right of every individual
+			asked to participate in a research study. You have the right: </p>
+		<ol>
+		<li>
+			To be told about the nature and purpose of the study.</p>
+		</li>
+		<li>
+			To be told about
+			the procedures to be followed in the research study, and whether any of the
+			drugs, devices, or procedures is different from what would be used in standard
+			practice.</p>
+		</li>
+		<li>
+			To receive a
+			description of any side effects, discomforts, or risks that you can reasonably
+			expect to occur during the study.</p>
+		</li>
+		<li>
+			To be told of any
+			benefits that you may reasonably expect from the participation in the study, if
+			applicable.</p>
+		</li>
+		<li>
+			To receive a
+			description of any alternative procedures, drugs, or devices that might be
+			helpful, and their risks and benefits compared to the proposed procedures,
+			drugs or devices.</p>
+		</li>
+		<li>
+			To be told of
+			what sort of medical treatment, if any, will be available if any complications
+			should arise.</p>
+		</li>
+		<li>
+			To be given a
+			chance to ask any questions concerning the research study both before agreeing
+			to participate and at any time during the course of the study.</p>
+		</li>
+		<li>
+			To refuse to
+			participate in the research study. Participation is voluntary. You may refuse
+			to answer any question or discontinue your involvement at any time without
+			penalty or loss of benefits to which you might otherwise be entitled. Your
+			decision will not affect your right to receive the care you would receive if
+			you were not in the experiment.</p>
+		</li>
+		<li>
+			To receive a copy
+			of the signed and dated written consent form and a copy of this form.</p>
+		</li>
+		<li>
+			To be given the
+			opportunity to freely decide whether or not to consent to the research study
+			without any force, coercion, or undue influence.</p>
+		</li>
+		</ol>
+		<hr />
+		<p>If you have any concerns or questions regarding the research
+			study you should contact the research team listed at the top of the consent
+			form.</p>
+		<p>If you are unable to reach a member of the research team and
+			have general questions, or you have concerns or complaints about the research
+			study, research team, or questions about your rights as a research subject,
+			please contact the UCI's Human Research Protections unit in the Office of
+			Research by calling (949) 824-6068 or (949) 824-2125 Monday - Friday, 8 am - 5
+			pm; or by e-mail at IRB@research.uci.edu; or by writing us at 160 Aldrich Hall,
+			Irvine, CA 92697.</p>
+		<hr />
+		
+		<p>Your signature below indicates you have read the information
+			in this consent form and have had a chance to ask any questions you have about
+			this study.</p>
+		<p>Note: If the research described in this form involves your
+			protected health information (PHI), you will be asked to sign separate UC HIPAA
+			Research Authorization form for the use of your PHI.</p>
+
+		<p class="statement">{{ statement }}</p>
+
+		<div class="two-column">
+			<div class="column">
+				<p>Electronic Signature: </p>
+			</div>
+			<div class="column">
+				<p class="signature-line">{{ signature }}</p>
+			</div>
+		</div>
+		<hr />
+	</div>
+
+	<div class="two-column">
+		<div class="column">
+			<p>First name of participant</p>
+		</div>
+		<div class="column">
+			<p>{{ participant_first_name }}</p>
+		</div>
+	</div>
+
+	<div class="two-column">
+		<div class="column">
+			<p>Last name of participant</p>
+		</div>
+		<div class="column">
+			<p>{{ participant_last_name }}</p>
+		</div>
+	</div>
+
+	<div class="two-column">
+		<div class="column">
+			<p>First name of person signing form</p>
+		</div>
+		<div class="column">
+			<p>{{ first_name }}</p>
+		</div>
+	</div>
+
+	<div class="two-column">
+		<div class="column">
+			<p>Last name of person signing form</p>
+		</div>
+		<div class="column">
+			<p>{{ last_name }}</p>
+		</div>
+	</div>
+
+	<div class="two-column">
+		<div class="column">
+			<p>Participant/Parent/Guardian/Legal Authorized Representative</p>
+		</div>
+		<div class="column">
+			<p>{{ representative }}</p>
+		</div>
+	</div>
+			
+	<div class="two-column">
+		<div class="column">
+			<p>Date/Time</p>
+		</div>
+		<div class="column">
+			<p>{{ datetime_now }}</p>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -23,23 +23,98 @@ class ConsentAgeGroup(models.TextChoices):
 
 
 class Consent(models.Model):
-    user_consent_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='consents')
-    dependent_user = models.ForeignKey("authentication.User", on_delete=models.SET_NULL, null=True, blank=True, related_name='dependent_consents')
-    consent_script = models.ForeignKey("consentbot.ConsentScript", on_delete=models.CASCADE, related_name="user_consents", null=True, blank=True)
-    consent_age_group = models.CharField(max_length=20, choices=ConsentAgeGroup.choices)
-    store_sample_this_study = models.BooleanField(default=True)
-    store_sample_other_studies = models.BooleanField(default=False)
-    store_phi_this_study = models.BooleanField(default=True)
-    store_phi_other_studies = models.BooleanField(default=False)
-    return_primary_results = models.BooleanField(default=False)
-    return_actionable_secondary_results = models.BooleanField(default=False)
-    return_secondary_results = models.BooleanField(default=False)
-    consent_statements = models.TextField(default='')
-    user_full_name_consent = models.CharField(max_length=200, default='')
-    child_full_name_consent = models.CharField(max_length=200, null=True, blank=True)
-    consented_at = models.DateTimeField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    """
+    Represents a record of consent given by a participant (user) for participation in a study.
+    
+    Each Consent object corresponds to a single user and optionally references a guardian who authorized 
+    the consent on behalf of that user (e.g., for minors or adults under guardianship).
+    """
+
+    user_consent_id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        help_text="Primary key identifier for the consent record."
+    )
+    user = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.CASCADE,
+        related_name='consents',
+        help_text="The individual for whom the consent applies (adult or dependent child)."
+    )
+    guardian = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='guardian_consents',
+        help_text="Legal guardian who authorized consent on behalf of the user (if applicable)."
+    )
+    consent_script = models.ForeignKey(
+        "consentbot.ConsentScript",
+        on_delete=models.CASCADE,
+        related_name="user_consents",
+        null=True,
+        blank=True,
+        help_text="Consent script (chat flow) associated with this consent instance."
+    )
+    consent_age_group = models.CharField(
+        max_length=20,
+        choices=ConsentAgeGroup.choices,
+        help_text="Age group classification at the time of consent (e.g., '<=6', '7-17', '>=18')."
+    )
+    store_sample_this_study = models.BooleanField(
+        default=True,
+        help_text="Whether the user consents to store samples for the current study."
+    )
+    store_sample_other_studies = models.BooleanField(
+        default=False,
+        help_text="Whether the user consents to store samples for future unrelated studies."
+    )
+    store_phi_this_study = models.BooleanField(
+        default=True,
+        help_text="Whether the user consents to store PHI for the current study."
+    )
+    store_phi_other_studies = models.BooleanField(
+        default=False,
+        help_text="Whether the user consents to store PHI for future unrelated studies."
+    )
+    return_primary_results = models.BooleanField(
+        default=False,
+        help_text="Whether the user consents to receive primary results."
+    )
+    return_actionable_secondary_results = models.BooleanField(
+        default=False,
+        help_text="Whether the user consents to receive actionable secondary results."
+    )
+    return_secondary_results = models.BooleanField(
+        default=False,
+        help_text="Whether the user consents to receive non-actionable secondary results."
+    )
+    consent_statements = models.TextField(
+        default='',
+        help_text="Full textual content of the consent statements acknowledged."
+    )
+    user_full_name_consent = models.CharField(
+        max_length=200,
+        default='',
+        help_text="Name of the user (or guardian) who signed the consent form."
+    )
+    child_full_name_consent = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text="Name of the dependent child if applicable."
+    )
+    consented_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Timestamp of when the consent was given."
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text="Auto-generated timestamp of when this record was created."
+    )
 
 
 class ConsentScript(models.Model):
@@ -148,6 +223,7 @@ class ConsentSession(models.Model):
 
     def __str__(self):
         return f"{self.session_slug} ({self.session_slug})"
+   
     
 class ConsentChatTurn(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

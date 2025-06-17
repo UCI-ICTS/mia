@@ -4908,13 +4908,31 @@
                 },
                 "SFiuhW9": {
                     "type": "user",
+                    "messages": [],
+                    "parent_ids": [
+                        "afCcd5B"
+                    ],
+                    "child_ids": [
+                        "Ycq8NGN"
+                    ],
+                    "attachment": null,
+                    "metadata": {
+                        "workflow": "child_consent",
+                        "end_sequence": false
+                    },
                     "render": {
                         "type": "form",
+                        "form_id": "sample-storage-use-form",
+                        "form_type": "sample_storage",
+                        "description": [
+                            "Can we store your child’s samples for purposes of this research study? (Required for participation in the study)",
+                            "Can we store your child’s samples in UCI’s biobank for purposes of unrelated research?"
+                        ],
                         "fields": [
                             {
-                                "name": "storeSamplesThisStudy",
                                 "type": "radio",
-                                "label": "Can we store this person’s samples for purposes of this research study? (Required for participation in the study)",
+                                "name": "storeSamplesThisStudy",
+                                "label": "Study Sample Storage",
                                 "options": [
                                     {
                                         "label": "Yes",
@@ -4923,9 +4941,9 @@
                                 ]
                             },
                             {
-                                "name": "storeSamplesOtherStudies",
                                 "type": "radio",
-                                "label": "Can we store this person’s samples in UCI’s biobank for purposes of unrelated research?",
+                                "name": "storeSamplesOtherStudies",
+                                "label": "Other Studies Sample Storage",
                                 "options": [
                                     {
                                         "label": "Yes",
@@ -4938,22 +4956,8 @@
                                 ]
                             }
                         ],
-                        "form_id": "sample-storage-use-form",
-                        "node_id": "SFiuhW9",
-                        "form_type": "sample_storage_other"
-                    },
-                    "messages": [],
-                    "metadata": {
-                        "workflow": "child_consent",
-                        "end_sequence": false
-                    },
-                    "child_ids": [
-                        "Ycq8NGN"
-                    ],
-                    "attachment": null,
-                    "parent_ids": [
-                        "afCcd5B"
-                    ]
+                        "node_id": "SFiuhW9"
+                    }
                 },
                 "SLcyBjQ": {
                     "type": "user",

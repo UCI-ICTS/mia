@@ -28,8 +28,7 @@ class SelectorFunctionTests(TestCase):
         self.script = self.user.consent_script
         self.graph = self.script.script
 
-    def test_get_latest_consent(self):
-        
+    def test_get_latest_consent(self): 
         consent = get_latest_consent(self.user)
         self.assertIsInstance(consent, Consent)
 
@@ -66,8 +65,7 @@ class SelectorFunctionTests(TestCase):
         self.assertIsInstance(start, str)
 
     def test_format_turn_output(self):
-        seq = traverse_consent_graph(self.graph, "start")
-        turn = format_turn(self.graph, "start", echo_user_response="Yes", next_sequence=seq)
+        turn = format_turn(self.graph, "start", "bot", [])
         self.assertIn("messages", turn)
         self.assertIn("responses", turn)
 
