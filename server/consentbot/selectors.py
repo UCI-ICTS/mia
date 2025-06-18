@@ -6,7 +6,7 @@ from typing import Optional
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
 from consentbot.models import (
     ConsentScript,
     ConsentSession,
@@ -130,18 +130,18 @@ def traverse_consent_graph(conversation_graph:dict, node_id:str, session_slug:st
     end = False
     render = None
     try:
-        session = ConsentSession.objects.get(session_slug=session_slug)
+        session = get_and_validate_consent_session(session_slug=session_slug)
         tries = session.user.num_test_tries
     except: 
         session = None
         tries = None
-        
+
     while True:
         node = conversation_graph.get(current_id, {})
         visited.append(current_id)
         node_type = node.get("type")
 
-        if node_type == "bot":
+        if node_type == "bot" or node_type == "start":
             if tries == 2 and node['metadata']['workflow'] == "test_user_understanding":
                 attempt = ConsentTestAttempt.objects.filter(
                     user=session.user,
@@ -250,7 +250,7 @@ def get_user_from_session_slug(session_slug: str):
 def get_script_from_session_slug(session_slug: str) -> dict:
     """Retrieve the consent script JSON from a ConsentSession UUID."""
     try:
-        script_id = ConsentSession.objects.get(session_slug=session_slug).user.consent_script_id
+        script_id = get_and_validate_consent_session(session_slug=session_slug).user.consent_script_id
         if not script_id:
             raise ValidationError("User does not have a consent_script assigned.")
         return ConsentScript.objects.get(script_id=script_id).script
@@ -314,21 +314,25 @@ def build_chat_from_history(session_slug: str) -> list[dict]:
     return [entry for entry in history if "messages" in entry]
 
 
-
-def get_consent_session_or_error(session_slug: str) -> ConsentSession:
+def check_session_validity(session):
     """
-    Retrieve a ConsentSession by slug or raise a ValueError.
+    Raise error if session is expired or inactive.
+    """
+    if not session.is_active:
+        raise PermissionDenied("This session is no longer active.")
+    if session.expires_at and session.expires_at < timezone.now():
+        session.is_active = False
+        session.save(update_fields=["is_active"])
+        raise PermissionDenied("This session has expired.")
 
-    Args:
-        session_slug (str): The session identifier slug.
 
-    Returns:
-        ConsentSession: The matching session object.
+def get_and_validate_consent_session(session_slug: str) -> ConsentSession:
+    """
+    Fetch and validate a ConsentSession by slug.
 
     Raises:
-        ValueError: If no session is found.
+        ValueError if not found or invalid.
     """
-    try:
-        return ConsentSession.objects.get(session_slug=session_slug)
-    except ConsentSession.DoesNotExist:
-        raise ValueError(f"No session found for slug: {session_slug}")
+    session = get_object_or_404(ConsentSession, session_slug=session_slug)
+    check_session_validity(session)
+    return session

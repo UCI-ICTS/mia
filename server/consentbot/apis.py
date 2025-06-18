@@ -36,14 +36,15 @@ from consentbot.services import (
     ConsentSessionInputSerializer,
     ConsentSessionOutputSerializer,
     get_or_initialize_consent_history,
-    get_consent_session_or_error,
     get_or_initialize_user_consent,
     handle_form_submission,
-    handle_user_step
+    handle_user_step,
 )
 
 from consentbot.selectors import (
+    get_and_validate_consent_session,
     get_script_from_session_slug,
+    check_session_validity
 
 )
 
@@ -76,7 +77,7 @@ class ConsentViewSet(viewsets.ViewSet):
         session_slug = pk
         try:
             # Get session (fallback to .get for internal control)
-            session = get_consent_session_or_error(session_slug)
+            session = get_and_validate_consent_session(session_slug)
 
             # Get or create consent + chat history
             consent, created = get_or_initialize_user_consent(session_slug)
@@ -364,7 +365,8 @@ class ConsentResponseViewSet(viewsets.ViewSet):
             session_slug = str(data["session_slug"])
             node_id = data["node_id"]
             try:
-                session = ConsentSession.objects.get(session_slug=session_slug)
+                session = get_and_validate_consent_session(session_slug=session_slug)
+                check_session_validity(session)
             except ConsentSession.DoesNotExist:
                 raise ValueError(f"No session found for slug: {session_slug}")
 
@@ -405,10 +407,12 @@ class ConsentResponseViewSet(viewsets.ViewSet):
             serializer = ConsentResponseInputSerializer(data=request.data, context={"request": request})
             serializer.is_valid(raise_exception=True)
             data = serializer.validated_data
-            session = get_consent_session_or_error(data["session_slug"])
+
             consent, _ = get_or_initialize_user_consent(data["session_slug"])
+            session = consent.sessions.order_by("-last_updated").first()
 
             history, render = handle_form_submission(data)
+
             return consent_response_constructor(
                 status_code=status.HTTP_200_OK,
                 status_label="ok",
@@ -417,7 +421,6 @@ class ConsentResponseViewSet(viewsets.ViewSet):
                 chat=history,
                 render=render
             )
-
         except Exception as e:
             return consent_response_constructor(
                 status_code=status.HTTP_400_BAD_REQUEST,
