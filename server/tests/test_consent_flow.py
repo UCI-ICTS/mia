@@ -4,8 +4,8 @@ from django.core.management import call_command
 from django.test import TestCase
 from io import StringIO
 from rest_framework.test import APIClient
-from consentbot.models import Consent, ConsentSession, ConsentTestAttempt
 from authentication.models import Feedback
+from consentbot.selectors import get_and_validate_consent_session
 
 
 User = get_user_model()
@@ -106,7 +106,7 @@ FORM_RESPONSES={
     "child_parent_consent": [
         {
             "name": "fullname",
-            "value": "Jimmie Doe"
+            "value": "Jane Doe"
         },
         {
             "name": "consent",
@@ -310,21 +310,23 @@ class ConsentTestFlowTest(TestCase):
             else:
                 res = self.advance_chat(last_turn, session_slug)
             
-            # if count > 90:
-            #     print(
-            #         count, "\n\tParticipant: ",
-            #         [message for message in res.data['chat'][-2]['messages']],
-            #         "\n\tMIA: ",
-            #         [message for message in res.data['chat'][-1]['messages']]
-            #     )
+            if count > 90:
+                
+                print(
+                    count, "\n\tParticipant: ",
+                    [message for message in res.data['chat'][-2]['messages']],
+                    "\n\tMIA: ",
+                    [message for message in res.data['chat'][-1]['messages']]
+                )
+                # import pdb;pdb.set_trace()
+                
                 # if count == 118:
-                #     import pdb;pdb.set_trace()
             try: 
                 self.assertEqual(res.status_code, 200)
             except:
                 print(res.data)
                 import pdb; pdb.set_trace()
-        session = ConsentSession.objects.get(session_slug=session_slug)
+        session = get_and_validate_consent_session(session_slug=session_slug)
         session_user = session.user
 
         attempts = session_user.test_attempts.all()

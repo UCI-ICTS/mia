@@ -16,15 +16,17 @@ from consentbot.selectors import (
     build_chat_from_history,
 )
 from utils.cache import set_user_consent_history
-import uuid
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class SelectorFunctionTests(TestCase):
     fixtures = ["tests/fixtures/test_data.json"]
 
     def setUp(self):
-        self.invite = ConsentSession.objects.first()
-        self.user = self.invite.user
+        self.user = User.objects.get(username='test')
+        self.invite = ConsentSession.objects.get(user=self.user)
         self.script = self.user.consent_script
         self.graph = self.script.script
 
@@ -43,7 +45,7 @@ class SelectorFunctionTests(TestCase):
 
     def test_traverse_consent_graph_returns_messages(self):
         sequence = traverse_consent_graph(self.graph, "start")
-        self.assertIn("messages", sequence)
+        self.assertIn("chat_turns", sequence)
         self.assertIn("visited", sequence)
 
     def test_get_user_label_from_user_node(self):

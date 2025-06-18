@@ -12,15 +12,16 @@ from consentbot.services import (
 )
 from utils.cache import set_user_consent_history
 from consentbot.selectors import get_script_from_session_slug
-import uuid
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class ConsentServiceTests(TestCase):
     fixtures = ["tests/fixtures/test_data.json"]
 
     def setUp(self):
-        self.invite = ConsentSession.objects.first()
-        self.user = self.invite.user
+        self.user = User.objects.get(username='test')
+        self.invite = ConsentSession.objects.get(user=self.user)
         self.script = self.user.consent_script
         self.graph = self.script.script
         self.session_slug = str(self.invite.session_slug)
@@ -32,6 +33,7 @@ class ConsentServiceTests(TestCase):
             {"name": "fullname", "value": "Jane Tester"}
         ]
         result = handle_consent(self.graph, self.session_slug, responses)
+        import pdb; pdb.set_trace()
         self.assertIsInstance(result, list)
         self.user.refresh_from_db()
         self.assertTrue(self.user.consent_complete)
@@ -78,8 +80,10 @@ class ConsentServiceTests(TestCase):
         self.assertIsInstance(result, list)
 
     def test_handle_consent_raises_with_missing_node_id(self):
-        with self.assertRaises(KeyError):
-            handle_consent(self.graph, self.session_slug, [{"name": "consent", "value": "true"}])
+        response = handle_consent(self.graph, self.session_slug, [{"name": "consent", "value": "true"}])
+        self.assertIsInstance(response, list)
+        self.assertIn("Invalid node", response[0]["messages"][0])
+
 
     def test_update_consent_and_advance_invalid_node(self):
         result = update_consent_and_advance(self.session_slug, "nonexistent", self.graph, "test")

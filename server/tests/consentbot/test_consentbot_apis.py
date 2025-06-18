@@ -9,13 +9,15 @@ from consentbot.models import ConsentSession, ConsentScript, Consent
 from django.contrib.auth import get_user_model
 import json
 
+User = get_user_model()
+
 class ConsentSessionViewSetTests(TestCase):
     fixtures = ["tests/fixtures/test_data.json"]
 
     def setUp(self):
         self.client = APIClient()
-        self.invite = ConsentSession.objects.first()
-        self.user = self.invite.user
+        self.user = User.objects.get(username='test')
+        self.invite = ConsentSession.objects.get(user=self.user)
         self.client.force_authenticate(user=self.user)
 
     def test_invite_url_detail_returns_user_info(self):
@@ -30,7 +32,8 @@ class ConsentResponseViewSetTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.invite = ConsentSession.objects.first()
+        self.user = User.objects.get(username='test')
+        self.invite = ConsentSession.objects.get(user=self.user)
 
     def test_valid_get(self):
         url = f"/mia/consentbot/consent-response/{self.invite.session_slug}/?node_id=start"
@@ -50,7 +53,7 @@ class ConsentResponseViewSetTests(TestCase):
         url = f"/mia/consentbot/consent-response/{bad_uuid}/?node_id=start"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 400)
-        self.assertIn("slug", response.data['error'])
+        self.assertIn("No ConsentSession matches the given query.", response.data['error'])
 
     def test_button_post(self):
         url = f"/mia/consentbot/consent-response/"
@@ -91,8 +94,8 @@ class ConsentViewSetTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.invite = ConsentSession.objects.first()
-        self.user = self.invite.user
+        self.user = User.objects.get(username='test')
+        self.invite = ConsentSession.objects.get(user=self.user)
         self.user.consent_script = ConsentScript.objects.first()
         self.user.save()
 
@@ -109,30 +112,31 @@ class ConsentViewSetTests(TestCase):
         self.assertIn("chat", response.data)
         self.assertEqual(response.data['consent']["user_id"], str(self.user.pk))
 
-    # def test_consent_create(self):
-    #     payload = {
-    #         "user_id": str(self.user.pk),
-    #         "consent_age_group": ">=18",
-    #         "store_sample_this_study": True,
-    #         "store_sample_other_studies": False,
-    #         "store_phi_this_study": True,
-    #         "store_phi_other_studies": False,
-    #         "return_primary_results": False,
-    #         "return_actionable_secondary_results": False,
-    #         "return_secondary_results": False,
-    #         "consent_statements": "Agree",
-    #         "user_full_name_consent": "Test User"
-    #     }
-    #     url = "/mia/consentbot/consent/"
-    #     response = self.client.post(url, data=payload, format="json")
-    #     self.assertEqual(response.status_code, 201)
-    #     self.assertEqual(response.data["user_id"], str(self.user.pk))
+    def test_consent_create(self):
+        payload = {
+            "user_id": str(self.user.pk),
+            "consent_age_group": ">=18",
+            "store_sample_this_study": True,
+            "store_sample_other_studies": False,
+            "store_phi_this_study": True,
+            "store_phi_other_studies": False,
+            "return_primary_results": False,
+            "return_actionable_secondary_results": False,
+            "return_secondary_results": False,
+            "consent_statements": "Agree",
+            "user_full_name_consent": "Test User"
+        }
+        url = "/mia/consentbot/consent/"
+        response = self.client.post(url, data=payload, format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["user_id"], str(self.user.pk))
 
     # def test_consent_update(self):
     #     import pdb; pdb.set_trace()
     #     instance = self.user.consents.latest("created_at")
     #     url = f"/mia/consentbot/consent/{instance.pk}/"
     #     response = self.client.put(url, data={"consent_age_group": "7-17"}, format="json")
+    #     import pdb; pdb.set_trace()
     #     self.assertEqual(response.status_code, 200)
     #     self.assertEqual(response.data["consent_age_group"], "7-17")
 

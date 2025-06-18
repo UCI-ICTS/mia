@@ -1,0 +1,126 @@
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Consent Form</title>
+	{% load static %}
+	<style>
+		@page {
+			margin: 1in;
+
+			@top-left {
+				content: "Confidential";
+				font-size: 12pt;
+				font-style: italic;
+			}
+
+			@top-right {
+				content: "UCI GREGoR Consent";
+				font-size: 10pt;
+				font-style: italic;
+			}
+
+			@bottom-left {
+				content: "Participant: {{ first_name }} {{ last_name }}";
+				font-size: 9pt;
+			}
+
+			@bottom-center {
+				content: "{{ datetime_now }}";
+				font-size: 9pt;
+			}
+
+			@bottom-right {
+				content: "Page " counter(page) " of " counter(pages);
+				font-size: 9pt;
+			}
+		}
+
+		body {
+			font-family: 'Arial', sans-serif;
+			font-size: 10pt;
+			line-height: 1.5;
+			margin: 0.25 in;
+		}
+
+		h1 {
+			font-size: 20pt;
+			margin-bottom: 0.25in;
+		}
+
+		h2 {
+			font-size: 12pt;
+			margin-top: 1em;
+			margin-bottom: 0.25em;
+		}
+
+		p {
+			margin: 0 0 0.5em 0;
+		}
+
+		.two-column {
+			display: flex;
+			gap: 2em;
+			margin-top: 1em;
+			margin-bottom: 1em;
+		}
+
+		.column {
+			flex: 1;
+		}
+
+		.checkbox {
+			display: inline-block;
+			width: 1em;
+			height: 1em;
+			border: 1px solid #000;
+			margin-right: 0.3em;
+		}
+
+		.checked {
+			background: black;
+			color: white;
+			text-align: center;
+			font-weight: bold;
+		}
+
+		.statement {
+			margin-left: 1em;
+			font-style: italic;
+		}
+
+		.signature-line {
+			border-bottom: 1px solid black;
+			display: inline-block;
+			width: 300px;
+			margin-left: 1em;
+		}
+
+        .chat-turn {
+            margin-bottom: 1em;
+        }
+
+	</style>
+</head>
+
+<body lang="EN-US">
+	<h1>Consent Chat Transcript</h1>
+
+	{% for turn in chat_turns %}
+	<div class="chat-turn" style="margin-bottom: 1em;">
+        <small style="color: gray;">{{ turn.timestamp|date:"F j, Y, g:i a" }}</small>
+
+		{% if turn.node.speaker == "user" %}
+			{% for msg in turn.node.messages %}
+				<p><strong>{{ first_name }} {{ last_name }}:</strong> {{ msg|safe }}</p>
+			{% endfor %}
+		{% elif turn.node.speaker == "bot" %}
+			{% for msg in turn.node.messages %}
+				<p><strong>Mia:</strong> {{ msg|safe }}</p>
+			{% endfor %}
+		{% endif %}
+	</div>
+	{% endfor %}
+</body>
+
+</html>
