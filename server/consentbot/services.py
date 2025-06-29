@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # consentbot/services.py
 
-from datetime import datetime, timedelta
+import mimetypes
+import os
+from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
@@ -43,7 +45,8 @@ from utils.cache import (
     append_to_consent_history
 ) 
 
-from utils.pdf_writers import generate_consent_pdf
+from utils.email_helpers import send_html_email
+from utils.pdf_writers import generate_consent_pdf, generate_transcript_pdf
 
 User = get_user_model()  
 # flags
@@ -262,22 +265,48 @@ class ConsentSessionOutputSerializer(serializers.ModelSerializer):
         return f"{base_url}/consent/{obj.session_slug}/"
 
 
-def mark_session_for_expiration(session_slug):
-    """Set a session to expire 24 hours from now.
-    
-    Call when    
-        At the end of the conversation (final node)
-        After consent is submitted or declined
-        After feedback is submitted
-        Or after N minutes of inactivity (future: background job)
-    """
+def run_post_consent_finalization(session_slug):
+    """Perform any cleanup or final actions after consent is completed."""
     try:
         session = get_and_validate_consent_session(session_slug=session_slug)
         session.expires_at = timezone.now() + timedelta(minutes=1)
         session.save(update_fields=["expires_at"])
-    except ConsentSession.DoesNotExist:
-        pass  # TODO: Or log
+        
+        # Generate transcript
+        generate_transcript_pdf(session=session)
 
+        # Path to PDF directory
+        pdf_dir = os.path.join(settings.MEDIA_ROOT, "pdfs", session_slug)
+        attachments = []
+
+        # Gather all PDF files in the session folder
+        if os.path.exists(pdf_dir):
+            for filename in os.listdir(pdf_dir):
+                file_path = os.path.join(pdf_dir, filename)
+                if os.path.isfile(file_path):
+                    with open(file_path, "rb") as f:
+                        mime_type, _ = mimetypes.guess_type(file_path)
+                        attachments.append((filename, f.read(), mime_type or "application/octet-stream"))
+
+        # Context for template
+        context = {
+            "first_name": session.user.first_name,
+            "last_name": session.user.last_name,
+        }
+
+        # Send email with template and attachments
+        send_html_email(
+            subject="The documents from your chat with Mia (the Medical Information Assistant)",
+            to_email=session.user.email,
+            template_name="emails/consentbot_cleanup.html",
+            context=context,
+            text_content="The documents from your chat with Mia are attached.",
+            attachments=attachments
+        )
+
+    except ConsentSession.DoesNotExist:
+        # Optional: log this
+        pass
 
 def get_or_initialize_user_consent(session_slug: str) -> tuple[Consent, bool]:
     """
@@ -366,6 +395,11 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str, ne
     bot_block = get_next_chat_block(next_node_id, session_slug, graph=graph)
     for turn in bot_block["chat_turns"]:
         append_to_consent_history(session_slug, turn)
+    
+    # Check final node for 'deactivate_session'
+    final_turn = bot_block["chat_turns"][-1] if bot_block["chat_turns"] else None
+    if final_turn['metadata']['workflow'] == "deactivate_session":
+        run_post_consent_finalization(session_slug)
 
     return build_chat_from_history(session_slug)
 
@@ -444,7 +478,8 @@ def handle_consent(graph, session_slug, responses):
         else:
             consent.consent_statements = "\n".join(description)
         user.consent_complete = True
-        generate_consent_pdf(consent, f"utils/{user.username}_ConsentForm_UCIGREGoR.pdf")
+        output_pdf_path = os.path.join(settings.MEDIA_ROOT, "pdfs", session_slug, f"{user.username}_ConsentForm_UCIGREGoR.pdf")
+        generate_consent_pdf(consent, output_pdf_path)
         user.save()
         consent.save()
 
@@ -470,7 +505,8 @@ def handle_consent(graph, session_slug, responses):
             else:
                 consent.consent_statements = "\n".join(description)
             consent.user.consent_complete = True
-            generate_consent_pdf(consent, f"utils/{user.username}_ConsentForm_UCIGREGoR.pdf")
+            output_pdf_path = os.path.join(settings.MEDIA_ROOT, "pdfs", session_slug, f"{consent.user.username}_ConsentForm_UCIGREGoR.pdf")
+            generate_consent_pdf(consent, output_pdf_path)
             consent.user.save()
             consent.save()
 
@@ -483,7 +519,6 @@ def handle_consent(graph, session_slug, responses):
                 next_node_id = node.get("metadata", {}).get("enroll_another_child")
                 return update_consent_and_advance(session_slug, node_id, graph, user_reply, next_node_id)
 
-        mark_session_for_expiration(session_slug=session_slug)
     # Default: proceed to next node normally
     return update_consent_and_advance(session_slug, node_id, graph, user_reply)
 
@@ -810,9 +845,23 @@ def get_test_results(user, consent_script_version_id):
     )
 
 
-def handle_child_enroll_form(graph, session_slug, responses):
+def handle_child_enroll_form(graph:dict, session_slug:str, responses:dict)-> list:
     """
+    Process the child enrollment form submission during a consent session.
+
+    Sets the number of children the user intends to enroll, generates a
+    summary response, and advances the chat flow. If more than 3 children
+    are being enrolled, a custom path is followed via metadata.
+
+    Args:
+        graph (dict): The full consent chat graph.
+        session_slug (str): Identifier for the active consent session.
+        responses (list): Form responses from the frontend (name/value pairs).
+
+    Returns:
+        list: Updated list of chat turns after advancing the flow.
     """
+
     next_node_id = None
 
     data = {r["name"]: r["value"] for r in responses}
@@ -925,6 +974,7 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
             metadata.get("follow_up_reason", ""),
             metadata.get("follow_up_info", "")
         )
+
     if not next_node_id:
         next_node_id = graph[node_id].get("child_ids", [None])[0]
 
@@ -940,18 +990,23 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
     
     
     # Return user + bot turn history
-    bot_turns = get_next_chat_block(next_node_id, session_slug, graph=graph)
+    bot_block = get_next_chat_block(next_node_id, session_slug, graph=graph)
 
-    for turn in bot_turns["chat_turns"]:
+    for turn in bot_block["chat_turns"]:
         append_to_consent_history(session_slug, turn)
 
     # Update session metadata
-    session.current_node = bot_turns["chat_turns"][-1]["node_id"] if bot_turns else next_node_id
+    session.current_node = bot_block["chat_turns"][-1]["node_id"] if bot_block else next_node_id
     if session.current_node not in session.visited_nodes:
         session.visited_nodes.append(session.current_node)
     session.responses[node_id] = user_label
     session.save(update_fields=["current_node", "visited_nodes", "responses"])
     
+        # Check final node for 'deactivate_session'
+    final_turn = bot_block["chat_turns"][-1] if bot_block["chat_turns"] else None
+    if final_turn['metadata']['workflow'] == "deactivate_session":
+        run_post_consent_finalization(session_slug)
+
     return get_user_consent_history(session_slug)
 
 

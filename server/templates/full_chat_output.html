@@ -1,0 +1,146 @@
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Full Consent Transcript</title>
+	{% load static %}
+	<style>
+		@page {
+			margin: 1in;
+
+			@top-left {
+				content: "Confidential";
+				font-size: 12pt;
+				font-style: italic;
+			}
+
+			@top-right {
+				content: "UCI GREGoR Consent";
+				font-size: 10pt;
+				font-style: italic;
+			}
+
+			@bottom-left {
+				content: "Participant: {{ first_name }} {{ last_name }}";
+				font-size: 9pt;
+			}
+
+			@bottom-center {
+				content: "{{ datetime_now }}";
+				font-size: 9pt;
+			}
+
+			@bottom-right {
+				content: "Page " counter(page) " of " counter(pages);
+				font-size: 9pt;
+			}
+		}
+
+		body {
+			font-family: 'Arial', sans-serif;
+			font-size: 10pt;
+			line-height: 1.5;
+		}
+
+		h1 {
+			font-size: 20pt;
+			margin-bottom: 0.25in;
+		}
+
+		h2 {
+			font-size: 14pt;
+			margin-top: 1em;
+			margin-bottom: 0.25em;
+			color: #2e6c80;
+		}
+
+		.chat-turn {
+			margin-bottom: 1em;
+			padding-bottom: 0.5em;
+			border-bottom: 1px solid #ccc;
+		}
+
+		p {
+			margin: 0 0 0.5em 0;
+		}
+
+		.timestamp {
+			color: gray;
+			font-size: 8pt;
+		}
+        .section-break {
+            page-break-before: always;
+        }
+        .section-break:first-of-type {
+            page-break-before: avoid;
+        }
+		.json-block {
+			background-color: #f4f4f4;
+			color: #333;
+			padding: 1em;
+			margin: 1em 0;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			font-family: monospace;
+			font-size: 9pt;
+			white-space: pre-wrap;  /* wraps long lines */
+			word-wrap: break-word;  /* breaks long words if needed */
+		}
+	</style>
+</head>
+
+<body lang="EN-US">
+	<h1>Full Consent Chat Transcript</h1>
+
+	{% for section in workflow_sections %}
+        <div class="section-break">
+            {% if section.turns %}
+                <h2>{{ section.label }}</h2>
+
+                {% for turn in section.turns %}
+                    <div class="chat-turn">
+                        <div class="node-ids">
+                            <p><small><strong>Node ID:</strong> {{ turn.node_id }}</small></p>
+                            <p><small><strong>Parents:</strong> {{ turn.parent_ids|join:", " }}</small></p>
+                            <p><small><strong>Children:</strong> {{ turn.child_ids|join:", " }}</small></p>
+                        </div>
+
+                        <!-- Show image if present -->
+                        {% if turn.image_path %}
+                            <div class="image-wrapper">
+                                <img src="{{ turn.image_path }}" alt="Consent Image" style="max-width: 100%;" />
+                            </div>
+                        {% endif %}
+
+						<!-- Show form if present -->
+                        {% if turn.form_options %}
+                            <div class="form-wrapper">
+								<p><small><strong>Form ID:</strong> {{ turn.form_options.form_id }}</small></p>
+								<p><small><strong>From Text:</strong></small></p>
+                                {% for line in turn.form_options.description %}
+									<p>{{ line|safe }}</p>
+								{% endfor %}
+								<p><small><strong>From Options:</strong></small></p>
+								<pre class="json-block">
+								{{ turn.form_options.fields }}
+								</pre>
+                            </div>
+                        {% endif %}
+
+                        <!-- Show speaker and messages -->
+                        {% if turn.speaker == "user" %}
+                            {% for msg in turn.messages %}
+                                <p><strong>{{ first_name }} {{ last_name }}:</strong> {{ msg|safe }}</p>
+                            {% endfor %}
+                        {% elif turn.speaker == "bot" %}
+                            {% for msg in turn.messages %}
+                                <p><strong>Mia:</strong> {{ msg|safe }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+	{% endfor %}
+</body>
+
+</html>

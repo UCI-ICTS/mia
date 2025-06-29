@@ -22,7 +22,6 @@ INCORRECT_NODES = [
     "6PJ8q9D","9LwDBiM","BZCE5J4","oXEsSu9","cCwcBvK",
     "DViRS7T","HSHVE6v","BnpCPkN","mh5Ta4t","Mc6Kfcw","W3wVKub"
 ]
-
 TEST_SCENARIOS = {
     "perfect_score": {
         "correct_nodes": [
@@ -40,16 +39,12 @@ TEST_SCENARIOS = {
         "correct_nodes": [],
     },
 }
-
-
 FORM_NODES = [
     "b5nYNf6","gWJxSfh","GkgFmXm","8A8kAJS","gdiDJUS",
     "VZsTdFg","nriTamw","AimWGCA","YkoAEVe","XGa7LFM",
     "SFiuhW9","VaSzySv","nU9xybq","nAaeApX","aXDDbh2"
 ]
-
 FORMS = ["enroll_form"]
-
 FORM_RESPONSES={
     "checkbox_form":[
         {
@@ -310,22 +305,23 @@ class ConsentTestFlowTest(TestCase):
             else:
                 res = self.advance_chat(last_turn, session_slug)
             
-            if count > 90:
+            # if count > 90:
                 
-                print(
-                    count, "\n\tParticipant: ",
-                    [message for message in res.data['chat'][-2]['messages']],
-                    "\n\tMIA: ",
-                    [message for message in res.data['chat'][-1]['messages']]
-                )
-                # import pdb;pdb.set_trace()
+            #     print(
+            #         count, "\n\tParticipant: ",
+            #         [message for message in res.data['chat'][-2]['messages']],
+            #         "\n\tMIA: ",
+            #         [message for message in res.data['chat'][-1]['messages']]
+            #     )
                 
-                # if count == 118:
+            # if count == 138:
+            #     import pdb;pdb.set_trace()
             try: 
                 self.assertEqual(res.status_code, 200)
             except:
                 print(res.data)
                 import pdb; pdb.set_trace()
+        
         session = get_and_validate_consent_session(session_slug=session_slug)
         session_user = session.user
 
