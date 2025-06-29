@@ -37,6 +37,7 @@ from authentication.services import (
     ActivateUserSerializer
     )
 from authentication.models import FollowUp
+from utils.email_helpers import send_html_email
 
 User = get_user_model()
 
@@ -154,63 +155,36 @@ class UserViewSet(viewsets.ViewSet):
         tags=["Account Management"]
     )
     def create(self, request):
-        """Create a new user with password hashing."""
-
         serializer = UserInputSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data["email"]
 
-        # Set temp password and mark user inactive
-        temp_password = get_random_string(
-            length=10,
-            allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-        )
+        temp_password = get_random_string(length=10, allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789')
         validated_data = {
             **serializer.validated_data,
             "password": temp_password,
             "is_active": False,
         }
         user = UserInputSerializer().create(validated_data)
+
         if user.is_staff:
-            # Build token and activation URL
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
-            activation_url = (
-                f"{settings.PUBLIC_HOSTNAME}/password-create?uid={uid}&token={token}"
+            activation_url = f"{settings.PUBLIC_HOSTNAME}/password-create?uid={uid}&token={token}"
+
+            send_html_email(
+                subject="You're invited to join UCI ICTS' Medical Information Assistant (MIA)!",
+                to_email=email,
+                template_name="emails/invite_email.html",
+                context={"activation_url": activation_url},
+                text_content=f"Use this link to activate your account and set your password: {activation_url}"
             )
 
-            # Email the activation link
-            # Compose HTML email
-            subject = "You're invited to join UCI ICTS' Medical Information Assistant (MIA)!"
-            from_email = settings.DEFAULT_FROM_EMAIL
-            to_email = email
+        return Response({
+            "message": f"Invite sent to {email}.",
+            "user": UserOutputSerializer(user).data,
+        }, status=status.HTTP_201_CREATED)
 
-            context = {
-                "activation_url": activation_url,
-            }
-
-            text_content = f"Use this link to activate your account and set your password: {activation_url}"
-            html_content = render_to_string("emails/invite_email.html", context)
-
-            msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
-            msg.attach_alternative(html_content, "text/html")
-            msg.send()
-
-            return Response(
-                {
-                    "message": f"Invite sent to {email}.",
-                    "user": UserOutputSerializer(user).data,
-                },
-                status=status.HTTP_201_CREATED,
-            )
-        
-        return Response(
-            {
-                "message": f"Participant {user.username} created.",
-                "user": UserOutputSerializer(user).data,
-            },
-            status=status.HTTP_201_CREATED,
-        )
 
     @swagger_auto_schema(
         operation_description="Update an existing user",
@@ -361,20 +335,16 @@ class PasswordViewSet(viewsets.ViewSet):
         uid = user.pk
         reset_link = f"{settings.PUBLIC_HOSTNAME}/password-reset?uid={uid}&token={token}"
 
-        context = {"reset_link": reset_link}
-
-        # Email content
-        subject = "Reset your password – UCI ICTS' Medical Information Assistant (MIA)"
-        from_email = settings.DEFAULT_FROM_EMAIL
-        to_email = [email]
-        text_content = f"Use this link to reset your password: {reset_link}"
-        html_content = render_to_string("emails/password_reset_email.html", context)
-
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        send_html_email(
+            subject="Reset your password – UCI ICTS' Medical Information Assistant (MIA)",
+            to_email=email,
+            template_name="emails/password_reset_email.html",
+            context={"reset_link": reset_link},
+            text_content=f"Use this link to reset your password: {reset_link}"
+        )
 
         return Response({"message": "Password reset link sent."}, status=200)
+
 
     @swagger_auto_schema(
         request_body=PasswordResetConfirmSerializer,
