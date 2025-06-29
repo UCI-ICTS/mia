@@ -35,6 +35,18 @@ ALLOWED_HOSTS = secrets.get("SERVER", "ALLOWED_HOSTS", fallback="*").split(",")
 VERSION = secrets.get("SERVER", "SERVER_VERSION", fallback="BETA")
 PUBLIC_HOSTNAME = secrets.get("SERVER", "DASHBOARD_URL", fallback="http://localhost:3000/")
 
+# Email settings with gracefull fallbacks
+EMAIL_BACKEND = secrets.get(
+    "EMAIL", "EMAIL_BACKEND", fallback="django.core.mail.backends.console.EmailBackend"
+)
+EMAIL_HOST = secrets.get("EMAIL", "EMAIL_HOST", fallback="")
+EMAIL_PORT = int(secrets.get("EMAIL", "EMAIL_PORT", fallback="25"))
+EMAIL_USE_TLS = secrets.get("EMAIL", "EMAIL_USE_TLS", fallback="False").lower() == "true"
+EMAIL_USE_SSL = secrets.get("EMAIL", "EMAIL_USE_SSL", fallback="False").lower() == "true"
+EMAIL_HOST_USER = secrets.get("EMAIL", "EMAIL_HOST_USER", fallback=None) or None
+EMAIL_HOST_PASSWORD = secrets.get("EMAIL", "EMAIL_HOST_PASSWORD", fallback=None) or None
+DEFAULT_FROM_EMAIL = secrets.get("EMAIL", "DEFAULT_FROM_EMAIL", fallback="")
+
 # DATABASE settings
 ENGINE=secrets.get("DATABASE", "ENGINE", fallback="django.db.backends.postgresql")
 NAME=secrets.get("DATABASE", "NAME", fallback="mia_app_prod")
@@ -145,7 +157,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [os.path.join(BASE_DIR,"templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

@@ -4,18 +4,20 @@ from django_json_widget.widgets import JSONEditorWidget
 from django import forms
 from consentbot.models import (
     ConsentScript,
-    ConsentCache,
-    ConsentUrl,
+    ConsentChatTurn,
+    ConsentSession,
     Consent,
-    ConsentTest
+    ConsentTestAnswer,
+    ConsentTestAttempt
 ) 
 
+# JSONEditorWidget() is a rich JSON editor
 class ConsentScriptAdminForm(forms.ModelForm):
     class Meta:
         model = ConsentScript
         fields = "__all__"
         widgets = {
-            "script": JSONEditorWidget(),  # 👈 This is the magic
+            "script": JSONEditorWidget(), 
         }
 
 @admin.register(ConsentScript)
@@ -25,19 +27,24 @@ class ConsentScriptAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     ordering = ("-created_at",)
 
-@admin.register(ConsentCache)
-class ConsentCacheAdmin(admin.ModelAdmin):
-    list_display = ["key", "value"]
-
-@admin.register(ConsentUrl)
-class ConsentUrlAdmin(admin.ModelAdmin):
-    list_display = ["consent_url", "user", "created_at", "expires_at"]
+@admin.register(ConsentSession)
+class ConsentSessionAdmin(admin.ModelAdmin):
+    list_display = ["session_slug", "user", "created_at", "expires_at"]
 
 @admin.register(Consent)
 class ConsentAdmin(admin.ModelAdmin):
     list_display = ["user", "store_sample_this_study", "return_primary_results", "consented_at"]
 
-@admin.register(ConsentTest)
-class ConsentTestAdmin(admin.ModelAdmin):
-    list_display = ["user", "test_question", "user_answer", "answer_correct", "created_at"]
+@admin.register(ConsentTestAnswer)
+class ConsentTestAnswerAdmin(admin.ModelAdmin):
+    list_display = ["answer_id", "question_text", "user_answer", "answer_correct", "submitted_at"]
 
+@admin.register(ConsentTestAttempt)
+class ConsentTestAttemptAdmin(admin.ModelAdmin):
+    list_display = ["attempt_id", "score"]
+
+@admin.register(ConsentChatTurn)
+class ConsentChatTurnAdmin(admin.ModelAdmin):
+    list_display = ("user", "session", "node_id", "timestamp")
+    list_filter = ("user",)
+    search_fields = ("node_id", "user__email", "session__session_slug")

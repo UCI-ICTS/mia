@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yourdomain.org/schema/consent-script.schema.json",
+  "title": "ConsentScript",
+  "type": "object",
+  "patternProperties": {
+    "^[a-zA-Z0-9_-]{3,}$": {
+      "type": "object",
+      "required": ["type", "messages", "child_ids", "parent_ids", "metadata"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["bot", "user"]
+        },
+        "messages": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "render": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["button", "form", "image", "video"]
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "type", "label"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "type": {
+                    "type": "string",
+                    "enum": ["checkbox", "radio", "input", "textarea", "select"]
+                  },
+                  "label": { "type": "string" },
+                  "options": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["label", "value"],
+                      "properties": {
+                        "label": { "type": "string" },
+                        "value": { "type": "string" }
+                      }
+                    }
+                  },
+                  "required": { "type": "boolean" }
+                }
+              }
+            }
+          },
+          "required": ["type"]
+        },
+        "child_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "parent_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "workflow": { "type": "string" },
+            "form_type": { "type": "string" },
+            "end_sequence": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,4 +1,4 @@
-* {
+/* * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -480,4 +480,35 @@ input[type='tel'] {
 .ant-row {
   margin-left: 0 !important;
   margin-right: 0 !important;
+} */
+
+/* ChatBubbles formatting */
+.bubble-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.bot-bubble {
+  background-color: #f0f2f5;
+  border-radius: 16px;
+  max-width: 80%;
+  align-self: flex-start;
+  padding: 10px;
+}
+
+.user-bubble {
+  background-color: #e6f7ff;
+  border-radius: 16px;
+  /* max-width: 80%; */
+  align-self: flex-end;
+  padding: 10px;
+}
+
+.echo-json {
+  font-size: 12px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
 }

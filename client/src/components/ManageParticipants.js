@@ -44,7 +44,7 @@ const ManageParticipants = () => {
   const handleAddUser = async () => {
     try {
       const values = await form.validateFields();
-      await dispatch(addUser({ ...values, is_staff: false })).unwrap();
+      dispatch(addUser({ ...values, is_staff: false }));
       message.success("Participant added successfully!");
       setModalVisible(false);
       form.resetFields();
@@ -122,7 +122,9 @@ const ManageParticipants = () => {
   
   const handleGenerateNewInviteLink = async (username) => {
     try {
-      await dispatch(generateInviteLink(username)).unwrap();
+      await dispatch(generateInviteLink(username))
+        .unwrap()
+        .then(() => dispatch(fetchUsers()));
       message.success("Invite link generated.");
     } catch (err) {
       message.error("Failed to generate link.");

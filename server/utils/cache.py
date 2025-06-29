@@ -1,105 +1,61 @@
 #!/usr/bin/env python
 # utils/cache.py
 
-import json
-from consentbot.models import ConsentCache
+from typing import Any, Optional
+from django.utils import timezone
+from django.core.cache import cache
+from consentbot.models import ConsentChatTurn, ConsentSession
+
+# -------------------------
+# CHAT HISTORY
 
 
-# Internal helpers
-def _cache_get(key):
-    try:
-        return ConsentCache.objects.get(pk=key).value
-    except ConsentCache.DoesNotExist:
-        return None
+def get_user_consent_history(session_slug: str) -> list[dict]:
+    session = ConsentSession.objects.get(session_slug=session_slug)
+    return [turn.node for turn in session.chat_turns.all()]
 
 
-def _cache_set(key, value):
-    obj, _ = ConsentCache.objects.get_or_create(pk=key)
-    if isinstance(value, (dict, list)):
-        obj.value = json.dumps(value)
-    else:
-        obj.value = str(value)
-    obj.save()
+def set_user_consent_history(session_slug: str, history: list[dict]) -> None:
+    session = ConsentSession.objects.get(session_slug=session_slug)
+    session.chat_turns.all().delete()
+    for turn in history:
+        ConsentChatTurn.objects.create(
+            session=session,
+            user=session.user,
+            node_id=turn["node_id"],
+            node=turn,
+            timestamp=turn.get("timestamp", timezone.now())
+        )
 
 
-def _build_key(invite_id, suffix):
-    return f"invite_id:{invite_id}:{suffix}"
+def append_to_consent_history(session_slug: str, turn: dict) -> None:
+    session = ConsentSession.objects.get(session_slug=session_slug)
+    ConsentChatTurn.objects.create(
+        session=session,
+        user=session.user,
+        node_id=turn["node_id"],
+        node=turn,
+        timestamp=turn.get("timestamp", timezone.now())
+    )
 
 
-# Workflow
-def get_user_workflow(invite_id):
-    """Retrieve the user's current workflow graph (list of node ID lists)."""
-    value = _cache_get(_build_key(invite_id, "workflow"))
-    return json.loads(value) if value else []
+# -------------------------
+# STATE FLAGS / METADATA
+
+def set_flag(session_slug: str, key: str, value: Any) -> None:
+    """Set a temporary flag in the session cache."""
+    state = cache.get(f"state:{session_slug}", {})
+    state[key] = value
+    cache.set(f"state:{session_slug}", state, timeout=None)
 
 
-def set_user_workflow(invite_id, workflow):
-    """Store the user’s current workflow graph."""
-    _cache_set(_build_key(invite_id, "workflow"), json.dumps(workflow))
+def get_flag(session_slug: str, key: str) -> Optional[Any]:
+    """Get a specific flag from the session cache."""
+    state = cache.get(f"state:{session_slug}", {})
+    return state.get(key)
 
 
-# Consent status flags
-def set_consenting_myself(invite_id, consenting=True):
-    """Set whether the user is enrolling themselves."""
-    _cache_set(_build_key(invite_id, "user_consenting"), consenting)
-
-
-def get_consenting_myself(invite_id):
-    """Get whether the user is enrolling themselves."""
-    value = _cache_get(_build_key(invite_id, "user_consenting"))
-    return value == "true" if value else None
-
-
-def set_consenting_children(invite_id, consenting=True):
-    """Set whether the user is enrolling children."""
-    _cache_set(_build_key(invite_id, "children_consenting"), consenting)
-
-
-def get_consenting_children(invite_id):
-    """Get whether the user is enrolling children."""
-    value = _cache_get(_build_key(invite_id, "children_consenting"))
-    return value == "true" if value else None
-
-
-# Consent chat node tracking
-def set_consent_node(invite_id, consent_node_id):
-    """Set the ID of the main consent node used during enrollment."""
-    _cache_set(_build_key(invite_id, "consent_node_id"), consent_node_id)
-
-
-def get_consent_node(invite_id):
-    """Get the ID of the main consent node."""
-    return _cache_get(_build_key(invite_id, "consent_node_id"))
-
-
-# Child user tracking (for family enrollment)
-def set_child_user_id(invite_id, child_user_id):
-    """Store the user ID of a child participant."""
-    _cache_set(_build_key(invite_id, "child_user_id"), child_user_id)
-
-
-def get_child_user_id(invite_id):
-    """Retrieve the user ID of a child participant."""
-    return _cache_get(_build_key(invite_id, "child_user_id"))
-
-
-def set_child_user_consent_id(invite_id, child_user_consent_id):
-    """Store the consent record ID for a child participant."""
-    _cache_set(_build_key(invite_id, "child_user_consent_id"), child_user_consent_id)
-
-
-def get_child_user_consent_id(invite_id):
-    """Retrieve the consent record ID for a child participant."""
-    return _cache_get(_build_key(invite_id, "child_user_consent_id"))
-
-
-# Chat history
-def set_user_consent_history(invite_id, history):
-    """Store the user’s full consent chat history (list of formatted turns)."""
-    _cache_set(_build_key(invite_id, "user_consent_history"), json.dumps(history))
-
-
-def get_user_consent_history(invite_id):
-    """Retrieve the user’s full consent chat history."""
-    value = _cache_get(_build_key(invite_id, "user_consent_history"))
-    return json.loads(value) if value else []
+def clear_session_cache(session_slug: str) -> None:
+    """Clear all cached history and state for a session."""
+    cache.delete(f"history:{session_slug}")
+    cache.delete(f"state:{session_slug}")

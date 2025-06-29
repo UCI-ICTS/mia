@@ -10,12 +10,8 @@ from authentication.models import (
     Feedback,
     FollowUp
 )
-from authentication.selectors import (
-    get_latest_consent,
-    get_first_test_score
-)
 from consentbot.models import ConsentScript
-from consentbot.selectors import get_user_from_invite_id
+from consentbot.selectors import get_user_from_session_slug, get_latest_consent
 
 User = get_user_model()
 
@@ -25,26 +21,31 @@ class UserInputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email',
-                  'first_name',
-                  'last_name',
-                  'phone',
-                  'password',
-                  'is_staff',
-                  'is_superuser',
-                  'script_id'
+        fields = [
+            'email',
+            'first_name',
+            'last_name',
+            'phone',
+            'password',
+            'is_staff',
+            'is_superuser',
+            'script_id',
+            'referred_by'  # Include this so it’s not dropped from validated_data
         ]
         extra_kwargs = {
             'password': {'write_only': True, 'required': False},
             'is_staff': {'required': False},
             'is_superuser': {'required': False},
+            'referred_by': {'required': False}  # Let it pass through cleanly
         }
 
     def create(self, validated_data):
         request = self.context.get("request")
-        referring_user = request.user if request and request.user.is_authenticated else None
+        if not validated_data.get("referred_by") and request and request.user.is_authenticated:
+            validated_data["referred_by"] = request.user
 
         script_id = validated_data.pop("script_id", None)
+
         consent_script = None
         if script_id:
             consent_script = ConsentScript.objects.filter(script_id=script_id).first()
@@ -61,8 +62,7 @@ class UserInputSerializer(serializers.ModelSerializer):
             is_staff=is_staff,
             is_superuser=is_superuser,
             consent_script=consent_script,
-            referred_by=referring_user,
-            **validated_data
+            **validated_data  # referred_by included here
         )
 
         if password:
@@ -72,7 +72,7 @@ class UserInputSerializer(serializers.ModelSerializer):
 
         user.save()
         return user
-    
+   
 
 class UserOutputSerializer(serializers.ModelSerializer):
     """
@@ -81,7 +81,7 @@ class UserOutputSerializer(serializers.ModelSerializer):
     This serializer extends the base User model to include additional metadata
     relevant to consent and participation in the study, including:
 
-    - First test score (from ConsentTest)
+    - First test score (from ConsentTestAnswer)
     - Number of test attempts
     - Whether the user's invite link has expired
     - Consent script name
@@ -113,10 +113,11 @@ class UserOutputSerializer(serializers.ModelSerializer):
         ]
 
     def get_first_test_score(self, user):
-        return get_first_test_score(user)
+        test = user.test_attempts.order_by("started_at").first()
+        return test.score() if test else "NA"
 
     def get_invite_expired(self, user):
-        return not user.consent_urls.exists()
+        return not user.consent_sessions.exists()
 
     def get_consent_age_group(self, user):
         consent = get_latest_consent(user)
@@ -195,22 +196,14 @@ class FollowUpOutputSerializer(serializers.ModelSerializer):
         return data
 
 
-class LoginSerializer(serializers.Serializer):
-    """Serializer for user login"""
+class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
 
-    def validate(self, data):
-        """Authenticate user"""
-        email = data.get("email").lower()
-        password = data.get("password")
-        user = authenticate(username=email, password=password)
 
-        if user is None:
-            raise serializers.ValidationError("Invalid email or password")
-
-        data["user"] = user
-        return data
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    uid = serializers.UUIDField()
+    token = serializers.CharField()
+    new_password = serializers.CharField(min_length=8)
 
 
 class ChangePasswordSerializer(serializers.Serializer):
@@ -235,6 +228,16 @@ class ChangePasswordSerializer(serializers.Serializer):
         update_last_login(None, instance)
         return instance
 
+class ActivateUserSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    new_password = serializers.CharField(min_length=8)
+
+    def validate(self, data):
+        if not data["uid"] or not data["token"] or not data["new_password"]:
+            raise serializers.ValidationError("All fields are required.")
+        return data
+
 
 class FeedbackInputSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
@@ -249,7 +252,7 @@ class FeedbackInputSerializer(serializers.ModelSerializer):
 
 
 class FeedbackOutputSerializer(serializers.ModelSerializer):
-    user_id = serializers.UUIDField(source="user.id", read_only=True)
+    user_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Feedback
@@ -260,11 +263,12 @@ class FeedbackOutputSerializer(serializers.ModelSerializer):
             "suggestions",
             "created_at",
         ]
+    def get_user_id(self, obj):
+            return str(obj.user.pk) if obj.user else None
 
-
-def create_follow_up_with_user(invite_id, reason, more_info):
+def create_follow_up_with_user(session_slug, reason, more_info):
     """Create a follow-up entry for a user."""
-    user = get_user_from_invite_id(invite_id)
+    user = get_user_from_session_slug(session_slug)
 
     serializer = FollowUpInputSerializer(
         data={

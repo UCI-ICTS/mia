@@ -2,9 +2,14 @@
 # consentbot/models.py
 
 import uuid
+import secrets
+import string
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 def default_expiry():
     return timezone.now() + timedelta(weeks=2)
@@ -18,28 +23,98 @@ class ConsentAgeGroup(models.TextChoices):
 
 
 class Consent(models.Model):
-    user_consent_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='user_consents')
-    dependent_user = models.ForeignKey("authentication.User", on_delete=models.SET_NULL, null=True, blank=True, related_name='dependent_consents')
-    consent_script = models.ForeignKey("consentbot.ConsentScript", on_delete=models.CASCADE, related_name="user_consents", null=True, blank=True)
-    consent_age_group = models.CharField(max_length=20, choices=ConsentAgeGroup.choices)
-    store_sample_this_study = models.BooleanField(default=True)
-    store_sample_other_studies = models.BooleanField(default=False)
-    store_phi_this_study = models.BooleanField(default=True)
-    store_phi_other_studies = models.BooleanField(default=False)
-    return_primary_results = models.BooleanField(default=False)
-    return_actionable_secondary_results = models.BooleanField(default=False)
-    return_secondary_results = models.BooleanField(default=False)
-    consent_statements = models.TextField(default='')
-    user_full_name_consent = models.CharField(max_length=200, default='')
-    child_full_name_consent = models.CharField(max_length=200, null=True, blank=True)
-    consented_at = models.DateTimeField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    """
+    Represents a record of consent given by a participant (user) for participation in a study.
+    
+    Each Consent object corresponds to a single user and optionally references a guardian who authorized 
+    the consent on behalf of that user (e.g., for minors or adults under guardianship).
+    """
 
-
-class ConsentCache(models.Model):
-    key = models.CharField(max_length=200, primary_key=True)
-    value = models.TextField()
+    user_consent_id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        help_text="Primary key identifier for the consent record."
+    )
+    user = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.CASCADE,
+        related_name='consents',
+        help_text="The individual for whom the consent applies (adult or dependent child)."
+    )
+    guardian = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='guardian_consents',
+        help_text="Legal guardian who authorized consent on behalf of the user (if applicable)."
+    )
+    consent_script = models.ForeignKey(
+        "consentbot.ConsentScript",
+        on_delete=models.CASCADE,
+        related_name="user_consents",
+        null=True,
+        blank=True,
+        help_text="Consent script (chat flow) associated with this consent instance."
+    )
+    consent_age_group = models.CharField(
+        max_length=20,
+        choices=ConsentAgeGroup.choices,
+        help_text="Age group classification at the time of consent (e.g., '<=6', '7-17', '>=18')."
+    )
+    store_sample_this_study = models.BooleanField(
+        default=True,
+        help_text="Whether the user consents to store samples for the current study."
+    )
+    store_sample_other_studies = models.BooleanField(
+        default=False,
+        help_text="Whether the user consents to store samples for future unrelated studies."
+    )
+    store_phi_this_study = models.BooleanField(
+        default=True,
+        help_text="Whether the user consents to store PHI for the current study."
+    )
+    store_phi_other_studies = models.BooleanField(
+        default=False,
+        help_text="Whether the user consents to store PHI for future unrelated studies."
+    )
+    return_primary_results = models.BooleanField(
+        default=False,
+        help_text="Whether the user consents to receive primary results."
+    )
+    return_actionable_secondary_results = models.BooleanField(
+        default=False,
+        help_text="Whether the user consents to receive actionable secondary results."
+    )
+    return_secondary_results = models.BooleanField(
+        default=False,
+        help_text="Whether the user consents to receive non-actionable secondary results."
+    )
+    consent_statements = models.TextField(
+        default='',
+        help_text="Full textual content of the consent statements acknowledged."
+    )
+    user_full_name_consent = models.CharField(
+        max_length=200,
+        default='',
+        help_text="Name of the user (or guardian) who signed the consent form."
+    )
+    child_full_name_consent = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text="Name of the dependent child if applicable."
+    )
+    consented_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Timestamp of when the consent was given."
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text="Auto-generated timestamp of when this record was created."
+    )
 
 
 class ConsentScript(models.Model):
@@ -77,20 +152,89 @@ class ConsentScript(models.Model):
         return max_version if max_version is not None else 0
 
 
-class ConsentTest(models.Model):
-    user_test_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='user_tests')
-    consent_script_version = models.ForeignKey(ConsentScript, on_delete=models.CASCADE, related_name='user_tests')
-    test_try_num = models.IntegerField(default=1, null=True, blank=True)
-    test_question = models.CharField(max_length=200)
-    user_answer = models.CharField(max_length=200)
-    answer_correct = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+class ConsentTestAttempt(models.Model):
+    attempt_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="test_attempts")
+    consent_script_version = models.ForeignKey(ConsentScript, on_delete=models.CASCADE)
+    test_try_num = models.IntegerField(default=1)
+    started_at = models.DateTimeField(auto_now_add=True)
+
+    def score(self):
+        """Return number of correct answers in this attempt."""
+        return self.answers.filter(answer_correct=True).count()
+
+    def total_questions(self):
+        return self.answers.count()
+
+    def percent_correct(self):
+        total = self.total_questions()
+        return (self.score() / total) * 100 if total else 0
+
+    def correct_question_ids(self):
+        return self.answers.filter(answer_correct=True).values_list("question_node_id", flat=True)
+    
+    def incorrect_question_ids(self):
+        return self.answers.filter(answer_correct=False).values_list("question_node_id", flat=True)
 
 
-class ConsentUrl(models.Model):
-    consent_url_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    consent_url = models.UUIDField(default=uuid.uuid4, unique=True)
+class ConsentTestAnswer(models.Model):
+    answer_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    attempt = models.ForeignKey(ConsentTestAttempt, on_delete=models.CASCADE, related_name="answers")
+    question_node_id = models.CharField(max_length=64)
+    question_text = models.TextField()
+    user_answer = models.TextField()
+    answer_correct = models.BooleanField()
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+
+class ConsentSession(models.Model):
+    session_slug = models.SlugField(primary_key=True, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="consent_sessions")
+    script = models.ForeignKey("ConsentScript", on_delete=models.CASCADE)
+    consent = models.ForeignKey(
+        "Consent",
+        on_delete=models.CASCADE,
+        related_name="sessions",
+        null=True,
+        blank=True
+    )
+
+    # Chat flow state
+    current_node = models.CharField(max_length=100)
+    visited_nodes = models.JSONField(default=list)   # ["node1", "node2"]
+    responses = models.JSONField(default=dict)       # {"node1": {...}, "node2": {...}}
+    workflow = models.CharField(max_length=100, blank=True, null=True)
+    num_test_tries = models.PositiveIntegerField(default=0)
+
+    # Lifecycle flags
+    is_active = models.BooleanField(default=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(default=default_expiry)
-    user = models.ForeignKey("authentication.User", on_delete=models.CASCADE, related_name='consent_urls')
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def generate_session_slug(cls, length=12):
+        alphabet = string.ascii_lowercase + string.digits
+        while True:
+            candidate = ''.join(secrets.choice(alphabet) for _ in range(length))
+            if not cls.objects.filter(session_slug=candidate).exists():
+                return candidate
+
+    def __str__(self):
+        return f"{self.session_slug} ({self.session_slug})"
+   
+    
+class ConsentChatTurn(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    session = models.ForeignKey("ConsentSession", on_delete=models.CASCADE, related_name="chat_turns")
+    node_id = models.CharField(max_length=32)
+    node = models.JSONField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ["timestamp"]
+
+    def __str__(self):
+        return f"{self.user} @ {self.node_id} ({self.timestamp.isoformat()})"
+    
