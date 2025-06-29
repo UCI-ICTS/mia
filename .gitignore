@@ -8,9 +8,20 @@ server/env
 **.DS_Store*
 **.pyc
 **/migrations/*.py
-server/static
+
+# Ignore all static files
+server/static/*
+
+# Except images
+!server/static/images/
+!server/static/images/**
+
+# Optional: still ignore unwanted hidden files
+server/static/.*
+
 server/.secrets
 docs/cache.txt
 docs/overhaul_notes
 server/family.json
 server/startTest.json
+server/media/pdfs/*
