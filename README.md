@@ -1,5 +1,5 @@
 # MIA (Medical Information Assistant)
-A virtual HIPAA-compliant clinical consentbot that facilitates virtual conversations with patients.
+A virtual consentbot that facilitates virtual conversations with patients.
 
 MIA is designed to be deployed in a variaty of environments. If configurd properly it should work with any external application that presents properly formatted API requests with appropirate authentication credentials.
 
