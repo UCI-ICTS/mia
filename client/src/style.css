@@ -47,6 +47,14 @@ body, html {
   min-height: 100vh; /* Full viewport height */
 }
 
+.layout-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+  background-color: var(--uci-light-gray);
+  padding: 20px;
+}
+
 .ant-layout-header.home-header {
   background-color: var(--uci-blue) !important;
   padding: 15px 20px;
@@ -436,6 +444,35 @@ body, html {
 .table .ant-table-tbody > tr > td,
 .table .ant-table-thead > tr > th {
   padding: 12px 16px;
+}
+
+.primary-card {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.card-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--uci-blue);
+  line-height: 1.2;
+}header
+
+.card-number {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--uci-blue);
+}
+
+.card-label {
+  font-size: 18px;
+  color: var(--uci-dark-blue);
+}
+
+.card-icon {
+  color: var(--uci-blue);
+  font-size: 24pt;
 }
 
 /* determines which side the consent bubbles show up */

@@ -1,14 +1,19 @@
 // src/FollowUp.js
 
-import React, { useEffect } from "react";
+import "../style.css";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFollowUps, resolveFollowUp } from "../slices/dataSlice";
-import { Table, Button, Tag, Spin, Alert, message } from "antd";
+import { Table, Typography, Button, Tag, Spin, Alert, message } from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
+import FollowUpFormModal from "../components/FollowUpModal";
+
+const { Title } = Typography;
 
 const FollowUp = () => {
   const dispatch = useDispatch();
+  const [contactModalVisible, setContactModalVisible] = useState(false);
   const { followUps = [], loading, error } = useSelector((state) => state.data || {});
 
   if (loading) return <Spin tip="Loading follow-ups..." style={{ display: "block", textAlign: "center", marginTop: 50 }} />;
@@ -52,8 +57,20 @@ const FollowUp = () => {
 
   return (
     <ErrorBoundary>
-      <div style={{ padding: 20 }}>
+      <div className="layout">
+        <div className="primary-header">
+          <div>
+            <Button
+              // icon={<UserAddOutlined />}
+              className="header-button"
+              onClick={() => setContactModalVisible(true)}
+            >Add Participant Follow Up</Button>
+          </div>
+          <Title level={3} className="primary-title">Participant Foll Up</Title>
+        </div>
+        <hr />
         <Table
+          className="table"
           columns={columns}
           dataSource={followUps || []}
           rowKey="user_follow_up_id"
@@ -61,6 +78,10 @@ const FollowUp = () => {
           loading={loading}
         />
       </div>
+      <FollowUpFormModal 
+        visible={contactModalVisible}
+        onClose={() => {setContactModalVisible(false)}}
+      />
     </ErrorBoundary>
   );
 };

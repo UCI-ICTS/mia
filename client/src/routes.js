@@ -6,7 +6,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ConsentPage from "./pages/ConsentPage";
 import PasswordResetConfirm from "./pages/PasswordResetConfirm";
-import AdminConsole from "./components/AdminConsole";
+import SummaryConsole from "./components/SummaryConsole";
 import ManageParticipants from "./components/ManageParticipants";
 import FollowUp from "./components/FollowUp";
 import ConsentScripts from "./components/ConsentScripts";
@@ -28,7 +28,7 @@ const AppRoutes = () => {
         {/* Protected Admin Dashboard */}
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />}>
-            <Route index element={<AdminConsole />} />
+            <Route index element={<SummaryConsole />} />
             <Route path="participants" element={<ManageParticipants/>} />
             <Route path="follow_up" element={<FollowUp />} />
             <Route path="scripts" element={<ConsentScripts />} />

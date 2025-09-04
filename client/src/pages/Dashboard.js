@@ -35,7 +35,7 @@ const Dashboard = () => {
   };
 
   const menuItems = [
-    {key: "home", icon: <HomeOutlined/>, label: <Link to="/dashboard">Home</Link>},
+    {key: "home", icon: <HomeOutlined/>, label: <Link to="/dashboard">Summary Console</Link>},
     {key: "participants", icon: <UserOutlined/>, label: <Link to="/dashboard/participants">Participants</Link>},
     {key: "follow-up", icon: <ScheduleOutlined/>, label: <Link to="/dashboard/follow_up">Participant Follow Up</Link>},
     {key: "scripts", icon: <MessageOutlined/>, label: <Link to="/dashboard/scripts">Consentbot Scripts</Link>},
@@ -75,7 +75,7 @@ const Dashboard = () => {
       </Sider>
 
       {/* Content Area */}
-      <Layout style={{ padding: "20px", background: "#fff" }}>
+      <Layout className="layout-dashboard">
         <Content>
           <Outlet />
         </Content>

@@ -1,7 +1,7 @@
 // src/components/ManageParticipants.js
 
 import "../style.css";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { fetchUsers, addUser, deleteUser, updateUser, getInviteLink, generateInviteLink } from "../slices/dataSlice";
@@ -20,6 +20,7 @@ import {
   Typography,
   message,
 } from "antd";
+
 import {
   DeleteOutlined,
   EditOutlined,
@@ -28,10 +29,11 @@ import {
   CopyOutlined,
   ReloadOutlined
 } from "@ant-design/icons";
+
 import ErrorBoundary from "../components/ErrorBoundary";
-import { Header } from "antd/es/layout/layout";
 
 const { Title } = Typography; 
+
 const ManageParticipants = () => {
   const dispatch = useDispatch();
   const { 

@@ -129,7 +129,9 @@ export const createFollowUp = createAsyncThunk("data/createFollowUp", async (fol
     message.success("Follow-up created");
     return res;
   } catch (error) {
-    message.error("Failed to create follow-up");
+    const msg = error.response.data
+    message.error(`Failed to create follow-up: ${msg}`);
+    console.log(error)
     return rejectWithValue(error.response?.data || error.message);
   }
 });
