@@ -17,7 +17,7 @@ const HomePage = () => {
         </Link>
       </Header>
 
-      {/* Hero Section */}
+      {/* top content section */}
       <Content className="home-top-content">
         <Row justify="center" align="middle" style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
           <Col xs={24} md={12} >

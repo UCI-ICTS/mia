@@ -227,6 +227,11 @@ body, html {
   overflow-y: auto; 
 }
 
+/* AntD Menu Styling */
+.ant-menu-dark .ant-menu-item-selected {
+  background-color: var(--uci-gold) !important;
+}
+
 /* Sider menu background & text color */
 .ant-menu-dark {
   background-color: var(--uci-dark-blue) !important;
@@ -305,6 +310,132 @@ body, html {
   background-color: var(--uci-gold) !important;
   color: var(--uci-dark-blue) !important;
   opacity: 0.9;
+}
+
+/* Modal container */
+.uci-modal .ant-modal-content {
+  border-radius: 12px;
+  background-color: var(--uci-blue);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 0; /* Remove default padding, we’ll set custom below */
+}
+
+/* Modal header */
+.uci-modal .ant-modal-header {
+  background-color: var(--uci-blue);
+  color: white;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  padding: 16px 24px;
+}
+
+/* Modal title */
+.uci-modal .ant-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--uci-light-gray);
+}
+
+/* Modal close icon */
+.uci-modal .ant-modal-close {
+  color: var(--uci-light-gray); 
+  top: 16px;
+  right: 16px;
+}
+
+/* Modal close icon: on hover */
+.uci-modal .ant-modal-close:hover {
+  color: var(--uci-athletics-gold)
+}
+
+/* Modal body */
+.uci-modal .ant-modal-body {
+  padding: 24px;
+  background-color: #fafafa; /* Light background */
+  font-size: 16px;
+}
+
+/* Modal footer */
+.uci-modal .ant-modal-footer {
+  border-top: 1px solid #e8e8e8;
+  padding: 12px 24px;
+  background-color: #f5f5f5;
+}
+
+/* Modal buttons */
+.uci-modal .ant-btn-primary {
+  background-color: var(--uci-blue);
+  border-color: var(--uci-blue);
+}
+
+.uci-modal .ant-btn-primary:hover {
+  background-color: var(--uci-gold);
+  border-color: var(--uci-gold);
+}
+
+.uci-modal .ant-btn-default:hover {
+  border-color: var(--uci-blue);
+  color: var(--uci-blue);
+}
+
+.action-button {
+  color: var(--uci-blue); 
+}
+
+.action-button:hover {
+  color: var(--uci-gold);
+}
+
+.primary-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  background: var(--uci-blue) !important;
+  padding: 0 24px;
+  height: 64px;
+  top: 0;
+  z-index: 2;
+  margin-bottom: 15px;
+}
+
+.primary-title {
+  color: var(--uci-gold) !important;
+  padding-top: 15px;
+  padding-right: 24px;
+  padding-left: 24px;
+  font-size: 24px !important;
+  margin: 0;
+}
+
+.header-button {
+  color: var(--uci-gold) !important;
+  background: var(--uci-blue) !important;
+}
+
+.table {
+  background-color: white;
+  border: 1px solid var(--uci-blue);
+  border-radius: 10px;
+}
+
+/* Table header */
+.table .ant-table-thead > tr > th {
+  background-color: var(--uci-blue);
+  color: var(--uci-gold);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Table body text */
+.table .ant-table-tbody > tr > td {
+  font-size: 15px;
+  color: var(--uci-dark-blue);
+}
+
+.table .ant-table-tbody > tr > td,
+.table .ant-table-thead > tr > th {
+  padding: 12px 16px;
 }
 
 /* determines which side the consent bubbles show up */
@@ -610,72 +741,12 @@ input[type='tel'] {
     margin-left: 10px;
 }
 
-/* Hero Banner Styling */
-#hero-banner {
-  width: 100%;
-  padding: 50px 0;
-  background-color: #1565c0; /* Updated to a stronger blue */
-  text-align: center;
-}
-
-#hero-banner h1, #hero-banner p {
-  color: white; /* Ensures text is readable */
-}
-
-/* Mia Logo Size Adjustment */
-#hero-banner img {
-  max-width: 150px; /* Resized Mia logo */
-  height: auto;
-  margin-top: 10px;
-}
-
-#hero-banner .header {
-    font-size: 3rem;
-    margin-bottom: 20px;
-}
-
-#hero-banner p {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-}
-
-#hero-banner img {
-    max-width: 250px;
-    height: auto;
-    margin-top: 20px;
-}
-
-/* Grid Section Styling */
-.container .section {
-    padding: 50px 0;
-}
-
-.container .row {
-    margin-bottom: 40px;
-}
-
-.container h6 {
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
-.container p {
-    font-size: 1.125rem;
-}
-
 /* Adjust Ant Design header */
 .ant-layout-header {
   height: 60px !important;
   display: flex;
   align-items: center;
   background-color: #1565c0 !important;
-}
-
-/* Hero section text alignment */
-#hero-banner h1 {
-  font-size: 40px !important;
-  font-weight: bold;
-  text-align: center;
 }
 
 /* Grid Cards */

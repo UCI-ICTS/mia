@@ -1,5 +1,6 @@
 // src/components/ManageParticipants.js
 
+import "../style.css";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
@@ -16,6 +17,7 @@ import {
   Table,
   Tag,
   Tooltip,
+  Typography,
   message,
 } from "antd";
 import {
@@ -27,7 +29,9 @@ import {
   ReloadOutlined
 } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
+import { Header } from "antd/es/layout/layout";
 
+const { Title } = Typography; 
 const ManageParticipants = () => {
   const dispatch = useDispatch();
   const { 
@@ -39,6 +43,8 @@ const ManageParticipants = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [editingUserId, setEditingUserId] = useState(null);
+  const [linkModalVisable, setLinkModalVisable] = useState(false);
+  const [inviteLink, setInviteLink] = useState(false);
   const [form] = Form.useForm();
 
   const handleAddUser = async () => {
@@ -91,25 +97,8 @@ const ManageParticipants = () => {
         });
         return;
       }
-  
-      Modal.info({
-        title: "Invite Link",
-        content: (
-          <Input
-            value={result.invite_link}
-            addonAfter={
-              <CopyOutlined
-                onClick={() => {
-                  navigator.clipboard.writeText(result.invite_link);
-                  message.success("Copied to clipboard!");
-                }}
-                style={{ cursor: "pointer" }}
-              />
-            }
-            readOnly
-          />
-        ),
-      });
+      setInviteLink(result.invite_link);
+      setLinkModalVisable(true);
     } catch (err) {
       const status = err?.status;
       const msg =
@@ -235,92 +224,121 @@ const ManageParticipants = () => {
 
   return (
     <ErrorBoundary>
-      <div style={{ padding: 20 }}>
-        <Button
-          type="primary"
-          icon={<UserAddOutlined />}
-          style={{ marginBottom: 20 }}
-          onClick={() => setModalVisible(true)}
-        >
-          Add New Participant
-        </Button>
-        
-        <Table
-          columns={columns}
-          dataSource={participants || []}
-          rowKey={(record) => record.username}
-          bordered
-        />
-
-        {/* Add User Modal */}
-        <Modal
-          title="Add New Participant"
-          open={isModalVisible}
-          onCancel={() => {
-            setModalVisible(false);
-            form.resetFields();
-          }}
-          onOk={handleAddUser}
-          okText="Add Participant"
-        >
-          <Form form={form} layout="vertical">
-            <Form.Item name="first_name" label="First Name" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="last_name" label="Last Name" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="phone" label="Phone">
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="script_id"
-              label="Consent Script"
-              rules={[{ required: true, message: "Please select a consent script" }]}
-            >
-              <Select placeholder="Select a consent script">
-                {scripts.map((script) => (
-                  <Select.Option key={script.script_id} value={script.script_id}>
-                    {script.name} (v{script.version_number})
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Form>
-        </Modal>
-        
-        {/* Edit User Modal */}
-        <Modal
-          title="Edit Participant"
-          open={isEditModalVisible}
-          onCancel={() => {
-            setEditModalVisible(false);
-            form.resetFields();
-            setEditingUserId(null);
-          }}
-          onOk={handleSubmitEdit}
-          okText="Submit Edits"
-        >
-          <Form form={form} layout="vertical">
-            <Form.Item name="first_name" label="First Name" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="last_name" label="Last Name" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="phone" label="Phone">
-              <Input />
-            </Form.Item>
-          </Form>
-        </Modal>
-    
+    <div className="layout">
+      <div className="primary-header">
+        <div>
+          <Button
+            icon={<UserAddOutlined />}
+            className="header-button"
+            onClick={() => setModalVisible(true)}
+          >Add New Participant</Button>
+        </div>
+        <Title className="primary-title">Manage Participants</Title>
       </div>
+      
+      <Table
+        className="table"
+        columns={columns}
+        dataSource={participants || []}
+        rowKey={(record) => record.username}
+        bordered
+      />
+
+      {/* Add User Modal */}
+      <Modal
+        className="uci-modal"
+        title="Add New Participant"
+        open={isModalVisible}
+        onCancel={() => {
+          setModalVisible(false);
+          form.resetFields();
+        }}
+        onOk={handleAddUser}
+        okText="Add Participant"
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item name="first_name" label="First Name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="last_name" label="Last Name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="phone" label="Phone">
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="script_id"
+            label="Consent Script"
+            rules={[{ required: true, message: "Please select a consent script" }]}
+          >
+            <Select placeholder="Select a consent script">
+              {scripts.map((script) => (
+                <Select.Option key={script.script_id} value={script.script_id}>
+                  {script.name} (v{script.version_number})
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+      
+      {/* Edit User Modal */}
+      <Modal
+        className="uci-modal"
+        title="Edit Participant"
+        open={isEditModalVisible}
+        onCancel={() => {
+          setEditModalVisible(false);
+          form.resetFields();
+          setEditingUserId(null);
+        }}
+        onOk={handleSubmitEdit}
+        okText="Submit Edits"
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item name="first_name" label="First Name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="last_name" label="Last Name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="phone" label="Phone">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+      
+      {/* Invite Link Modal */}
+      <Modal
+        className="uci-modal"
+        title="Invite Link"
+        open={linkModalVisable}
+        onCancel={() => setLinkModalVisable(false)}
+        footer={null}
+      >
+        <Input
+          value={inviteLink}
+          readOnly
+          addonAfter={
+            <Tooltip title="Copy to clipboard">
+            <CopyOutlined
+              className="action-button"
+              onClick={() => {
+                navigator.clipboard.writeText(inviteLink);
+                message.success("Copied to clipboard!");
+              }}
+            />
+            </Tooltip>
+          }
+        />
+      </Modal>
+    </div>
     </ErrorBoundary>
 
     
