@@ -1,8 +1,9 @@
 // src/pages/Dashboard.js
 
-import React, { useEffect } from "react";
+import "../style.css";
+import React, { useEffect, useState } from "react";
 import { Layout, Menu, Button, Typography } from "antd";
-import { HomeOutlined, UserOutlined, ScheduleOutlined, MessageOutlined, TeamOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined, ScheduleOutlined, MessageOutlined, TeamOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
@@ -16,6 +17,7 @@ const { Title } = Typography;
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const {staff,participants,followUps,consent,scripts,loading,error} = useSelector((state) => state.data || {});
   
@@ -32,44 +34,44 @@ const Dashboard = () => {
     navigate("/login"); // redirect to login
   };
 
-  return (
-    <Layout style={{ minHeight: "100vh" }}>
-      {/* Sidebar */}
-      <Sider width={240} style={{ background: "#f5f5f5", padding: "20px" }}>
-        <Title level={4} style={{ textAlign: "center" }}>Admin</Title>
-        <Menu mode="vertical" defaultSelectedKeys={["home"]} style={{ borderRight: 0 }}>
-          <Menu.Item key="home" icon={<HomeOutlined />}>
-            <Link to="/dashboard">Home</Link>
-          </Menu.Item>
-          <Menu.Item key="participants" icon={<UserOutlined />}>
-            <Link to="/dashboard/participants">Participants</Link>
-          </Menu.Item>
-          <Menu.Item key="follow-up" icon={<ScheduleOutlined />}>
-            <Link to="/dashboard/follow_up">Participant Follow Up</Link>
-          </Menu.Item>
-          <Menu.Item key="scripts" icon={<MessageOutlined />}>
-            <Link to="/dashboard/scripts">Consentbot Scripts</Link>
-          </Menu.Item>
-          <Menu.Item key="admin" icon={<TeamOutlined />}>
-            <Link to="/dashboard/admin">Manage Admin Users</Link>
-          </Menu.Item>
-        </Menu>
+  const menuItems = [
+    {key: "home", icon: <HomeOutlined/>, label: <Link to="/dashboard">Home</Link>},
+    {key: "participants", icon: <UserOutlined/>, label: <Link to="/dashboard/participants">Participants</Link>},
+    {key: "follow-up", icon: <ScheduleOutlined/>, label: <Link to="/dashboard/follow_up">Participant Follow Up</Link>},
+    {key: "scripts", icon: <MessageOutlined/>, label: <Link to="/dashboard/scripts">Consentbot Scripts</Link>},
+    {key: "admin", icon: <TeamOutlined/>, label: <Link to="/dashboard/admin">Manage Staff & Admin </Link>},
 
+  ];
+
+  return (
+    <Layout className="layout">
+      {/* Sidebar */}
+      <Sider
+        width={250}
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        className="sider-container"
+      >
+        <h2 className="sider-header">{collapsed ? "" : "MIA Admin Dashboard"}</h2>
+        <div className="sider-menu-wrapper">
+          <Menu
+            theme="dark"
+            mode="inline"
+            defaultSelectedKeys={["home"]}
+            style={{ borderRight: 0 }}
+            items={menuItems}
+          />
+        </div>
         {/* User Info and Logout */}
-        <div style={{ position: "absolute", bottom: 20, width: "100%", textAlign: "center", padding: "0 10px" }}>
-          <Button type="text" block style={{ width: "80%", marginTop: "5px" }} >
-            {user?.first_name} {user?.last_name}
-          </Button>
-          <Button 
-            danger 
+        <div className="logout-button-container">  
+          <Button
+            className="logout-button"
+            icon={<LogoutOutlined/>}
             style={{ width: "80%", marginTop: "5px" }} 
             onClick={handleLogout}
-          >
-  Logout
-</Button>
-
+          >{!collapsed && "Logout"}</Button>
         </div>
-
       </Sider>
 
       {/* Content Area */}

@@ -1,3 +1,5 @@
+ /* src/style.css */
+ 
 
 body, html {
   font-family: 'Calibri', sans-serif;
@@ -201,6 +203,108 @@ body, html {
 /* Default (unchecked) border color */
 .ant-checkbox-inner {
   border-color: var(--uci-light-gray) !important;
+}
+
+/* ==== Sidebar (Sider) ==== */
+.sider-container {
+  background-color: var(--uci-dark-blue) !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 220px; 
+}
+
+.sider-header {
+  color: var(--uci-light-gray);
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 16px;
+  font-weight: 700;
+}
+
+.sider-menu-wrapper {
+  flex: 1;
+  overflow-y: auto; 
+}
+
+/* Sider menu background & text color */
+.ant-menu-dark {
+  background-color: var(--uci-dark-blue) !important;
+}
+
+/* Default menu item text */
+.ant-menu-dark .ant-menu-item {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--uci-light-gray) !important;
+}
+
+/* Hover effect for menu items */
+.ant-menu-dark .ant-menu-item:hover {
+  background-color: var(--uci-gold) !important;
+  color: var(--uci-dark-blue) !important;
+}
+
+.ant-menu-dark .ant-menu-item:hover .anticon{
+  color: var(--uci-dark-blue) !important;
+}
+
+/* Selected (active) menu item */
+.ant-menu-dark .ant-menu-item-selected {
+  color: var(--uci-dark-blue) !important;
+}
+
+/* Icon colors */
+.ant-menu-dark .ant-menu-item .anticon {
+  color: var(--uci-light-gray) !important;
+}
+
+/* Selected icon color */
+.ant-menu-dark .ant-menu-item-selected .anticon {
+  color: var(--uci-dark-blue) !important;
+}
+
+/* Logout button container*/
+.logout-button-container {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Logout button styling */
+.logout-button {
+  background-color: var(--uci-blue) !important;
+  color: var(--uci-light-gray) !important;
+  border: none !important;
+  border-radius: 6px;
+  font-weight: 600;
+  padding: 0 16px;
+  height: 40px;
+  transition: all 0.2s ease;
+}
+
+/* Hover state */
+.logout-button:hover {
+  background-color: var(--uci-teal-blue) !important;
+  color: var(--uci-dark-blue) !important;
+  opacity: 0.9;
+}
+
+/* Make the collapse button match your theme */
+.ant-layout-sider-trigger {
+  background-color: var(--uci-dark-blue) !important;
+  color: var(--uci-light-gray) !important;
+  font-size: 16px;
+  height: 48px;
+  line-height: 48px;
+  transition: all 0.2s ease;
+}
+
+/* Hover state */
+.ant-layout-sider-trigger:hover {
+  background-color: var(--uci-gold) !important;
+  color: var(--uci-dark-blue) !important;
+  opacity: 0.9;
 }
 
 /* determines which side the consent bubbles show up */
