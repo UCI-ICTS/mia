@@ -1,9 +1,9 @@
 // src/components/ChatBubbles.js
-import React from "react";
+
 import { Typography, Row, Image } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { Bubble } from "@ant-design/x";
-// import "../style.css";
+import "../style.css";
 
 const { Text } = Typography;
 
@@ -12,18 +12,18 @@ const ChatBubbles = ({ turn, username }) => {
   return (
     <div className="bubble-container">
       {speaker === "bot" ? (
-        <div>
+        <div >
           {messages.map((msg, index) => (
-            <Row key={`bot-${index}`} align="top">
+            <Row key={`bot-${index}`} className="bubble-row-left">
               <Bubble
                 key={index}
-                header={<strong>Mia</strong>}
+                className="bot-bubble"
+                header={<strong className="card-label">Mia</strong>}
                 placement="start"
                 shape="round"
                 content={
-                  <div style={{ fontFamily: "sans-serif", fontSize: 16 }}>
+                  <div >
                     <span dangerouslySetInnerHTML={{ __html: msg }} />
-                    {/* <div ref={bottomRef} /> */}
                   </div>
                 }
                 avatar={{ icon: <img src="/images/mia_logo.png" alt="Mia" /> }}
@@ -34,14 +34,15 @@ const ChatBubbles = ({ turn, username }) => {
       ) : (
         <div>
           {messages.map((msg, index) => (
-            <Row justify="end" align="top">
+            <Row key={`usr-${index}`} className="bubble-row-right">
               <Bubble
-                header={<strong>{username}</strong>}
+                className="user-bubble"
+                header={<strong className="card-label">{username}</strong>}
                 placement="end"
                 shape="round"
                 avatar={{icon:<UserOutlined />}}
                 content={
-                  <div style={{ fontFamily: "sans-serif", fontSize: 16 }}>
+                  <div >
                     {msg}
                   </div>
                 }
@@ -50,9 +51,6 @@ const ChatBubbles = ({ turn, username }) => {
           ))}
       </div>
       )}
-    {/* Text Bot messages */}
-      
-
     </div>
   );
 };

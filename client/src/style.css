@@ -113,6 +113,30 @@ body, html {
   font-size: 14px;
 }
 
+
+.card-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--uci-blue) !important;
+  line-height: 1.2;
+}header
+
+.card-number {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--uci-blue);
+}
+
+.card-label {
+  font-size: 18px;
+  color: var(--uci-dark-blue);
+}
+
+.card-icon {
+  color: var(--uci-blue);
+  font-size: 24pt;
+}
+
 .login-page {
   background-color: var(--uci-blue);
   display: flex;
@@ -452,360 +476,37 @@ body, html {
   background-color: rgba(255, 255, 255, 0.9);
 }
 
-.card-title {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--uci-blue);
-  line-height: 1.2;
-}header
-
-.card-number {
-  font-weight: 600;
-  font-size: 18px;
-  color: var(--uci-blue);
-}
-
-.card-label {
-  font-size: 18px;
-  color: var(--uci-dark-blue);
-}
-
-.card-icon {
-  color: var(--uci-blue);
-  font-size: 24pt;
-}
-
-/* determines which side the consent bubbles show up */
-.message-row.bot {
-  align-self: flex-start;  /* default to the left side */
-}
-
-.message-row.user {
-  align-self: flex-end;  /* position to the right side */
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.message-content {
-  border-radius: 1.2em;
-  display: block;
-  line-height: 1.4;
-  margin: 0.0625em 0;
-  max-width: 85%;
-  padding: 0.5em 1em;
-  position: relative;
-  transition: border-radius 0.1s ease 0s;
-  word-break: break-word;
-  word-wrap: break-word;
-  white-space: normal;
-  font-family: "Helvetica Nueue", sans-serif;
-}
-
-.message-content.bot {
-  background-color: #EDF2F7;
-  color: #313F48;
-  fill: #EDF2F7;
-  border-radius: 1.2em 1.2em 1.2em 0;
-}
-
-.message-content.bot img {
-    max-width: 100%;
-    height: auto;
-}
-
-.fade-in-image {
-  opacity: 0;
-  transition: opacity 0.8s ease-in;
-}
-
-.fade-in-image.visible {
-  opacity: 1;
-}
-
-.message-content.user {
-  text-align: right;
-  background-color: #148cfb;
-  color: #fff;
-  fill: #148cfb;
-  border-radius: 1.2em 1.2em 0 1.2em;
-  animation: Message-fadeIn 0.8s ease 0s forwards;
-}
-
-.message-row.user, .message-content.user {
-  max-width: 100%;
-  width: auto;
-}
-
-.user-response-container {
-  background-color: #EDF2F7;
-  border-top: solid 1px #CCD6E1;
+ /* --- Chat formatting --- */
+.chat-header {
+  position: sticky;
+  top: 0;
   display: flex;
-  left: 0;
-  min-height: 68px;
-  width: 100%;
-  position: absolute;
-  bottom: 0;
+  justify-content: space-between;
+  padding:  12px 20px;
+  border-bottom: 10px;
+  background-color: var(--uci-blue);
+  z-index: 10;
 }
 
-.user-response-form {
-  position: relative;
-  display: inline-block;
-  max-width: 740px;
-  width: 100%;
-  min-height: 48px;
-  margin: 0 auto;
-}
-
-.user-response-button-group {
-  padding: 0.5em;
-  margin: -2px auto;
-  width: 100%;
-  max-width: 740px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.user-response-button {
-  position: relative;
-  display: inline-block;
-  background-color: #fafbfc;
-  border-radius: 4px;
-  border: solid 1px #CCD6E1;
-  min-height: 48px;
-  padding: 0.66em 1em;
-  outline: none;
-  text-decoration: none;
-  cursor: pointer;
-  font-size: 1.125em;
-  color: #148cfb;
-  margin: 2px;
-  width: 100%;
-}
-
-.user-form-row {
-  padding: 15px;
-  border-bottom: solid 1px #CCD6E1;
-  position: relative;
-  display: block;
-  text-align: left;
-  background-color: #fafbfc;
-  min-height: 40px;
-  width: 100%;
-  cursor: pointer;
-}
-
-.user-form-row-label {
-  padding-left: 0px;
-  font-size: 1.125em;
-}
-
-input[type="checkbox"] {
-  transform: scale(2);
-  margin-right: 10px;
-}
-
-#submit-button:disabled {
-  background-color: #D3D3D3; /* Light Gray */
-  color: #A9A9A9; /* Dark Gray */
-  cursor: not-allowed; /* To change the cursor shape indicating that it's not clickable */
-}
-
-.user-contact-form-row-label {
-  font-size: 0.9em;
-  text-align: left;
-  margin-bottom: 0.15em;
-  color: #148cfb;
-}
-
-/* Apply only to text input types */
-input[type='text'] {
-    border: solid 1px rgba(0,0,0,0.23);
-    border-radius: 4px;
-    background-color: #fff;
-    min-height: 48px;
-    line-height: 1.4;
-    font-size: 18px;
-    text-align: left;
-    width: 100%;
-    padding-left: 10px;
-}
-
-/* Apply only to email input types */
-input[type='email'] {
-    border: solid 1px rgba(0,0,0,0.23);
-    border-radius: 4px;
-    background-color: #fff;
-    min-height: 40px;
-    line-height: 1.4;
-    font-size: 16px;
-    text-align: left;
-    width: 100%;
-    padding-left: 10px;
-}
-
-/* Apply only to tel input types */
-input[type='tel'] {
-    border: solid 1px rgba(0,0,0,0.23);
-    border-radius: 4px;
-    background-color: #fff;
-    min-height: 48px;
-    line-height: 1.4;
-    font-size: 18px;
-    text-align: left;
-    width: 100%;
-    padding-left: 10px;
-}
-
-#age-group, #satisfaction {
-    border: solid 1px rgba(0,0,0,0.23);
-    border-radius: 4px;
-    background-color: #fff;
-    min-height: 48px;
-    line-height: 1.4;
-    font-size: 18px;
-    text-align: left;
-    width: 100%;
-    padding-left: 10px;
-}
-
-#suggestions {
-    width: 100%;
-    height: 75px;
-    padding: 5px;
-}
-::placeholder { /* Most modern browsers support */
-  color: #D5D5D5;
-}
-
-#admin-sidebar {
-    height: 100vh;
-    padding-top: 30px;
-    padding-left: 20px;
-}
-
-#admin-sidebar-title {
-    padding-bottom: 30px;
-}
-
-.admin-sidebar-item {
-    padding: 10px;
-    display: flex;
-    align-items: center; /* Vertically aligns items in the center */
-    gap: 5px; /* Creates a small space between the icon and the text */
-}
-
-#admin-main-content {
-    height: 100vh;
-    overflow-y: auto;
-    padding-top: 75px;
-}
-
-#admin-sidebar a:hover {
-    background-color: rgba(255,255,255,0.1);
-}
-
-.user-options-dropdown:hover, .member-options-dropdown:hover {
-    background-color: #e3f2fd !important;
-}
-
-.material-icons{
-    display: inline-flex;
-    vertical-align: top;
-}
-
-/* Each individual card */
-.card {
-    min-height: 260px; /* Adjust this value to your preference */
-}
-
-#script-entries {
-    flex: 1;
-    padding: 20px;
-    height: 800px;
-    overflow-y: auto;  /* Scrollable when content overflows */
-    overflow-x: hidden;
-}
-
-.script-entry {
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    padding: 10px;
-    font-size: 11pt;
-}
-
-.bot-consent-bullets {
-    padding-left: 35px;
-}
-
-.consent-text {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    font-weight: bold;
-}
-
-/* Style adjustments for user info button */
-.user-info-btn .user-btn {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    height: 50px;
-    padding: 0 10px;
-    border-radius: 10px;
-    width: 100%;
-}
-
-.user-info-btn .user-btn .btn-text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background-color: #f44336;
-    color: #fff;
-    border-radius: 50%;
-    margin-right: 10px;
-    font-size: 20px;
-    overflow: hidden;
-}
-
-.user-info-btn .user-btn i {
-    line-height: 50px; /* Adjust to center the icon vertically */
-}
-
-/* Additional styling to ensure the text is aligned properly */
-.user-info-btn .user-btn span + span {
-    margin-left: 10px;
-}
-
-/* Adjust Ant Design header */
-.ant-layout-header {
-  height: 60px !important;
+.chat-header-left {
   display: flex;
   align-items: center;
-  background-color: #1565c0 !important;
+  color: var(--uci-gold);
 }
 
-/* Grid Cards */
-.ant-card {
-  transition: all 0.3s ease-in-out;
+.chat-header-right {
+  display: flex;
+  align-items: center;
+  color: var(--uci-gold);
 }
 
-.ant-card:hover {
-  transform: scale(1.02);
+.help-button {
+  color: var(--uci-gold) !important;
+  background: var(--uci-blue) !important;
+  margin-left: 12px;
+  cursor: pointer;
+  font-size: 30px;
 }
-
-/* Remove left/right padding from the whole page */
-.ant-layout-content {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-/* Ensure grid content does not have extra padding */
-.ant-row {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-} */
 
 /* ChatBubbles formatting */
 .bubble-container {
@@ -815,20 +516,41 @@ input[type='tel'] {
   margin-bottom: 12px;
 }
 
+/* Align bot messages to the left */
+.bubble-row-left {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Align user messages to the right */
+.bubble-row-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .bot-bubble {
-  background-color: #f0f2f5;
   border-radius: 16px;
   max-width: 80%;
-  align-self: flex-start;
   padding: 10px;
 }
 
+.bot-bubble .ant-bubble-content {
+  background-color: var(--uci-blue) !important;
+  color: var(--uci-athletics-gold);
+  font-size: 11pt;
+}
+
+
 .user-bubble {
-  background-color: #e6f7ff;
   border-radius: 16px;
-  /* max-width: 80%; */
-  align-self: flex-end;
+  max-width: 80%;
   padding: 10px;
+}
+
+.user-bubble .ant-bubble-content {
+  background-color: var(--uci-blue) !important;
+  color: var(--uci-athletics-gold);
+  font-size: 11pt;
 }
 
 .echo-json {

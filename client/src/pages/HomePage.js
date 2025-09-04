@@ -27,9 +27,7 @@ const HomePage = () => {
             <Paragraph className="home-paragraph">
               Our virtual Medical Information Assistant (Mia)
             </Paragraph>
-            <Paragraph className="home-paragraph">
-              A HIPAA-compliant clinical consentbot that facilitates virtual conversations with patients.
-            </Paragraph>
+            
           </Col>
           <Col xs={24} md={12} style={{ textAlign: "right" }}>
             <Image 
@@ -46,16 +44,16 @@ const HomePage = () => {
       {/* Steps Section */}
       <Content className="home-bottom-content">
         <Title level={3} className="home-subtitle">
-          Providing informed consent is simple with Mia
+          A clinical chatbot that facilitates conversations with patients.
         </Title>
         <Row gutter={[24, 24]} justify="center">
           {[{ 
             title: "1. Share Mia", 
-            text: "Provide a link to your patients prior to their appointment.",
-            italic: "Available for patients and clinicians in the US." 
+            text: "Provide a link to your participants prior to their appointment.",
+            // italic: "Available for patients and clinicians in the US." 
           }, { 
-            title: "2. Intake", 
-            text: "Via virtual consent, Mia gathers intake information, including personal and medical history." 
+            title: "2. Enrollment", 
+            text: "Join the study." 
           }, { 
             title: "3. Education",
             text: "Mia guides your patients through pre-appointment education from home."
