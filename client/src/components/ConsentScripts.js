@@ -14,12 +14,15 @@ import {
   Table,
   Tooltip,
   Spin,
+  Typography,
   message,
 } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReadOutlined, MenuUnfoldOutlined, UploadOutlined } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
 import { useNavigate } from "react-router-dom";
 import UploadModal from "./UploadModal";
+
+const { Title } = Typography; 
 
 const ConsentScripts = () => {
   const dispatch = useDispatch();
@@ -65,7 +68,6 @@ const ConsentScripts = () => {
     }
     return false; // prevent default upload
   };
-  
 
   const handleSubmit = async () => {
     const values = await form.validateFields();
@@ -141,16 +143,18 @@ const ConsentScripts = () => {
 
   return (
     <ErrorBoundary>
-      <div style={{ padding: 20 }}>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => handleOpenModal()}
-          style={{ marginBottom: 20 }}
-        >
-          Add New Script
-        </Button>
-
+      <div className="layout">
+        <div className="primary-header">
+          
+            <div>
+              <Button
+                className="header-button"
+                icon={<PlusOutlined />}
+                onClick={() => handleOpenModal()}
+              >Add New Script</Button>
+            </div>
+          <Title className="primary-title">Consentbot Scripts</Title>
+        </div>
         {/* === Conditional rendering === */}
         {loading ? (
           <Spin tip="Loading scripts..." style={{ display: "block", textAlign: "center", marginTop: 50 }} />
@@ -166,6 +170,7 @@ const ConsentScripts = () => {
           <Empty description="No scripts available." />
         ) : (
           <Table
+            className="table"
             columns={columns}
             dataSource={scripts}
             rowKey="consent_id"
@@ -176,6 +181,7 @@ const ConsentScripts = () => {
         {/* Modal for Add/Edit */}
         <Modal
           title={editingScript ? "Edit Script" : "Add New Script"}
+          className="uci-modal"
           open={isModalVisible}
           onCancel={() => {
             setIsModalVisible(false);
