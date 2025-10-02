@@ -5,6 +5,12 @@ MIA is designed to be deployed in a variaty of environments. If configurd proper
 
 This repository is composed of two serivce applications. The server application is a Django API DB and the client application is a Redux/React UI.
 
+## License
+This project is licensed under the Creative Commons Attribution–NonCommercial 4.0 International License (CC BY-NC 4.0).
+
+You may share and adapt the material for noncommercial purposes, provided that you give appropriate credit.  
+See the [full license](./LICENSE.txt) or the [Creative Commons page](https://creativecommons.org/licenses/by-nc/4.0/).
+
 ## Deployment
 
 - [Local deployment](docs/deployment/localDeployment.md) 
