@@ -18,7 +18,7 @@ See the [full license](./LICENSE.txt) or the [Creative Commons page](https://cre
 - [Production deployment](docs/deployment/productionDeployment.md)
     - For deployment that is exposed to the internet
 - [Docker deployment](docs/deployment/dockerDeployment.md)
-    - WIP: comming soon
+    - WIP: coming soon
 
 ## Development and troubleshooting
 - [Contribution Guide lines](docs/CONTRIBUTING.md)
