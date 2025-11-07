@@ -8,7 +8,10 @@ import "../style.css";
 const { Text } = Typography;
 
 const ChatBubbles = ({ turn, username }) => {
-  const {messages, speaker } = turn;
+  const { messages = [], speaker, render } = turn || {};
+  const isImage = render?.type === "image" && render?.content;
+  const isVideo = render?.type === "video" && render?.content;
+
   return (
     <div className="bubble-container">
       {speaker === "bot" ? (
@@ -49,7 +52,7 @@ const ChatBubbles = ({ turn, username }) => {
               />
             </Row>
           ))}
-      </div>
+        </div>
       )}
     </div>
   );

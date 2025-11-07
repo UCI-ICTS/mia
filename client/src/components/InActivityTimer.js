@@ -7,6 +7,9 @@ const useInActivityTimer = (timeout = 300000) => {
   const timerRef = useRef(null);
 
   const resetTimer = () => {
+    
+    if (isInactive) return;
+
     setIsInactive(false);
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
