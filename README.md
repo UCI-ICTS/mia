@@ -1,9 +1,15 @@
 # MIA (Medical Information Assistant)
-A virtual HIPAA-compliant clinical consentbot that facilitates virtual conversations with patients.
+A virtual consentbot that facilitates virtual conversations with patients.
 
 MIA is designed to be deployed in a variaty of environments. If configurd properly it should work with any external application that presents properly formatted API requests with appropirate authentication credentials.
 
 This repository is composed of two serivce applications. The server application is a Django API DB and the client application is a Redux/React UI.
+
+## License
+This project is licensed under the Creative Commons Attribution–NonCommercial 4.0 International License (CC BY-NC 4.0).
+
+You may share and adapt the material for noncommercial purposes, provided that you give appropriate credit.  
+See the [full license](./LICENSE.txt) or the [Creative Commons page](https://creativecommons.org/licenses/by-nc/4.0/).
 
 ## Deployment
 
@@ -12,7 +18,7 @@ This repository is composed of two serivce applications. The server application 
 - [Production deployment](docs/deployment/productionDeployment.md)
     - For deployment that is exposed to the internet
 - [Docker deployment](docs/deployment/dockerDeployment.md)
-    - WIP: comming soon
+    - WIP: coming soon
 
 ## Development and troubleshooting
 - [Contribution Guide lines](docs/CONTRIBUTING.md)

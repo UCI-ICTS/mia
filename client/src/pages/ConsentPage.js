@@ -1,12 +1,11 @@
 // src/pages/ConsentPage.js
 
 import "../style.css";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConsentByInvite, submitConsentResponse } from "../slices/consentSlice";
-import { Button, Spin, Dropdown, Modal, Typography, Card, Row } from "antd";
-import { Bubble } from "@ant-design/x";
+import { Button, Spin, Alert, Dropdown, Modal, Space, Typography, Card } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import ChatBubbles from "../components/ChatBubbles";
 import ConsentFormSubmission from "../components/ConsentFormSubmission";
@@ -232,6 +231,7 @@ const ConsentPage = () => {
         </div>
 
         <Dropdown
+          className="chat-header-right"
           placement="bottomRight"
           menu={{
             items: [
@@ -263,7 +263,7 @@ const ConsentPage = () => {
           <QuestionCircleOutlined className="help-button" />
         </Dropdown>
       </div>
-      <div className="layout-consent">
+      <div className="layout-dashboard">
         {!hasStarted ? (
           <Card style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
               <img
