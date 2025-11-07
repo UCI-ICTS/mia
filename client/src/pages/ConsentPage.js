@@ -1,10 +1,11 @@
 // src/pages/ConsentPage.js
 
+import "../style.css";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConsentByInvite, submitConsentResponse } from "../slices/consentSlice";
-import { Button, Spin, Alert, Dropdown, Modal, Space, Typography } from "antd";
+import { Button, Spin, Alert, Dropdown, Modal, Space, Typography, Card } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import ChatBubbles from "../components/ChatBubbles";
 import ConsentFormSubmission from "../components/ConsentFormSubmission";
@@ -132,24 +133,10 @@ const ConsentPage = () => {
   };
 
   return (
-    <div style={{maxHeight: "100vh", overflowY: "auto" }}>
-      {loading && <Spin size="large" style={{ marginBottom: 24 }} />}
-      {/* Header */}
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 1000,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between", // this spreads left and right
-          padding: "12px 20px",
-          borderBottom: "1px solid #ccc",
-          backgroundColor: "#fff",
-        }}
-      >
-        {/* Left side: Logo and title */}
-        <div style={{ display: "flex", alignItems: "center" }}>
+    <div className="layout">
+      {loading && <Spin size="large" className="card-icon" />}
+      <div className="chat-header">
+        <div className="chat-header-left">
           <img
             src="/images/mia_logo.png"
             alt="Mia"
@@ -158,8 +145,8 @@ const ConsentPage = () => {
           <div>Mia by University of California, Irvine</div>
         </div>
 
-        {/* Right side: Help dropdown */}
         <Dropdown
+          className="chat-header-right"
           placement="bottomRight"
           menu={{
             items: [
@@ -188,49 +175,45 @@ const ConsentPage = () => {
             ],
           }}
         >
-          <QuestionCircleOutlined style={{ fontSize: 20, cursor: "pointer" }} />
+          <QuestionCircleOutlined className="help-button" />
         </Dropdown>
       </div>
-
-      {!hasStarted ? (
-        <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
-            <img
-              src="/images/uci_health_logo.png"
-              alt="UCI Health"
-              style={{ width: 200, marginBottom: 20 }}
-            />
-            <Title level={3}>Welcome</Title>
-            <Paragraph>
-              We have some important information to share with you about the
-              PMGRC study. Mia, our Medical Information Assistant, will walk
-              you through it.
-            </Paragraph>
-            <Paragraph>Chat takes 25–30 min</Paragraph>
-            <img
-              src="/images/hipaa_compliant.png"
-              alt="HIPAA Compliant"
-              style={{ width: 150, marginTop: 20 }}
-            />
+      <div className="layout-dashboard">
+        {!hasStarted ? (
+          <Card style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
+              <img
+                src="/images/uci_health_logo.png"
+                alt="UCI Health"
+                style={{ width: 200, marginBottom: 20 }}
+              />
+              <Title level={3} className="card-title">Welcome</Title>
+              <Paragraph className="card-label">
+                We have some important information to share with you about the
+                PMGRC study. Mia, our Medical Information Assistant, will walk
+                you through it.
+              </Paragraph>
+              <Paragraph className="card-paragraph-italic">Chat takes 25–30 min</Paragraph>
+              
+              <div ref={bottomRef} />
+              <Button
+                onClick={() => {
+                  setHasStarted(true);
+                  setShowTimeoutModal(false);
+                  setCountdown(10);
+                }}
+                type="primary"
+                className="login-form-button"
+              >Start or resume</Button>
+            </Card>
+        ) : (
+          <div >
+            {chat.map((turn, idx) => (
+              <ChatBubbles key={idx} turn={turn} username={email}/>
+            ))}
             <div ref={bottomRef} />
-            <Button
-              onClick={() => {
-                setHasStarted(true);
-                setShowTimeoutModal(false);
-                setCountdown(10);
-              }}
-              type="primary"
-              style={{ fontSize: 16, minWidth: 200, margin: 8 }}
-            >Start or resume</Button>
           </div>
-      ) : (
-        <div style={{ marginBottom: 100 }}>
-          {chat.map((turn, idx) => (
-            <ChatBubbles key={idx} turn={turn} username={email}/>
-          ))}
-          <div ref={bottomRef} />
-        </div>
-      )}
-
+        )}
+      </div>
       {consent?.email && (
         <FollowUpModal
           visible={contactModalVisible}

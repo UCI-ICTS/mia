@@ -1,6 +1,6 @@
 // src/components.FollowUpModal.js
 
-import React from "react";
+import "../style.css";
 import { Modal, Form, Input, Select, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { createFollowUp } from "../slices/dataSlice";
@@ -31,6 +31,7 @@ const FollowUpFormModal = ({ visible, onClose, userInfo = {} }) => {
       open={visible}
       onCancel={onClose}
       footer={null}
+      className="uci-modal"
     >
       <Form
         layout="vertical"

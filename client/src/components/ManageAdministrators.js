@@ -1,5 +1,6 @@
 // src/components/ManageAdministrators.js
 
+import "../style.css";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
@@ -20,6 +21,7 @@ import {
   Spin,
   Table,
   Tooltip,
+  Typography,
   message,
 } from "antd";
 import {
@@ -31,6 +33,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import { current } from "@reduxjs/toolkit";
 
 const { Option } = Select;
+const { Title } = Typography;
 
 const ManageAdministrators = () => {
   const dispatch = useDispatch();
@@ -61,7 +64,6 @@ const ManageAdministrators = () => {
     setIsModalVisible(true);
   };
   
-
   const handleSubmit = async () => {
     const values = await form.validateFields();
   
@@ -91,8 +93,6 @@ const ManageAdministrators = () => {
     setIsModalVisible(false);
     dispatch(fetchUsers());
   };
-  
-  
 
   const handleDelete = async (id) => {
     await dispatch(deleteUser(id));
@@ -152,15 +152,16 @@ const ManageAdministrators = () => {
 
   return (
     <ErrorBoundary>
-      <div style={{ padding: 20 }}>
+      <div className="layout">
+        <div className="primary-header">
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => handleOpenModal()}
-          style={{ marginBottom: 20 }}
-        >
-          Add New Staff
-        </Button>
+          className="header-button"
+        >Add New Staff</Button>
+        <Title className="primary-title">Manage Administrators & Staff</Title>
+        </div>
 
         {loading ? (
           <Spin />
@@ -185,6 +186,7 @@ const ManageAdministrators = () => {
           open={isModalVisible}
           onCancel={() => setIsModalVisible(false)}
           onOk={handleSubmit}
+          className="uci-modal"
         >
           <Form form={form} layout="vertical">
             <Form.Item

@@ -567,7 +567,7 @@
                     ],
                     "attachment": null,
                     "parent_ids": [
-                        "XecrLoK"
+                        "4pcbkEp"
                     ]
                 },
                 "4bYChBx": {
@@ -646,7 +646,7 @@
                         "end_sequence": false
                     },
                     "child_ids": [
-                        "WiP4Fk6"
+                        "4SVWLG2"
                     ],
                     "attachment": null,
                     "parent_ids": [
@@ -3941,7 +3941,7 @@
                     },
                     "messages": [
                         "We are almost done with the consent process. Just a few more things to tell you.",
-                        "Below are links to access some of the documents we discussed during our chat:<br><br><b>Notice of Privacy Practices</b> - <a href=\"https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf\">https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf</a><br><br><b>HIPAA information</b> - <a href=\"https://www.cdc.gov/phlp/publications/topic/hipaa.html\">https://www.cdc.gov/phlp/publications/topic/hipaa.html</a><br><br><b>GINA resources</b> - <a href=\"https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina\">https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina</a>"
+                        "Below are links to access some of the documents we discussed during our chat:<br><br><br><b>HIPAA information</b> - <a href=\"https://www.cdc.gov/phlp/publications/topic/hipaa.html\">https://www.cdc.gov/phlp/publications/topic/hipaa.html</a><br><br><b>GINA resources</b> - <a href=\"https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina\">https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina</a><br><br><b>CalGINA information</b> - <a href=\"http://www.leginfo.ca.gov/pub/11-12/bill/sen/sb_0551-0600/sb_559_bill_20110906_chaptered.pdf\">http://www.leginfo.ca.gov/pub/11-12/bill/sen/sb_0551-0600/sb_559_bill_20110906_chaptered.pdf</a>"
                     ],
                     "metadata": {
                         "workflow": "",
@@ -3965,7 +3965,7 @@
                     "messages": [
                         "We are almost done with the consent process. Just a few more things to tell you.",
                         "If you enrolled a child who is 7 years or older, a member of the study team will need to talk to your child briefly to tell them about the study and confirm their interest in participating",
-                        "Below are links to access some of the documents we discussed during our chat:<br><br><b>Notice of Privacy Practices</b> - <a href=\"https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf\">https://childrensnational.org/-/media/cnhs-site/files/about/nppprivacypractices2.pdf</a><br><br><b>HIPAA information</b> - <a href=\"https://www.cdc.gov/phlp/publications/topic/hipaa.html\">https://www.cdc.gov/phlp/publications/topic/hipaa.html</a><br><br><b>GINA resources</b> - <a href=\"https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina\">https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina</a>"
+                        "Below are links to access some of the documents we discussed during our chat:<br><br><br><b>HIPAA information</b> - <a href=\"https://www.cdc.gov/phlp/publications/topic/hipaa.html\">https://www.cdc.gov/phlp/publications/topic/hipaa.html</a><br><br><b>GINA resources</b> - <a href=\"https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina\">https://www.genome.gov/about-genomics/policy-issues/Genetic-Discrimination#gina</a><br><br><b>CalGINA information</b> - <a href=\"http://www.leginfo.ca.gov/pub/11-12/bill/sen/sb_0551-0600/sb_559_bill_20110906_chaptered.pdf\">http://www.leginfo.ca.gov/pub/11-12/bill/sen/sb_0551-0600/sb_559_bill_20110906_chaptered.pdf</a>"
                     ],
                     "metadata": {
                         "workflow": "",
@@ -5929,26 +5929,6 @@
                         "7YuvMHb"
                     ]
                 },
-                "WiP4Fk6": {
-                    "type": "bot",
-                    "render": {
-                        "type": "button"
-                    },
-                    "messages": [
-                        "I can provide you with a link to UCI’s Notice of Privacy Practices at the end of our chat"
-                    ],
-                    "metadata": {
-                        "workflow": "",
-                        "end_sequence": false
-                    },
-                    "child_ids": [
-                        "XecrLoK"
-                    ],
-                    "attachment": null,
-                    "parent_ids": [
-                        "4pcbkEp"
-                    ]
-                },
                 "WnXoffX": {
                     "type": "bot",
                     "render": {
@@ -6188,26 +6168,6 @@
                     "attachment": null,
                     "parent_ids": [
                         "WwRBQik"
-                    ]
-                },
-                "XecrLoK": {
-                    "type": "user",
-                    "render": {
-                        "type": "button"
-                    },
-                    "messages": [
-                        "Okay, thanks"
-                    ],
-                    "metadata": {
-                        "workflow": "",
-                        "end_sequence": false
-                    },
-                    "child_ids": [
-                        "4SVWLG2"
-                    ],
-                    "attachment": null,
-                    "parent_ids": [
-                        "WiP4Fk6"
                     ]
                 },
                 "XskwUVW": {
