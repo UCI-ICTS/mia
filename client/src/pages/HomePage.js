@@ -48,26 +48,30 @@ const HomePage = () => {
         </Title>
         <Row gutter={[24, 24]} justify="center">
           {[{ 
-            title: "1. Share Mia", 
-            text: "Provide a link to your participants prior to their appointment.",
-            // italic: "Available for patients and clinicians in the US." 
+            title: "1. Easy Invitations", 
+            text: "MIA emails participants a secure link to begin their consent session.",
+            italic: "No downloads, no confusion — just click and start."
           }, { 
-            title: "2. Enrollment", 
-            text: "Join the study." 
+            title: "2. Family Enrollment",
+            text: "Participants can invite family members directly during their session.",
+            italic: "Enrollment expands without extra staff work."
           }, { 
-            title: "3. Education",
-            text: "Mia guides your patients through pre-appointment education from home."
+            title: "3. Built-In Knowledge Checks",
+            text: "MIA guides participants through pre-approved comprehension quizzes.",
+            italic: "Ensures understanding before consent is finalized."
           }, { 
-            title: "4. Guidance",
-            text: "Clinicians receive a summary note and notifications about patient eligibility."
+            title: "4. Full Audit Trail",
+            text: "Every interaction is logged with timestamps and script versioning.",
+            italic: "Compliance and reproducibility built in."
           }, {
-            title: "5. Ordering",
-            text: "The order form auto-fills with patient data, allowing quick service selection."
+            title: "5. Streamlined Workflows",
+            text: "Forms auto-fill with participant data across steps.",
+            italic: "Reduces repetitive entry and saves staff time."
           }, {
-            title: "6. Results", 
-            text: "Patients receive results, and clinicians can follow up or automate next steps."
-          },
-          ].map((item, index) => (
+            title: "6. Integrated Results",
+            text: "Consent outcomes and test results flow back to clinicians.",
+            italic: "Follow-up can be automated or handled directly."
+          }].map((item, index) => (
             <Col xs={24} md={12} key={index}>
               <Card className="home-card">
                 <Title level={5} className="home-card-title">{item.title}</Title>
