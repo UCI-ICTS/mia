@@ -39,6 +39,11 @@ const fetchConsentScripts = async () => {
   return response.data;
 };
 
+const getConsentScript = async (id) => {
+  const response = await API.get(`consentbot/scripts/${id}/`);
+  return response.data;
+};
+
 const addScript = async (data) => {
   const response = await API.post(`consentbot/scripts/`, data);
   return response.data;
@@ -78,6 +83,7 @@ const dataService = {
   getInviteLink,
   generateInviteLink,
   fetchConsentScripts,
+  getConsentScript,
   addScript,
   editScript,
   deleteScript,

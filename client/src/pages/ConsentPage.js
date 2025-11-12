@@ -1,7 +1,7 @@
 // src/pages/ConsentPage.js
 
 import "../style.css";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConsentByInvite, submitConsentResponse } from "../slices/consentSlice";

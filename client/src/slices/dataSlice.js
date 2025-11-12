@@ -82,6 +82,14 @@ export const fetchConsentScripts = createAsyncThunk("data/fetchConsentScripts", 
   }
 });
 
+export const getConsentScript = createAsyncThunk("data/getConsentScript", async (id, { rejectWithValue }) => {
+  try {
+    return await dataService.getConsentScript(id);
+  } catch (error) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+});
+
 export const addScript = createAsyncThunk("data/addScript", async (scriptData, { rejectWithValue }) => {
   try {
     const res = await dataService.addScript(scriptData);
@@ -170,6 +178,35 @@ const dataSlice = createSlice({
       })
       .addCase(fetchConsentScripts.fulfilled, (state, action) => {
         state.scripts = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchConsentScripts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchConsentScripts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getConsentScript.fulfilled, (state, action) => {
+        const incoming = action.payload;
+        const idx = state.scripts.findIndex(
+          (s) => s.script_id === incoming.script_id
+        );
+        if (idx !== -1) {
+          // Update existing script in place
+          state.scripts[idx] = { ...state.scripts[idx], ...incoming };
+        } else {
+          // Add new script to list
+          state.scripts.push(incoming);
+        }
+        state.loading = false;
+      })
+      .addCase(getConsentScript.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getConsentScript.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       .addCase(fetchFollowUps.fulfilled, (state, action) => {
         state.followUps = action.payload;

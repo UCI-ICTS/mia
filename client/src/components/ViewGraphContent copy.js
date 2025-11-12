@@ -1,4 +1,4 @@
-// src/components/ViewScriptContent.js
+// src/pages/ViewGraphPage.js
 
 import React from "react";
 import { useParams, Navigate } from "react-router-dom";
@@ -50,11 +50,11 @@ const ScriptNode = ({ nodeId, scriptMap, visited }) => {
   );
 };
 
-const ViewScriptContent = () => {
+const ViewGraphPage = () => {
   const { script_id } = useParams();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const scriptMeta = useSelector((state) =>
-    state.data.scripts.find((s) => s.consent_id === script_id)
+    state.data.scripts.find((s) => s.script_id === script_id)
   );
   const scriptMap = scriptMeta?.script || {};
 
@@ -65,6 +65,7 @@ const ViewScriptContent = () => {
 
   // ❌ Redirect if script isn't in Redux state (likely due to direct navigation)
   if (!scriptMeta) {
+    console.log("OOPS")
     return <Navigate to="/dashboard/scripts" replace />;
   }
 
@@ -74,6 +75,9 @@ const ViewScriptContent = () => {
 
   return (
     <div style={{ padding: 24 }}>
+      <div className="primary-header">
+        <Title className="primary-title">Consentbot Scripts</Title>
+      </div>
       <Typography.Title level={4}>
         View Script: {scriptMeta.name}
       </Typography.Title>
@@ -94,4 +98,4 @@ const ViewScriptContent = () => {
   );
 };
 
-export default ViewScriptContent;
+export default ViewGraphPage;
