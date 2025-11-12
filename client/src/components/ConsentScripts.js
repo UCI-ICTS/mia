@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchConsentScripts, addScript, editScript, deleteScript } from "../slices/dataSlice";
+import { fetchConsentScripts, addScript, editScript, deleteScript, getConsentScript } from "../slices/dataSlice";
 import {
   Alert,
   Button,
@@ -73,7 +73,7 @@ const ConsentScripts = () => {
     const values = await form.validateFields();
     try {
       if (editingScript) {
-        await dispatch(editScript({ id: editingScript.consent_id, ...values })).unwrap();
+        await dispatch(editScript({ id: editingScript.script_id, ...values })).unwrap();
         message.success("Script updated successfully.");
       } else {
         await dispatch(addScript(values)).unwrap();
@@ -84,6 +84,24 @@ const ConsentScripts = () => {
       dispatch(fetchConsentScripts());
     } catch (err) {
       message.error(err?.message || "Error saving script.");
+    }
+  };
+
+  const handleView = async (script_id) => {
+    try {
+      // Optionally show loading indicator
+      message.loading({ content: "Loading script...", key: "loadScript" });
+
+      // Dispatch thunk — unwrap to get real rejection if fails
+      await dispatch(getConsentScript(script_id)).unwrap();
+
+      message.success({ content: "Script loaded.", key: "loadScript", duration: 1 });
+
+      // ✅ Navigate after success
+      navigate(`/dashboard/scripts/view/${script_id}`);
+    } catch (error) {
+      console.error("Error fetching script:", error);
+      // message.error({ content: "Failed to load consent script.", key: "loadScript" });
     }
   };
 
@@ -98,10 +116,7 @@ const ConsentScripts = () => {
   };
 
   const columns = [
-    { title: "Name", dataIndex: "name" },
-    { title: "Description", dataIndex: "description" },
-    { title: "Created", dataIndex: "created_at" },
-    {
+        {
       title: "Actions",
       render: (_, record) => (
         <>
@@ -112,24 +127,24 @@ const ConsentScripts = () => {
               style={{ marginRight: 8 }}
             />
           </Tooltip>
-          <Tooltip title="Edit content">
+          {/* <Tooltip title="Edit content">
             <Button
               icon={<MenuUnfoldOutlined />}
-              onClick={() => navigate(`/dashboard/scripts/edit/${record.consent_id}`)}
+              onClick={() => navigate(`/dashboard/scripts/edit/${record.script_id}`)}
               style={{ marginRight: 8 }}
             />
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip title="View consent script content">
             <Button
               icon={<ReadOutlined />}
-              onClick={() => navigate(`/dashboard/scripts/view/${record.consent_id}`)}
+              onClick={() => handleView(record.script_id)}
               style={{ marginRight: 8 }}
             />
           </Tooltip>
           <Tooltip title="Delete consent script">
             <Popconfirm
               title="Are you sure you want to delete this consent script?"
-              onConfirm={() => handleDelete(record.consent_id)} 
+              onConfirm={() => handleDelete(record.script_id)} 
               okText="Yes"
               cancelText="No"
             >
@@ -139,25 +154,20 @@ const ConsentScripts = () => {
         </>
       ),
     },
+    { title: "Name", dataIndex: "name" },
+    { title: "Description", dataIndex: "description" },
+    { title: "Created", dataIndex: "created_at" },
   ];
 
   return (
     <ErrorBoundary>
       <div className="layout">
         <div className="primary-header">
-          
-            <div>
-              <Button
-                className="header-button"
-                icon={<PlusOutlined />}
-                onClick={() => handleOpenModal()}
-              >Add New Script</Button>
-            </div>
           <Title className="primary-title">Consentbot Scripts</Title>
         </div>
         {/* === Conditional rendering === */}
         {loading ? (
-          <Spin tip="Loading scripts..." style={{ display: "block", textAlign: "center", marginTop: 50 }} />
+          <Spin tip="Loading scripts..." fullscreen />
         ) : error ? (
           <Alert
             message="Error fetching scripts"
@@ -169,13 +179,20 @@ const ConsentScripts = () => {
         ) : scripts?.length === 0 ? (
           <Empty description="No scripts available." />
         ) : (
-          <Table
-            className="table"
-            columns={columns}
-            dataSource={scripts}
-            rowKey="consent_id"
-            bordered
-          />
+          <div>
+            <Button
+              className="header-button"
+              icon={<PlusOutlined />}
+              onClick={() => handleOpenModal()}
+            >Add New Script</Button>
+            <Table
+              className="table"
+              columns={columns}
+              dataSource={scripts}
+              rowKey="script_id"
+              bordered
+            />
+          </div>
         )}
 
         {/* Modal for Add/Edit */}

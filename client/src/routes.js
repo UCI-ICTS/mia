@@ -12,8 +12,7 @@ import FollowUp from "./components/FollowUp";
 import ConsentScripts from "./components/ConsentScripts";
 import ManageAdministrators from "./components/ManageAdministrators";
 import PrivateRoute from "./components/PrivateRoute";
-import ViewScriptContent from "./components/ViewScriptContent";
-import EditScriptContent from "./components/EditScriptContent";
+import GraphPage from "./pages/GraphPage";
 
 const AppRoutes = () => {
   return (
@@ -32,8 +31,7 @@ const AppRoutes = () => {
             <Route path="participants" element={<ManageParticipants/>} />
             <Route path="follow_up" element={<FollowUp />} />
             <Route path="scripts" element={<ConsentScripts />} />
-            <Route path="scripts/view/:script_id" element={<ViewScriptContent />} />
-            <Route path="scripts/edit/:script_id" element={<EditScriptContent />} />
+            <Route path="scripts/view/:script_id" element={<GraphPage />} />
             <Route path="admin" element={<ManageAdministrators />} />
           </Route>
         </Route>
