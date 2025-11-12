@@ -166,15 +166,9 @@ class ConsentScriptInputSerializer(serializers.ModelSerializer):
 
 
 class ConsentScriptOutputSerializer(serializers.ModelSerializer):
+    graph = serializers.SerializerMethodField()
     derived_from = serializers.StringRelatedField()
     versions = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    script = serializers.DictField(
-        child=serializers.DictField(
-            help_text="Each node in the conversation graph",
-            child=serializers.JSONField()
-        ),
-        help_text="Consent conversation graph keyed by node_id. Each value is a node dict with type, messages, child_ids, parent_ids, render, metadata, etc."
-    )
 
     class Meta:
         model = ConsentScript
@@ -185,9 +179,16 @@ class ConsentScriptOutputSerializer(serializers.ModelSerializer):
             "created_at",
             "derived_from",
             "version_number",
-            "script",
+            "graph",
             "versions"
         ]
+    
+    def get_graph(self, obj):
+        view = self.context.get("view")
+        if view and view.action == "retrieve" :
+            return chat_to_graph(obj.script or {})
+        return None
+
 
 
 class ConsentResponseInputSerializer(serializers.Serializer):
@@ -263,6 +264,19 @@ class ConsentSessionOutputSerializer(serializers.ModelSerializer):
     def get_invite_link(self, obj):
         base_url = getattr(settings, 'PUBLIC_HOSTNAME', 'https://genomics.icts.uci.edu')
         return f"{base_url}/consent/{obj.session_slug}/"
+
+
+def chat_to_graph(chat_json):
+    nodes, edges = [], []
+    for node_id, node in chat_json.items():
+        nodes.append({
+            "id": node_id,
+            "data": {**node},
+            "position": {"x": 0, "y": 0}
+        })
+        for child in node.get("child_ids", []):
+            edges.append({"id": f"{node_id}-{child}", "source": node_id, "target": child})
+    return {"nodes": nodes, "edges": edges}
 
 
 def run_post_consent_finalization(session_slug):

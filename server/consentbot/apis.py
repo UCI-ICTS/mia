@@ -159,7 +159,7 @@ class ConsentScriptViewSet(viewsets.ViewSet):
     )
     def retrieve(self, request, pk=None):
         script = get_object_or_404(ConsentScript, pk=pk)
-        serializer = ConsentScriptOutputSerializer(script)
+        serializer = ConsentScriptOutputSerializer(script, context={"request": request, "view": self})
         return Response(serializer.data)
 
     @swagger_auto_schema(
