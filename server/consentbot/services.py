@@ -27,6 +27,7 @@ from consentbot.models import (
     ConsentTestAnswer,
     ConsentTestAttempt,
     ConsentSession,
+    Document
 )
 from consentbot.selectors import (
     build_chat_from_history,
@@ -119,7 +120,6 @@ class ConsentInputSerializer(serializers.ModelSerializer):
         return Consent.objects.create(user=user, guardian=guardian, **validated_data)
         
 
-
 class ConsentOutputSerializer(serializers.ModelSerializer):
     user_id = serializers.UUIDField(source='user.user_id', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
@@ -188,7 +188,6 @@ class ConsentScriptOutputSerializer(serializers.ModelSerializer):
         if view and view.action == "retrieve" :
             return chat_to_graph(obj.script or {})
         return None
-
 
 
 class ConsentResponseInputSerializer(serializers.Serializer):
@@ -266,6 +265,20 @@ class ConsentSessionOutputSerializer(serializers.ModelSerializer):
         return f"{base_url}/consent/{obj.session_slug}/"
 
 
+class DocumentInputSerializer(serializers.ModelSerializer):
+    user = serializers.EmailField(source='user.email', read_only=True)
+    class Meta:
+        model = Document
+        fields = ["file_name", "file_path", "user", "session", "uploaded_at"]
+
+
+class DocumentOutputSerializer(serializers.ModelSerializer):
+    user = serializers.EmailField(source='user.email', read_only=True)
+    class Meta:
+        model = Document
+        fields = ["file_name", "file_path", "user", "session", "uploaded_at"]
+
+
 def chat_to_graph(chat_json):
     nodes, edges = [], []
     for node_id, node in chat_json.items():
@@ -288,7 +301,7 @@ def run_post_consent_finalization(session_slug):
         
         # Generate transcript
         generate_transcript_pdf(session=session)
-
+        
         # Path to PDF directory
         pdf_dir = os.path.join(settings.MEDIA_ROOT, "pdfs", session_slug)
         attachments = []
@@ -492,8 +505,9 @@ def handle_consent(graph, session_slug, responses):
         else:
             consent.consent_statements = "\n".join(description)
         user.consent_complete = True
-        output_pdf_path = os.path.join(settings.MEDIA_ROOT, "pdfs", session_slug, f"{user.username}_ConsentForm_UCIGREGoR.pdf")
-        generate_consent_pdf(consent, output_pdf_path)
+        
+        generate_consent_pdf(consent, session)
+
         user.save()
         consent.save()
 
@@ -519,8 +533,8 @@ def handle_consent(graph, session_slug, responses):
             else:
                 consent.consent_statements = "\n".join(description)
             consent.user.consent_complete = True
-            output_pdf_path = os.path.join(settings.MEDIA_ROOT, "pdfs", session_slug, f"{consent.user.username}_ConsentForm_UCIGREGoR.pdf")
-            generate_consent_pdf(consent, output_pdf_path)
+            
+            generate_consent_pdf(consent, session)
             consent.user.save()
             consent.save()
 

@@ -25,7 +25,8 @@ from authentication.services import (
 from consentbot.models import (
     Consent,
     ConsentScript,
-    ConsentSession
+    ConsentSession,
+    Document
 )
 from consentbot.services import (
     ConsentInputSerializer,
@@ -35,6 +36,7 @@ from consentbot.services import (
     ConsentResponseInputSerializer,
     ConsentSessionInputSerializer,
     ConsentSessionOutputSerializer,
+    DocumentOutputSerializer,
     get_or_initialize_consent_history,
     get_or_initialize_user_consent,
     handle_form_submission,
@@ -431,3 +433,18 @@ class ConsentResponseViewSet(viewsets.ViewSet):
                 render=None,
                 error=str(e)
             )
+
+
+class DocumentViewSet(viewsets.ViewSet):
+    lookup_field = 'documents'
+    permission_classes = {permissions.IsAuthenticated}
+
+    @swagger_auto_schema(
+        operation_description="List all user document records",
+        responses={200: DocumentOutputSerializer(many=True)},
+        tags=["User Documents"]
+    )
+    def list(self, request):
+        queryset = Document.objects.all()
+        serializer = DocumentOutputSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

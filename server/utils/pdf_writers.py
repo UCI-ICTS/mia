@@ -10,18 +10,30 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.contrib.auth import get_user_model
-from consentbot.models import Consent, ConsentSession, ConsentScript
+from consentbot.models import Consent, ConsentSession, ConsentScript, Document
+from django.core.files import File
+from pathlib import Path
 
 User = get_user_model()
 
-def generate_consent_pdf(consent, output_pdf_path):
+def generate_consent_pdf(consent, session):
     """
     Generate a filled PDF of the static consent form with participant responses.
 
     Args:
         consent (Consent): The Consent model instance.
-        output_pdf_path (str): Full path where the PDF should be saved.
+        session (str): The Session  model instance.
     """
+    
+    file_name = f"{consent.user.username}_ConsentForm_UCIGREGoR.pdf"
+
+    output_pdf_path = os.path.join(
+        settings.MEDIA_ROOT,
+        "pdfs",
+        session.session_slug,
+        file_name
+    )
+
     user = consent.user
     
     data_dict = {
@@ -54,7 +66,13 @@ def generate_consent_pdf(consent, output_pdf_path):
 
     html_content = render_to_string("consent_form.html", data_dict)
     HTML(string=html_content).write_pdf(output_pdf_path)
-
+    
+    with open(output_pdf_path, "rb") as f:
+        django_file = File(f)
+        doc = Document(file_name=file_name,user=consent.user,session=session)
+        # manually set relative path
+        doc.file_path.name = f"pdfs/{session.session_slug}/{file_name}"
+        doc.save()
 
 def generate_transcript_pdf(session):
     """
@@ -63,11 +81,13 @@ def generate_transcript_pdf(session):
     Args:
         session (ConsentSession): The ConsentSession object.
     """
+
+    file_name = f"{session.user.username}_ConsentChatTranscript.pdf"
     output_pdf_path = os.path.join(
         settings.MEDIA_ROOT,
         "pdfs",
         session.session_slug,
-        f"{session.user.username}_ConsentChatTranscript.pdf"
+        file_name
     )
     os.makedirs(os.path.dirname(output_pdf_path), exist_ok=True)
 
@@ -125,14 +145,16 @@ def generate_transcript_pdf(session):
         "last_name": session.user.last_name,
         "datetime_now": datetime.now().strftime("%m/%d/%Y"),
     }
-    # count = 0
-    # for thing in parsed_turns:
-    #     count += 1 
-    #     if thing['image_path'] != None:
-    #         import pdb; pdb.set_trace()
 
     html_content = render_to_string("chat_transcript.html", context)
     HTML(string=html_content).write_pdf(output_pdf_path)
+
+    with open(output_pdf_path, "rb") as f:
+        django_file = File(f)
+        doc = Document(file_name=file_name,user=session.user,session=session)
+        # manually set relative path
+        doc.file_path.name = f"pdfs/{session.session_slug}/{file_name}"
+        doc.save()
 
 
 def generate_full_graph_transcript_pdf():
@@ -225,11 +247,9 @@ def generate_full_graph_transcript_pdf():
 
     os.makedirs(os.path.dirname(output_pdf_path), exist_ok=True)
 
-    # with open("debug_transcript.html", "w") as f:
-    #     f.write(html_content)
-
     HTML(string=html_content, base_url=settings.STATIC_ROOT).write_pdf(output_pdf_path)
-
+    
+    return output_pdf_path
 
 def main():
     user = User.objects.get(username="jane")
