@@ -1,4 +1,6 @@
+#!/usr/bin/env python
 # consentbot/admin.py
+
 from django.contrib import admin
 from django_json_widget.widgets import JSONEditorWidget
 from django import forms
@@ -9,7 +11,6 @@ from consentbot.models import (
     Consent,
     ConsentTestAnswer,
     ConsentTestAttempt,
-    Document
 ) 
 
 # JSONEditorWidget() is a rich JSON editor
@@ -49,9 +50,3 @@ class ConsentChatTurnAdmin(admin.ModelAdmin):
     list_display = ("user", "session", "node_id", "timestamp")
     list_filter = ("user",)
     search_fields = ("node_id", "user__email", "session__session_slug")
-
-@admin.register(Document)
-class DocumentAdmin(admin.ModelAdmin):
-    list_display = ("user", "session", "file_name", "file_path", "uploaded_at")
-    list_filter = ("user",)
-    search_fields = ("user", "session", "file_name", "file_path", "uploaded_at")

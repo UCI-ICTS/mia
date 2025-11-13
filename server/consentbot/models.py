@@ -237,11 +237,3 @@ class ConsentChatTurn(models.Model):
 
     def __str__(self):
         return f"{self.user} @ {self.node_id} ({self.timestamp.isoformat()})"
-
-
-class Document(models.Model):
-    file_name = models.CharField(max_length=255)
-    file_path = models.FileField(upload_to='pdfs/')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    session = models.ForeignKey(ConsentSession, on_delete=models.CASCADE)
-    uploaded_at = models.DateTimeField(auto_now_add=True)

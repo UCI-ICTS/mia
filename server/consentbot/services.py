@@ -26,8 +26,7 @@ from consentbot.models import (
     ConsentScript,
     ConsentTestAnswer,
     ConsentTestAttempt,
-    ConsentSession,
-    Document
+    ConsentSession
 )
 from consentbot.selectors import (
     build_chat_from_history,
@@ -263,20 +262,6 @@ class ConsentSessionOutputSerializer(serializers.ModelSerializer):
     def get_invite_link(self, obj):
         base_url = getattr(settings, 'PUBLIC_HOSTNAME', 'https://genomics.icts.uci.edu')
         return f"{base_url}/consent/{obj.session_slug}/"
-
-
-class DocumentInputSerializer(serializers.ModelSerializer):
-    user = serializers.EmailField(source='user.email', read_only=True)
-    class Meta:
-        model = Document
-        fields = ["file_name", "file_path", "user", "session", "uploaded_at"]
-
-
-class DocumentOutputSerializer(serializers.ModelSerializer):
-    user = serializers.EmailField(source='user.email', read_only=True)
-    class Meta:
-        model = Document
-        fields = ["file_name", "file_path", "user", "session", "uploaded_at"]
 
 
 def chat_to_graph(chat_json):

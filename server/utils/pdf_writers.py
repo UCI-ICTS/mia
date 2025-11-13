@@ -7,12 +7,13 @@ import urllib.request
 from collections import defaultdict
 from datetime import datetime
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.files import File
 from django.template.loader import render_to_string
 from weasyprint import HTML
-from django.contrib.auth import get_user_model
-from consentbot.models import Consent, ConsentSession, ConsentScript, Document
-from django.core.files import File
-from pathlib import Path
+
+from consentbot.models import ConsentSession, ConsentScript
+from archive.models import Document
 
 User = get_user_model()
 

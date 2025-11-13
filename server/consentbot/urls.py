@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # consentbot/urls.py
 
 from django.urls import path, include
@@ -7,7 +8,6 @@ from consentbot.apis import (
     ConsentViewSet,
     ConsentSessionViewSet,
     ConsentResponseViewSet,
-    DocumentViewSet
 )
 
 router = DefaultRouter()
@@ -15,8 +15,6 @@ router.register(r'scripts', ConsentScriptViewSet, basename='consent-scripts')
 router.register(r'consent', ConsentViewSet, basename='consent')
 router.register(r'consent-url', ConsentSessionViewSet, basename='consent-url')
 router.register(r'consent-response', ConsentResponseViewSet, basename='consent-response')
-router.register(r'documents', DocumentViewSet, basename='documents')
-
 
 urlpatterns = [
     path('', include(router.urls)),

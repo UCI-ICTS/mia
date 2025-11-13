@@ -28,6 +28,7 @@ SECRET_KEY = (
     or os.getenv("SECRET_KEY")
     or get_random_secret_key()  # Fallback to a random key in CI
 )
+SECRET_DOC_SALT = secrets.get("DJANGO_KEYS", "SECRET_DOC_SALT", fallback="secret_doc_salt")
 
 # Handle missing SERVER settings gracefully
 DEBUG = secrets.getboolean("SERVER", "DEBUG", fallback=True)
@@ -109,6 +110,7 @@ AUTH_USER_MODEL = 'authentication.User'
 
 # Application definition
 INSTALLED_APPS = [
+    'archive',
     'authentication',
     'consentbot',
     "corsheaders",
