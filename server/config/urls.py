@@ -30,7 +30,7 @@ urlpatterns = [
     path("mia/django-admin/", admin.site.urls),
     path('mia/auth/', include('authentication.urls')),
     path('mia/consentbot/', include('consentbot.urls')),
-    path('api/archive/', include('archive.urls')),
+    path('mia/archive/', include('archive.urls')),
 ]
 
 if settings.DEBUG:

@@ -7,6 +7,11 @@ from rest_framework import serializers
 from archive.models import Document
 
 
+class DocumentEmaiSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    
+    message = serializers.CharField(required=False, allow_blank=True)
+
 
 class DocumentInputSerializer(serializers.ModelSerializer):
     user = serializers.EmailField(source='user.email', read_only=True)
@@ -18,10 +23,11 @@ class DocumentInputSerializer(serializers.ModelSerializer):
 class DocumentOutputSerializer(serializers.ModelSerializer):
     file_url = serializers.SerializerMethodField()
     id = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
-        fields = ["id", "file_name", "file_url", "user", "session", "uploaded_at"]
+        fields = ["id", "file_name", "file_url", "username", "session", "uploaded_at"]
 
     def get_id(self, obj):
         return encode_id(obj.pk)
@@ -33,6 +39,10 @@ class DocumentOutputSerializer(serializers.ModelSerializer):
         elif obj.file_path:
             return obj.file_path.url
         return None
+    
+    def get_username(slef, obj):
+        user = obj.user
+        return f"{user.first_name} {user.last_name}"
 
 def encode_id(pk: int) -> str:
     signer = signing.Signer(key=settings.SECRET_KEY, salt=settings.SECRET_DOC_SALT)
