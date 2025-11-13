@@ -1,4 +1,4 @@
-// src/components/ManageParticipants.js
+// src/pages/ManageParticipants.js
 
 import "../style.css";
 import { useState } from "react";

@@ -5,14 +5,15 @@ import Dashboard from "./pages/Dashboard";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ConsentPage from "./pages/ConsentPage";
+import SummaryConsole from "./pages/SummaryConsole";
 import PasswordResetConfirm from "./pages/PasswordResetConfirm";
-import SummaryConsole from "./components/SummaryConsole";
-import ManageParticipants from "./components/ManageParticipants";
-import FollowUp from "./components/FollowUp";
-import ConsentScripts from "./components/ConsentScripts";
-import ManageAdministrators from "./components/ManageAdministrators";
-import PrivateRoute from "./components/PrivateRoute";
+import ManageParticipants from "./pages/ManageParticipants";
+import ManageAdministrators from "./pages/ManageAdministrators";
+import FollowUp from "./pages/FollowUp";
+import ConsentScripts from "./pages/ConsentScripts";
 import GraphPage from "./pages/GraphPage";
+import DocumentsPage from "./pages/DocumentsPage";
+import PrivateRoute from "./components/PrivateRoute";
 
 const AppRoutes = () => {
   return (
@@ -33,6 +34,7 @@ const AppRoutes = () => {
             <Route path="scripts" element={<ConsentScripts />} />
             <Route path="scripts/view/:script_id" element={<GraphPage />} />
             <Route path="admin" element={<ManageAdministrators />} />
+            <Route path="documents" element={<DocumentsPage />} />
           </Route>
         </Route>
       </Routes>

@@ -1,4 +1,4 @@
-// src/components/SummaryConsole.js
+// src/pages/SummaryConsole.js
 
 import "../style.css";
 import { useEffect, useState } from "react";

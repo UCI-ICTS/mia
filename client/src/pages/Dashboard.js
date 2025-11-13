@@ -3,7 +3,7 @@
 import "../style.css";
 import React, { useEffect, useState } from "react";
 import { Layout, Menu, Button, Typography } from "antd";
-import { HomeOutlined, UserOutlined, ScheduleOutlined, MessageOutlined, TeamOutlined, LogoutOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined, ScheduleOutlined, MessageOutlined, TeamOutlined, LogoutOutlined, PaperClipOutlined } from "@ant-design/icons";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
@@ -38,6 +38,7 @@ const Dashboard = () => {
     {key: "home", icon: <HomeOutlined/>, label: <Link to="/dashboard">Summary Console</Link>},
     {key: "participants", icon: <UserOutlined/>, label: <Link to="/dashboard/participants">Participants</Link>},
     {key: "follow-up", icon: <ScheduleOutlined/>, label: <Link to="/dashboard/follow_up">Participant Follow Up</Link>},
+    {key: "docs", icon: <PaperClipOutlined />, label: <Link to="/dashboard/documents">Participant Documents</Link>},
     {key: "scripts", icon: <MessageOutlined/>, label: <Link to="/dashboard/scripts">Consentbot Scripts</Link>},
     {key: "admin", icon: <TeamOutlined/>, label: <Link to="/dashboard/admin">Manage Staff & Admin </Link>},
 

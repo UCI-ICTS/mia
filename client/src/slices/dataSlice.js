@@ -10,6 +10,7 @@ const initialState = {
   staff: [],
   scripts: [],
   followUps: [],
+  documents: [],
   loading: false,
   error: null,
 };
@@ -155,6 +156,14 @@ export const resolveFollowUp = createAsyncThunk("data/resolveFollowUp", async (i
   }
 });
 
+export const fetchDocuments = createAsyncThunk("data/getDocuments", async (_, { rejectWithValue }) => {
+  try {
+    return await dataService.fetchDocuments();
+  } catch (error) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+});
+
 // --- Slice ---
 const dataSlice = createSlice({
   name: "data",
@@ -162,20 +171,21 @@ const dataSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUsers.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
         const users = action.payload;
         state.staff = users.filter((u) => u.is_staff);
         state.participants = users.filter((u) => !u.is_staff);
       })
+      .addCase(fetchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+      
       .addCase(fetchConsentScripts.fulfilled, (state, action) => {
         state.scripts = action.payload;
         state.loading = false;
@@ -187,6 +197,7 @@ const dataSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      
       .addCase(getConsentScript.fulfilled, (state, action) => {
         const incoming = action.payload;
         const idx = state.scripts.findIndex(
@@ -208,15 +219,30 @@ const dataSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
       .addCase(fetchFollowUps.fulfilled, (state, action) => {
         state.followUps = action.payload;
       })
-      .addCase(addUser.pending, (state, action) => {
+      .addCase(fetchFollowUps.pending, (state, action) => {
         state.loading = true;
       })
-      .addCase(addUser.rejected, (state, action) => {
+      .addCase(fetchFollowUps.rejected, (state, action) => {
         state.loading = false;
       })
+
+      .addCase(fetchDocuments.fulfilled, (state, action) => {
+        state.documents = action.payload;
+        console.log(action.payload);
+        state.loading = false;
+      })
+      .addCase(fetchDocuments.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchDocuments.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
       .addCase(addUser.fulfilled, (state, action) => {
         state.loading = false;
         const user = action.payload.user;
@@ -225,7 +251,15 @@ const dataSlice = createSlice({
         } else {
           state.participants.push(user)
         }
-      });
+      })
+      .addCase(addUser.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(addUser.rejected, (state, action) => {
+        state.loading = false;
+      })
+      
+      ;
   },
 });
 

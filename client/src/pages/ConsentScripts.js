@@ -1,4 +1,4 @@
-// src/components/ConsentScripts.js
+// src/pages/ConsentScripts.js
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +20,7 @@ import {
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReadOutlined, MenuUnfoldOutlined, UploadOutlined } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
 import { useNavigate } from "react-router-dom";
-import UploadModal from "./UploadModal";
+import UploadModal from "../components/UploadModal";
 
 const { Title } = Typography; 
 
@@ -139,6 +139,7 @@ const ConsentScripts = () => {
               icon={<ReadOutlined />}
               onClick={() => handleView(record.script_id)}
               style={{ marginRight: 8 }}
+              // disabled
             />
           </Tooltip>
           <Tooltip title="Delete consent script">

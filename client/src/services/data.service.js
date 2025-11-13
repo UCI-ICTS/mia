@@ -75,6 +75,12 @@ const resolveFollowUp = async (id) => {
   return response.data;
 };
 
+// Documents
+const fetchDocuments = async () => {
+  const response = await API.get(`archive/documents/`);
+  return response.data;
+};
+
 const dataService = {
   fetchUsers,
   addUser,
@@ -90,6 +96,7 @@ const dataService = {
   fetchFollowUps,
   createFollowUp,
   resolveFollowUp,
+  fetchDocuments,
 };
 
 export default dataService;

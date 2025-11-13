@@ -1,4 +1,4 @@
-// src/FollowUp.js
+// src/pages/FollowUp.js
 
 import "../style.css";
 import { useState } from "react";

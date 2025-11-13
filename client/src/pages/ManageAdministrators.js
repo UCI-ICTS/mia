@@ -1,4 +1,4 @@
-// src/components/ManageAdministrators.js
+// src/pages/ManageAdministrators.js
 
 import "../style.css";
 import React, { useEffect, useState } from "react";
@@ -29,8 +29,7 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import ErrorBoundary from "./ErrorBoundary";
-import { current } from "@reduxjs/toolkit";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 const { Option } = Select;
 const { Title } = Typography;
