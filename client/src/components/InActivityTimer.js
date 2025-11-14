@@ -7,13 +7,10 @@ const useInActivityTimer = (timeout = 300000) => {
   const timerRef = useRef(null);
 
   const resetTimer = () => {
-    
-    if (isInactive) return;
-
     setIsInactive(false);
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
-      setIsInactive(true); // ⏰ Triggered after inactivity
+      setIsInactive(true);
     }, timeout);
   };
 
@@ -22,22 +19,17 @@ const useInActivityTimer = (timeout = 300000) => {
 
     const handleActivity = () => resetTimer();
 
-    activityEvents.forEach((event) =>
-      window.addEventListener(event, handleActivity)
-    );
+    activityEvents.forEach((event) => window.addEventListener(event, handleActivity));
 
-    // Start the timer on mount
-    resetTimer();
+    resetTimer(); // start timer on mount
 
     return () => {
       clearTimeout(timerRef.current);
-      activityEvents.forEach((event) =>
-        window.removeEventListener(event, handleActivity)
-      );
+      activityEvents.forEach((event) => window.removeEventListener(event, handleActivity));
     };
   }, [timeout]);
 
-  return isInactive;
+  return { isInactive, reset: resetTimer };
 };
 
 export default useInActivityTimer;

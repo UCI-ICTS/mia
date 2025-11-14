@@ -51,7 +51,7 @@ body, html {
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* Full viewport height */
-  background-color: var(--uci-light-gray);
+  /* background-color: var(--uci-light-gray); */
   padding: 20px;
 }
 
@@ -477,7 +477,7 @@ body, html {
 }
 
  /* --- Chat formatting --- */
-.chat-header {
+ .chat-header {
   position: sticky;
   top: 0;
   display: flex;
@@ -500,6 +500,78 @@ body, html {
   color: var(--uci-gold);
 }
 
+.chat-welcome {
+  padding-top: 60px;
+  max-width: 600;
+  text-align: center;
+  margin: auto;
+}
+
+.chat-bubbles {
+  padding-bottom: 120px;
+}
+/* ----------------------------------------
+   CHAT FOOTER (Sticky Response Buttons)
+-----------------------------------------*/
+.chat-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--uci-blue) !important;
+  padding: 16px 12px;
+  border-top: 1px solid var(--uci-light-gray);
+  z-index: 50;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Container that wraps buttons or form */
+.footer-button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+}
+
+/* Individual footer response buttons */
+.footer-button {
+  height: auto;                     /* allow multi-line */
+  min-height: 45px;
+  max-width: 90%;                   /* prevent long labels from breaking layout */
+  white-space: normal !important;   /* allow wrapping */
+  word-break: break-word !important;
+  line-height: 1.3;
+  padding: 10px 14px;
+  font-size: 15px;
+  border-radius: 10px !important;
+  background-color: var(--uci-light-blue) !important;
+  border: 1px solid var(--uci-athletics-gold) !important;
+  color: var(--uci-dark-gray) !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover behavior */
+.footer-button:hover {
+  background-color: var(--uci-teal-blue) !important;
+  border-color: var(--uci-gold) !important;
+  color: var(--uci-darkest-blue) !important;
+}
+
+/* Finish & Close button block */
+.chat-footer-end {
+  margin-top: 12px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .help-button {
   color: var(--uci-gold) !important;
   background: var(--uci-blue) !important;
@@ -509,6 +581,16 @@ body, html {
 }
 
 /* ChatBubbles formatting */
+.chat-image {
+  max-width: 80%;
+  border-radius: 8px;
+}
+
+.chat-video {
+  max-width: 80%;
+  border-radius: 8px;
+}
+
 .bubble-container {
   display: flex;
   flex-direction: column;
@@ -539,7 +621,6 @@ body, html {
   color: var(--uci-athletics-gold);
   font-size: 11pt;
 }
-
 
 .user-bubble {
   border-radius: 16px;
