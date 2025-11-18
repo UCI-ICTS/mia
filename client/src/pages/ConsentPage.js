@@ -180,7 +180,7 @@ const ConsentPage = () => {
 
             <Paragraph className="card-label">
               We have some important information to share with you about the PMGRC study.
-              Mia, our Medical Information Assistant, will walk you through it.
+              Kauro, our consent bot, will walk you through it.
             </Paragraph>
 
             <Paragraph className="card-paragraph-italic">Chat takes 25–30 min</Paragraph>

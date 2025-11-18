@@ -4,9 +4,9 @@ import axios from "axios";
 import { store } from "../store";
 import { getCSRFToken } from "../utils/csrf";
 
-const MIADBURL = process.env.REACT_APP_MIADB;
+const KBIDBURL = process.env.REACT_APP_MIADB;
 
-const API = axios.create({ baseURL: `${MIADBURL}/mia/` });
+const API = axios.create({ baseURL: `${KBIDBURL}/mia/` });
 
 const getAuthHeaders = () => {
     const state = store.getState();
