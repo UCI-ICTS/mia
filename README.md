@@ -1,7 +1,7 @@
-# MIA (Medical Information Assistant)
+# Kauro Consent Assistant
 A virtual consentbot that facilitates virtual conversations with patients.
 
-MIA is designed to be deployed in a variaty of environments. If configurd properly it should work with any external application that presents properly formatted API requests with appropirate authentication credentials.
+Kauro is designed to be deployed in a variaty of environments. If configurd properly it should work with any external application that presents properly formatted API requests with appropirate authentication credentials.
 
 This repository is composed of two serivce applications. The server application is a Django API DB and the client application is a Redux/React UI.
 
@@ -26,9 +26,9 @@ See the [full license](./LICENSE.txt) or the [Creative Commons page](https://cre
 - [`.secretes` configuration](docs/config.md)
 - [Testing](docs/testing.md)
 
-# MIA Consent Chat Engine – Architecture Overview
+# Kauro Consent Chat Engine – Architecture Overview
 
-The **MIA Consent Chat Engine** is a **graph-driven, stateful conversation system** designed to guide users through personalized consent flows for research studies. It combines structured metadata, dynamic branching, and real-time user interactions to deliver a responsive and compliant experience.
+The **Kauro Consent Chat Engine** is a **graph-driven, stateful conversation system** designed to guide users through personalized consent flows for research studies. It combines structured metadata, dynamic branching, and real-time user interactions to deliver a responsive and compliant experience.
 
 ---
 
@@ -102,7 +102,7 @@ The **MIA Consent Chat Engine** is a **graph-driven, stateful conversation syste
 ## Special Features
 
 -  **Form rendering** from JSON (`render_type: form`)
--  **Typing indicator** (“Mia is typing...”)
+-  **Typing indicator** (“Kauro is typing...”)
 -  **Session timeout** modal after inactivity
 -  **Feedback, PHI, and result return forms** handled as modular processors
 -  **Dynamic sub-workflows** depending on user inputs (e.g., enrolling child vs self)
@@ -113,7 +113,7 @@ The **MIA Consent Chat Engine** is a **graph-driven, stateful conversation syste
 
 ```text
 Bot: Welcome to the PMGRC study
-User: [👋 Hi Mia!]
+User: [👋 Hi Kauro!]
 Bot: Let me walk you through it...
 Bot: Here’s what we’ll cover...
 User: [Sounds good]

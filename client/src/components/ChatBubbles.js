@@ -128,11 +128,11 @@ const ChatBubbles = ({ chat = [], username, session_slug }) => {
               <Row key={`bot-${idx}-${index}`} className="bubble-row-left">
                 <Bubble
                   className="bot-bubble"
-                  header={<strong className="card-label">Mia</strong>}
+                  header={<strong className="card-label">Kauro</strong>}
                   placement="start"
                   shape="round"
                   content={<span dangerouslySetInnerHTML={{ __html: msg }} />}
-                  avatar={{ src: "/images/mia_logo.png" }}
+                  avatar={{ src: "/doctor_robot.svg" }}
                 />
               </Row>
             ))
@@ -175,11 +175,11 @@ const ChatBubbles = ({ chat = [], username, session_slug }) => {
           <Row key={`typing-${index}`} className="bubble-row-left">
             <Bubble
               className="bot-bubble"
-              header={<strong className="card-label">Mia</strong>}
+              header={<strong className="card-label">Kauro</strong>}
               placement="start"
               shape="round"
               content={<span dangerouslySetInnerHTML={{ __html: msg }} />}
-              avatar={{ src: "/images/mia_logo.png" }}
+              avatar={{ src: "/doctor_robot.svg" }}
             />
           </Row>
         ))}

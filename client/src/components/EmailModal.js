@@ -1,16 +1,15 @@
 // src/components.EmailModal.js
 
 import "../style.css";
-import { Modal, Form, Input, Select, Button, message } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { Modal, Form, Input, Button, message } from "antd";
+import { useDispatch } from "react-redux";
 import { sendDocument } from "../slices/dataSlice";
 
 const { TextArea } = Input;
-const { Option } = Select;
+
 
 const EmailModal = ({ visible, onClose, docInfo = {} }) => {
   const dispatch = useDispatch();
-  const {loading, error } = useSelector((state) => state.consentChat);
   const [form] = Form.useForm();
   
   const handleFinish = (values) => {

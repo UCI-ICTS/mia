@@ -15,7 +15,7 @@ const DocumentsPage = () => {
   const dispatch = useDispatch();
   const [emailModalVisible, setEmailModalVisible] = useState(false);
   const [docInfo, setDocInfo] = useState();
-  const { documents = [], participants = [], loading, error } = useSelector((state) => state.data || {});
+  const { documents = [], loading, error } = useSelector((state) => state.data || {});
 
   useEffect(() => {
     if (!loading && !error && (!documents || documents.length === 0)) {

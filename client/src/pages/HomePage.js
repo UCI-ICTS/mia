@@ -31,7 +31,7 @@ const HomePage = () => {
           </Col>
           <Col xs={24} md={12} style={{ textAlign: "right" }}>
             <Image 
-              src="/images/mia_logo.png"
+              src="/doctor_robot.svg"
               alt="Mia Logo"
               width={180} 
               style={{ borderRadius: "50%" }}

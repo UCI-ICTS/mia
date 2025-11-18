@@ -8,7 +8,7 @@ const TypingBubble = () => (
     header={<strong className="card-label">Mia</strong>}
     placement="start"
     shape="round"
-    avatar={{ src: "/images/mia_logo.png" }}
+    avatar={{ src: "/doctor_robot.svg" }}
   />
 );
 

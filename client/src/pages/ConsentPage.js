@@ -119,11 +119,11 @@ const ConsentPage = () => {
       <div className="chat-header">
         <div className="chat-header-left">
           <img
-            src="/images/mia_logo.png"
-            alt="Mia"
+            src="/doctor_robot.svg"
+            alt="Kauro"
             style={{ height: 40, marginRight: 15 }}
           />
-          <div>Mia by University of California, Irvine</div>
+          <div>Kauro by University of California, Irvine</div>
         </div>
 
         <Dropdown

@@ -1,8 +1,8 @@
 // src/pages/Dashboard.js
 
 import "../style.css";
-import React, { useEffect, useState } from "react";
-import { Layout, Menu, Button, Typography } from "antd";
+import { useEffect, useState } from "react";
+import { Layout, Menu, Button } from "antd";
 import { HomeOutlined, UserOutlined, ScheduleOutlined, MessageOutlined, TeamOutlined, LogoutOutlined, PaperClipOutlined } from "@ant-design/icons";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,18 +10,15 @@ import { logout } from "../slices/authSlice";
 import { fetchUsers, fetchFollowUps, fetchConsentScripts } from "../slices/dataSlice"
 import { useLocation } from "react-router-dom";
 
-import react from "react";
-
 const { Sider, Content } = Layout;
-const { Title } = Typography;
 
 const Dashboard = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-  const user = useSelector((state) => state.auth.user);
-  const {staff,participants,followUps,consent,scripts,loading,error} = useSelector((state) => state.data || {});
+
+  const {staff,participants,loading,error} = useSelector((state) => state.data || {});
   
   useEffect(() => {
     if (!loading && !error && (!staff || staff.length === 0)) {
@@ -29,11 +26,11 @@ const Dashboard = () => {
       dispatch(fetchFollowUps());
       dispatch(fetchConsentScripts());
     }
-  }, [participants, loading, error, dispatch]);
+  }, [participants, loading, error, dispatch, staff]);
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login"); // redirect to login
+    navigate("/"); // redirect to login
   };
 
   const menuItems = [
@@ -66,7 +63,7 @@ const Dashboard = () => {
         onCollapse={setCollapsed}
         className="sider-container"
       >
-        <h2 className="sider-header">{collapsed ? "" : "MIA Admin Dashboard"}</h2>
+        <h2 className="sider-header">{collapsed ? "" : "Kauro Admin Dashboard"}</h2>
         <div className="sider-menu-wrapper">
           <Menu
             theme="dark"
