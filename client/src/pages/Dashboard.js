@@ -8,6 +8,7 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slices/authSlice";
 import { fetchUsers, fetchFollowUps, fetchConsentScripts } from "../slices/dataSlice"
+import { useLocation } from "react-router-dom";
 
 import react from "react";
 
@@ -15,6 +16,7 @@ const { Sider, Content } = Layout;
 const { Title } = Typography;
 
 const Dashboard = () => {
+  const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
@@ -41,9 +43,19 @@ const Dashboard = () => {
     {key: "docs", icon: <PaperClipOutlined />, label: <Link to="/dashboard/documents">Participant Documents</Link>},
     {key: "scripts", icon: <MessageOutlined/>, label: <Link to="/dashboard/scripts">Consentbot Scripts</Link>},
     {key: "admin", icon: <TeamOutlined/>, label: <Link to="/dashboard/admin">Manage Staff & Admin </Link>},
-
   ];
+  
+  const getActiveMenuKey = (pathname) => {
+    if (pathname.startsWith("/dashboard/participants")) return "participants";
+    if (pathname.startsWith("/dashboard/follow_up")) return "follow-up";
+    if (pathname.startsWith("/dashboard/documents")) return "docs";
+    if (pathname.startsWith("/dashboard/scripts")) return "scripts";
+    if (pathname.startsWith("/dashboard/admin")) return "admin";
+    return "home";
+  };
 
+  const activeKey = getActiveMenuKey(location.pathname);
+  
   return (
     <Layout className="layout">
       {/* Sidebar */}
@@ -59,7 +71,7 @@ const Dashboard = () => {
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={["home"]}
+            defaultSelectedKeys={[activeKey]}
             style={{ borderRight: 0 }}
             items={menuItems}
           />

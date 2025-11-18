@@ -164,6 +164,14 @@ export const fetchDocuments = createAsyncThunk("data/getDocuments", async (_, { 
   }
 });
 
+export const sendDocument = createAsyncThunk("data/sendDocument", async (email_content, { rejectWithValue }) => {
+  try {
+    return await dataService.sendDocument(email_content);
+  } catch (error) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+});
+
 // --- Slice ---
 const dataSlice = createSlice({
   name: "data",
@@ -239,6 +247,18 @@ const dataSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchDocuments.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(sendDocument.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.loading = false;
+      })
+      .addCase(sendDocument.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(sendDocument.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

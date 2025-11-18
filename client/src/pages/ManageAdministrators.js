@@ -66,7 +66,7 @@ const ManageAdministrators = () => {
   const handleSubmit = async () => {
     const values = await form.validateFields();
   
-    // ✅ Split full name into first and last name
+    // Split full name into first and last name
     const nameParts = values.full_name.trim().split(" ");
     const first_name = nameParts[0] || "";
     const last_name = nameParts.slice(1).join(" ") || "";

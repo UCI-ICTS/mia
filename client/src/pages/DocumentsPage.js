@@ -2,20 +2,20 @@
 
 import "../style.css";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDocuments } from "../slices/dataSlice";
-import { Table, Typography, Button, Tag, Spin, Alert, message, Tooltip } from "antd";
+import { Table, Typography, Button, Alert, Tooltip } from "antd";
 import { MailOutlined, DownloadOutlined } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
-import FollowUpFormModal from "../components/FollowUpModal";
+import EmailModal from "../components/EmailModal";
 
 const { Title } = Typography;
 
 const DocumentsPage = () => {
   const dispatch = useDispatch();
-  const [contactModalVisible, setContactModalVisible] = useState(false);
-  const { documents = [], loading, error } = useSelector((state) => state.data || {});
+  const [emailModalVisible, setEmailModalVisible] = useState(false);
+  const [docInfo, setDocInfo] = useState();
+  const { documents = [], participants = [], loading, error } = useSelector((state) => state.data || {});
 
   useEffect(() => {
     if (!loading && !error && (!documents || documents.length === 0)) {
@@ -23,7 +23,11 @@ const DocumentsPage = () => {
     }
   }, [documents, loading, error, dispatch]);
   
-  const handleDownload = async () => {};
+  const handleEmail = async (doc) => {
+    setEmailModalVisible(true)
+    setDocInfo(doc)
+  };
+
   if (error) return <Alert message="Error fetching follow-ups" description={error} type="error" showIcon />;
 
   const columns = [
@@ -46,7 +50,7 @@ const DocumentsPage = () => {
             <Button
               icon={<MailOutlined />}
               style={{ marginRight: 8 }}
-              onClick={() => handleDownload(record)}
+              onClick={() => handleEmail(record)}
             />
          </Tooltip>
         </>
@@ -62,7 +66,7 @@ const DocumentsPage = () => {
             <Button
               // icon={<UserAddOutlined />}
               className="header-button"
-              onClick={() => setContactModalVisible(true)}
+              onClick={() => console.log("stuff")}
             >Add Participant Document</Button>
           </div>
           <Title level={3} className="primary-title">Participant Documents</Title>
@@ -77,9 +81,11 @@ const DocumentsPage = () => {
           loading={loading}
         />
       </div>
-      <FollowUpFormModal 
-        visible={contactModalVisible}
-        onClose={() => {setContactModalVisible(false)}}
+      
+      <EmailModal
+        visible={emailModalVisible}
+        onClose={() => {setEmailModalVisible(false)}}
+        docInfo = {docInfo}
       />
     </ErrorBoundary>
   );

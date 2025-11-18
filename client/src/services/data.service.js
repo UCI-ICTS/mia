@@ -81,6 +81,15 @@ const fetchDocuments = async () => {
   return response.data;
 };
 
+const sendDocument = async (email_content) => {
+  console.log(email_content)
+  const response = await API.post(`archive/documents/${email_content.id}/send/`, {
+    "email": email_content.email,
+    "message": email_content.body
+  });
+  return response.data;
+};
+
 const dataService = {
   fetchUsers,
   addUser,
@@ -97,6 +106,7 @@ const dataService = {
   createFollowUp,
   resolveFollowUp,
   fetchDocuments,
+  sendDocument,
 };
 
 export default dataService;
