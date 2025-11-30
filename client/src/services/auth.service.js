@@ -22,6 +22,13 @@ const getAuthHeaders = () => {
     };
   };
 
+  // Token verification
+const verifyToken = async () => {
+  const response = await API.post("auth/verify/", {
+    token: JSON.parse(localStorage.getItem("user"))?.access,
+  });
+  return response;
+}
 
 // Log in function
 const login = async (credentials) => {
@@ -76,5 +83,12 @@ const createPassword = async ({ uid, token, new_password }) => {
   return response.data;
 };
 
-export const authService = { login, logout, resetPassword, confirmPasswordReset, createPassword };
+export const authService = {
+  verifyToken,
+  login,
+  logout,
+  resetPassword,
+  confirmPasswordReset,
+  createPassword
+};
 

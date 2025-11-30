@@ -19,7 +19,7 @@ const GraphPage = () => {
   );
   const graphData = scriptMeta?.graph || { nodes: [], edges: [] };
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isAuthenticated) return <Navigate to="/" replace />;
   if (!scriptMeta) return <Navigate to="/dashboard/scripts" replace />;
 
   return (

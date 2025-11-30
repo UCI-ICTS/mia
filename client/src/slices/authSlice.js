@@ -23,6 +23,22 @@ const initialState = storedUser
       error: null,
     };
 
+export const validateToken = createAsyncThunk(
+  "auth/validateToken",
+  async (_, thunkAPI) => {
+    try {
+      const response = await authService.verifyToken(); 
+      return response; // response doesn't matter much — success is enough
+    } catch (error) {
+      const msg =
+        error?.response?.data?.detail ||
+        "Your login has expired. Please sign in again.";
+
+      return thunkAPI.rejectWithValue(msg);
+    }
+  }
+);
+
 export const login = createAsyncThunk(
   "auth/login",
   async ({ email, password, rememberMe }, thunkAPI) => {
@@ -177,7 +193,27 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    
+
+    // --- Validate Token ---
+    builder.addCase(validateToken.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(validateToken.fulfilled, (state) => {
+      state.loading = false;
+      state.isAuthenticated = true; // token valid
+    });
+
+    builder.addCase(validateToken.rejected, (state, action) => {
+      state.loading = false;
+      state.user = null;
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem("user");
+      message.error(action.payload || "Session expired. Please log in again.");
+    });
+
     // --- LOGIN ---
     builder.addCase(login.pending, (state) => {
       state.loading = true;

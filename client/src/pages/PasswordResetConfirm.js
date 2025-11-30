@@ -26,7 +26,7 @@ const PasswordResetConfirm = () => {
         dispatch(confirmPasswordReset({uid,token,new_password: values.new_password}))
     );
     setLoading(false);
-    navigate("/login")
+    navigate("/")
   };
 
   return (

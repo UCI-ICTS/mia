@@ -60,7 +60,7 @@ const ViewGraphPage = () => {
 
   // 🔒 Redirect unauthenticated users
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // ❌ Redirect if script isn't in Redux state (likely due to direct navigation)
