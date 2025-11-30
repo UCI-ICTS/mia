@@ -2,10 +2,10 @@
 import axios from "axios";
 import { store } from "../store"; // needed to read auth state
 
-const KBIDBURL = process.env.REACT_APP_MIADB;
+const KBIDBURL = process.env.REACT_APP_KBIDB;
   // change mia
 const API = axios.create({
-  baseURL: `${KBIDBURL}/mia/`, 
+  baseURL: `${KBIDBURL}/kbi/`, 
   withCredentials: true,
 });
 

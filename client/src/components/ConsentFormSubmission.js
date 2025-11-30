@@ -35,6 +35,7 @@ const ConsentFormSubmission = ({ form, session_slug }) => {
     <Form
       form={formInstance}
       layout="vertical"
+      className="consent-form"
       onFinish={handleFinish}
       style={{ maxWidth: 700, margin: "0 auto", marginTop: 24 }}
     >

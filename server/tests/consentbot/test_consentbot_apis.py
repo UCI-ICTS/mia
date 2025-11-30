@@ -21,7 +21,7 @@ class ConsentSessionViewSetTests(TestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_invite_url_detail_returns_user_info(self):
-        url = f"/mia/consentbot/consent-url/{self.user.username}/invite-link/"
+        url = f"/kbi/consentbot/consent-url/{self.user.username}/invite-link/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["user_id"], str(self.user.pk))
@@ -32,31 +32,31 @@ class ConsentResponseViewSetTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.get(username='test')
+        self.user = User.objects.get(username='jane')
         self.invite = ConsentSession.objects.get(user=self.user)
 
     def test_valid_get(self):
-        url = f"/mia/consentbot/consent-response/{self.invite.session_slug}/?node_id=start"
+        url = f"/kbi/consentbot/consent-response/{self.invite.session_slug}/?node_id=start"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("chat", response.data)
         self.assertIn("node_id", response.data['chat'][-1])
 
     def test_missing_node_param(self):
-        url = f"/mia/consentbot/consent-response/{self.invite.session_slug}/"
+        url = f"/kbi/consentbot/consent-response/{self.invite.session_slug}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 400)
         self.assertIn("node_id", response.data['error'])
 
     def test_invalid_session_slug(self):
         bad_uuid = uuid.uuid4()
-        url = f"/mia/consentbot/consent-response/{bad_uuid}/?node_id=start"
+        url = f"/kbi/consentbot/consent-response/{bad_uuid}/?node_id=start"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 400)
         self.assertIn("No ConsentSession matches the given query.", response.data['error'])
 
     def test_button_post(self):
-        url = f"/mia/consentbot/consent-response/"
+        url = f"/kbi/consentbot/consent-response/"
         response = self.client.post(url, {
             "session_slug": str(self.invite.session_slug),
             "node_id": "AimWGCA",
@@ -67,19 +67,18 @@ class ConsentResponseViewSetTests(TestCase):
                 {"name": "fullname", "value": "Jane Example"}
             ]
         }, format="json")
-
         self.assertEqual(response.status_code, 200)
         self.assertIn("chat", response.data)
         self.assertIn("node_id", response.data['chat'][-1])
 
     def test_invalid_post_payload(self):
-        url = f"/mia/consentbot/consent-response/"
+        url = f"/kbi/consentbot/consent-response/"
         response = self.client.post(url, {"node_id": 1234}, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("session_slug", response.data['error'])
 
     def test_unknown_form_type(self):
-        url = f"/mia/consentbot/consent-response/"
+        url = f"/kbi/consentbot/consent-response/"
         response = self.client.post(url, {
             "session_slug": str(self.invite.session_slug),
             "node_id": "start",
@@ -94,19 +93,19 @@ class ConsentViewSetTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.get(username='test')
+        self.user = User.objects.get(username='jane')
         self.invite = ConsentSession.objects.get(user=self.user)
         self.user.consent_script = ConsentScript.objects.first()
         self.user.save()
 
     def test_consent_list(self):
-        url = "/mia/consentbot/consent/"
+        url = "/kbi/consentbot/consent/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(isinstance(response.data, list))
 
     def test_consent_retrieve(self):
-        url = f"/mia/consentbot/consent/{self.invite.session_slug}/"
+        url = f"/kbi/consentbot/consent/{self.invite.session_slug}/"
         response = self.client.get(url)
         self.assertIn(response.status_code, [200, 201])
         self.assertIn("chat", response.data)
@@ -126,7 +125,7 @@ class ConsentViewSetTests(TestCase):
             "consent_statements": "Agree",
             "user_full_name_consent": "Test User"
         }
-        url = "/mia/consentbot/consent/"
+        url = "/kbi/consentbot/consent/"
         response = self.client.post(url, data=payload, format="json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["user_id"], str(self.user.pk))
@@ -134,7 +133,7 @@ class ConsentViewSetTests(TestCase):
     # def test_consent_update(self):
     #     import pdb; pdb.set_trace()
     #     instance = self.user.consents.latest("created_at")
-    #     url = f"/mia/consentbot/consent/{instance.pk}/"
+    #     url = f"/kbi/consentbot/consent/{instance.pk}/"
     #     response = self.client.put(url, data={"consent_age_group": "7-17"}, format="json")
     #     import pdb; pdb.set_trace()
     #     self.assertEqual(response.status_code, 200)
@@ -143,6 +142,6 @@ class ConsentViewSetTests(TestCase):
     # def test_consent_destroy(self):
     #     import pdb; pdb.set_trace()
     #     instance = self.user.consents.latest("created_at")
-    #     url = f"/mia/consentbot/consent/{instance.pk}/"
+    #     url = f"/kbi/consentbot/consent/{instance.pk}/"
     #     response = self.client.delete(url)
     #     self.assertEqual(response.status_code, 204)

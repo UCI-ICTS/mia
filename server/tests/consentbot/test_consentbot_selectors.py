@@ -25,12 +25,12 @@ class SelectorFunctionTests(TestCase):
     fixtures = ["tests/fixtures/test_data.json"]
 
     def setUp(self):
-        self.user = User.objects.get(username='test')
+        self.user = User.objects.get(username='jane')
         self.invite = ConsentSession.objects.get(user=self.user)
         self.script = self.user.consent_script
         self.graph = self.script.script
 
-    def test_get_latest_consent(self): 
+    def test_get_latest_consent(self):
         consent = get_latest_consent(self.user)
         self.assertIsInstance(consent, Consent)
 

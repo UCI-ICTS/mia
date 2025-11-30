@@ -172,7 +172,7 @@ class ConsentTestFlowTest(TestCase):
         self.user = User.objects.get(username="wheel")
         self.user.set_password("wheel")
         self.user.save()
-        auth_response = self.client.post("/mia/auth/login/", {
+        auth_response = self.client.post("/kbi/auth/login/", {
             "email": self.user.email,
             "password": "wheel"
         }, format="json")
@@ -201,14 +201,14 @@ class ConsentTestFlowTest(TestCase):
 
         if FORM_RESPONSES.get(form_type, []) == []:
             import pdb; pdb.set_trace()
-        form_response = self.client.post("/mia/consentbot/consent-response/", payload, format="json")
+        form_response = self.client.post("/kbi/consentbot/consent-response/", payload, format="json")
         try:
             if len(form_response.data['chat'][-1]['responses']) == 0 and form_type != "feedback":
                 import pdb; pdb.set_trace()
         except:
             if 'user with this email already exists.' in form_response.data['error']:
                 payload['form_responses'] = FORM_RESPONSES["child_contact_2"]
-                form_response = self.client.post("/mia/consentbot/consent-response/", payload, format="json")
+                form_response = self.client.post("/kbi/consentbot/consent-response/", payload, format="json")
                 return form_response
             else:
                 import pdb; pdb.set_trace()
@@ -220,7 +220,7 @@ class ConsentTestFlowTest(TestCase):
         if form_type == 'checkbox_form':
             next_turn = form_response.data['chat'][-1]
             # import pdb; pdb.set_trace()
-            response = self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id=8dehgq7")
+            response = self.client.get(f"/kbi/consentbot/consent-response/{session_slug}/?node_id=8dehgq7")
             self.handle_form_submission(response.data['chat'][-1], session_slug)
             
         return form_response
@@ -232,18 +232,18 @@ class ConsentTestFlowTest(TestCase):
 
         if len(node["responses"]) == 1:
             node_id = node["responses"][0]['id']
-            return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={node_id}")
+            return self.client.get(f"/kbi/consentbot/consent-response/{session_slug}/?node_id={node_id}")
         
         for response_option in node.get("responses", []):
             node_id = response_option["id"]
             if node_id in self.correct_nodes:
-                return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={node_id}")
+                return self.client.get(f"/kbi/consentbot/consent-response/{session_slug}/?node_id={node_id}")
 
         # Fallback: submit the first known incorrect answer
         for response_option in node.get("responses", []):
             node_id = response_option["id"]
             if node_id in INCORRECT_NODES:
-                return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={node_id}")
+                return self.client.get(f"/kbi/consentbot/consent-response/{session_slug}/?node_id={node_id}")
 
         # If no match found at all, raise for clarity
         import pdb; pdb.set_trace()
@@ -275,23 +275,23 @@ class ConsentTestFlowTest(TestCase):
                 retry_choice = self.handle_test_question(node, session_slug).data['chat'][-1]['responses']
                 for response_option in retry_choice:
                     if response_option['metadata']['workflow'] == "test_user_understanding":
-                        return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={response_option['id']}")
+                        return self.client.get(f"/kbi/consentbot/consent-response/{session_slug}/?node_id={response_option['id']}")
             return self.handle_test_question(node, session_slug)
 
         # Default to GET
-        return self.client.get(f"/mia/consentbot/consent-response/{session_slug}/?node_id={response['id']}")
+        return self.client.get(f"/kbi/consentbot/consent-response/{session_slug}/?node_id={response['id']}")
 
 
     def test_consent_test_flow(self):
-        create_response = self.client.post("/mia/consentbot/consent-url/", {
+        create_response = self.client.post("/kbi/consentbot/consent-url/", {
             "username": "jane"
         }, format="json")
         self.assertEqual(create_response.status_code, 201)
 
-        get_invite = self.client.get("/mia/consentbot/consent-url/jane/invite-link/")
+        get_invite = self.client.get("/kbi/consentbot/consent-url/jane/invite-link/")
         session_slug = get_invite.data['session_slug']
 
-        res = self.client.get(f"/mia/consentbot/consent/{session_slug}/")
+        res = self.client.get(f"/kbi/consentbot/consent/{session_slug}/")
 
         count = 0
         for _ in range(150):
