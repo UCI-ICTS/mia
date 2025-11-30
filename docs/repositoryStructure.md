@@ -16,7 +16,7 @@ MIA is a web app built with Django on the backend and React on the frontend. It'
 
 ### Repository Layout
 ``` 
-mia/
+kauro/
 ├── admin/                   # Configuration and administration files
 ├── client/                  # React frontend application
 ├── server/                  # Django backend application

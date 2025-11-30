@@ -127,7 +127,7 @@ npm run build
 The values for production should be:
 ```
 REACT_APP_BASEURL=http://[SERVERNAME]
-REACT_APP_MIADB=http://[SERVERNAME]
+REACT_APP_KBIDB=http://[SERVERNAME]
 ```
 
 ## MIA Server deployment  (mia/server)

@@ -1,14 +1,12 @@
 // src/pages/LoginPage.js
 
 import "../style.css";
-import { Checkbox, Form, Input, Button, Typography, Modal, Card, message } from "antd";
+import { Checkbox, Form, Input, Button, Modal, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { login, resetPassword } from "../slices/authSlice";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const { Title } = Typography;
 
 const LoginPage = () => {
   const [form] = Form.useForm();
@@ -39,7 +37,6 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      message.success("Login successful! Redirecting...");
       navigate("/dashboard", { replace: true }); // Redirect to admin dashboard
     }
   }, [isAuthenticated, navigate]);
@@ -49,7 +46,7 @@ const LoginPage = () => {
     <div className="login-page">
       <div className="login-container">
         <div className="login-form-wrapper">
-          <h2>MIA Staff Login</h2>
+          <h2>Kauro Staff Login</h2>
           <Form name="loginForm" onFinish={onFinish} className="login-form">
             <Form.Item 
               label="Email" 

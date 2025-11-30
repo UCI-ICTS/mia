@@ -19,7 +19,7 @@ class AuthApiTests(TestCase):
         self.user.save()
 
     def test_login_valid_credentials(self):
-        response = self.client.post("/mia/auth/login/", {
+        response = self.client.post("/kbi/auth/login/", {
             "email": self.user.email,
             "password": self.password
         }, format="json")
@@ -29,37 +29,37 @@ class AuthApiTests(TestCase):
         self.assertIn("user", response.data)
 
     def test_login_invalid_credentials(self):
-        response = self.client.post("/mia/auth/login/", {
+        response = self.client.post("/kbi/auth/login/", {
             "email": self.user.email,
             "password": "wrong-password"
         }, format="json")
         self.assertEqual(response.status_code, 401)
 
     def test_token_refresh(self):
-        login_response = self.client.post("/mia/auth/login/", {
+        login_response = self.client.post("/kbi/auth/login/", {
             "email": self.user.email,
             "password": self.password
         }, format="json")
         refresh_token = login_response.data["refresh"]
-        response = self.client.post("/mia/auth/refresh/", {
+        response = self.client.post("/kbi/auth/refresh/", {
             "refresh": refresh_token
         }, format="json")
         self.assertEqual(response.status_code, 200)
         self.assertIn("access", response.data)
 
     def test_token_verify(self):
-        login_response = self.client.post("/mia/auth/login/", {
+        login_response = self.client.post("/kbi/auth/login/", {
             "email": self.user.email,
             "password": self.password
         }, format="json")
         access_token = login_response.data["access"]
-        response = self.client.post("/mia/auth/verify/", {
+        response = self.client.post("/kbi/auth/verify/", {
             "token": access_token
         }, format="json")
         self.assertEqual(response.status_code, 200)
 
     def test_logout_blacklists_refresh_token(self):
-        login_response = self.client.post("/mia/auth/login/", {
+        login_response = self.client.post("/kbi/auth/login/", {
             "email": self.user.email,
             "password": self.password
         }, format="json")
@@ -67,14 +67,14 @@ class AuthApiTests(TestCase):
         access_token = login_response.data["access"]
         refresh_token = login_response.data["refresh"]
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
-        response = self.client.post("/mia/auth/logout/", {
+        response = self.client.post("/kbi/auth/logout/", {
             "refresh": refresh_token
         }, format="json")
         self.assertEqual(response.status_code, 200)
 
     def test_change_password(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.post("/mia/auth/password/change/", {
+        response = self.client.post("/kbi/auth/password/change/", {
             "old_password": self.password,
             "new_password": "newsecurepassword123",
             "confirm_new_password": "newsecurepassword123"
@@ -84,7 +84,7 @@ class AuthApiTests(TestCase):
 
     def test_change_password_fail(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.post("/mia/auth/password/change/", {
+        response = self.client.post("/kbi/auth/password/change/", {
             "old_password": "bad password",
             "new_password": "newsecurepassword123",
             "confirm_new_password": "newsecurepassword123"
@@ -94,12 +94,12 @@ class AuthApiTests(TestCase):
         self.assertEqual(response.data["old_password"][0], "Incorrect password")
 
     def test_get_csrf_token(self):
-        response = self.client.get("/mia/auth/csrf/")
+        response = self.client.get("/kbi/auth/csrf/")
         self.assertEqual(response.status_code, 200)
 
     def test_user_list(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.get("/mia/auth/users/")
+        response = self.client.get("/kbi/auth/users/")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.data) > 1)
 
@@ -112,7 +112,7 @@ class AuthApiTests(TestCase):
             "first_name": "New",
             "last_name": "User"
         }
-        response = self.client.post("/mia/auth/users/", payload, format="json")
+        response = self.client.post("/kbi/auth/users/", payload, format="json")
         self.assertEqual(response.status_code, 201)
         self.assertIn(payload["email"].split('@')[0], response.data['message'])
 
@@ -125,39 +125,39 @@ class AuthApiTests(TestCase):
             "first_name": "New",
             "last_name": "User"
         }
-        response = self.client.post("/mia/auth/users/", payload, format="json")
+        response = self.client.post("/kbi/auth/users/", payload, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data["email"][0], "user with this email already exists.")
 
     def test_user_update(self):
         self.client.force_authenticate(user=self.user)
         payload = {"first_name": "Updated", "last_name": "Name"}
-        response = self.client.put(f"/mia/auth/users/{self.user.username}/", payload, format="json")
+        response = self.client.put(f"/kbi/auth/users/{self.user.username}/", payload, format="json")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["first_name"], "Updated")
 
     def test_user_update_dne(self):
         self.client.force_authenticate(user=self.user)
         payload = {"first_name": "Updated", "last_name": "Name"}
-        response = self.client.put(f"/mia/auth/users/DNE/", payload, format="json")
+        response = self.client.put(f"/kbi/auth/users/DNE/", payload, format="json")
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data["detail"], "User not found")
 
     def test_user_delete(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.delete(f"/mia/auth/users/{self.user.username}/")
+        response = self.client.delete(f"/kbi/auth/users/{self.user.username}/")
         self.assertEqual(response.status_code, 204)
         self.assertFalse(User.objects.filter(username=self.user.username).exists())
 
     def test_user_delete_dne(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.delete(f"/mia/auth/users/dne/")
+        response = self.client.delete(f"/kbi/auth/users/dne/")
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data["detail"], "User not found")
 
     def test_followup_list(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.get("/mia/auth/follow-ups/")
+        response = self.client.get("/kbi/auth/follow-ups/")
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.data, list)
 
@@ -168,6 +168,6 @@ class AuthApiTests(TestCase):
             "message": "This is a test message",
             "full_name": "Test User"
         }
-        response = self.client.post("/mia/auth/follow-ups/", payload, format="json")
+        response = self.client.post("/kbi/auth/follow-ups/", payload, format="json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["email"], payload["email"])

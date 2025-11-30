@@ -162,7 +162,7 @@ password: wheel
 The values for local dev should be:
 ```
 REACT_APP_BASEURL=http://localhost:3000/
-REACT_APP_MIADB=http://localhost:8000/
+REACT_APP_KBIDB=http://localhost:8000/
 ```
 
 ### **Start service**

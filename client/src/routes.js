@@ -2,7 +2,6 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
-import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ConsentPage from "./pages/ConsentPage";
 import SummaryConsole from "./pages/SummaryConsole";
@@ -19,9 +18,8 @@ const AppRoutes = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<LoginPage />} />
         <Route path="/consent/:session_slug" element={<ConsentPage />} />
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/password-reset" element={<PasswordResetConfirm />} />
         <Route path="/password-create" element={<PasswordResetConfirm />} />
 

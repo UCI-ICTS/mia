@@ -640,3 +640,118 @@ body, html {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* ============================================================
+   CONSENT FORM (Chat Footer Form Rendering)
+   Applies to all forms rendered inside ConsentFormSubmission
+   ============================================================ */
+
+/* Outer wrapper */
+.consent-form {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 700px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  border: 1px solid var(--uci-light-gray);
+}
+
+/* Section headings inside forms */
+.consent-form .ant-form-item-label > label {
+  color: var(--uci-blue) !important;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Paragraph / description text */
+.consent-form-description {
+  color: var(--uci-dark-blue);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Checkbox group text */
+.consent-form .ant-checkbox-wrapper {
+  color: var(--uci-dark-blue);
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+/* Radio text */
+.consent-form .ant-radio-wrapper {
+  color: var(--uci-dark-blue);
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+/* Inputs */
+.consent-form .ant-input,
+.consent-form .ant-input-textarea {
+  border-radius: 6px;
+  border: 1px solid var(--uci-light-gray);
+  font-size: 15px;
+  padding: 8px;
+  color: var(--uci-dark-blue);
+}
+
+.consent-form .ant-input:focus,
+.consent-form .ant-input:hover,
+.consent-form .ant-input-textarea:focus,
+.consent-form .ant-input-textarea:hover {
+  border-color: var(--uci-teal-blue);
+  box-shadow: 0 0 0 2px rgba(0, 131, 179, 0.15);
+}
+
+/* Select dropdown */
+.consent-form .ant-select-selector {
+  border-radius: 6px !important;
+  border-color: var(--uci-light-gray) !important;
+  padding: 6px !important;
+  height: auto !important;
+}
+
+.consent-form .ant-select-selection-item,
+.consent-form .ant-select-item-option-content {
+  font-size: 15px;
+  color: var(--uci-dark-blue);
+}
+
+.consent-form .ant-select-selector:hover {
+  border-color: var(--uci-teal-blue) !important;
+}
+
+/* “Submit” button */
+.consent-form .ant-btn-primary {
+  background-color: var(--uci-blue) !important;
+  color: var(--uci-gold) !important;
+  font-size: 16px;
+  height: 42px;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.consent-form .ant-btn-primary:hover {
+  background-color: var(--uci-teal-blue) !important;
+  color: var(--uci-light-gray) !important;
+}
+
+/* Checkbox alignment fix */
+.consent-form .ant-form-item-control-input {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Description bullets in consent form */
+.consent-form .consent-description-item {
+  color: var(--uci-dark-blue);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+/* Improve spacing between vertical groups */
+.consent-form .ant-space-vertical {
+  gap: 8px !important;
+}

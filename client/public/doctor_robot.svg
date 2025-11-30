@@ -1,0 +1,31 @@
+<svg width="260" height="260" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="130" cy="130" r="120" fill="#E6EEF5"/>
+
+  <!-- Robot head -->
+  <rect x="70" y="50" width="120" height="90" rx="20" fill="#F5F7FA" stroke="#A5B4C1" stroke-width="3"/>
+
+  <!-- Eyes -->
+  <circle cx="110" cy="95" r="10" fill="#0EA5E9"/>
+  <circle cx="150" cy="95" r="10" fill="#0EA5E9"/>
+
+  <!-- Antenna -->
+  <line x1="130" y1="32" x2="130" y2="50" stroke="#64748B" stroke-width="4"/>
+  <circle cx="130" cy="28" r="6" fill="#0EA5E9"/>
+
+  <!-- Robot body -->
+  <rect x="85" y="140" width="90" height="70" rx="16" fill="#F5F7FA" stroke="#A5B4C1" stroke-width="3"/>
+
+  <!-- Stethoscope tubes -->
+  <path d="M100 140 C85 160, 85 185, 110 190" stroke="#4B5563" stroke-width="4" fill="none"/>
+  <path d="M160 140 C175 160, 175 185, 150 190" stroke="#4B5563" stroke-width="4" fill="none"/>
+
+  <!-- Stethoscope chest piece -->
+  <circle cx="130" cy="190" r="12" fill="#0EA5E9" stroke="#0369A1" stroke-width="3"/>
+
+  <!-- Tablet / Clipboard -->
+  <rect x="105" y="150" width="50" height="60" rx="6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="2"/>
+  <rect x="112" y="160" width="36" height="4" rx="2" fill="#94A3B8"/>
+  <rect x="112" y="170" width="36" height="4" rx="2" fill="#94A3B8"/>
+  <rect x="112" y="180" width="28" height="4" rx="2" fill="#94A3B8"/>
+</svg>

@@ -4,9 +4,9 @@ import axios from "axios";
 import { store } from "../store";
 import { getCSRFToken } from "../utils/csrf";
 
-const MIADBURL = process.env.REACT_APP_MIADB;
+const KBIDBURL = process.env.REACT_APP_KBIDB;
 
-const API = axios.create({ baseURL: `${MIADBURL}/mia/` });
+const API = axios.create({ baseURL: `${KBIDBURL}/kbi/` });
 
 const getAuthHeaders = () => {
     const state = store.getState();
@@ -22,6 +22,13 @@ const getAuthHeaders = () => {
     };
   };
 
+  // Token verification
+const validateToken = async (accessToken) => {
+  const response = await API.post("auth/verify/", {
+    token: accessToken,
+  });
+  return response.data;
+}
 
 // Log in function
 const login = async (credentials) => {
@@ -30,8 +37,10 @@ const login = async (credentials) => {
 };
 
 // Log out function
-const logout = async (credentials) => {
-    await API.post("/auth/logout/", null, {
+const logout = async (refreshToken) => {
+    await API.post("/auth/logout/", {
+      "refresh": refreshToken
+    }, {
       headers: getAuthHeaders() 
     });
   };
@@ -76,5 +85,12 @@ const createPassword = async ({ uid, token, new_password }) => {
   return response.data;
 };
 
-export const authService = { login, logout, resetPassword, confirmPasswordReset, createPassword };
+export const authService = {
+  validateToken,
+  login,
+  logout,
+  resetPassword,
+  confirmPasswordReset,
+  createPassword
+};
 
