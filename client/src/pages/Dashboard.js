@@ -18,7 +18,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
 
-  const {staff,participants,loading,error} = useSelector((state) => state.data || {});
+  const { staff, participants, loading, error } = useSelector((state) => state.data || {});
+  const { accessToken, refreshToken, isAuthenticated } = useSelector((state) => state.auth)
   
   useEffect(() => {
     if (!loading && !error && (!staff || staff.length === 0)) {
@@ -29,8 +30,8 @@ const Dashboard = () => {
   }, [participants, loading, error, dispatch, staff]);
 
   const handleLogout = () => {
-    dispatch(logout());
-    navigate("/"); // redirect to login
+    console.log(refreshToken)
+    dispatch(logout(refreshToken));
   };
 
   const menuItems = [

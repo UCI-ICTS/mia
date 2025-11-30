@@ -1,5 +1,3 @@
-// src/components/PrivateRoutes.js
-
 // src/components/PrivateRoute.js
 
 import React, { useEffect } from "react";
@@ -18,7 +16,7 @@ const PrivateRoute = () => {
   // Run token validation on mount
   useEffect(() => {
     if (accessToken) {
-      dispatch(validateToken());
+      dispatch(validateToken(accessToken));
     }
   }, [dispatch, accessToken]);
 

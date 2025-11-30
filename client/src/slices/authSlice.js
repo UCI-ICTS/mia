@@ -25,9 +25,9 @@ const initialState = storedUser
 
 export const validateToken = createAsyncThunk(
   "auth/validateToken",
-  async (_, thunkAPI) => {
+  async (accessToken, thunkAPI) => {
     try {
-      const response = await authService.verifyToken(); 
+      const response = await authService.validateToken(accessToken); 
       return response; // response doesn't matter much — success is enough
     } catch (error) {
       const msg =
@@ -44,8 +44,7 @@ export const login = createAsyncThunk(
   async ({ email, password, rememberMe }, thunkAPI) => {
     try {
       const response = await authService.login({ email, password });
-
-      message.success("Login successful! Redirecting..."); // ✅ success message
+      message.success("Login successful! "); // success message
 
       // Store user object directly if rememberMe is enabled
       if (rememberMe) {
@@ -65,15 +64,15 @@ export const login = createAsyncThunk(
         error.message ||
         "Login failed";
 
-      message.error(msg); // ✅ error message
+      message.error(msg); // error message
       return thunkAPI.rejectWithValue({ message: msg });
     }
   }
 );
 
-export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
+export const logout = createAsyncThunk("auth/logout", async (refreshToken, thunkAPI) => {
   try {
-    await authService.logout();
+    await authService.logout(refreshToken);
     message.info("Logged out successfully.");
   } catch (e) {
     message.warning("Logout error.");
@@ -201,7 +200,8 @@ const authSlice = createSlice({
 
     builder.addCase(validateToken.fulfilled, (state) => {
       state.loading = false;
-      state.isAuthenticated = true; // token valid
+      console.log("stuff")
+      // state.isAuthenticated = true; // token valid
     });
 
     builder.addCase(validateToken.rejected, (state, action) => {

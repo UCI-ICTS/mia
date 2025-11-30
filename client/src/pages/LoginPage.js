@@ -37,7 +37,6 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      message.success("Login successful! Redirecting...");
       navigate("/dashboard", { replace: true }); // Redirect to admin dashboard
     }
   }, [isAuthenticated, navigate]);
