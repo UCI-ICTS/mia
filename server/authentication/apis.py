@@ -135,6 +135,9 @@ class DecoratedTokenBlacklistView(TokenBlacklistView):
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class UserViewSet(viewsets.ViewSet):
     lookup_field = 'username'
+    lookup_url_kwarg = "username"
+    lookup_value_regex = r"[^/]+"
+
     # permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
