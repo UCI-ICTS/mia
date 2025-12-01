@@ -1451,7 +1451,7 @@
                         "type": "button"
                     },
                     "messages": [
-                        "I’d like to continue chatting with Mia now"
+                        "I’d like to continue chatting with Kauro now"
                     ],
                     "metadata": {
                         "workflow": "",
@@ -1656,7 +1656,7 @@
                         "type": "button"
                     },
                     "messages": [
-                        "Okay, Mia 👍"
+                        "Okay, Kauro 👍"
                     ],
                     "metadata": {
                         "workflow": "",
@@ -2122,7 +2122,7 @@
                         "type": "button"
                     },
                     "messages": [
-                        "I want to pick up this chat with Mia sometime later"
+                        "I want to pick up this chat with Kauro sometime later"
                     ],
                     "metadata": {
                         "workflow": "",
@@ -2228,7 +2228,7 @@
                         "type": "button"
                     },
                     "messages": [
-                        "I’m Mia, your automated Medical Information Assistant from the University of California, Irvine (UCI). I’m inviting you to participate in the <b>Pediatric Mendelian Genomics Research Center (PMGRC)</b> research study.",
+                        "I’m Kauro, your automated Medical Information Assistant from the University of California, Irvine (UCI). I’m inviting you to participate in the <b>Pediatric Mendelian Genomics Research Center (PMGRC)</b> research study.",
                         "I’m here to tell you all about the PMGRC study and help you decide if you want to participate"
                     ],
                     "metadata": {
@@ -6708,7 +6708,7 @@
                         "type": "button"
                     },
                     "messages": [
-                        "Whether or not you choose to participate in the study, the team at UCI may review your interactions with me, Mia, to better understand how people interact with me and how I can improve"
+                        "Whether or not you choose to participate in the study, the team at UCI may review your interactions with me, Kauro, to better understand how people interact with me and how I can improve"
                     ],
                     "metadata": {
                         "workflow": "",
@@ -9093,7 +9093,7 @@
                         "type": "button"
                     },
                     "messages": [
-                        "👋 Hi Mia!"
+                        "👋 Hi Kauro!"
                     ],
                     "metadata": {
                         "workflow": "",
@@ -10014,7 +10014,7 @@
                 "de5ZDgm"
             ],
             "responses": {
-                "m84n5MM": "👋 Hi Mia!"
+                "m84n5MM": "👋 Hi Kauro!"
             },
             "workflow": null,
             "num_test_tries": 0,
@@ -10156,10 +10156,10 @@
                 "7SXetE5": "That’s reassuring",
                 "8Pvoowc": "That’s interesting",
                 "8XuWfkg": "Makes sense",
-                "9DgwYTz": "I’d like to continue chatting with Mia now",
+                "9DgwYTz": "I’d like to continue chatting with Kauro now",
                 "9btMpEf": "Great!",
                 "9hePugt": "That’s good to know",
-                "9s6U2mp": "Okay, Mia 👍",
+                "9s6U2mp": "Okay, Kauro 👍",
                 "AAoupYe": "Right",
                 "AonpoZW": "That’s complicated",
                 "BBfTzRw": "Okay",
@@ -10249,7 +10249,7 @@
                 "kkG2ixC": "Got it",
                 "kmCfuJA": "I understand",
                 "kvTbHhw": "That’s cool!",
-                "m84n5MM": "👋 Hi Mia!",
+                "m84n5MM": "👋 Hi Kauro!",
                 "mC7SWtw": "Okay, I understand",
                 "mcjM5XL": "Yes, there may be risks",
                 "me5RCBw": "Okay",
@@ -10281,7 +10281,7 @@
                 "node_id": "CaLvKv4",
                 "speaker": "bot",
                 "messages": [
-                    "I’m Mia, your automated Medical Information Assistant from the University of California, Irvine (UCI). I’m inviting you to participate in the <b>Pediatric Mendelian Genomics Research Center (PMGRC)</b> research study.",
+                    "I’m Kauro, your automated Medical Information Assistant from the University of California, Irvine (UCI). I’m inviting you to participate in the <b>Pediatric Mendelian Genomics Research Center (PMGRC)</b> research study.",
                     "I’m here to tell you all about the PMGRC study and help you decide if you want to participate"
                 ],
                 "metadata": {
@@ -10291,7 +10291,7 @@
                 "responses": [
                     {
                         "id": "m84n5MM",
-                        "label": "👋 Hi Mia!",
+                        "label": "👋 Hi Kauro!",
                         "metadata": {
                             "workflow": "",
                             "end_sequence": false
@@ -10316,7 +10316,7 @@
                 "node_id": "m84n5MM",
                 "speaker": "user",
                 "messages": [
-                    "👋 Hi Mia!"
+                    "👋 Hi Kauro!"
                 ],
                 "metadata": {
                     "workflow": "",
@@ -10599,7 +10599,7 @@
                 "node_id": "ZjTLunQ",
                 "speaker": "bot",
                 "messages": [
-                    "Whether or not you choose to participate in the study, the team at UCI may review your interactions with me, Mia, to better understand how people interact with me and how I can improve"
+                    "Whether or not you choose to participate in the study, the team at UCI may review your interactions with me, Kauro, to better understand how people interact with me and how I can improve"
                 ],
                 "metadata": {
                     "workflow": "",
@@ -10670,7 +10670,7 @@
                 "responses": [
                     {
                         "id": "9DgwYTz",
-                        "label": "I’d like to continue chatting with Mia now",
+                        "label": "I’d like to continue chatting with Kauro now",
                         "metadata": {
                             "workflow": "",
                             "end_sequence": false
@@ -10688,7 +10688,7 @@
                     },
                     {
                         "id": "BxD4wrq",
-                        "label": "I want to pick up this chat with Mia sometime later",
+                        "label": "I want to pick up this chat with Kauro sometime later",
                         "metadata": {
                             "workflow": "",
                             "end_sequence": false
@@ -10914,7 +10914,7 @@
                 "node_id": "m84n5MM",
                 "speaker": "user",
                 "messages": [
-                    "👋 Hi Mia!"
+                    "👋 Hi Kauro!"
                 ],
                 "metadata": {
                     "workflow": "",
@@ -11197,7 +11197,7 @@
                 "node_id": "ZjTLunQ",
                 "speaker": "bot",
                 "messages": [
-                    "Whether or not you choose to participate in the study, the team at UCI may review your interactions with me, Mia, to better understand how people interact with me and how I can improve"
+                    "Whether or not you choose to participate in the study, the team at UCI may review your interactions with me, Kauro, to better understand how people interact with me and how I can improve"
                 ],
                 "metadata": {
                     "workflow": "",
@@ -11268,7 +11268,7 @@
                 "responses": [
                     {
                         "id": "9DgwYTz",
-                        "label": "I’d like to continue chatting with Mia now",
+                        "label": "I’d like to continue chatting with Kauro now",
                         "metadata": {
                             "workflow": "",
                             "end_sequence": false
@@ -11286,7 +11286,7 @@
                     },
                     {
                         "id": "BxD4wrq",
-                        "label": "I want to pick up this chat with Mia sometime later",
+                        "label": "I want to pick up this chat with Kauro sometime later",
                         "metadata": {
                             "workflow": "",
                             "end_sequence": false
@@ -11311,7 +11311,7 @@
                 "node_id": "9DgwYTz",
                 "speaker": "user",
                 "messages": [
-                    "I’d like to continue chatting with Mia now"
+                    "I’d like to continue chatting with Kauro now"
                 ],
                 "metadata": {
                     "workflow": "",
@@ -16026,7 +16026,7 @@
                 "responses": [
                     {
                         "id": "9s6U2mp",
-                        "label": "Okay, Mia 👍",
+                        "label": "Okay, Kauro 👍",
                         "metadata": {
                             "workflow": "",
                             "end_sequence": false
@@ -16051,7 +16051,7 @@
                 "node_id": "9s6U2mp",
                 "speaker": "user",
                 "messages": [
-                    "Okay, Mia 👍"
+                    "Okay, Kauro 👍"
                 ],
                 "metadata": {
                     "workflow": "",
@@ -18997,7 +18997,7 @@
                 "node_id": "CaLvKv4",
                 "speaker": "bot",
                 "messages": [
-                    "I’m Mia, your automated Medical Information Assistant from the University of California, Irvine (UCI). I’m inviting you to participate in the <b>Pediatric Mendelian Genomics Research Center (PMGRC)</b> research study.",
+                    "I’m Kauro, your automated Medical Information Assistant from the University of California, Irvine (UCI). I’m inviting you to participate in the <b>Pediatric Mendelian Genomics Research Center (PMGRC)</b> research study.",
                     "I’m here to tell you all about the PMGRC study and help you decide if you want to participate"
                 ],
                 "metadata": {
@@ -19007,7 +19007,7 @@
                 "responses": [
                     {
                         "id": "m84n5MM",
-                        "label": "👋 Hi Mia!",
+                        "label": "👋 Hi Kauro!",
                         "metadata": {
                             "workflow": "",
                             "end_sequence": false
@@ -19032,7 +19032,7 @@
                 "node_id": "m84n5MM",
                 "speaker": "user",
                 "messages": [
-                    "👋 Hi Mia!"
+                    "👋 Hi Kauro!"
                 ],
                 "metadata": {
                     "workflow": "",

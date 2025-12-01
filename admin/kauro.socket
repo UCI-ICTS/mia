@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn socket for Kauro
+
+[Socket]
+ListenStream=/var/run/kauro.sock
+SocketMode=0660
+DirectoryMode=0750
+User=nginx
+Group=developers
+
+[Install]
+WantedBy=sockets.target

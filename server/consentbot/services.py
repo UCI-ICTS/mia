@@ -308,11 +308,11 @@ def run_post_consent_finalization(session_slug):
 
         # Send email with template and attachments
         send_html_email(
-            subject="The documents from your chat with Mia (the Medical Information Assistant)",
+            subject="The documents from your chat with Kauro Chatbot",
             to_email=session.user.email,
             template_name="emails/consentbot_cleanup.html",
             context=context,
-            text_content="The documents from your chat with Mia are attached.",
+            text_content="The documents from your chat with Kauro Chatbot are attached.",
             attachments=attachments
         )
 

@@ -1,5 +1,5 @@
 """
-WSGI config for mia project.
+WSGI config for Kauro Chatbot project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

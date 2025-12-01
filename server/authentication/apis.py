@@ -339,7 +339,7 @@ class PasswordViewSet(viewsets.ViewSet):
         reset_link = f"{settings.PUBLIC_HOSTNAME}/password-reset?uid={uid}&token={token}"
 
         send_html_email(
-            subject="Reset your password – UCI ICTS' Medical Information Assistant (MIA)",
+            subject="Reset your password – UCI ICTS' Kauro Chatbot",
             to_email=email,
             template_name="emails/password_reset_email.html",
             context={"reset_link": reset_link},

@@ -1,0 +1,23 @@
+[Unit]
+Description=Kauro gunicorn daemon
+Requires=kauro.socket
+After=network.target
+
+[Service]
+User=nginx
+Group=developers
+WorkingDirectory=/var/www/github/kauro/server
+ExecStart=/var/www/github/kauro/server/env/bin/python \
+    /var/www/github/kauro/server/env/bin/gunicorn \
+    --access-logfile /var/log/gunicorn/kauro_stdout.log \
+    --log-level=debug \
+    --log-file /var/log/gunicorn/kauro_stderr.log \
+    --workers 3 \
+    --bind unix:/var/run/kauro.sock \
+    config.wsgi:application
+
+Environment="PATH=/var/www/github/kauro/server/env/bin:/usr/bin:/bin"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

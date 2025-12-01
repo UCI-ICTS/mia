@@ -304,18 +304,6 @@ class ConsentTestFlowTest(TestCase):
                 break
             else:
                 res = self.advance_chat(last_turn, session_slug)
-            
-            # if count > 90:
-                
-            #     print(
-            #         count, "\n\tParticipant: ",
-            #         [message for message in res.data['chat'][-2]['messages']],
-            #         "\n\tMIA: ",
-            #         [message for message in res.data['chat'][-1]['messages']]
-            #     )
-                
-            # if count == 138:
-            #     import pdb;pdb.set_trace()
             try: 
                 self.assertEqual(res.status_code, 200)
             except:
