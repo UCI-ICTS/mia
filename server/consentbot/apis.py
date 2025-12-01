@@ -314,7 +314,7 @@ class ConsentSessionViewSet(viewsets.ViewSet):
                 consent = serializer.save()
                 # Email the activation link
                 # Compose HTML email
-                subject = "You're invited to join UCI ICTS' Medical Information Assistant (MIA)!"
+                subject = "You're invited to join UCI ICTS' Kauro Chatbot!"
                 from_email = settings.DEFAULT_FROM_EMAIL
                 user = User.objects.get(pk=consent.user_id)
                 to_email = user.email

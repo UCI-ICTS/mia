@@ -176,7 +176,7 @@ class UserViewSet(viewsets.ViewSet):
             activation_url = f"{settings.PUBLIC_HOSTNAME}/password-create?uid={uid}&token={token}"
 
             send_html_email(
-                subject="You're invited to join UCI ICTS' Medical Information Assistant (MIA)!",
+                subject="You're invited to join UCI ICTS' Kauro Chatbot!",
                 to_email=email,
                 template_name="emails/invite_email.html",
                 context={"activation_url": activation_url},
