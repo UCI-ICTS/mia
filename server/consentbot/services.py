@@ -907,7 +907,10 @@ def handle_child_contact_form(graph, session_slug, responses):
     guardian = session.user
 
     response_dict = {r.get("name"): r.get("value") for r in responses if r.get("name")}
-    node_id = response_dict.get("node_id")
+    
+    bot_node_id = response_dict.get("node_id")
+    user_node_id = graph[bot_node_id]["parent_ids"][0]
+
     age_group = response_dict.get("age_group")
 
     if not age_group:
@@ -950,7 +953,7 @@ def handle_child_contact_form(graph, session_slug, responses):
     session.save(update_fields=["consent"])
 
     user_reply = f"Information submitted for {child_name}, age: {age_group}"
-    return update_consent_and_advance(session_slug, node_id, graph, user_reply)
+    return update_consent_and_advance(session_slug, user_node_id, graph, user_reply)
 
 
 def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]:

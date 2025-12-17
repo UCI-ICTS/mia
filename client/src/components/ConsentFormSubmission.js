@@ -154,6 +154,31 @@ const ConsentFormSubmission = ({ form, session_slug }) => {
         );
       })()}
 
+      {formType === "num_children_enroll" && (() => {
+        return (
+          <>
+            {form.fields.map((field, index) => (
+              <Form.Item
+                key={field.name}
+                name={field.name}
+                label={field.label}
+                rules={[{ required: true, message: "Please select an option" }]}
+              >
+                <Radio.Group>
+                  <Space direction="vertical">
+                    {field.options.map((option) => (
+                      <Radio key={option.value} value={option.value}>
+                        {option.label}
+                      </Radio>
+                    ))}
+                  </Space>
+                </Radio.Group>
+              </Form.Item>
+            ))}
+          </>
+        );
+      })()}
+
       {formType === "consent" && (() => {
         return (
           <>
@@ -187,7 +212,41 @@ const ConsentFormSubmission = ({ form, session_slug }) => {
           </>
         );
       })()}
-      {/* Add more formType conditions like 'input', 'textarea', etc. as needed */}
+
+      {formType === "child_contact" && (
+        <>
+          {form.fields.map((field) => {
+            const rules = [];
+            if (field.required) {
+              rules.push({required: true, message: "This field is required."})
+            }
+
+            if (field.pattern) {
+              rules.push({
+                pattern: new RegExp(field.pattern),
+                message: "Invalid format",
+              });
+            }
+
+            return (
+              <Form.Item
+                key={field.name}
+                name={field.name}
+                label={field.label}
+                rules={rules}
+              >
+                {field.type === "input" && (
+                  <Input type={field.input_type || "text"} placeholder={field.placeholder}/>
+                )}
+
+                {field.type === "select" && (
+                  <Select placeholder="Select an option" options={field.options}/>
+                )}
+              </Form.Item>
+            );
+          })}
+        </>
+      )}
 
       <Form.Item style={{ textAlign: "center" }}>
         <Button type="primary" htmlType="submit">
