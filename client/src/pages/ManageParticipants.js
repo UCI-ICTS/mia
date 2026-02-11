@@ -22,11 +22,12 @@ import {
 } from "antd";
 
 import {
+  CopyOutlined,
   DeleteOutlined,
   EditOutlined,
   LinkOutlined,
+  MailOutlined,
   UserAddOutlined,
-  CopyOutlined,
   ReloadOutlined
 } from "@ant-design/icons";
 
@@ -184,13 +185,13 @@ const ManageParticipants = () => {
       key: "actions",
       render: (_, record) => (
         <>
-          <Tooltip title="Edit participant">
+          {/* <Tooltip title="Edit participant">
             <Button
               icon={<EditOutlined />}
               style={{ marginRight: 8 }}
               onClick={() => handleEdit(record)}
             />
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip title="Get invite link">
             <Button
               icon={<LinkOutlined />}
@@ -199,11 +200,12 @@ const ManageParticipants = () => {
               disabled={record.invite_expired}
             />
           </Tooltip>
-          <Tooltip title="Gernerate new invite link">
+          <Tooltip title="Generate new consent session">
             <Button
-              icon={<ReloadOutlined />}
+              icon={<MailOutlined />}
               style={{ marginRight: 8 }}
               onClick={() => {handleGenerateNewInviteLink(record.username)}}
+              disabled={!record.invite_expired}
             />
           </Tooltip>
           <Tooltip title="Delete participant">
