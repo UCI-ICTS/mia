@@ -314,13 +314,15 @@ class ConsentSessionViewSet(viewsets.ViewSet):
                 consent = serializer.save()
                 # Email the activation link
                 # Compose HTML email
-                subject = "You're invited to join UCI ICTS' Kauro Chatbot!"
+                subject = "Research study through the UCI-GREGoR and the Pediatric Mendelian Genomics Research Center (PMGRC)."
                 from_email = settings.DEFAULT_FROM_EMAIL
                 user = User.objects.get(pk=consent.user_id)
                 to_email = user.email
                 session_slug = f"{settings.PUBLIC_HOSTNAME}/consent/{consent.session_slug}"
                 context = {
                     "session_slug": session_slug,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name
                 }
 
                 text_content = f"Use this link to access the chat: {session_slug}"
@@ -342,6 +344,23 @@ class ConsentSessionViewSet(viewsets.ViewSet):
                 return Response(data=str(error), status=status.HTTP_400_BAD_REQUEST)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(
+        operation_description="Generate a new consent URL for a user by username",
+        responses={200: ConsentSessionOutputSerializer},
+        tags=["Consent URLs"]
+    )
+    def update(self, request, username=None):
+        """"""
+        
+        user = get_object_or_404(User, username=username)
+        import pdb; pdb.set_trace()
+        invite = user.consent_sessions.order_by('-created_at').first()
+
+        if not invite:
+            return Response({"detail": "No invite link found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ConsentSessionOutputSerializer(invite)
+        return Response(serializer.data)
 
 class ConsentResponseViewSet(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
