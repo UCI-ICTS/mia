@@ -540,7 +540,7 @@ def handle_consent(graph, session_slug, responses):
                 next_node_id = "33yRxHn"
                 if not next_node_id:
                     raise ValueError("Missing enrolling_children_node_id on consent node metadata.")
-                import pdb; pdb.set_trace()
+
                 return update_consent_and_advance(session_slug, node_id, graph, user_reply, next_node_id)
 
     # Default: proceed to next node normally
@@ -651,7 +651,6 @@ def handle_family_enrollment_form(graph: dict, session_slug: str, responses: lis
             append_to_consent_history(session_slug, turn)
         
         return get_user_consent_history(session_slug)
-    import pdb; pdb.set_trace()
     if user.enrolling_children and children_node_id:
         bot_block = get_next_chat_block(
             node_id=children_node_id,
@@ -872,7 +871,6 @@ def handle_other_adult_contact_form(conversation_graph, session_slug, responses)
 
     # # ---- Resume queued work if this subflow ended ----
     if bot_block_has_end_sequence(bot_block):
-        import pdb; pdb.set_trace()
         queued = pop_flag(session_slug, ENROLL_CHILDREN_NEXT_NODE_KEY)
         if queued and queued in conversation_graph:
             queued_block = get_next_chat_block(queued, session_slug, graph=conversation_graph)

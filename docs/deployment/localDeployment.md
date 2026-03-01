@@ -1,4 +1,4 @@
-# MIA Local Deployment Instructions & Notes
+# Kauro Local Deployment Instructions & Notes
 
 ## System Setup
 ### Requirements
@@ -52,7 +52,7 @@
 
 `git switch <BRANCH NAME>` *(for whatever branch you need)*
 
-## MIA Server deployment  (mia/server)
+## Kauro Server deployment  (mia/server)
 
 **Open a new terminal and retrun to the project root**
 
@@ -146,7 +146,7 @@ username: wheel@wheel.sh
 password: wheel
 ````
 
-## MIA Client deployment  (mia/client)
+## Kauro Client deployment  (mia/client)
 
 ### Enter the repository, create a environment file, and install the required packages
 

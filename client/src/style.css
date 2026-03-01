@@ -507,22 +507,34 @@ body, html {
   margin: auto;
 }
 
+/* Chat body bottom padding uses measured footer height */
 .chat-bubbles {
-  padding-bottom: 120px;
+  padding-bottom: calc(var(--footer-height, 120px) + 16px);
 }
+
 /* ----------------------------------------
    CHAT FOOTER (Sticky Response Buttons)
 -----------------------------------------*/
+/* make sizing sane everywhere inside footer/forms */
+.chat-footer,
+.chat-footer * {
+  box-sizing: border-box;
+}
+
 .chat-footer {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 50vh;
   background: var(--uci-blue) !important;
   padding: 16px 12px;
   border-top: 1px solid var(--uci-light-gray);
   z-index: 50;
-
+  max-height: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -530,6 +542,9 @@ body, html {
 
 /* Container that wraps buttons or form */
 .footer-button-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -548,13 +563,18 @@ body, html {
   padding: 10px 14px;
   font-size: 15px;
   border-radius: 10px !important;
-  background-color: var(--uci-light-blue) !important;
-  border: 1px solid var(--uci-athletics-gold) !important;
-  color: var(--uci-dark-gray) !important;
-
+  background-color: var(--uci-blue);
+  border: 1px solid var(--uci-light-gray) !important;
+  color: var(--uci-gold) !important;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.chat-footer-placeholder {
+  padding: 8px;
+  color: var(--uci-gold);
+  text-align: center;
 }
 
 /* Hover behavior */
@@ -570,6 +590,35 @@ body, html {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+/* Toggle button pinned at the top of the footer */
+.chat-footer-toggle {
+  width: 44px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid var(--uci-light-gray);
+  background: rgba(255,255,255,0.12);
+  color: var(--uci-gold);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 8px auto; /* center "tick" */
+}
+
+/* Wrapper for the dynamic content so it can't overflow sideways */
+.chat-footer-content {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* When collapsed, keep footer short (still visible + clickable) */
+.chat-footer--collapsed {
+  max-height: 44px;     /* just enough for the toggle */
+  overflow: hidden;     /* hide buttons/forms */
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .help-button {

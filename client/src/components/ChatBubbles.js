@@ -1,25 +1,27 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Image, Row } from "antd";
 import { Bubble } from "@ant-design/x";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, UpOutlined, DownOutlined } from "@ant-design/icons";
 import TypingBubble from "./TypingBubble";
 import { submitConsentResponse } from "../slices/consentSlice";
 import ConsentFormSubmission from "../components/ConsentFormSubmission";
 import "../style.css";
 
 const wait = (ms) => new Promise((res) => setTimeout(res, ms));
-// const typingDelay = (msg) => 900 + Math.min(2000, msg.length * 15);
-const typingDelay = (msg) => 10;
+const typingDelay = (msg) => 900 + Math.min(2000, msg.length * 15);
+// const typingDelay = (msg) => 10;
 
 
 const ChatBubbles = ({ chat = [], username, session_slug }) => {
   const dispatch = useDispatch()
   const bottomRef = useRef(null);
   const prevLenRef = useRef(0);
+  const footerRef = useRef(null);
   const [visibleTurns, setVisibleTurns] = useState([]);
   const [partialBotMessages, setPartialBotMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [footerCollapsed, setFooterCollapsed] = useState(false);
 
   // Scroll on update
   useEffect(() => {
@@ -63,59 +65,110 @@ const ChatBubbles = ({ chat = [], username, session_slug }) => {
     reveal();
   }, [chat]);
 
+
+  useLayoutEffect(() => {
+    const el = footerRef.current;
+    if (!el) return;
+
+    const apply = () => {
+      const h = el.getBoundingClientRect().height || 0;
+      document.documentElement.style.setProperty("--footer-height", `${h}px`);
+    };
+
+    apply();
+
+    const ro = new ResizeObserver(() => apply());
+    ro.observe(el);
+
+    window.addEventListener("resize", apply);
+
+    // helps AntD forms settle after render
+    const raf = requestAnimationFrame(apply);
+    const t = setTimeout(apply, 0);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t);
+      ro.disconnect();
+      window.removeEventListener("resize", apply);
+    };
+  }, [footerCollapsed, isTyping, chat.length]);
+
   /* -----------------------------
       FOOTER BUTTON RENDER
   ----------------------------- */
   const renderFooter = () => {
-    if (isTyping ||  !chat || chat.length === 0) return null;
+    if (!chat || chat.length === 0) return null;
     const lastTurn = chat[chat.length - 1];
     if (!lastTurn) return null;
+    
+    const shouldShowContent = !footerCollapsed && !isTyping;
 
     const { responses = [], node_id, end } = lastTurn;
     const isForm =
       typeof responses?.[0]?.label === "object" &&
       responses[0]?.label?.type;
 
-    return (
-      <footer className="chat-footer">
-        {isForm ? (
-          <ConsentFormSubmission
-            node_id={node_id}
-            session_slug={session_slug}
-            form={responses[0].label}
-          />
-        ) : (
-          <div className="footer-button-container">
-            {responses.map(({ id, label }) => (
-              <Button
-                key={id}
-                className="footer-button"
-                onClick={() =>
-                  dispatch(submitConsentResponse({ session_slug, node_id: id }))
-                }
-              >
-                {typeof label === "string" ? label : JSON.stringify(label)}
-              </Button>
-            ))}
-          </div>
-        )}
+      return (
+        <footer
+          className={`chat-footer ${footerCollapsed ? "chat-footer--collapsed" : ""}`}
+          ref={footerRef}
+        >
+          <Button
+            type="button"
+            className="chat-footer-toggle"
+            onClick={() => setFooterCollapsed((prev) => !prev)}
+            aria-expanded={!footerCollapsed}
+            aria-label={footerCollapsed ? "Expand responses" : "Collapse responses"}
+          >
+            {footerCollapsed ? <DownOutlined /> : <UpOutlined />}
+          </Button>
 
-        {end && (
-          <div style={{ marginTop: 24 }}>
-            <Button
-              type="primary"
-              onClick={() => {
-                if (window.opener) window.close();
-                else window.location.href = "https://gregorconsortium.org/learning";
-              }}
-              style={{ minWidth: 200 }}
-            >
-              Finish & Close
-            </Button>
-          </div>
-        )}
-      </footer>
-    );
+          {/* only show the heavy content when expanded */}
+          {!footerCollapsed && (
+            <div className="chat-footer-content">
+              {!shouldShowContent ? (
+                <div className="chat-footer-placeholder">
+                  {isTyping ? "Kauro is typing…" : null}
+                 </div>
+              ) : (isForm ? (
+                <ConsentFormSubmission
+                  node_id={node_id}
+                  session_slug={session_slug}
+                  form={responses[0].label}
+                />
+              ) : (
+                <div className="footer-button-container">
+                  {responses.map(({ id, label }) => (
+                    <Button
+                      key={id}
+                      className="footer-button"
+                      onClick={() => dispatch(submitConsentResponse({ session_slug, node_id: id }))}
+                    >
+                      {typeof label === "string" ? label : JSON.stringify(label)}
+                    </Button>
+                  ))}
+                </div>
+              ))}
+
+              {end && (
+                <div className="chat-footer-end">
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      if (window.opener) window.close();
+                      else window.location.href = "https://gregorconsortium.org/learning";
+                    }}
+                    style={{ minWidth: 200 }}
+                  >
+                    Finish & Close
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </footer>
+      );
   };
 
   return (

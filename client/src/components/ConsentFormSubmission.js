@@ -37,7 +37,6 @@ const ConsentFormSubmission = ({ form, session_slug }) => {
       layout="vertical"
       className="consent-form"
       onFinish={handleFinish}
-      style={{ maxWidth: 700, margin: "0 auto", marginTop: 24 }}
     >
       {(formType === "checkbox_form" || formType === "child_ages_checkbox_form" ) && (
         <Form.Item

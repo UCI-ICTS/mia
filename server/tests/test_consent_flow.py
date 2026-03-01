@@ -52,6 +52,12 @@ FORM_RESPONSES={
             "value": ["myself", "myChildChildren", "childOtherParent", "adultFamilyMember"]
         }
     ],
+    "child_ages_checkbox_form": [
+        {
+            "name": "child_ages_checkbox_form", 
+            "value": ["ageSixOrLess", "ageSevenToSeventeen"]
+        }
+    ],
     "sample_storage": [
         {
             "name": "storeSamplesOtherStudies",
@@ -164,7 +170,7 @@ FORM_RESPONSES={
 
 
 class ConsentTestFlowTest(TestCase):
-    fixtures = ['tests/fixtures/test_data.json']
+    fixtures = ['tests/fixtures/initial.json']
 
     def setUp(self):
         self.client = APIClient()
