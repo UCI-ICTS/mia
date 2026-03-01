@@ -422,11 +422,9 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str, ne
 
 def handle_sample_storage(graph, session_slug, responses):
     data = {r["name"]: r["value"] for r in responses}
-    node = graph.get(data['node_id'])
-    # import pdb; pdb.set_trace()
-    consent = Consent.objects.filter(user=get_and_validate_consent_session(session_slug=session_slug).user).latest('created_at')
+    consent = get_and_validate_consent_session(session_slug=session_slug).consent 
     consent.store_sample_this_study = True
-    consent.store_sample_other_studies = (data.get("storeSamplesOtherStudies") == "yes")
+    consent.store_sample_other_studies = data.get("radio_selection") == 'storeSamplesOtherStudies'
     consent.save()
 
     return update_consent_and_advance(session_slug, data["node_id"], graph, "Sample use submitted!")
@@ -434,9 +432,9 @@ def handle_sample_storage(graph, session_slug, responses):
 
 def handle_phi_use(graph, session_slug, responses):
     data = {r["name"]: r["value"] for r in responses}
-    consent = Consent.objects.filter(user=get_and_validate_consent_session(session_slug=session_slug).user).latest('created_at')
+    consent = get_and_validate_consent_session(session_slug=session_slug).consent 
     consent.store_phi_this_study = True
-    consent.store_phi_other_studies = (data.get("storePhiOtherStudies") == "yes")
+    consent.store_phi_other_studies = data.get("radio_selection") == "storePhiOtherStudies"
     consent.save()
 
     return update_consent_and_advance(session_slug, data["node_id"], graph, "PHI use submitted!")
@@ -445,7 +443,7 @@ def handle_phi_use(graph, session_slug, responses):
 def handle_result_return(graph, session_slug, responses):
     response_dict = {r["name"]: r["value"] for r in responses}
     node_id = response_dict["node_id"]
-    consent = Consent.objects.filter(user=get_and_validate_consent_session(session_slug=session_slug).user).latest('created_at')
+    consent = get_and_validate_consent_session(session_slug=session_slug).consent 
     consent.return_primary_results = (response_dict.get("rorPrimary") == "yes")
     consent.return_actionable_secondary_results = (response_dict.get("rorSecondary") == "yes")
     consent.return_secondary_results = (response_dict.get("rorSecondaryNot") == "yes")
@@ -503,7 +501,13 @@ def handle_consent(graph, session_slug, responses):
 
     # === DEPENDENT CONSENT HANDLING ===
     if user.enrolling_children:
-        dependent_consents = Consent.objects.filter(guardian=user)
+        dependent_consents_qs = Consent.objects.filter(
+            guardian=user
+        ).exclude(
+            user=user
+        ).filter(
+            consented_at__isnull=False
+        )
 
         if consent.user == user:
             # We are still at the guardian's own signature step; redirect to child consent form
@@ -531,8 +535,12 @@ def handle_consent(graph, session_slug, responses):
                 f"{consent.user_full_name_consent}"
             )
             #Check fro additional dependents
-            if user.num_children_enrolling > len(dependent_consents):
-                next_node_id = node.get("metadata", {}).get("enroll_another_child")
+            if user.num_children_enrolling > dependent_consents_qs.count():
+                # next_node_id = node.get("metadata", {}).get("enrolling_children_node_id")
+                next_node_id = "33yRxHn"
+                if not next_node_id:
+                    raise ValueError("Missing enrolling_children_node_id on consent node metadata.")
+                import pdb; pdb.set_trace()
                 return update_consent_and_advance(session_slug, node_id, graph, user_reply, next_node_id)
 
     # Default: proceed to next node normally
@@ -1059,7 +1067,7 @@ def handle_child_enroll_form(graph:dict, session_slug:str, responses:dict)-> lis
     
     if int(data['numChildrenEnroll']) > 3:
         next_node_id = node.get("metadata").get("enrolling_four_or_more")
-    
+
     session = get_and_validate_consent_session(session_slug=session_slug)
     user = session.user
     user.num_children_enrolling = data['numChildrenEnroll']

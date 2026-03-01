@@ -31,8 +31,8 @@ const ConsentPage = () => {
   const [countdown, setCountdown] = useState(10);
   const [contactModalVisible, setContactModalVisible] = useState(false);
 
-  const { chat, consent, loading } = useSelector((state) => state.consentChat);
-  const email = consent?.email || "Participant";
+  const { chat, consent, session, loading } = useSelector((state) => state.consentChat);
+  const email = session?.email || "Participant";
 
   /* -----------------------------
       FETCH SESSION ON LOAD
