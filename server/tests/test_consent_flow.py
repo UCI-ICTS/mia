@@ -49,7 +49,7 @@ FORM_RESPONSES={
     "checkbox_form":[
         {
             "name": "checkbox_form", 
-            "value": ["myself", "myChildChildren", "childOtherParent", "adultFamilyMember"]
+            "value": ["myself", "myChildChildren", "adultFamilyMember"]
         }
     ],
     "child_ages_checkbox_form": [
@@ -200,7 +200,7 @@ class ConsentTestFlowTest(TestCase):
         form_type = label["form_type"]  # assume checked in advance
         payload = {
             "session_slug": session_slug,
-            "node_id": response["id"],
+            "node_id": node["responses"][0]['label']['node_id'],
             "form_type": form_type,
             "form_responses": FORM_RESPONSES.get(form_type, [])
         }
@@ -302,6 +302,7 @@ class ConsentTestFlowTest(TestCase):
         count = 0
         for _ in range(150):
             count += 1
+            print(count)
             try: 
                 last_turn = res.data["chat"][-1]
             except:
