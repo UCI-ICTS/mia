@@ -205,7 +205,7 @@ class ConsentSession(models.Model):
     responses = models.JSONField(default=dict)       # {"node1": {...}, "node2": {...}}
     workflow = models.CharField(max_length=100, blank=True, null=True)
     num_test_tries = models.PositiveIntegerField(default=0)
-
+    dependants_consented =  models.IntegerField(default=0, null=True, blank=True)
     # Lifecycle flags
     is_active = models.BooleanField(default=True)
     expires_at = models.DateTimeField(null=True, blank=True)

@@ -40,6 +40,9 @@ from consentbot.selectors import (
 )
 
 from utils.cache import (
+    get_flag,
+    set_flag,
+    pop_flag,
     get_user_consent_history,
     set_user_consent_history,
     append_to_consent_history
@@ -52,6 +55,7 @@ User = get_user_model()
 # flags
 TEST_QUESTIONS_CORRECT = 10
 NUM_TEST_TRIES = 2
+ENROLL_CHILDREN_NEXT_NODE_KEY = "enroll_children_next_node_id"
 
 class RenderBlockSerializer(serializers.Serializer):
     """
@@ -418,11 +422,9 @@ def update_consent_and_advance(session_slug, node_id, graph, user_reply: str, ne
 
 def handle_sample_storage(graph, session_slug, responses):
     data = {r["name"]: r["value"] for r in responses}
-    node = graph.get(data['node_id'])
-    # import pdb; pdb.set_trace()
-    consent = Consent.objects.filter(user=get_and_validate_consent_session(session_slug=session_slug).user).latest('created_at')
+    consent = get_and_validate_consent_session(session_slug=session_slug).consent 
     consent.store_sample_this_study = True
-    consent.store_sample_other_studies = (data.get("storeSamplesOtherStudies") == "yes")
+    consent.store_sample_other_studies = data.get("radio_selection") == 'storeSamplesOtherStudies'
     consent.save()
 
     return update_consent_and_advance(session_slug, data["node_id"], graph, "Sample use submitted!")
@@ -430,9 +432,9 @@ def handle_sample_storage(graph, session_slug, responses):
 
 def handle_phi_use(graph, session_slug, responses):
     data = {r["name"]: r["value"] for r in responses}
-    consent = Consent.objects.filter(user=get_and_validate_consent_session(session_slug=session_slug).user).latest('created_at')
+    consent = get_and_validate_consent_session(session_slug=session_slug).consent 
     consent.store_phi_this_study = True
-    consent.store_phi_other_studies = (data.get("storePhiOtherStudies") == "yes")
+    consent.store_phi_other_studies = data.get("radio_selection") == "storePhiOtherStudies"
     consent.save()
 
     return update_consent_and_advance(session_slug, data["node_id"], graph, "PHI use submitted!")
@@ -441,7 +443,7 @@ def handle_phi_use(graph, session_slug, responses):
 def handle_result_return(graph, session_slug, responses):
     response_dict = {r["name"]: r["value"] for r in responses}
     node_id = response_dict["node_id"]
-    consent = Consent.objects.filter(user=get_and_validate_consent_session(session_slug=session_slug).user).latest('created_at')
+    consent = get_and_validate_consent_session(session_slug=session_slug).consent 
     consent.return_primary_results = (response_dict.get("rorPrimary") == "yes")
     consent.return_actionable_secondary_results = (response_dict.get("rorSecondary") == "yes")
     consent.return_secondary_results = (response_dict.get("rorSecondaryNot") == "yes")
@@ -476,7 +478,6 @@ def handle_consent(graph, session_slug, responses):
     session = get_object_or_404(ConsentSession, session_slug=session_slug)
     user = session.user
     consent = session.consent
-
     user_reply = "CONSENT ERROR!!! *****"
 
     # === SELF-CONSENT HANDLING ===
@@ -500,7 +501,13 @@ def handle_consent(graph, session_slug, responses):
 
     # === DEPENDENT CONSENT HANDLING ===
     if user.enrolling_children:
-        dependent_consents = Consent.objects.filter(guardian=user)
+        dependent_consents_qs = Consent.objects.filter(
+            guardian=user
+        ).exclude(
+            user=user
+        ).filter(
+            consented_at__isnull=False
+        )
 
         if consent.user == user:
             # We are still at the guardian's own signature step; redirect to child consent form
@@ -528,72 +535,223 @@ def handle_consent(graph, session_slug, responses):
                 f"{consent.user_full_name_consent}"
             )
             #Check fro additional dependents
-            if user.num_children_enrolling > len(dependent_consents):
-                next_node_id = node.get("metadata", {}).get("enroll_another_child")
+            if user.num_children_enrolling > dependent_consents_qs.count():
+                # next_node_id = node.get("metadata", {}).get("enrolling_children_node_id")
+                next_node_id = "33yRxHn"
+                if not next_node_id:
+                    raise ValueError("Missing enrolling_children_node_id on consent node metadata.")
+
                 return update_consent_and_advance(session_slug, node_id, graph, user_reply, next_node_id)
 
     # Default: proceed to next node normally
     return update_consent_and_advance(session_slug, node_id, graph, user_reply)
 
 
-def handle_family_enrollment_form(graph, session_slug, responses):
+def handle_family_enrollment_form(graph: dict, session_slug: str, responses: list) -> list[dict]:
     """
-    Handles the family enrollment form with checkbox inputs.
-    Updates user flags and walks all selected enrollment paths.
+    Handle the enrollment checkbox form (ex: node b5nYNf6).
 
-    Args:
-        graph (dict): The chat graph
-        session_slug (str): User's session slug
-        responses (list): List of submitted checkbox selections
+    Key behavior:
+    - Treat the checkbox payload as ONE submission (one user turn).
+    - Persist DB flags for enrolling_myself/enrolling_children.
+    - Choose ONE next branch to advance to.
+    - If children are selected, ALWAYS route to the child-count prompt first (RMb2hrx),
+      so it can never be skipped even if other boxes are also checked.
+    - Optionally stash "remaining selections" into cache for future routing logic.
 
-    Returns:
-        list: Updated chat history
+    Expected responses payload pattern (order independent):
+      [
+        {"name": "checkbox_form", "value": ["myself", "myChildChildren", ...]},
+        {"name": "node_id", "value": "b5nYNf6"}
+      ]
     """
+    # ---- Parse payload (order independent) ----
+    payload = {r.get("name"): r.get("value") for r in responses if r.get("name")}
+    prompt_node_id = payload.get("node_id")
+    checked_items = payload.get("checkbox_form", [])
 
-    user = get_and_validate_consent_session(session_slug=session_slug).user
-    history = get_user_consent_history(session_slug)
-    parent_node_id = history[-1]["node_id"] if history else None
-    if not parent_node_id or parent_node_id not in graph:
-        raise ValueError("Invalid or missing parent node in history.")
-
-    checked_items = responses[0].get("value", [])
+    if not prompt_node_id or prompt_node_id not in graph:
+        raise ValueError("Missing or invalid node_id for enrollment checkbox form.")
+    if checked_items is None:
+        checked_items = []
     if not isinstance(checked_items, list):
-        raise ValueError("Expected list of checked items from response.")
+        raise ValueError("Expected checkbox_form value to be a list.")
 
-    try:
-        field_map = {
-            f["name"]: f["id_value"]
-            for f in history[-1]["responses"][0]["label"]["fields"]
-        }
-    except (KeyError, IndexError, TypeError):
-        raise ValueError("Checkbox field structure invalid or missing from chat history.")
+    # ---- Load session/user ----
+    session = get_and_validate_consent_session(session_slug=session_slug)
+    user = session.user
 
-    seen = set()
-    for item in checked_items:
-        node_id = field_map.get(item)
-        if not node_id or node_id in seen:
-            continue
-        seen.add(node_id)
+    # ---- Build mapping from option key -> target node id (id_value) ----
+    render = graph[prompt_node_id].get("render") or {}
+    fields = render.get("fields") or []
+    if not isinstance(fields, list) or not fields:
+        raise ValueError("Enrollment checkbox fields missing from graph render.fields.")
 
-        if item == "myself":
-            user.enrolling_myself = True
-        elif item == "myChildChildren":
-            user.enrolling_children = True
+    field_map: dict[str, str] = {}
+    for f in fields:
+        name = f.get("name")
+        id_value = f.get("id_value")
+        if name and id_value:
+            field_map[name] = id_value
+    self_node_id = field_map.get("myself")  # eca6cQF
+    children_node_id = field_map.get("myChildChildren")  # RMb2hrx in your graph
+    adult_family_member_node_id = field_map.get("adultFamilyMember") # axvGUBt
 
-        user_turn = format_turn(
-            graph=graph,
-            speaker="user",
-            node_id=node_id,
-            messages=[item],
-            timestamp=timezone.now().isoformat()
+    # Normalize selections and persist DB flags
+    user.enrolling_myself = "myself" in checked_items
+    user.enrolling_children = "myChildChildren" in checked_items
+    enrolling_adult_family_member = "adultFamilyMember" in checked_items
+    user.save(update_fields=["enrolling_myself", "enrolling_children"])
+
+    # ---- Append ONE user turn representing the form submission ----
+    # We keep node_id as the prompt node for clarity; messages carry the choices.
+    message_mapping = {
+        "myself": "myself",
+        "myChildChildren": "my child/children",
+        "childOtherParent": "my child’s other parent",
+        "adultFamilyMember": "another adult family member",
+    }
+    messages = [message_mapping[x] for x in checked_items if x in message_mapping]
+    user_turn = format_turn(
+        graph=graph,
+        speaker="user",
+        node_id=prompt_node_id,
+        messages=messages,
+        timestamp=timezone.now().isoformat(),
+    )
+    append_to_consent_history(session_slug, user_turn)
+
+    # ---- Decide NEXT branch deterministically ----
+    # Priority: self -> other adult -> children
+    if user.enrolling_myself:
+        bot_block = get_next_chat_block(
+            node_id=self_node_id,
+            session_slug=session_slug,
+            graph=graph
         )
-        append_to_consent_history(session_slug, user_turn)
-
-        bot_block = get_next_chat_block(node_id, session_slug, graph=graph)
-
-        for turn in bot_block["chat_turns"]:
+        for turn in bot_block.get("chat_turns", []):
             append_to_consent_history(session_slug, turn)
-    user.save()
+    
+    if enrolling_adult_family_member and adult_family_member_node_id:    
+        # If adult branch and children branch both selected:
+        # go adult now, stash children for later.
+        if user.enrolling_children and children_node_id:
+            set_flag(
+                session_slug=session_slug,
+                key=ENROLL_CHILDREN_NEXT_NODE_KEY,
+                value=children_node_id
+            )
+        
+        bot_block = get_next_chat_block(
+            node_id=adult_family_member_node_id,
+            session_slug=session_slug,
+            graph=graph
+        )
+        for turn in bot_block.get("chat_turns", []):
+            append_to_consent_history(session_slug, turn)
+        
+        return get_user_consent_history(session_slug)
+    if user.enrolling_children and children_node_id:
+        bot_block = get_next_chat_block(
+            node_id=children_node_id,
+            session_slug=session_slug,
+            graph=graph
+        )
+        for turn in bot_block.get("chat_turns", []):
+            append_to_consent_history(session_slug, turn)
+        
+    return get_user_consent_history(session_slug)
+
+
+def handle_child_age_form(graph: dict, session_slug: str, responses: list) -> list[dict]:
+    """
+    Handle the child ages checkbox form (ex: node GkgFmXm).
+
+    Behavior:
+    - Treat checkbox submission as ONE user turn.
+    - Determine ONE next branch deterministically (so flow is predictable).
+    - Cache remaining age branches for optional later continuation.
+    - Does not assume anything about chat history structure.
+
+    Expected responses payload pattern (order independent):
+      [
+        {"name": "checkbox_form", "value": ["ageSixOrLess", "ageSevenToSeventeen"]},
+        {"name": "node_id", "value": "GkgFmXm"}
+      ]
+    """
+    # ---- Parse payload (order independent) ----
+    payload = {r.get("name"): r.get("value") for r in responses if r.get("name")}
+    prompt_node_id = payload.get("node_id")
+    checked_items = payload.get("checkbox_form", [])
+
+    if not prompt_node_id or prompt_node_id not in graph:
+        raise ValueError("Missing or invalid node_id for child ages checkbox form.")
+    if checked_items is None:
+        checked_items = []
+    if not isinstance(checked_items, list):
+        raise ValueError("Expected checkbox_form value to be a list.")
+
+    checked_set = {x for x in checked_items if isinstance(x, str) and x.strip()}
+
+    # ---- Validate session/user ----
+    session = get_and_validate_consent_session(session_slug=session_slug)
+    user = session.user
+
+    # ---- Build mapping from option key -> target node id (id_value) ----
+    render = graph[prompt_node_id].get("render") or {}
+    fields = render.get("fields") or []
+    if not isinstance(fields, list) or not fields:
+        raise ValueError("Child age checkbox fields missing from graph render.fields.")
+
+    field_map: dict[str, str] = {}
+    for f in fields:
+        name = f.get("name")
+        id_value = f.get("id_value")
+        if name and id_value:
+            field_map[name] = id_value
+
+    # ---- Append ONE user turn representing the selection ----
+    user_turn = format_turn(
+        graph=graph,
+        speaker="user",
+        node_id=prompt_node_id,
+        messages=sorted(list(checked_set)) if checked_set else ["(no selection)"],
+        timestamp=timezone.now().isoformat(),
+    )
+    append_to_consent_history(session_slug, user_turn)
+
+    # ---- Deterministic priority order ----
+    # You can change this priority, but keep it explicit.
+    priority = ["ageSixOrLess", "ageSevenToSeventeen", "eighteenOrOlder"]
+
+    selected_node_ids = []
+    for key in priority:
+        if key in checked_set:
+            nid = field_map.get(key)
+            if nid:
+                selected_node_ids.append(nid)
+
+    # If none selected, fall back to first child_id if present (or stop)
+    if not selected_node_ids:
+        children = graph[prompt_node_id].get("child_ids") or []
+        if not children:
+            return get_user_consent_history(session_slug)
+        selected_node_ids = [children[0]]
+
+    # Advance only the first selected branch now
+    remaining = selected_node_ids
+    while remaining:
+        next_node_id = remaining.pop(0)
+        print(next_node_id)
+
+    # ---- Advance chat ONCE from chosen next node ----
+        if next_node_id not in graph:
+            raise ValueError("Child age form produced an invalid next node_id.")
+
+        bot_block = get_next_chat_block(next_node_id, session_slug, graph=graph)
+        for turn in bot_block.get("chat_turns", []):
+            append_to_consent_history(session_slug, turn)
+
 
     return get_user_consent_history(session_slug)
 
@@ -647,9 +805,13 @@ def handle_other_adult_contact_form(conversation_graph, session_slug, responses)
     response_dict = {r.get("name"): r.get("value") for r in responses if r.get("name")}
     node_id = response_dict.get("node_id")
 
+    if not node_id or node_id not in conversation_graph:
+        raise ValueError("Missing or invalid node_id for other adult contact form.")
+
     session = get_object_or_404(ConsentSession, session_slug=session_slug)
     email = response_dict.get("email", "")
 
+    # ---- Build user-visible summary message ----
     if email:  # Only create a referred user if an email was submitted
         serializer = UserInputSerializer(data=response_dict)
         serializer.is_valid(raise_exception=True)
@@ -675,11 +837,17 @@ def handle_other_adult_contact_form(conversation_graph, session_slug, responses)
         user = UserInputSerializer().create(validated_data)
         new_user_data = UserOutputSerializer(user).data
 
-        messages=[f"{new_user_data['first_name']} {new_user_data['last_name']}. Email: {new_user_data['email']} Phone: {new_user_data['phone']}"],
+        messages=[
+            f"{new_user_data['first_name']} {new_user_data['last_name']}."
+            f"Email: {new_user_data['email']} Phone: {new_user_data['phone']}"
+        ]
 
     else:
-        messages = ["Let's skip this"]
-    
+        # TODO: add error handling here
+        messages = ["Skipping referral"]
+
+    # import pdb; pdb.set_trace()
+    # ---- Append the user turn (the form submission) ----
     user_turn = format_turn(
         graph=conversation_graph,
         speaker="user",
@@ -687,14 +855,27 @@ def handle_other_adult_contact_form(conversation_graph, session_slug, responses)
         messages=messages,
         timestamp=timezone.now().isoformat()
     )
-
     append_to_consent_history(session_slug, user_turn)
+    
+    # ---- Advance to the next node AFTER this form ----
+    next_nodes = conversation_graph[node_id].get("child_ids") or []
+    if not next_nodes:
+        # nothing to advance to, just return history
+        return get_user_consent_history(session_slug)
 
-    submit_node_id = conversation_graph[node_id]["child_ids"][0]
-    bot_block = get_next_chat_block(submit_node_id, session_slug, graph=conversation_graph)
+    next_node_id = next_nodes[0]
 
-    for turn in bot_block["chat_turns"]:
-        append_to_consent_history(session_slug, turn)    
+    bot_block = get_next_chat_block(next_node_id, session_slug, graph=conversation_graph)
+    for turn in bot_block.get("chat_turns", []):
+        append_to_consent_history(session_slug, turn)
+
+    # # ---- Resume queued work if this subflow ended ----
+    if bot_block_has_end_sequence(bot_block):
+        queued = pop_flag(session_slug, ENROLL_CHILDREN_NEXT_NODE_KEY)
+        if queued and queued in conversation_graph:
+            queued_block = get_next_chat_block(queued, session_slug, graph=conversation_graph)
+            for turn in queued_block.get("chat_turns", []):
+                append_to_consent_history(session_slug, turn)
 
     return get_user_consent_history(session_slug)
 
@@ -884,7 +1065,7 @@ def handle_child_enroll_form(graph:dict, session_slug:str, responses:dict)-> lis
     
     if int(data['numChildrenEnroll']) > 3:
         next_node_id = node.get("metadata").get("enrolling_four_or_more")
-    
+
     session = get_and_validate_consent_session(session_slug=session_slug)
     user = session.user
     user.num_children_enrolling = data['numChildrenEnroll']
@@ -956,6 +1137,11 @@ def handle_child_contact_form(graph, session_slug, responses):
     return update_consent_and_advance(session_slug, user_node_id, graph, user_reply)
 
 
+def bot_block_has_end_sequence(bot_block: dict) -> bool:
+    turns = bot_block.get("chat_turns") or []
+    return any(bool(t.get("end_sequence")) for t in turns)
+
+
 def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]:
     """
     Handle a user's response in the consent chat by:
@@ -1008,6 +1194,17 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
     # Return user + bot turn history
     bot_block = get_next_chat_block(next_node_id, session_slug, graph=graph)
 
+    # ---- if this click ended a sub-flow, resume queued work ----
+    # TODO: need to make the cache more extensible. The pop for child enroll is too specific
+    if bot_block_has_end_sequence(bot_block):
+        # import pdb; pdb.set_trace()
+        queued_children = pop_flag(session_slug, ENROLL_CHILDREN_NEXT_NODE_KEY)
+        if queued_children and queued_children in graph:
+            queued_block = get_next_chat_block(queued_children, session_slug, graph=graph)
+            for turn in queued_block.get("chat_turns", []):
+                append_to_consent_history(session_slug, turn)
+        return get_user_consent_history(session_slug)
+    
     for turn in bot_block["chat_turns"]:
         append_to_consent_history(session_slug, turn)
 
@@ -1130,8 +1327,9 @@ def handle_form_submission(data):
 
 
 FORM_HANDLER_MAP = {
-    "family_enrollment": handle_family_enrollment_form,
+    "child_ages_checkbox_form": handle_child_age_form,
     "checkbox_form": handle_family_enrollment_form,
+    "contact_other_adult": handle_other_adult_contact_form,
     "sample_storage": handle_sample_storage,
     "phi_use": handle_phi_use,
     "result_return": handle_result_return,

@@ -353,7 +353,6 @@ class ConsentSessionViewSet(viewsets.ViewSet):
         """"""
         
         user = get_object_or_404(User, username=username)
-        import pdb; pdb.set_trace()
         invite = user.consent_sessions.order_by('-created_at').first()
 
         if not invite:

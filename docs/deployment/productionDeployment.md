@@ -1,4 +1,4 @@
-# MIA Production Deployment Instructions & Notes
+# Kauro Production Deployment Instructions & Notes
 
 ## System Setup
 ### Requirements
@@ -47,7 +47,7 @@ sudo -u postgres psql
 ```
 * At the `postgres=#` prompt, type `\password` to set the password for the default `postgres` user.
     * Follow the prompts and enter the new password. Save it somewhere safe (you will need it for your `.secrets` file later).
-### 5. Create the MIA database and exit psql
+### 5. Create the Kauro database and exit psql
 ```bash
 CREATE DATABASE mia_app;
 \q
@@ -106,7 +106,7 @@ cd /var/www/github/
 
 `git switch <BRANCH NAME>` *(for whatever branch you need)*
 
-## MIA Client deployment  (mia/client)
+## Kauro Client deployment  (mia/client)
 
 ### Enter the repository, create a environment file, and install the required packages
 
@@ -130,7 +130,7 @@ REACT_APP_BASEURL=http://[SERVERNAME]
 REACT_APP_KBIDB=http://[SERVERNAME]
 ```
 
-## MIA Server deployment  (mia/server)
+## Kauro Server deployment  (mia/server)
 
 **Open a new terminal and retrun to the project root**
 
@@ -196,7 +196,7 @@ sudo chown -R nginx:developers /var/log/gunicorn
 ```
 
 ### Create a Gunicorn systemd Service and Socet for MIA
-Set up a `systemd` service so Gunicorn runs the Django mia backend at boot and stays running.
+Set up a `systemd` service so Gunicorn runs the Django Kauro backend at boot and stays running.
 ```bash
 sudo cp ../admin/mia.service /etc/systemd/system/mia.service
 sudo cp /var/www/github/mia/admin/mia.socket /etc/systemd/system/mia.socket
@@ -231,7 +231,7 @@ sudo systemctl status mia
 
 It should say **active (running)**:
 ```bash
-● mia.service - MIA gunicorn daemon
+● mia.service - Kauro gunicorn daemon
      Loaded: loaded (/etc/systemd/system/mia.service; enabled; preset: disabled)
      Active: active (running) since Tue 2025-04-29 13:25:07 UTC; 3min 20s ago
 TriggeredBy: ● mia.socket

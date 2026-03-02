@@ -17,7 +17,7 @@ const ConsentFormSubmission = ({ form, session_slug }) => {
       name,
       value: value ?? null
     }));
-  
+    console.log(session_slug, form.node_id, form.form_type, formatted)
     dispatch(
       submitConsentForm({
         session_slug,
@@ -30,16 +30,15 @@ const ConsentFormSubmission = ({ form, session_slug }) => {
   
 
   const formType = (form.form_type);
-
+  console.log(formType)
   return (
     <Form
       form={formInstance}
       layout="vertical"
       className="consent-form"
       onFinish={handleFinish}
-      style={{ maxWidth: 700, margin: "0 auto", marginTop: 24 }}
     >
-      {formType === "checkbox_form" && (
+      {(formType === "checkbox_form" || formType === "child_ages_checkbox_form" ) && (
         <Form.Item
           name="checkbox_form"
           label="Who might consider enrolling?"
@@ -57,7 +56,7 @@ const ConsentFormSubmission = ({ form, session_slug }) => {
         </Form.Item>
       )}
 
-      {formType === "text_fields" && (
+      {(formType === "text_fields" || formType=== "contact_other_adult") && (
         <Space direction="vertical">
           {form.fields.map((field) => (
           <Form.Item

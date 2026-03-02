@@ -42,20 +42,37 @@ def append_to_consent_history(session_slug: str, turn: dict) -> None:
 # -------------------------
 # STATE FLAGS / METADATA
 
-def set_flag(session_slug: str, key: str, value: Any) -> None:
-    """Set a temporary flag in the session cache."""
-    state = cache.get(f"state:{session_slug}", {})
-    state[key] = value
-    cache.set(f"state:{session_slug}", state, timeout=None)
+DEFAULT_STATE_TTL_SECONDS = 60 * 60 * 6  # 6 hours, adjust
 
+def _state_key(session_slug: str) -> str:
+    return f"state:{session_slug}"
+
+def get_state(session_slug: str) -> dict:
+    return cache.get(_state_key(session_slug), {}) or {}
+
+def set_state(session_slug: str, state: dict, ttl: int = DEFAULT_STATE_TTL_SECONDS) -> None:
+    cache.set(_state_key(session_slug), state, timeout=ttl)
+
+def set_flag(session_slug: str, key: str, value: Any, ttl: int = DEFAULT_STATE_TTL_SECONDS) -> None:
+    state = get_state(session_slug)
+    state[key] = value
+    set_state(session_slug, state, ttl=ttl)
 
 def get_flag(session_slug: str, key: str) -> Optional[Any]:
-    """Get a specific flag from the session cache."""
-    state = cache.get(f"state:{session_slug}", {})
+    state = get_state(session_slug)
     return state.get(key)
 
+def pop_flag(session_slug: str, key: str, default: Any = None) -> Any:
+    state = get_state(session_slug)
+    value = state.pop(key, default)
+    set_state(session_slug, state)
+    return value
+
+def delete_flag(session_slug: str, key: str) -> None:
+    state = get_state(session_slug)
+    if key in state:
+        del state[key]
+        set_state(session_slug, state)
 
 def clear_session_cache(session_slug: str) -> None:
-    """Clear all cached history and state for a session."""
-    cache.delete(f"history:{session_slug}")
-    cache.delete(f"state:{session_slug}")
+    cache.delete(_state_key(session_slug))

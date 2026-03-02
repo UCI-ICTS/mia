@@ -183,6 +183,27 @@ def traverse_consent_graph(conversation_graph:dict, node_id:str, session_slug:st
             if not children:
                 break
 
+            # if there is a user-child with a form render, stop and return that form
+            form_child_id = None
+            for cid in children:
+                cnode = conversation_graph.get(cid, {})
+                if cnode.get("type") == "user":
+                    r = cnode.get("render") or {}
+                    if r.get("type") == "form":
+                        form_child_id = cid
+                        break
+
+            if form_child_id:
+                user_node = conversation_graph[form_child_id]
+                responses.append({
+                    "id": form_child_id,
+                    "label": user_node.get("render"),  # <-- the whole form config
+                    "metadata": user_node.get("metadata", {}),
+                })
+                visited.append(form_child_id)
+                render = {"type": "button"}  # parent bot is still "button mode"
+                break
+
             # If next step is a user response block
             if all(conversation_graph.get(cid, {}).get("type") == "user" for cid in children):
                 # import pdb; pdb.set_trace()
