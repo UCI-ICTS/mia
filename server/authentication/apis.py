@@ -264,11 +264,11 @@ class UserViewSet(viewsets.ViewSet):
 
 class FollowUpVieWSet(viewsets.ViewSet):
     # permission_classes = {permissions.IsAuthenticated}
-    permission_classes = {permissions.AllowAny}
-    # def get_permissions(self):
-    #     if self.action == 'create':
-    #         return [permissions.AllowAny()]
-    #     return [permissions.IsAuthenticated()]
+    # permission_classes = {permissions.AllowAny}
+    def get_permissions(self):
+        if self.action == 'create':
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
     
     @swagger_auto_schema(
         operation_description="Retrieve all follow ups",
@@ -297,6 +297,11 @@ class FollowUpVieWSet(viewsets.ViewSet):
             return Response(output.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(
+        operation_description="Resolve a follow-up entry"
+    )
+    def update(self, request):
+        return Response( status=status.HTTP_200_OK)
 
 class PasswordViewSet(viewsets.ViewSet):
     """

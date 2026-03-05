@@ -1203,7 +1203,7 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
             queued_block = get_next_chat_block(queued_children, session_slug, graph=graph)
             for turn in queued_block.get("chat_turns", []):
                 append_to_consent_history(session_slug, turn)
-        return get_user_consent_history(session_slug)
+            return get_user_consent_history(session_slug)
     
     for turn in bot_block["chat_turns"]:
         append_to_consent_history(session_slug, turn)

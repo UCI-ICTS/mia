@@ -65,6 +65,8 @@ def get_flag(session_slug: str, key: str) -> Optional[Any]:
 def pop_flag(session_slug: str, key: str, default: Any = None) -> Any:
     state = get_state(session_slug)
     value = state.pop(key, default)
+    if value == None:
+        return False
     set_state(session_slug, state)
     return value
 
