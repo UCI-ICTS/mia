@@ -53,7 +53,7 @@
   "pk": "9705cfaf-3397-4787-8967-01d6ec32f697",
   "fields": {
     "password": "pbkdf2_sha256$870000$3qmWlDkC6knJMAWqWLjqK1$dE6sCtCrR2ypdCnlvikPI7YvxUMMgiFxRUzaTfNrlTg=",
-    "last_login": "2025-05-28T14:05:18.359Z",
+    "last_login": "2026-03-06T15:36:57.854Z",
     "is_superuser": true,
     "username": "wheel",
     "first_name": "wheel",
@@ -111,6 +111,28 @@
     "follow_up_info": "prefer to talk with someone from the research team",
     "resolved": false,
     "created_at": "2025-11-30T17:31:17.452Z"
+  }
+},
+{
+  "model": "authentication.followup",
+  "pk": "6d8028f9-52fe-4a24-8d1c-91676d646e5d",
+  "fields": {
+    "user": "d1da2195-2deb-4bc1-88b2-bbb7a3c50215",
+    "follow_up_reason": "default",
+    "follow_up_info": "Last Node ID: m84n5MM",
+    "resolved": true,
+    "created_at": "2026-03-06T15:37:13.799Z"
+  }
+},
+{
+  "model": "authentication.followup",
+  "pk": "aa863430-70eb-4772-83eb-728ffb1c136c",
+  "fields": {
+    "user": "9705cfaf-3397-4787-8967-01d6ec32f697",
+    "follow_up_reason": "question",
+    "follow_up_info": "test",
+    "resolved": false,
+    "created_at": "2026-03-06T15:37:24.941Z"
   }
 },
 {
@@ -19061,6 +19083,32 @@
   }
 },
 {
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-03-06T15:37:13.800Z",
+    "user": "9705cfaf-3397-4787-8967-01d6ec32f697",
+    "content_type": 3,
+    "object_id": "6d8028f9-52fe-4a24-8d1c-91676d646e5d",
+    "object_repr": "FollowUp object (6d8028f9-52fe-4a24-8d1c-91676d646e5d)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-03-06T15:37:24.942Z",
+    "user": "9705cfaf-3397-4787-8967-01d6ec32f697",
+    "content_type": 3,
+    "object_id": "aa863430-70eb-4772-83eb-728ffb1c136c",
+    "object_repr": "FollowUp object (aa863430-70eb-4772-83eb-728ffb1c136c)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
   "model": "auth.permission",
   "pk": 1,
   "fields": {
@@ -19670,6 +19718,14 @@
     "name": "Can view blacklisted token",
     "content_type": 17,
     "codename": "view_blacklistedtoken"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "0hkttxpua1ljrbnx4xfvrblqaotw4ad0",
+  "fields": {
+    "session_data": ".eJxVzMsOwiAQheF3YW0JMIUZXLr3GZoBBls1bdLLyvju2qQLXZ__Oy_V8bb23bbI3A1FnVVE43Pl2gBEbFokbCgGbIwtQTK4GiKq0y9LnB8y7rbcebxNOk_jOg9J74k-1kVfpyLPy9H-HfS89F8NDgTQmCBQU-EoHimQuJQ8ApGgqWgTmrZS9Nbl7BldYCvOt4VsUO8PeTg_yQ:1vyXEX:-NXH8yB_Yqi5mwjmht4m4rLHNehTlRqm9BARrqyaTYk",
+    "expire_date": "2026-03-20T15:36:57.856Z"
   }
 },
 {
