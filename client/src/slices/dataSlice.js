@@ -230,6 +230,7 @@ const dataSlice = createSlice({
 
       .addCase(fetchFollowUps.fulfilled, (state, action) => {
         state.followUps = action.payload;
+        state.loading = false
       })
       .addCase(fetchFollowUps.pending, (state, action) => {
         state.loading = true;
