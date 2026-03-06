@@ -6,6 +6,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
@@ -138,7 +139,7 @@ class UserViewSet(viewsets.ViewSet):
     lookup_url_kwarg = "username"
     lookup_value_regex = r"[^/]+"
 
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Retrieve all users",
@@ -272,8 +273,8 @@ class FollowUpVieWSet(viewsets.ViewSet):
     
     @swagger_auto_schema(
         operation_description="Retrieve all follow ups",
-        # responses={200: UserOutputSerializer(many=True)},
-        tags=["Follow Ups"]
+        responses={200: UserOutputSerializer(many=True)},
+        tags=["Follow-up"]
     )
 
     def list(slef, request):
@@ -287,7 +288,7 @@ class FollowUpVieWSet(viewsets.ViewSet):
         operation_description="Create a new follow-up entry",
         request_body=FollowUpInputSerializer,
         responses={201: FollowUpOutputSerializer()},
-        tags=["Follow Ups"]
+        tags=["Follow-up"]
     )
     def create(self, request):
         serializer = FollowUpInputSerializer(data=request.data)
@@ -298,10 +299,29 @@ class FollowUpVieWSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
-        operation_description="Resolve a follow-up entry"
+        operation_description="Resolve a follow-up entry",
+        responses={
+            200: FollowUpOutputSerializer(),
+            400: "Bad request",
+            404: "Object not found"
+        },
+        tags=["Follow-up"]
     )
-    def update(self, request):
-        return Response( status=status.HTTP_200_OK)
+    @action(detail=True, methods=["put"], url_path="resolve")
+    def resolve(self, request, pk=None):
+        
+        try:
+            instance = get_object_or_404(FollowUp, pk=pk)
+        except Exception as err:
+            return Response(data=err, status=status.HTTP_400_BAD_REQUEST)
+        
+        if instance. resolved is True:
+            return Response(data={"message": "Follow-up is already marked as resolved"}, status=status.HTTP_400_BAD_REQUEST)
+        instance.resolved = True
+        instance.save()
+        print(request.data)
+        serializer = FollowUpOutputSerializer(instance)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 class PasswordViewSet(viewsets.ViewSet):
     """
