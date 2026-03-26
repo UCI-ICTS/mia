@@ -18,7 +18,7 @@ const DocumentsPage = () => {
   const { documents = [], loading, error } = useSelector((state) => state.data || {});
 
   useEffect(() => {
-    if (!loading && !error && (!documents || documents.length === 0)) {
+    if (!loading && !error && (documents !== null) && (!documents || documents.length === 0)) {
       dispatch(fetchDocuments());
     }
   }, [documents, loading, error, dispatch]);
