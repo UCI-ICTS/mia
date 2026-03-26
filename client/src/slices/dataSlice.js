@@ -240,9 +240,13 @@ const dataSlice = createSlice({
       })
 
       .addCase(fetchDocuments.fulfilled, (state, action) => {
-        state.documents = action.payload;
-        console.log(action.payload);
+        const documents = action.payload;
         state.loading = false;
+        if (documents.length !== 0) {
+          state.documents = documents
+        } else {
+          state.documents = null
+        }
       })
       .addCase(fetchDocuments.pending, (state, action) => {
         state.loading = true;
