@@ -120,6 +120,7 @@ class Consent(models.Model):
 class ConsentScript(models.Model):
     script_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50)
+    study_info = models.URLField(max_length=2048, default="https://gregorconsortium.org/learning")
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     

@@ -33,6 +33,7 @@ const ConsentPage = () => {
 
   const { chat, consent, session, loading } = useSelector((state) => state.consentChat);
   const email = session?.email || "Participant";
+  const studyInfo = session?.study_info 
 
   /* -----------------------------
       FETCH SESSION ON LOAD
@@ -135,7 +136,7 @@ const ConsentPage = () => {
                 key: "faq",
                 label: (
                   <a
-                    href="https://gregorconsortium.org/learning"
+                    href={studyInfo}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
