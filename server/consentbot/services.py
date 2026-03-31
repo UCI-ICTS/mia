@@ -159,6 +159,7 @@ class ConsentScriptInputSerializer(serializers.ModelSerializer):
         fields = [
             "name",
             "description",
+            "study_info",
             "derived_from",
             "version_number",
             "script"
@@ -250,6 +251,7 @@ class ConsentSessionInputSerializer(serializers.ModelSerializer):
 class ConsentSessionOutputSerializer(serializers.ModelSerializer):
     user_id = serializers.UUIDField(source='user.user_id', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
+    study_info = serializers.CharField(source='script.study_info', read_only=True)
     invite_link = serializers.SerializerMethodField()
 
     class Meta:
@@ -257,6 +259,7 @@ class ConsentSessionOutputSerializer(serializers.ModelSerializer):
         fields = [
             'session_slug',
             'invite_link',
+            'study_info',
             'created_at',
             'expires_at',
             'user_id',

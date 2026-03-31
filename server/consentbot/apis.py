@@ -171,17 +171,18 @@ class ConsentScriptViewSet(viewsets.ViewSet):
     def create(self, request):
         serializer = ConsentScriptInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        base_script_id = serializer.validated_data.get('derived_from')
-        base_script = ConsentScript.objects.filter(consent_id=base_script_id).first() if base_script_id else None
-
-        new_script = ConsentScript.objects.create(
-            name=serializer.validated_data['name'],
-            description=serializer.validated_data['description'],
-            script={},
-            derived_from=base_script,
-            version_number=(ConsentScript.get_max_version_number(base_script_id) + 1 if base_script else 0)
-        )
+        import pdb; pdb.set_trace()
+        new_script = serializer.save()
+        # TODO 
+        # base_script_id = serializer.validated_data.get('derived_from')
+        # base_script = ConsentScript.objects.filter(consent_id=base_script_id).first() if base_script_id else None
+        # new_script = ConsentScript.objects.create(
+        #     name=serializer.validated_data['name'],
+        #     description=serializer.validated_data['description'],
+        #     script={},
+        #     derived_from=base_script,
+        #     version_number=(ConsentScript.get_max_version_number(base_script_id) + 1 if base_script else 0)
+        # )
 
         output_serializer = ConsentScriptOutputSerializer(new_script)
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
