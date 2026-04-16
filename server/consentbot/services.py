@@ -159,6 +159,7 @@ class ConsentScriptInputSerializer(serializers.ModelSerializer):
         fields = [
             "name",
             "description",
+            "study_info",
             "derived_from",
             "version_number",
             "script"
@@ -250,6 +251,7 @@ class ConsentSessionInputSerializer(serializers.ModelSerializer):
 class ConsentSessionOutputSerializer(serializers.ModelSerializer):
     user_id = serializers.UUIDField(source='user.user_id', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
+    study_info = serializers.CharField(source='script.study_info', read_only=True)
     invite_link = serializers.SerializerMethodField()
 
     class Meta:
@@ -257,6 +259,7 @@ class ConsentSessionOutputSerializer(serializers.ModelSerializer):
         fields = [
             'session_slug',
             'invite_link',
+            'study_info',
             'created_at',
             'expires_at',
             'user_id',
@@ -1203,7 +1206,7 @@ def handle_user_step(session_slug: str, node_id: str, graph: dict) -> list[dict]
             queued_block = get_next_chat_block(queued_children, session_slug, graph=graph)
             for turn in queued_block.get("chat_turns", []):
                 append_to_consent_history(session_slug, turn)
-        return get_user_consent_history(session_slug)
+            return get_user_consent_history(session_slug)
     
     for turn in bot_block["chat_turns"]:
         append_to_consent_history(session_slug, turn)

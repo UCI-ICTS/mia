@@ -71,7 +71,7 @@ const createFollowUp = async (data) => {
 };
 
 const resolveFollowUp = async (id) => {
-  const response = await API.patch(`auth/follow-ups/${id}/`, { resolved: true });
+  const response = await API.put(`auth/follow-ups/${id}/resolve/`, );
   return response.data;
 };
 

@@ -9,8 +9,8 @@ import ConsentFormSubmission from "../components/ConsentFormSubmission";
 import "../style.css";
 
 const wait = (ms) => new Promise((res) => setTimeout(res, ms));
-const typingDelay = (msg) => 900 + Math.min(2000, msg.length * 15);
-// const typingDelay = (msg) => 10;
+// const typingDelay = (msg) => 900 + Math.min(2000, msg.length * 15);
+const typingDelay = (msg) => 10;
 
 
 const ChatBubbles = ({ chat = [], username, session_slug }) => {
@@ -203,7 +203,6 @@ const ChatBubbles = ({ chat = [], username, session_slug }) => {
               </Row>
             ))
           )}
-          {console.log(turn.render?.type)}
           {turn.render?.type === "image" && (
             <img
               className="chat-image"

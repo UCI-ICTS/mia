@@ -36,6 +36,17 @@ const FollowUp = () => {
       title: "Resolved",
       dataIndex: "resolved",
       render: (resolved) => (resolved ? <Tag color="green">Resolved</Tag> : <Tag color="red">Unresolved</Tag>),
+      filters: [
+        {
+          text: 'Resolved',
+          value: true,
+        },
+        {
+          text: 'Unresolved',
+          value: false,
+        },
+      ],
+      onFilter: (value, record) => record.resolved === value,
     },
     { title: "Created", dataIndex: "created_at" },
     {

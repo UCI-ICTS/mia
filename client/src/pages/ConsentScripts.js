@@ -15,12 +15,13 @@ import {
   Tooltip,
   Spin,
   Typography,
+  Upload,
   message,
+  InputNumber,
 } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReadOutlined, MenuUnfoldOutlined, UploadOutlined } from "@ant-design/icons";
 import ErrorBoundary from "../components/ErrorBoundary";
 import { useNavigate } from "react-router-dom";
-import UploadModal from "../components/UploadModal";
 
 const { Title } = Typography; 
 
@@ -30,8 +31,10 @@ const ConsentScripts = () => {
   const { scripts = [], loading, error } = useSelector((state) => state.data || {});
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingScript, setEditingScript] = useState(null);
-  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [fileList, setFileList] = useState([]);
+
   const [form] = Form.useForm();
+  const values = Form.useWatch([], form); //watch all fields
 
   useEffect(() => {
     dispatch(fetchConsentScripts()).catch((err) => {
@@ -39,45 +42,47 @@ const ConsentScripts = () => {
     });
   }, [dispatch]);
 
+  const readJsonFile = (file) => 
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          resolve(parsed);
+        } catch (error) {
+          console.log(error);
+          reject(new Error("Invalid JSON file."));
+        }
+      };
+      reader.onerror = () => reject(new Error("Failed to read file."));
+      reader.readAsText(file);
+    });
+    
   const handleOpenModal = (script = null) => {
     setEditingScript(script);
     form.setFieldsValue(script || { name: "", description: "" });
     setIsModalVisible(true);
   };
 
-  const handleUpload = async (file) => {
-    try {
-      const text = await file.text();
-      const parsed = JSON.parse(text);
-  
-      const scriptPayload = {
-        name: parsed.name || "Uploaded Script",
-        description: parsed.description || "Imported from JSON",
-        script: parsed, // assuming parsed is the full script graph
-      };
-  
-      await dispatch(addScript(scriptPayload)).unwrap();
-      message.success("Script uploaded successfully.");
-      dispatch(fetchConsentScripts());
-      setUploadModalVisible(false);
-      setIsModalVisible(false);
-      form.resetFields();
-    } catch (err) {
-      console.error("Upload error:", err);
-      message.error("Invalid or corrupt JSON file.");
-    }
-    return false; // prevent default upload
-  };
-
   const handleSubmit = async () => {
-    const values = await form.validateFields();
+    let parsedJson = null;
+    console.log("fileList:", fileList, typeof fileList);
+    if (Array.isArray(fileList) && fileList.length > 0) {
+      const fileObj = fileList[0].originFileObj || fileList[0];
+
+      parsedJson = await readJsonFile(fileObj);
+    }
+    const payload = {
+      ...values,
+      ...(parsedJson ? {script: parsedJson} : {}),
+    };
+    
     try {
       if (editingScript) {
-        await dispatch(editScript({ id: editingScript.script_id, ...values })).unwrap();
+        await dispatch(editScript({ id: editingScript.script_id, ...payload })).unwrap();
         message.success("Script updated successfully.");
       } else {
-        await dispatch(addScript(values)).unwrap();
-        message.success("Script added successfully.");
+        await dispatch(addScript(payload)).unwrap();
       }
       setIsModalVisible(false);
       form.resetFields();
@@ -108,7 +113,7 @@ const ConsentScripts = () => {
   const handleDelete = async (id) => {
     try {
       await dispatch(deleteScript(id)).unwrap();
-      message.success("Script deleted.");
+      // message.success("Script deleted.");
       dispatch(fetchConsentScripts());
     } catch (err) {
       message.error(err?.message || "Failed to delete script.");
@@ -206,6 +211,7 @@ const ConsentScripts = () => {
             form.resetFields();
           }}
           onOk={handleSubmit}
+          // okButtonProps={{disabled: !isReady}}
         >
           <Form form={form} layout="vertical">
             <Form.Item
@@ -216,26 +222,44 @@ const ConsentScripts = () => {
               <Input />
             </Form.Item>
             <Form.Item
+              name="version_number"
+              label="Script Version Number"
+              rules={[{ required: true, message: "Please enter script version" }]}
+            >
+              <InputNumber min={0}/>
+            </Form.Item>
+            <Form.Item
+              name="study_info"
+              label="Study Information Website"
+              rules={[{ required: true, message: "Please enter a study information website" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
               name="description"
               label="Description"
               rules={[{ required: true, message: "Please enter description" }]}
             >
               <Input.TextArea rows={3} />
             </Form.Item>
-            <Button
-              icon={<UploadOutlined />}
-              style={{ marginLeft: 12 }}
-              onClick={() => setUploadModalVisible(true)}
-            >
-              Upload Script
-            </Button>
+            <Form.Item>
+              <Upload
+                accept=".json"
+                fileList={fileList}
+                beforeUpload={(file) =>{
+                  setFileList([file]);
+                  return false; 
+                }}
+                onRemove={() => {
+                  setFileList([]);
+                }}
+                maxCount={1}
+              >
+                <Button icon={<UploadOutlined />}>Select JSON File</Button>
+              </Upload>
+            </Form.Item>
           </Form>
         </Modal>
-        <UploadModal
-          visible={uploadModalVisible}
-          onClose={() => setUploadModalVisible(false)}
-          handleUpload={handleUpload}
-        />
       </div>
     </ErrorBoundary>
   );
